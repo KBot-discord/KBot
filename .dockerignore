@@ -1,0 +1,7 @@
+Dockerfile
+node_modules
+.env
+.git
+README.md
+LICENSE
+npm-debug.log

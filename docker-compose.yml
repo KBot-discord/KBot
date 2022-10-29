@@ -1,0 +1,17 @@
+version: "3.3"
+
+services:
+  kbot:
+    image: registry.gitlab.com/kbot1/kbot:latest
+    container_name: kbot
+    restart: unless-stopped
+    networks:
+      - KBot-network
+    ports:
+      - "10.8.0.130:8500:8500"
+    env_file:
+      - .env
+
+networks:
+  KBot-network:
+    external: true
