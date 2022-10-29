@@ -25,7 +25,8 @@ export async function getUserInfo(
         let avatar = await getMemberAvatarUrl(member);
         if (!avatar) avatar = await getUserAvatarUrl(user)
 
-        const formattedRoles = member.roles.cache.size === 0 ?
+        console.log(member.roles.cache.size);
+        const formattedRoles = member.roles.cache.size <= 1 ?
             '\u200B' :
             (member.roles.cache.sort((a, b) => a.position - b.position)
                 .map(role => ` <@&${role.id}>`))
@@ -37,8 +38,7 @@ export async function getUserInfo(
             .addFields(
                 { name: 'Created at:', value: createdAt, inline: true },
                 { name: 'Joined at:', value: `<t:${Math.round(member.joinedTimestamp! / 1000)}:F>`, inline: true },
-                { name: `Roles (${member.roles.cache.size - 1})`, value: `${formattedRoles}` },
-                { name: 'Custom status:', value: member.presence?.activities?.[0]?.state || 'N/A', inline: true },
+                { name: `Roles (${member.roles.cache.size - 1})`, value: formattedRoles },
             )
             .setFooter({ text: 'Present in server: ✔️' });
 
@@ -54,7 +54,7 @@ export async function getUserInfo(
             .addFields(
                 { name: 'Created at:', value: createdAt },
                 { name: '\u200B', value: '\u200B' },
-                { name: 'Ban status:', value: `${banned}`, inline: true },
+                { name: 'Ban status:', value: banned, inline: true },
             )
             .setFooter({ text: 'Present in server: ❌' });
     }
