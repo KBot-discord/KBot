@@ -1,3 +1,5 @@
+const commandIds = require('./commandIds')
+
 const config = {
     discord: {
         token: process.env.DISCORD_TOKEN,
@@ -9,7 +11,8 @@ const config = {
     },
     metrics: {
         port: process.env.METRICS_PORT
-    }
+    },
+    idHints: commandIds[process.env.NODE_ENV],
 }
 
 module.exports = config;
