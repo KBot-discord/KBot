@@ -1,10 +1,14 @@
 import '@sapphire/plugin-api/register';
-import { KBotClient } from "./lib/KBotClient";
-import { Config } from "./lib/types/config";
-import startMetricsServer from "./lib/metrics";
+import '@sapphire/plugin-logger/register';
+import {container, LogLevel} from "@sapphire/framework";
+
+import {KBotClient} from "./lib/KBotClient";
+import {Config} from "./lib/types/config";
+import startMetricsServer from "./lib/util/metrics";
 
 
 const config: Config = require('../config.js');
+container.config = config;
 
 const client = new KBotClient({
     intents: [
@@ -19,11 +23,18 @@ const client = new KBotClient({
             port: config.api.port,
         },
     },
+    logger: {
+        level: process.env.NODE_ENV === 'production' ? LogLevel.Info : LogLevel.Debug,
+    }
 });
 
 async function main() {
-    startMetricsServer();
-    await client.login(config.discord.token);
+    try {
+        startMetricsServer();
+        await client.login(config.discord.token);
+    } catch {
+        await client.destroy();
+    }
 }
 
 void main();
