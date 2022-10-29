@@ -1,6 +1,6 @@
 FROM node:18-alpine
 EXPOSE 8600 8601
-WORKDIR /app
+WORKDIR /
 COPY package.json ./
 RUN apk add --update \
 	&& apk add --no-cache ca-certificates \
