@@ -1,0 +1,84 @@
+include:
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/License-Scanning.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+services:
+  - docker:dind
+
+stages:
+  - test
+  - build
+  - deploy
+
+dependency_scanning:
+  stage: test
+  tags: 
+    - test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+license_scanning:
+  stage: test
+  tags: 
+    - test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+sast:
+  stage: test
+  tags: 
+    - test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+.secret-analyzer:
+  stage: test
+  tags: 
+    - test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+build:
+  image: docker:latest
+  stage: build
+  tags: 
+    - build
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        tag=""
+        echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+      else
+        tag=":$CI_COMMIT_REF_SLUG"
+        echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+      fi
+    - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
+    - docker push "$CI_REGISTRY_IMAGE${tag}"
+  after_script:
+    - "docker logout ${CI_REGISTRY}"
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile
+    - when: on_success
+
+deploy:
+  stage: deploy
+  tags: 
+    - deploy
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - echo "NODE_ENV=$NODE_ENV" >> .env
+    - echo "CLIENT_ID=$STAGING_CLIENT_ID" >> .env
+    - echo "DISCORD_TOKEN=$STAGING_DISCORD_TOKEN" >> .env
+    - docker-compose pull
+    - docker-compose up -d --force-recreate
+    - echo y | docker image prune
+  after_script:
+    - "docker logout ${CI_REGISTRY}"
+  when: on_success
