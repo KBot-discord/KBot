@@ -19,7 +19,7 @@ export class UserInfo extends Command {
                             .setDescription('Select a user or provide ID')
                             .setRequired(true)),
         {
-                idHints: ['1035784234377416734'],
+                idHints: [],
                 guildIds: ['953375922990506005'],
             }
         );
