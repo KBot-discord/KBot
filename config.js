@@ -8,7 +8,7 @@ const config = {
         port: process.env.API_PORT
     },
     metrics: {
-        ports: process.env.METRICS_PORT
+        port: process.env.METRICS_PORT
     }
 }
 
