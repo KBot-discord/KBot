@@ -2,7 +2,7 @@ import { SapphireClient } from '@sapphire/framework';
 import { Counters } from "./types/client";
 
 export class KBotClient extends SapphireClient {
-    public dev = process.env.NODE_ENV === 'production';
+    public isDev = process.env.NODE_ENV !== 'production';
 
     public override async login(token: string) {
         return super.login(token);
