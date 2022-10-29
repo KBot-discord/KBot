@@ -137,7 +137,7 @@ export class Uwu extends Command {
                 .setType(3)
                 .setName('uwu'),
             {
-                idHints: ['1035728422854467634'],
+                idHints: [],
                 guildIds: ['953375922990506005'],
             }
         );
