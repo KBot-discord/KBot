@@ -10,4 +10,13 @@ export interface Config {
     metrics: {
         port: number;
     },
+    idHints: IdHints,
+}
+
+interface IdHints {
+    uwu: string,
+    ping: string,
+    userinfo: string,
+    echo: string,
+    addemote: string,
 }

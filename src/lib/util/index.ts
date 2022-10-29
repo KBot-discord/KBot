@@ -25,12 +25,11 @@ export async function getUserInfo(
         let avatar = await getMemberAvatarUrl(member);
         if (!avatar) avatar = await getUserAvatarUrl(user)
 
-        console.log(member.roles.cache.size);
         const formattedRoles = member.roles.cache.size <= 1 ?
             '\u200B' :
-            (member.roles.cache.sort((a, b) => a.position - b.position)
+            (member.roles.cache.sort((a, b) => b.position - a.position)
                 .map(role => ` <@&${role.id}>`))
-                .reverse().slice(0, -1).toString();
+                .slice(0, -1).toString();
 
         return embed.setColor(member.roles?.color?.color || member.displayHexColor || '#006BFC')
             .setThumbnail(avatar || 'https://i.imgur.com/ikwmld2.jpg')

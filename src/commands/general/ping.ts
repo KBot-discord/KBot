@@ -1,5 +1,12 @@
+// Imports
 import { isMessageInstance } from '@sapphire/discord.js-utilities';
-import { ChatInputCommand, Command } from '@sapphire/framework';
+import { Command } from '@sapphire/framework';
+import { getIdHint } from "../../lib/util/configuration";
+import { PermissionFlagsBits } from "discord-api-types/v10";
+
+// Types
+import type { ChatInputCommand } from '@sapphire/framework';
+
 
 export class Ping extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -9,10 +16,11 @@ export class Ping extends Command {
     public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
         registry.registerChatInputCommand((builder) =>
             builder
+                .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
                 .setName('ping')
                 .setDescription('Ping bot to see if it is alive'),
             {
-                idHints: [],
+                idHints: [getIdHint(this.constructor.name)],
                 guildIds: ['953375922990506005'],
             }
         );

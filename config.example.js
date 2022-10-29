@@ -10,6 +10,9 @@ const config = {
     metrics: {
         port: 3001,
     },
+    idHints: {
+        // Command IDs
+    },
 }
 
 module.exports = config;

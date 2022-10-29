@@ -1,9 +1,9 @@
 import express from 'express';
 import * as promClient from 'prom-client';
-import { Config } from "./types/config";
+import { Config } from "../types/config";
 
-const config: Config = require('../../config.js');
 
+const config: Config = require('../../../config.js');
 
 const app = express();
 promClient.collectDefaultMetrics();
