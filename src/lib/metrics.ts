@@ -1,5 +1,8 @@
 import express from 'express';
 import * as promClient from 'prom-client';
+import { Config } from "./types/config";
+
+const config: Config = require('../config.js');
 
 
 const app = express();
@@ -15,8 +18,8 @@ function startMetricsServer() {
         }
     });
 
-    app.listen(8501, () => {
-        console.log(`Metrics server started on port: 8501`)
+    app.listen(config.metrics.port, () => {
+        console.log(`Metrics server started on port: ${config.metrics.port}`)
     });
 }
 

@@ -1,5 +1,5 @@
 FROM node:18-alpine
-EXPOSE 8600
+EXPOSE 8600 8601
 WORKDIR /app
 COPY package.json ./
 RUN apk add --update \

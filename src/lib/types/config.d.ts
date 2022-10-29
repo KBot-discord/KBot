@@ -6,5 +6,8 @@ export interface Config {
     },
     api: {
         port: number;
-    }
+    },
+    metrics: {
+        port: number;
+    },
 }
