@@ -15,7 +15,9 @@ function startMetricsServer() {
         }
     });
 
-    app.listen(8501);
+    app.listen(8501, () => {
+        console.log(`Metrics server started on port: 8501`)
+    });
 }
 
 export default startMetricsServer;

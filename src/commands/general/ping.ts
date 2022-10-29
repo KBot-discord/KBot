@@ -13,7 +13,7 @@ export class Ping extends Command {
                 .setDescription('Ping bot to see if it is alive'),
             {
                 idHints: ['1035721679604809738'],
-                guildIds: ['953375922990506005']
+                guildIds: ['953375922990506005'],
             }
         );
     }

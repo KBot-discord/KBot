@@ -1,4 +1,4 @@
-import { ChatInputCommand, Command } from '@sapphire/framework';
+import { Command, ContextMenuCommand } from '@sapphire/framework';
 
 
 const KAOMOJI_JOY = [
@@ -131,14 +131,14 @@ export class Uwu extends Command {
         super(context, {...options });
     }
 
-    public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
+    public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
         registry.registerContextMenuCommand((builder) =>
             builder
                 .setType(3)
                 .setName('uwu'),
             {
                 idHints: ['1035728422854467634'],
-                guildIds: ['953375922990506005']
+                guildIds: ['953375922990506005'],
             }
         );
     }
@@ -160,6 +160,5 @@ export class Uwu extends Command {
             });
         }
         return interaction.editReply({ content: uwuText });
-
     }
 }

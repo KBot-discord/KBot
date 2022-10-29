@@ -10,8 +10,8 @@ declare module 'discord.js' {
 }
 
 export interface Counters {
-    youtube: {
-        total: Counter;
-        success: Counter;
-    };
+    command: {
+        count: Counter;
+        errors: Counter;
+    }
 }
