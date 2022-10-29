@@ -1,4 +1,10 @@
-import { Command, ContextMenuCommand } from '@sapphire/framework';
+// Imports
+import { Command } from '@sapphire/framework';
+import { getIdHint } from "../../lib/util/configuration";
+import { PermissionFlagsBits } from "discord-api-types/v10";
+
+// Types
+import type { ContextMenuCommand } from '@sapphire/framework';
 
 
 const KAOMOJI_JOY = [
@@ -134,10 +140,11 @@ export class Uwu extends Command {
     public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
         registry.registerContextMenuCommand((builder) =>
             builder
-                .setType(3)
-                .setName('uwu'),
+                .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+                .setName('uwu')
+                .setType(3),
             {
-                idHints: [],
+                idHints: [getIdHint(this.constructor.name)],
                 guildIds: ['953375922990506005'],
             }
         );
