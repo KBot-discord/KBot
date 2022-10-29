@@ -76,6 +76,8 @@ deploy:
     - echo "NODE_ENV=$NODE_ENV" >> .env
     - echo "CLIENT_ID=$STAGING_CLIENT_ID" >> .env
     - echo "DISCORD_TOKEN=$STAGING_DISCORD_TOKEN" >> .env
+    - echo "API_PORT=$API_PORT" >> .env
+    - echo "METRICS_PORT=$METRICS_PORT" >> .env
     - docker-compose pull
     - docker-compose up -d --force-recreate
     - echo y | docker image prune
