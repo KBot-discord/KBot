@@ -1,4 +1,4 @@
-// Packages
+// Imports
 import axios from 'axios';
 import { MessageEmbed } from "discord.js";
 
@@ -25,9 +25,9 @@ export async function getUserInfo(
         let avatar = await getMemberAvatarUrl(member);
         if (!avatar) avatar = await getUserAvatarUrl(user)
 
-        const formattedRoles = member.roles.cache.size <= 1 ?
-            '\u200B' :
-            (member.roles.cache.sort((a, b) => b.position - a.position)
+        const formattedRoles = member.roles.cache.size <= 1
+            ? '\u200B'
+            : (member.roles.cache.sort((a, b) => b.position - a.position)
                 .map(role => ` <@&${role.id}>`))
                 .slice(0, -1).toString();
 

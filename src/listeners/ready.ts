@@ -1,5 +1,8 @@
+// Imports
 import { Listener, ListenerOptions } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
+
+// Types
 import type { Client } from 'discord.js';
 
 
