@@ -8,15 +8,14 @@ import {
     ModalSubmitInteraction,
     TextInputComponent
 } from "discord.js";
-import { getIdHint } from "../../lib/util/configuration";
 import { TextInputStyles } from "discord.js/typings/enums";
 import { PermissionFlagsBits } from "discord-api-types/v10";
+import { KBotCommand } from "../../lib/extensions/KBotCommand";
+import { getGuildEmoteSlots } from "../../lib/util/constants";
 
 // Types
 import type { Message } from "discord.js";
 
-
-const slot = { 'NONE': 50, 'TIER_1': 100, 'TIER_2': 150, 'TIER_3': 250 };
 
 async function getEmojiData(message: Message): Promise<{
     emojiName?: string;
@@ -41,9 +40,8 @@ async function getEmojiData(message: Message): Promise<{
         }
     } else if (emojiEmbed) {
         const res = await axios.get(emojiEmbed[0], { responseType: 'arraybuffer' });
-        if (!res) return null;
+        if (!res || !res.headers['content-type']) return null;
 
-        // @ts-ignore
         const resType = res.headers['content-type'].match(/\/\S*(png|jpg|gif)/);
         if (!resType) return null;
 
@@ -56,7 +54,7 @@ async function getEmojiData(message: Message): Promise<{
     return null;
 }
 
-export class AddEmote extends Command {
+export class AddEmote extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
         super(context, { ...options });
     }
@@ -68,8 +66,8 @@ export class AddEmote extends Command {
                     .setName('Add emote')
                     .setType(3),
             {
-                idHints: [getIdHint(this.constructor.name)],
-                guildIds: ['953375922990506005'],
+                idHints: super.getIdHints(this.constructor.name),
+                guildIds: super.getGuildIds(),
             }
         );
     }
@@ -86,14 +84,13 @@ export class AddEmote extends Command {
         }
 
         const allEmoji = await interaction.guild!.emojis.fetch();
-        const staticEmoji = allEmoji.filter(e => !e.animated).size;
-        const animEmoji = allEmoji.filter(e => !!e.animated).size;
-        const staticAvail = slot[interaction.guild!.premiumTier] - staticEmoji;
-        const animAvail = slot[interaction.guild!.premiumTier] - animEmoji;
+        const totalSlots = getGuildEmoteSlots(interaction.guild!.premiumTier);
+        const staticAvail = totalSlots - allEmoji.filter(e => !e.animated).size;
+        const animAvail = totalSlots - allEmoji.filter(e => !!e.animated).size;
 
-        const slotsLeft = emojiData.isAnimated ?
-            `**Animated emote slots left:** ${animAvail - 1}/${slot[interaction.guild!.premiumTier]}` :
-            `**Static emote slots left:** ${staticAvail - 1}/${slot[interaction.guild!.premiumTier]}`;
+        const slotsLeft = emojiData.isAnimated
+            ? `**Animated emote slots left:** ${animAvail - 1}/${totalSlots}`
+            : `**Static emote slots left:** ${staticAvail - 1}/${totalSlots}`;
 
         if (emojiData.isAnimated && animAvail === 0) {
             return interaction.followUp({
@@ -105,22 +102,23 @@ export class AddEmote extends Command {
             });
         }
 
-        try {
-            const modal = new Modal()
-                .setCustomId('addEmoteModal')
-                .setTitle('Emote name');
+        const modal = new Modal()
+            .setCustomId('addEmoteModal')
+            .setTitle('Emote name');
 
-            modal.addComponents(
-                new MessageActionRow<TextInputComponent>()
-                    .addComponents(new TextInputComponent()
-                        .setCustomId('emoteNameInput')
-                        .setLabel("Emote name")
-                        .setStyle(TextInputStyles.SHORT)
-                        .setMinLength(1)
-                        .setMaxLength(32)
-                        .setRequired(true))
-            );
-            const filter = (interaction: ModalSubmitInteraction) => interaction.customId === 'addEmoteModal';
+        modal.addComponents(
+            new MessageActionRow<TextInputComponent>()
+                .addComponents(new TextInputComponent()
+                    .setCustomId('emoteNameInput')
+                    .setLabel("Emote name")
+                    .setStyle(TextInputStyles.SHORT)
+                    .setMinLength(1)
+                    .setMaxLength(32)
+                    .setRequired(true))
+        );
+        const filter = (interaction: ModalSubmitInteraction) => interaction.customId === 'addEmoteModal';
+
+        try {
             await interaction.showModal(modal);
 
             interaction.awaitModalSubmit({filter, time: 60_000})

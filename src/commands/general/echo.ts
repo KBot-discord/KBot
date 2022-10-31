@@ -2,14 +2,14 @@
 import { Command } from '@sapphire/framework';
 import { MessageEmbed } from "discord.js";
 import { ChannelType, PermissionFlagsBits } from "discord-api-types/v10";
-import { getIdHint } from "../../lib/util/configuration";
 
 // Types
 import type { ChatInputCommand } from '@sapphire/framework';
 import type { Message } from "discord.js";
+import {KBotCommand} from "../../lib/extensions/KBotCommand";
 
 
-export class Echo extends Command {
+export class Echo extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
         super(context, {...options });
     }
@@ -33,8 +33,8 @@ export class Echo extends Command {
                             .setRequired(true)),
 
             {
-                idHints: [getIdHint(this.constructor.name)],
-                guildIds: ['953375922990506005'],
+                idHints: super.getIdHints(this.constructor.name),
+                guildIds: super.getGuildIds(),
             }
         );
     }

@@ -1,32 +1,17 @@
 // Imports
 import { Command } from '@sapphire/framework';
-import { getIdHint } from "../../lib/util/configuration";
 import { PermissionFlagsBits } from "discord-api-types/v10";
+import { KBotCommand } from "../../lib/extensions/KBotCommand";
+import {
+    KAOMOJI_CONFUSE,
+    KAOMOJI_EMBARRASSED,
+    KAOMOJI_JOY,
+    KAOMOJI_SPARKLES
+} from "../../lib/util/constants";
 
 // Types
 import type { ContextMenuCommand } from '@sapphire/framework';
 
-
-const KAOMOJI_JOY = [
-    ' (\\* ^ ω ^)',
-    ' (o^▽^o)',
-    ' (≧◡≦)',
-    ' ☆⌒ヽ(\\*"､^\\*) chu',
-    ' ( ˘⌣˘)♡(˘⌣˘ )',
-    ' xD',
-];
-const KAOMOJI_EMBARRASSED = [
-    ' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)..',
-    ' (\\*^.^\\*)..,',
-    '..,',
-    ',,,',
-    '... ',
-    '.. ',
-    ' mmm..',
-    'O.o',
-];
-const KAOMOJI_CONFUSE = [' (o_O)?', ' (°ロ°) !?', ' (ーー;)?', ' owo?'];
-const KAOMOJI_SPARKLES = [' \\*:･ﾟ✧\\*:･ﾟ✧ ', ' ☆\\*:・ﾟ ', '〜☆ ', ' uguu.., ', ' -.-'];
 
 function getRandomInt(max: number) {
     return Math.floor(Math.random() * max);
@@ -132,7 +117,7 @@ function uwuString(string: string) {
     return converted;
 }
 
-export class Uwu extends Command {
+export class Uwu extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
         super(context, {...options });
     }
@@ -144,8 +129,8 @@ export class Uwu extends Command {
                 .setName('uwu')
                 .setType(3),
             {
-                idHints: [getIdHint(this.constructor.name)],
-                guildIds: ['953375922990506005'],
+                idHints: super.getIdHints(this.constructor.name),
+                guildIds: super.getGuildIds(),
             }
         );
     }

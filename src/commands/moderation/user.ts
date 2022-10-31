@@ -1,14 +1,14 @@
 // Imports
 import { Command } from '@sapphire/framework';
 import { getUserInfo } from "../../lib/util";
-import { getIdHint } from "../../lib/util/configuration";
 import { PermissionFlagsBits } from "discord-api-types/v10";
 
 // Types
 import type { ChatInputCommand } from '@sapphire/framework';
+import {KBotCommand} from "../../lib/extensions/KBotCommand";
 
 
-export class UserInfo extends Command {
+export class UserInfo extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
         super(context, {...options });
     }
@@ -25,8 +25,8 @@ export class UserInfo extends Command {
                             .setDescription('Select a user or provide ID')
                             .setRequired(true)),
         {
-            idHints: [getIdHint(this.constructor.name)],
-            guildIds: ['953375922990506005'],
+            idHints: super.getIdHints(this.constructor.name),
+            guildIds: super.getGuildIds(),
             }
         );
     }
