@@ -1,12 +1,14 @@
 // Types
 import type {
     GuildData,
-    ModerationModule,
-    NotificationModule,
     Settings,
+    WelcomeModule,
+    ModerationModule,
+    LockedChannel,
     UtilityModule,
-    WelcomeModule
-} from "./models";
+    Poll,
+    NotificationModule,
+} from './models';
 
 
 export const enum RedisNamespaces {
@@ -14,7 +16,9 @@ export const enum RedisNamespaces {
     Settings = 'settings',
     WelcomeModule = 'welcome',
     ModerationModule = 'moderation',
+    LockedChannels = 'lockedchannels',
     UtilityModule = 'utility',
+    Polls = 'polls',
     NotificationModule = 'notification',
 }
 
@@ -27,8 +31,12 @@ export type RedisData<T extends RedisNamespaces> =
     ? WelcomeModule
     : T extends 'moderation'
     ? ModerationModule
+    : T extends 'lockedchannels'
+    ? LockedChannel
     : T extends 'utility'
     ? UtilityModule
+    : T extends 'polls'
+    ? Poll
     : T extends 'notification'
     ? NotificationModule
     : never;

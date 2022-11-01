@@ -1,11 +1,10 @@
 // Imports
 import Redis from 'ioredis';
-import { container, Result } from "@sapphire/framework";
-import { isNullish } from "@sapphire/utilities";
+import { container, Result } from '@sapphire/framework';
+import { isNullish } from '@sapphire/utilities';
 
 // Types
-import type { RedisData } from "../types/redis";
-import type { RedisNamespaces } from "../types/redis";
+import type { RedisData, RedisNamespaces } from '../types/redis';
 
 
 export class RedisClient extends Redis {
@@ -13,12 +12,12 @@ export class RedisClient extends Redis {
         super({
             host: container.config.redis.host,
             port: container.config.redis.port,
-            password: container.config.redis.password
-        })
+            password: container.config.redis.password,
+        });
 
-        super.once("ready", () => {
-            container.logger.info("Redis client is ready.")
-        })
+        super.once('ready', () => {
+            container.logger.info('Redis client is ready.');
+        });
     }
 
     public async fetch<T extends RedisNamespaces>(key: string) {
@@ -31,27 +30,43 @@ export class RedisClient extends Redis {
 
         return result.match({
             ok: (data) => data,
-            err: () => null
+            err: () => null,
         });
     }
 
     public async create<T extends RedisNamespaces>(key: string, data: RedisData<T>, ttl: number): Promise<boolean> {
-        return (await this.setex(key, JSON.stringify(data), ttl)) === "OK";
+        return (await this.setex(key, JSON.stringify(data), ttl)) === 'OK';
     }
 
     public async updateExpiry(key: string, ttl: number): Promise<number> {
-        return this.expire(key, ttl)
+        return this.expire(key, ttl);
     }
 
     public delete(key: string): Promise<number> {
-        return this.del(key)
+        return this.del(key);
     }
 
     public deleteMany(keys: string[]): Promise<number> {
-        return this.del(keys)
+        return this.del(keys);
     }
 
-    public deleteScan<K extends RedisNamespaces>(pattern: string): void {
+    public async addSortedSet(key: string, member: string | number, data: string | number): Promise<number> {
+        return this.zadd(key, member, data);
+    }
+
+    public async deleteSortedSet(key: string, member: string | number): Promise<number> {
+        return this.zrem(key, member);
+    }
+
+    public async countSortedSet(key: string): Promise<number> {
+        return this.zcard(key);
+    }
+
+    public async querySortedSet(key: string, min: number, max: number): Promise<string[]> {
+        return this.zrangebyscore(key, min, max);
+    }
+
+    public deleteScan(pattern: string): void {
         this.scanStream({
             match: pattern,
         }).on('data', async (keys) => {
