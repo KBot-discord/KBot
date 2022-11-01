@@ -1,4 +1,4 @@
-import { GuildData } from "./index";
+import { GuildData } from './index';
 
 export interface NotificationModule {
     id: string;

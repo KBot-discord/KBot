@@ -1,14 +1,14 @@
 // Imports
 import { ChatInputCommand, Command } from '@sapphire/framework';
-import { ApplicationCommandType, PermissionFlagsBits } from "discord-api-types/v10";
-import { KBotCommand } from "../../lib/extensions/KBotCommand";
-import { ApplyOptions } from "@sapphire/decorators";
-import { getMemberAvatarUrl, getUserAvatarUrl } from "../../lib/util/util";
+import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotCommand } from '../../lib/extensions/KBotCommand';
+import { ApplyOptions } from '@sapphire/decorators';
+import { getMemberAvatarUrl, getUserAvatarUrl } from '../../lib/util/util';
 import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage, Image } from 'canvas-constructor/cairo';
-import { MessageAttachment } from "discord.js";
-import { imageFolder } from "../../lib/util/constants";
-import { join } from "node:path";
+import { MessageAttachment } from 'discord.js';
+import { imageFolder } from '../../lib/util/constants';
+import { join } from 'node:path';
 import { buffer } from 'node:stream/consumers';
 import { readdirSync } from 'fs';
 
@@ -22,33 +22,32 @@ interface PatOptions {
 }
 
 @ApplyOptions<ChatInputCommand.Options>({
-    name: 'Pat',
     detailedDescription: '(Used on members) Makes and sends a pat emote.',
 })
 export class PatCommand extends KBotCommand {
     private pats: Image[] = [];
 
     public constructor(context: Command.Context, options: Command.Options) {
-        super(context, {...options });
+        super(context, { ...options });
     }
 
     public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
-        registry.registerContextMenuCommand((builder) =>
-                builder
-                    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-                    .setName(this.name)
+        registry.registerContextMenuCommand(
+            (builder) => builder
+                    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+                    .setName('Pat')
                     .setType(ApplicationCommandType.User),
             {
                 idHints: super.getIdHints(this.name),
                 guildIds: super.getGuildIds(),
-            }
+            },
         );
     }
 
     public async contextMenuRun(interaction: Command.ContextMenuInteraction) {
         await interaction.deferReply();
 
-        let avatar: string, username: string;
+        let avatar: string; let username: string;
         const member = await interaction.guild!.members.fetch(interaction.targetId).catch(() => null);
         if (!member) {
             const user = await interaction.options.getUser('user', true);
@@ -61,7 +60,7 @@ export class PatCommand extends KBotCommand {
 
         const gif = await this.createPatGif(avatar, { resolution: 64 });
 
-        return await interaction.editReply({
+        return interaction.editReply({
             files: [new MessageAttachment(gif, `${username}Pat.gif`)],
         });
     }
@@ -89,21 +88,21 @@ export class PatCommand extends KBotCommand {
         }
 
         encoder.finish();
-        return await buffer(stream);
+        return buffer(stream);
     }
 
     public calculateDimensions(i: number, frames: number) {
         const j = i < frames / 2 ? i : frames - i;
         const width = 0.8 + j * 0.02;
         const height = 0.8 - j * 0.05;
-        return { width, height, offsetX: (1 - width) * 0.5 + 0.1, offsetY: (1 - height) - 0.08 }
+        return { width, height, offsetX: (1 - width) * 0.5 + 0.1, offsetY: (1 - height) - 0.08 };
     }
 
     public async onLoad() {
         await Promise.all(
             readdirSync(join(imageFolder, 'pat')).map(async (file) => {
-                this.pats.push(await loadImage(join(imageFolder, `pat/${file}`)))
-            })
+                this.pats.push(await loadImage(join(imageFolder, `pat/${file}`)));
+            }),
         );
     }
 }

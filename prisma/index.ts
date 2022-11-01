@@ -1,12 +1,12 @@
-import { createSchema } from "schemix";
+import { createSchema } from 'schemix';
 
 createSchema({
     basePath: __dirname,
     datasource: {
-        provider: "postgresql",
-        url: { env: "DATABASE_URL" },
+        provider: 'postgresql',
+        url: { env: 'DATABASE_URL' },
     },
     generator: {
-        provider: "prisma-client-js",
+        provider: 'prisma-client-js',
     },
-}).export(__dirname, "schema");
+}).export(__dirname, 'schema');

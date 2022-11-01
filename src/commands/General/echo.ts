@@ -1,37 +1,34 @@
 // Imports
 import { Command } from '@sapphire/framework';
-import { MessageEmbed } from "discord.js";
-import { ChannelType, PermissionFlagsBits } from "discord-api-types/v10";
-import { KBotCommand } from "../../lib/extensions/KBotCommand";
-import { ApplyOptions } from "@sapphire/decorators";
+import { MessageEmbed } from 'discord.js';
+import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotCommand } from '../../lib/extensions/KBotCommand';
+import { ApplyOptions } from '@sapphire/decorators';
 
 // Types
 import type { ChatInputCommand } from '@sapphire/framework';
-import type { Message } from "discord.js";
+import type { Message } from 'discord.js';
 
 
 @ApplyOptions<ChatInputCommand.Options>({
-    name: 'echo',
     description: 'Sends the provided message to the selected channel.',
 })
 export class EchoCommand extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
-        super(context, {...options });
+        super(context, { ...options });
     }
 
     public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
-        registry.registerChatInputCommand((builder) =>
-                builder
+        registry.registerChatInputCommand(
+            (builder) => builder
                     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-                    .setName(this.name)
+                    .setName('echo')
                     .setDescription(this.description)
-                    .addStringOption(acc =>
-                        acc
+                    .addStringOption((acc) => acc
                             .setName('message')
                             .setDescription('Message you want to send')
                             .setRequired(true))
-                    .addChannelOption(chan =>
-                        chan
+                    .addChannelOption((chan) => chan
                             .setName('channel')
                             .setDescription('Select a channel to send the message in')
                             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildNews)
@@ -40,7 +37,7 @@ export class EchoCommand extends KBotCommand {
             {
                 idHints: super.getIdHints(this.name),
                 guildIds: super.getGuildIds(),
-            }
+            },
         );
     }
 
@@ -52,14 +49,12 @@ export class EchoCommand extends KBotCommand {
         await channel.send({
             content: message,
             allowedMentions: { parse: ['users'] },
-        }).then((msg: Message) => {
-            return interaction.editReply({
+        }).then((msg: Message) => interaction.editReply({
                 embeds: [new MessageEmbed()
                     .setColor('#33B54E')
                     .setAuthor({ name: 'Message sent' })
                     .setDescription(`**Channel:** <#${channel.id}>\n**Message:**\n\`\`\`${msg.content}\`\`\``)],
-            });
-        });
+            }));
 
     }
 }

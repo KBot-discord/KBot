@@ -1,26 +1,26 @@
 // Types
-import type { RedisNamespaces } from "../types/redis";
+import type { RedisNamespaces } from '../types/redis';
 
 
 export class KeyBuilder {
-    private key: string = ''
+    private key: string = '';
 
     public constructor(namespace: RedisNamespaces) {
-        this.key.concat(namespace)
+        this.key.concat(namespace);
     }
 
-    public addNamespace(domain: RedisNamespaces): this {
-        this.key.concat(`:${domain}`)
+    public addNamespace(namespace: RedisNamespaces): this {
+        this.key.concat(`:${namespace}`);
         return this;
     }
 
-    public addId(id: string): this {
-        this.key.concat(`:${id}`)
+    public addId(id: string | number): this {
+        this.key.concat(`:${id}`);
         return this;
     }
 
     public addWildcard(): this {
-        this.key.concat(':*')
+        this.key.concat(':*');
         return this;
     }
 

@@ -8,7 +8,7 @@ import type { Client } from 'discord.js';
 
 @ApplyOptions<ListenerOptions>({
     event: 'ready',
-    once: true
+    once: true,
 })
 
 export class ReadyListener extends Listener {

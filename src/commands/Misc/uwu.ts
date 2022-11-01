@@ -1,14 +1,14 @@
 // Imports
 import { ChatInputCommand, Command } from '@sapphire/framework';
-import { ApplicationCommandType, PermissionFlagsBits } from "discord-api-types/v10";
-import { KBotCommand } from "../../lib/extensions/KBotCommand";
+import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotCommand } from '../../lib/extensions/KBotCommand';
 import {
     KAOMOJI_CONFUSE,
     KAOMOJI_EMBARRASSED,
     KAOMOJI_JOY,
-    KAOMOJI_SPARKLES
-} from "../../lib/util/constants";
-import { ApplyOptions } from "@sapphire/decorators";
+    KAOMOJI_SPARKLES,
+} from '../../lib/util/constants';
+import { ApplyOptions } from '@sapphire/decorators';
 
 // Types
 import type { ContextMenuCommand } from '@sapphire/framework';
@@ -19,24 +19,23 @@ function getRandomInt(max: number) {
 }
 
 @ApplyOptions<ChatInputCommand.Options>({
-    name: 'uwu',
     detailedDescription: 'uwu-ify messages.',
 })
 export class UwuCommand extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
-        super(context, {...options });
+        super(context, { ...options });
     }
 
     public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
-        registry.registerContextMenuCommand((builder) =>
-            builder
+        registry.registerContextMenuCommand(
+            (builder) => builder
                 .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-                .setName(this.name)
+                .setName('uwu')
                 .setType(ApplicationCommandType.Message),
             {
                 idHints: super.getIdHints(this.name),
                 guildIds: super.getGuildIds(),
-            }
+            },
         );
     }
 

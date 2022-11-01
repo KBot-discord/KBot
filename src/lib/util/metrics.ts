@@ -1,7 +1,7 @@
 // Imports
 import express from 'express';
 import * as promClient from 'prom-client';
-import { container } from "@sapphire/framework";
+import { container } from '@sapphire/framework';
 
 
 const app = express();
@@ -18,7 +18,7 @@ function startMetricsServer() {
     });
 
     app.listen(container.config.metrics.port, () => {
-        container.logger.info(`Metrics server started on port: ${container.config.metrics.port}`)
+        container.logger.info(`Metrics server started on port: ${container.config.metrics.port}`);
     });
 }
 

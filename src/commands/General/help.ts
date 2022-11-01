@@ -2,13 +2,13 @@
 import {
     Collection,
     MessageEmbed,
-} from "discord.js";
+} from 'discord.js';
 import { Command, container } from '@sapphire/framework';
-import { PaginatedMessage } from "@sapphire/discord.js-utilities";
-import { PermissionFlagsBits } from "discord-api-types/v10";
-import { KBotCommand } from "../../lib/extensions/KBotCommand";
-import { embedColors } from "../../lib/util/constants";
-import { ApplyOptions } from "@sapphire/decorators";
+import { PaginatedMessage } from '@sapphire/discord.js-utilities';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotCommand } from '../../lib/extensions/KBotCommand';
+import { embedColors } from '../../lib/util/constants';
+import { ApplyOptions } from '@sapphire/decorators';
 
 // Types
 import type { ChatInputCommand } from '@sapphire/framework';
@@ -21,24 +21,23 @@ function sortCommandsAlphabetically(_: KBotCommand[], __: KBotCommand[], firstCa
 }
 
 @ApplyOptions<ChatInputCommand.Options>({
-    name: 'help',
     description: 'Make a poll with or without a time limit.',
 })
 export class HelpCommand extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
-        super(context, {...options });
+        super(context, { ...options });
     }
 
     public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
-        registry.registerChatInputCommand((builder) =>
-                builder
+        registry.registerChatInputCommand(
+            (builder) => builder
                     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-                    .setName(this.name)
+                    .setName('help')
                     .setDescription(this.description),
             {
                 idHints: super.getIdHints(this.name),
                 guildIds: super.getGuildIds(),
-            }
+            },
         );
     }
 
@@ -58,25 +57,25 @@ export class HelpCommand extends KBotCommand {
         const commandsByCategory = await HelpCommand.getCommands();
 
         const display = new PaginatedMessage({
-            template: new MessageEmbed().setColor(embedColors.default)
+            template: new MessageEmbed().setColor(embedColors.default),
         })
             .setSelectMenuOptions((pageIndex) => ({ label: commandsByCategory.keyAt(pageIndex - 1)! }));
 
-        display.addPageEmbed((embed) =>
-            embed
+        display.addPageEmbed((embed) => embed
                 .setAuthor({ name: 'Bot info', iconURL: avatar })
                 .addFields(
                     { name: 'Dashboard', value: 'https://kbot.ca/', inline: true },
                     { name: 'Documentation', value: 'https://docs.kbot.ca', inline: true },
                     { name: 'Support server', value: 'https://discord.gg/4bXGu4Gf4c' },
-                    { name: 'Command identifiers', value: '**[S]** - Slash command\n**[C]** - Context menu command (Right-click -> Apps)' }));
+                    { name: 'Command identifiers', value: '**[S]** - Slash command\n**[C]** - Context menu command (Right-click -> Apps)' },
+));
 
         for (const [category, commands] of commandsByCategory) {
-            if (commands.length) display.addPageEmbed((embed) =>
-                embed
+            if (commands.length) {
+                display.addPageEmbed((embed) => embed
                     .setAuthor({ name: `${category} commands`, iconURL: avatar })
-                    .setDescription(commands.map(this.formatCommand).join('\n'))
-            );
+                    .setDescription(commands.map(this.formatCommand).join('\n')));
+}
         }
         return display;
     }
@@ -88,14 +87,14 @@ export class HelpCommand extends KBotCommand {
     private static async getCommands() {
         const commands = container.stores.get('commands');
         const filtered = new Collection<string, KBotCommand[]>();
-        filtered.set("Bot info", []);
+        filtered.set('Bot info', []);
         await Promise.all(
             commands.map(async (cmd) => {
                 const command = cmd as KBotCommand;
                 const category = filtered.get(command.category!);
                 if (category) category.push(command);
                 else filtered.set(command.category!, [command as KBotCommand]);
-            })
+            }),
         );
         return filtered.sort(sortCommandsAlphabetically);
     }

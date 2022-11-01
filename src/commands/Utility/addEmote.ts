@@ -3,23 +3,23 @@ import axios from 'axios';
 import {
     ChatInputCommand,
     Command,
-    ContextMenuCommand
+    ContextMenuCommand,
 } from '@sapphire/framework';
 import {
     MessageActionRow,
     MessageEmbed,
     Modal,
     ModalSubmitInteraction,
-    TextInputComponent
-} from "discord.js";
-import { TextInputStyles } from "discord.js/typings/enums";
-import { ApplicationCommandType, PermissionFlagsBits } from "discord-api-types/v10";
-import { KBotCommand } from "../../lib/extensions/KBotCommand";
-import { getGuildEmoteSlots } from "../../lib/util/constants";
-import { ApplyOptions } from "@sapphire/decorators";
+    TextInputComponent,
+} from 'discord.js';
+import { TextInputStyles } from 'discord.js/typings/enums';
+import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotCommand } from '../../lib/extensions/KBotCommand';
+import { getGuildEmoteSlots } from '../../lib/util/constants';
+import { ApplyOptions } from '@sapphire/decorators';
 
 // Types
-import type { Message } from "discord.js";
+import type { Message } from 'discord.js';
 
 
 interface EmojiData {
@@ -38,15 +38,15 @@ export class AddEmoteCommand extends KBotCommand {
     }
 
     public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
-        registry.registerContextMenuCommand((builder) =>
-                builder
+        registry.registerContextMenuCommand(
+            (builder) => builder
                     .setDefaultMemberPermissions(PermissionFlagsBits.ManageEmojisAndStickers)
-                    .setName(this.name)
+                    .setName('Add emote')
                     .setType(ApplicationCommandType.Message),
             {
                 idHints: super.getIdHints(this.name),
                 guildIds: super.getGuildIds(),
-            }
+            },
         );
     }
 
@@ -70,22 +70,22 @@ export class AddEmoteCommand extends KBotCommand {
             return interaction.followUp({
                 embeds: [embed.setColor('RED').setDescription('No animated emoji slots left.')],
             });
-        } else if (!emojiData.isAnimated && animSlots === 0) {
+        } if (!emojiData.isAnimated && animSlots === 0) {
             return interaction.followUp({
                 embeds: [embed.setColor('RED').setDescription('No static emoji slots left.')],
             });
         }
 
         const modal = this.createModal();
-        const filter = (interaction: ModalSubmitInteraction) => interaction.customId === 'addEmoteModal';
+        const filter = (i: ModalSubmitInteraction) => i.customId === 'addEmoteModal';
 
         try {
             await interaction.showModal(modal);
-            interaction.awaitModalSubmit({filter, time: 60_000})
-                .then(async (modal) => {
-                    emojiData.emojiName = modal.fields.getTextInputValue('emoteNameInput');
-                    await this.handleSubmit(modal, emojiData, embed, slotsLeft)
-                })
+            interaction.awaitModalSubmit({ filter, time: 60_000 })
+                .then(async (mdl) => {
+                    emojiData.emojiName = mdl.fields.getTextInputValue('emoteNameInput');
+                    await this.handleSubmit(mdl, emojiData, embed, slotsLeft);
+                });
         } catch {
             return interaction.editReply({
                 embeds: [embed.setColor('RED').setDescription('Failed to add emoji')],
@@ -119,28 +119,29 @@ export class AddEmoteCommand extends KBotCommand {
         const allEmojis = await interaction.guild!.emojis.fetch();
         const totalSlots = getGuildEmoteSlots(interaction.guild!.premiumTier);
         return {
-            staticSlots: totalSlots - allEmojis.filter(e => !e.animated).size,
-            animSlots: totalSlots - allEmojis.filter(e => !!e.animated).size,
-            totalSlots
-        }
+            staticSlots: totalSlots - allEmojis.filter((e) => !e.animated).size,
+            animSlots: totalSlots - allEmojis.filter((e) => !!e.animated).size,
+            totalSlots,
+        };
     }
 
     private createModal(): Modal {
         const modal = new Modal()
             .setCustomId('addEmoteModal')
-            .setTitle('Emote name')
+            .setTitle('Emote name');
 
         const components = new MessageActionRow<TextInputComponent>()
             .addComponents(
                 new TextInputComponent()
                     .setCustomId('emoteNameInput')
-                    .setLabel("Emote name")
+                    .setLabel('Emote name')
                     .setStyle(TextInputStyles.SHORT)
                     .setMinLength(1)
                     .setMaxLength(32)
-                    .setRequired(true));
+                    .setRequired(true),
+);
 
-        modal.addComponents(components)
+        modal.addComponents(components);
         return modal;
     }
 
@@ -152,18 +153,18 @@ export class AddEmoteCommand extends KBotCommand {
         if (emojiData) {
             return {
                 emojiUrl: `https://cdn.discordapp.com/emojis/${emojiData[3]}.${emojiData[1] === 'a' ? 'gif' : 'png'}`,
-                isAnimated: emojiData[1] === 'a'
-            }
-        } else if (message.attachments.size > 0) {
-            const attachmentUrl = message.attachments.at(0)!.url
+                isAnimated: emojiData[1] === 'a',
+            };
+        } if (message.attachments.size > 0) {
+            const attachmentUrl = message.attachments.at(0)!.url;
             const parsedUrl = attachmentUrl.match(/([a-zA-z0-9]+)(.png|.jpg|.gif)$/);
-            if (!parsedUrl) return null
+            if (!parsedUrl) return null;
 
             return {
                 emojiUrl: attachmentUrl,
-                isAnimated: parsedUrl[2] === '.gif'
-            }
-        } else if (emojiEmbed) {
+                isAnimated: parsedUrl[2] === '.gif',
+            };
+        } if (emojiEmbed) {
             const res = await axios.get(emojiEmbed[0], { responseType: 'arraybuffer' });
             if (!res || !res.headers['content-type']) return null;
 
@@ -173,8 +174,8 @@ export class AddEmoteCommand extends KBotCommand {
             const buffer = Buffer.from(res.data, 'binary').toString('base64');
             return {
                 emojiUrl: `data:${res.headers['content-type']};base64,${buffer}`,
-                isAnimated: resType[1] === '.gif'
-            }
+                isAnimated: resType[1] === '.gif',
+            };
         }
         return null;
     }

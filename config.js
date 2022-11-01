@@ -1,7 +1,6 @@
 process.env.NODE_ENV ??= 'dev';
 
-const commandIds = require('./commandIds')
-
+const commandIds = require('./commandIds');
 
 const config = {
     isDev: process.env.NODE_ENV !== 'production',
@@ -15,7 +14,7 @@ const config = {
         ],
     },
     api: {
-        port: process.env.API_PORT
+        port: process.env.API_PORT,
     },
     db: {
         url: process.env.DATABASE_URL,
@@ -26,11 +25,11 @@ const config = {
         password: process.env.REDIS_PASS,
     },
     metrics: {
-        port: process.env.METRICS_PORT
+        port: process.env.METRICS_PORT,
     },
     sentry: {
         dsn: process.env.SENTRY_DSN,
     },
-}
+};
 
 module.exports = config;

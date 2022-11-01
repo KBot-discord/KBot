@@ -1,7 +1,7 @@
-import { WelcomeModule } from "./welcome";
-import { ModerationModule } from "./moderation";
-import { UtilityModule } from "./utility";
-import { NotificationModule } from "./notification";
+import { WelcomeModule } from './welcome';
+import { ModerationModule } from './moderation';
+import { UtilityModule } from './utility';
+import { NotificationModule } from './notification';
 
 export * from './welcome';
 export * from './moderation';

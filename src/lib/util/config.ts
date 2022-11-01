@@ -1,8 +1,8 @@
 // Imports
-import { container } from "@sapphire/framework";
+import { container } from '@sapphire/framework';
 
 // Types
-import type { Config } from "../types/config";
+import type { Config } from '../types/config';
 
 
 const config: Config = require('../../../config');
@@ -11,11 +11,11 @@ function flattenConfig(obj: any) {
     const flattenedObj: any = {};
     for (const i in obj) {
         if (!obj.hasOwnProperty(i)) continue;
-        if ((typeof obj[i]) == 'object' && obj[i] !== null) {
+        if ((typeof obj[i]) === 'object' && obj[i] !== null) {
             const flatObject = flattenConfig(obj[i]);
             for (const j in flatObject) {
                 if (!flatObject.hasOwnProperty(j)) continue;
-                flattenedObj[i + '.' + j] = flatObject[j];
+                flattenedObj[`${i}.${j}`] = flatObject[j];
             }
         } else {
             flattenedObj[i] = obj[i];
@@ -26,17 +26,17 @@ function flattenConfig(obj: any) {
 
 function validateConfig(): boolean {
     let error = false;
-    const obj = flattenConfig(config)
+    const obj = flattenConfig(config);
     for (const [key, value] of Object.entries(obj)) {
         if (value === undefined) {
-            console.log(`Invalid value for: ${key}`)
+            console.log(`Invalid value for: ${key}`);
             if (!error) error = true;
         }
     }
     return !error;
 }
 
-export function getConfig(): Config | null {
+export default function getConfig(): Config | null {
     const isConfigValid = validateConfig();
     if (!isConfigValid) return null;
     container.config = config;

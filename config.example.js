@@ -26,6 +26,6 @@ const config = {
     sentry: {
         dsn: '',
     },
-}
+};
 
 module.exports = config;

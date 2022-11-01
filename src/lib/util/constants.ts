@@ -41,6 +41,6 @@ export const guildEmoteSlots: {
     NONE: 50,
     TIER_1: 100,
     TIER_2: 150,
-    TIER_3: 250
+    TIER_3: 250,
 };
 export const getGuildEmoteSlots = (tier: string): number => guildEmoteSlots[tier];
