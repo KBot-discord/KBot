@@ -1,4 +1,7 @@
+process.env.NODE_ENV ??= 'dev';
+
 const commandIds = require('./commandIds')
+
 
 const config = {
     isDev: process.env.NODE_ENV !== 'production',
