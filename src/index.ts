@@ -1,26 +1,37 @@
-// Imports
+// Register plugins
 import '@sapphire/plugin-api/register';
 import '@sapphire/plugin-logger/register';
+
+// Imports
 import { container, LogLevel } from "@sapphire/framework";
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import { KBotClient } from "./lib/extensions/KBotClient";
-import { Config } from "./lib/types/config";
 import startMetricsServer from "./lib/util/metrics";
 import { rootFolder } from "./lib/util/constants";
+import { Intents } from "discord.js";
+import { getConfig } from "./lib/util/config";
 
 
-const config: Config = require('../config.js');
-// if (config is not valid) process.exit(1);
-container.config = config;
+const config = getConfig();
+if (!config) {
+    console.error("Invalid config, exiting.")
+    process.exit(1);
+}
 
 const client = new KBotClient({
     intents: [
-        'GUILDS',
-        'GUILD_MEMBERS',
-        'GUILD_VOICE_STATES',
-        'GUILD_SCHEDULED_EVENTS',
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_SCHEDULED_EVENTS,
     ],
+    presence: {
+        status: 'online',
+        activities: [
+            { name: '/help', type: 0 },
+        ],
+    },
     api: {
         listenOptions: {
             port: config.api.port,
@@ -32,9 +43,9 @@ const client = new KBotClient({
 });
 
 async function main() {
-    if (config.sentry.enable) {
+    if (config!.sentry.enable) {
         Sentry.init({
-            dsn: config.sentry.dsn,
+            dsn: config!.sentry.dsn,
             integrations: [
                 new Sentry.Integrations.Modules(),
                 new Sentry.Integrations.FunctionToString(),
@@ -48,8 +59,7 @@ async function main() {
 
     try {
         startMetricsServer();
-        // container.db = await connect();
-        await client.login(config.discord.token);
+        await client.login(config!.discord.token);
     } catch (error) {
         container.logger.error(error);
         await client.destroy();

@@ -1,10 +1,8 @@
 // Imports
 import express from 'express';
 import * as promClient from 'prom-client';
-import { Config } from "../types/config";
+import { container } from "@sapphire/framework";
 
-
-const config: Config = require('../../../config.js');
 
 const app = express();
 promClient.collectDefaultMetrics();
@@ -19,8 +17,8 @@ function startMetricsServer() {
         }
     });
 
-    app.listen(config.metrics.port, () => {
-        console.log(`Metrics server started on port: ${config.metrics.port}`)
+    app.listen(container.config.metrics.port, () => {
+        container.logger.info(`Metrics server started on port: ${container.config.metrics.port}`)
     });
 }
 

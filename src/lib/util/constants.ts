@@ -5,6 +5,14 @@ import { join } from 'node:path';
 
 export const mainFolder = getRootData().root;
 export const rootFolder = join(mainFolder, '..');
+export const assetsFolder = join(rootFolder, 'assets');
+export const imageFolder = join(assetsFolder, 'images');
+
+export const enum embedColors {
+    default = '#006BFC',
+    success = '#33B54E',
+    error = 'RED',
+}
 
 export const KAOMOJI_JOY = [
     ' (\\* ^ ω ^)',

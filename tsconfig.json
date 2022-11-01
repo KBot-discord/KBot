@@ -2,10 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "outDir": "./dist",
-    "rootDirs": [
-      "./prisma",
-      "./src"
-    ],
+    "rootDir": "./src",
     "typeRoots": [
       "./src/lib/types",
       "./node_modules/@types"
@@ -30,7 +27,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "./prisma/**/*",
     "./src/**/*"
   ],
   "exclude": [

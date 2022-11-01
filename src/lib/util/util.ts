@@ -1,10 +1,22 @@
 // Imports
-import axios from 'axios';
 import { MessageEmbed } from "discord.js";
 
 // Types
-import type { GuildMember, Guild, User, CommandInteraction } from 'discord.js';
+import type {
+    GuildMember,
+    Guild,
+    User,
+    CommandInteraction,
+    AllowedImageSize,
+    DynamicImageFormat,
+} from 'discord.js';
 
+
+interface ImageOptions {
+    dynamicFormat?: boolean,
+    defaultFormat?: DynamicImageFormat,
+    size?: AllowedImageSize,
+}
 
 export async function getUserInfo(
     interaction: CommandInteraction,
@@ -59,78 +71,34 @@ export async function getUserInfo(
     }
 }
 
-export async function getUserBannerUrl(
-    user: User,
-    { dynamicFormat = true, defaultFormat = 'webp', size = 512 } = {}
-): Promise<string | null> {
-    if (!user.banner) return null;
-
-    const query = `?size=${size}`;
-    const baseUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}`;
-
-    if (dynamicFormat) {
-        const { headers } = await axios.head(baseUrl);
-        if (headers && headers.hasOwnProperty('content-type')) {
-            return baseUrl + (headers['content-type'] == 'image/gif' ? '.gif' : `.${defaultFormat}`) + query;
-        }
-    }
-
-    return baseUrl + `.${defaultFormat}` + query;
-}
-
 export async function getUserAvatarUrl(
     user: User,
-    { dynamicFormat = true, defaultFormat = 'webp', size = 512 } = {}
-): Promise<string | null> {
-    if (!user.avatar) return null;
-
-    const query = `?size=${size}`;
-    const baseUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`;
-
-    if (dynamicFormat) {
-        const { headers } = await axios.head(baseUrl);
-        if (headers && headers.hasOwnProperty('content-type')) {
-            return baseUrl + (headers['content-type'] == 'image/gif' ? '.gif' : `.${defaultFormat}`) + query;
-        }
-    }
-
-    return baseUrl + `.${defaultFormat}` + query;
+    { dynamicFormat = true, defaultFormat = 'webp', size = 512 }: ImageOptions = {}
+): Promise<string> {
+    return user.avatar
+        ? user.avatarURL({ dynamic: dynamicFormat, format: defaultFormat, size: size })!
+        : user.defaultAvatarURL;
 }
 
 export async function getMemberAvatarUrl(
     member: GuildMember,
-    { dynamicFormat = true, defaultFormat = 'webp', size = 512 } = {}
+    { dynamicFormat = true, defaultFormat = 'webp', size = 512 }: ImageOptions = {}
+): Promise<string> {
+    return member.avatar
+        ? member.avatarURL({ dynamic: dynamicFormat, format: defaultFormat, size: size })!
+        : await getUserAvatarUrl(member.user, { dynamicFormat: dynamicFormat, defaultFormat: defaultFormat, size: size });
+}
+
+export async function getUserBannerUrl(
+    user: User,
+    { dynamicFormat = true, defaultFormat = 'webp', size = 512 }: ImageOptions = {}
 ): Promise<string | null> {
-    if (!member.avatar) return null;
-
-    const query = `?size=${size}`;
-    const baseUrl = `https://cdn.discordapp.com/guilds/${member.guild.id}/users/${member.id}/avatars/${member.avatar}`;
-
-    if (dynamicFormat) {
-        const { headers } = await axios.head(baseUrl);
-        if (headers && headers.hasOwnProperty('content-type')) {
-            return baseUrl + (headers['content-type'] == 'image/gif' ? '.gif' : `.${defaultFormat}`) + query;
-        }
-    }
-
-    return baseUrl + `.${defaultFormat}` + query;
+    return user.bannerURL({ dynamic: dynamicFormat, format: defaultFormat, size: size });
 }
 
 export async function getServerIcon(
     guild: Guild,
-    { dynamicFormat = true, defaultFormat = 'webp', size = 512 } = {}
+    { dynamicFormat = true, defaultFormat = 'webp', size = 512 }: ImageOptions = {}
 ): Promise<string | null> {
-    if (!guild.icon) return null;
-
-    const query = `?size=${size}`;
-    const baseUrl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`;
-
-    if (dynamicFormat) {
-        const { headers } = await axios.head(baseUrl);
-        if (headers && headers.hasOwnProperty('content-type')) {
-            return baseUrl + (headers['content-type'] == 'image/gif' ? '.gif' : `.${defaultFormat}`) + query;
-        }
-    }
-
-    return baseUrl + `.${defaultFormat}` + query;
+    return guild.iconURL({ dynamic: dynamicFormat, format: defaultFormat, size: size })
 }

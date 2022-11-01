@@ -1,6 +1,15 @@
+// Imports
 import { ApplyOptions } from '@sapphire/decorators';
 import {
-    ApiRequest, ApiResponse, methods, Route, RouteOptions,
+    methods,
+    Route,
+} from '@sapphire/plugin-api';
+
+// Types
+import type {
+    ApiRequest,
+    ApiResponse,
+    RouteOptions,
 } from '@sapphire/plugin-api';
 
 
