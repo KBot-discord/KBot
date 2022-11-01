@@ -7,20 +7,16 @@ import { getMemberAvatarUrl, getUserAvatarUrl } from "../../lib/util/util";
 import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage, Image } from 'canvas-constructor/cairo';
 import { MessageAttachment } from "discord.js";
-import { imageFoler } from "../../lib/util/constants";
+import { imageFolder } from "../../lib/util/constants";
 import { join } from "node:path";
 import { buffer } from 'node:stream/consumers';
+import { readdirSync } from 'fs';
 
 // Types
 import type { ContextMenuCommand } from '@sapphire/framework';
 
 
-const DEFAULT_OPTIONS = {
-    frames: 10,
-}
-
 interface PatOptions {
-    frames?: number;
     resolution?: number;
     delay?: number;
 }
@@ -70,7 +66,8 @@ export class PatCommand extends KBotCommand {
         });
     }
 
-    public async createPatGif(avatarURL: string, { frames = 10, resolution = 64, delay = 25 }: PatOptions = {}): Promise<Buffer> {
+    public async createPatGif(avatarURL: string, { resolution = 64, delay = 25 }: PatOptions = {}): Promise<Buffer> {
+        const frames = this.pats.length * 2;
         const encoder = new GifEncoder(resolution, resolution);
         const canvas = new Canvas(resolution, resolution);
 
@@ -85,7 +82,7 @@ export class PatCommand extends KBotCommand {
             const frame = canvas
                 .clearRectangle(0, 0, resolution, resolution)
                 .printImage(avatar, resolution * offsetX, resolution * offsetY, resolution * width, resolution * height)
-                .printImage(this.pats[i], 0, 0, resolution, resolution)
+                .printImage(this.pats[Math.floor(i / 2)], 0, 0, resolution, resolution)
                 .getImageData().data;
 
             encoder.addFrame(frame);
@@ -103,6 +100,10 @@ export class PatCommand extends KBotCommand {
     }
 
     public async onLoad() {
-        for (let i = 0; i < DEFAULT_OPTIONS.frames; i++) this.pats.push(await loadImage(join(imageFoler, `pat/pet${i}.gif`)))
+        await Promise.all(
+            readdirSync(join(imageFolder, 'pat')).map(async (file) => {
+                this.pats.push(await loadImage(join(imageFolder, `pat/${file}`)))
+            })
+        );
     }
 }
