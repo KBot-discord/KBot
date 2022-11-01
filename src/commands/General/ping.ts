@@ -3,12 +3,17 @@ import { isMessageInstance } from '@sapphire/discord.js-utilities';
 import { Command } from '@sapphire/framework';
 import { PermissionFlagsBits } from "discord-api-types/v10";
 import { KBotCommand } from "../../lib/extensions/KBotCommand";
+import { ApplyOptions } from "@sapphire/decorators";
 
 // Types
 import type { ChatInputCommand } from '@sapphire/framework';
 
 
-export class Ping extends KBotCommand {
+@ApplyOptions<ChatInputCommand.Options>({
+    name: 'ping',
+    description: 'Ping bot to see if it is alive.',
+})
+export class PingCommand extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
         super(context, {...options });
     }
@@ -17,10 +22,10 @@ export class Ping extends KBotCommand {
         registry.registerChatInputCommand((builder) =>
             builder
                 .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-                .setName('ping')
-                .setDescription('Ping bot to see if it is alive'),
+                .setName(this.name)
+                .setDescription(this.description),
             {
-                idHints: super.getIdHints(this.constructor.name),
+                idHints: super.getIdHints(this.name),
                 guildIds: super.getGuildIds(),
             }
         );

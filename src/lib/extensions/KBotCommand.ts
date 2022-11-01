@@ -8,6 +8,7 @@ import type { IdHints } from "../types/config";
 export abstract class KBotCommand extends Command {
     protected constructor(context: Command.Context, options: Command.Options) {
         super(context, { ...options });
+        if (!!this.description && !this.detailedDescription) this.detailedDescription = this.description;
     }
 
     public getIdHints(commandName: string): string[] | undefined {
@@ -19,4 +20,9 @@ export abstract class KBotCommand extends Command {
             ? container.config.discord.devServers
             : undefined;
     }
+}
+
+export namespace KBotCommand {
+    export type Options = Command.Options
+    export type Context = Command.Context
 }

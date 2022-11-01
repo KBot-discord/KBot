@@ -2,14 +2,19 @@
 import { Command } from '@sapphire/framework';
 import { MessageEmbed } from "discord.js";
 import { ChannelType, PermissionFlagsBits } from "discord-api-types/v10";
+import { KBotCommand } from "../../lib/extensions/KBotCommand";
+import { ApplyOptions } from "@sapphire/decorators";
 
 // Types
 import type { ChatInputCommand } from '@sapphire/framework';
 import type { Message } from "discord.js";
-import {KBotCommand} from "../../lib/extensions/KBotCommand";
 
 
-export class Echo extends KBotCommand {
+@ApplyOptions<ChatInputCommand.Options>({
+    name: 'echo',
+    description: 'Sends the provided message to the selected channel.',
+})
+export class EchoCommand extends KBotCommand {
     public constructor(context: Command.Context, options: Command.Options) {
         super(context, {...options });
     }
@@ -18,8 +23,8 @@ export class Echo extends KBotCommand {
         registry.registerChatInputCommand((builder) =>
                 builder
                     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-                    .setName('echo')
-                    .setDescription('Sends the provided message in the chosen channel')
+                    .setName(this.name)
+                    .setDescription(this.description)
                     .addStringOption(acc =>
                         acc
                             .setName('message')
@@ -33,7 +38,7 @@ export class Echo extends KBotCommand {
                             .setRequired(true)),
 
             {
-                idHints: super.getIdHints(this.constructor.name),
+                idHints: super.getIdHints(this.name),
                 guildIds: super.getGuildIds(),
             }
         );

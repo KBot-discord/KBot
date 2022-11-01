@@ -6,31 +6,34 @@ export interface Config {
         secret: string;
         idHints: IdHints;
         devServers: string[];
-    },
+    }
     api: {
         port: number;
-    },
+    }
     db: {
         url: string;
-    },
+    }
     redis: {
         host: string,
         port: number,
         password: string,
-    },
+    }
     metrics: {
         port: number;
-    },
+    }
     sentry: {
         enable: boolean;
         dsn: string;
-    },
+    }
 }
 
 interface IdHints {
-    uwu: string[],
-    ping: string[],
-    userinfo: string[],
-    echo: string[],
-    addemote: string[],
+    uwu: string[];
+    ping: string[];
+    userinfo: string[];
+    echo: string[];
+    addemote: string[];
+    help: string[];
+    pat: string[];
+    poll: string[];
 }
