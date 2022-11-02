@@ -2,7 +2,7 @@
 
 # KBot 
 [![Discord Shield](https://discordapp.com/api/guilds/953375922990506005/widget.png)](https://discord.com/invite/4bXGu4Gf4c)
-[![Uptime Kuma](https://kuma.kbot.ca/api/badge/8/status?upLabel=online&downLabel=offline)](https://kuma.kbot.ca/status/kbot)
+[![Uptime Kuma](https://status.kbot.ca/api/badge/8/status?upLabel=online&downLabel=offline)](https://status.kbot.ca/status/kbot)
 
 [![Pipeline](https://gitlab.com/kbot1/kbot/badges/main/pipeline.svg)](https://gitlab.com/kbot1/kbot/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2fe6f09b5268465e8719721e8ec419dd)](https://www.codacy.com/gl/kbot1/kbot/dashboard?utm_source=gitlab.com&amp;utm_medium=referral&amp;utm_content=kbot1/kbot&amp;utm_campaign=Badge_Grade)
@@ -11,9 +11,10 @@
 
 ### A multi-feature Discord bot using Sapphire and discord.js.
 
+This repository holds the rewrite for v2.
+
 </div>
 
-This repository holds the rewrite for v2.
 
 ## Features
 - Moderation commands to help server staff keep your Discord server safe.
