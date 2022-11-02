@@ -29,7 +29,7 @@ This repository holds the rewrite for v2.
 - [Dashboard](https://kbot.ca/)
 - [Documentation](https://docs.kbot.ca/)
 - [Status page](https://kuma.kbot.ca/status/kbot)
-- [Support server](https://discord.com/invite/4bXGu4Gf4c)
+- [Support server](https://kbot.ca/discord)
 
 ## [Donations](https://ko-fi.com/killbasa)
 Everything received will go right back into developing and hosting the bot. Thank you!
