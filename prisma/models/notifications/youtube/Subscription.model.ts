@@ -3,17 +3,17 @@ import YoutubeChannelModel from './YoutubeChannel.model';
 import YoutubeModel from './Youtube.model';
 
 
-export default createModel((SubscriptionModel) => {
+export default createModel('YoutubeSubscription', (SubscriptionModel) => {
     SubscriptionModel
         .string('id')
         .string('message')
         .string('webhookId')
         .string('webhookToken')
 
-        .relation('channel', YoutubeChannelModel, { fields: ['channelId'], references: ['id'] })
         .string('channelId', { unique: true })
-        .relation('youtube', YoutubeModel, { fields: ['youtubeId'], references: ['id'] })
-        .string('youtubeId', { unique: true })
+        .relation('channel', YoutubeChannelModel, { fields: ['channelId'], references: ['id'] })
+        .string('guildId', { unique: true })
+        .relation('youtube', YoutubeModel, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'channelId', 'youtubeId'] });
+        .id({ fields: ['id', 'channelId', 'guildId'] });
 });

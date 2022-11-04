@@ -3,17 +3,17 @@ import TwitterModel from './Twitter.model';
 import TwitterAccountModel from './TwitterAccount.model';
 
 
-export default createModel((TwitterFollowModel) => {
+export default createModel('TwitterFollow', (TwitterFollowModel) => {
     TwitterFollowModel
         .string('id')
         .string('message')
         .string('webhookId')
         .string('webhookToken')
 
+        .string('accountId', { unique: true })
         .relation('account', TwitterAccountModel, { fields: ['accountId'], references: ['id'] })
-        .string('accountId')
-        .relation('twitter', TwitterModel, { fields: ['twitterId'], references: ['id'] })
-        .string('twitterId')
+        .string('guildId', { unique: true })
+        .relation('twitter', TwitterModel, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'accountId', 'twitterId'] });
+        .id({ fields: ['id', 'accountId', 'guildId'] });
 });

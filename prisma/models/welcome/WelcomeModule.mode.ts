@@ -2,9 +2,9 @@ import { createModel } from 'schemix';
 import GuildModel from '../Guild.model';
 
 
-export default createModel((WelcomeModuleModel) => {
+export default createModel('WelcomeModule', (WelcomeModuleModel) => {
     WelcomeModuleModel
-        .string('id')
+        .string('id', { unique: true })
         .boolean('moduleEnabled')
         .boolean('messagesEnabled')
         .string('channel')
@@ -14,8 +14,8 @@ export default createModel((WelcomeModuleModel) => {
         .string('image')
         .string('color')
 
-        .relation('guild', GuildModel, { fields: ['guildId'], references: ['id'] })
         .string('guildId', { unique: true })
+        .relation('guild', GuildModel, { fields: ['guildId'], references: ['id'] })
 
         .id({ fields: ['id', 'guildId'] });
 });

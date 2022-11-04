@@ -2,9 +2,9 @@ import { createModel } from 'schemix';
 import SubscriptionModel from './Subscription.model';
 
 
-export default createModel((YoutubeChannelModel) => {
+export default createModel('YoutubeChannel', (YoutubeChannelModel) => {
     YoutubeChannelModel
-        .string('id')
+        .string('id', { unique: true })
         .string('name')
         .string('image')
 

@@ -2,13 +2,13 @@ import { createModel } from 'schemix';
 import ModerationModuleMode from './ModerationModule.mode';
 
 
-export default createModel((LockedChannelModel) => {
+export default createModel('LockedChannel', (LockedChannelModel) => {
     LockedChannelModel
-        .string('id')
-        .dateTime('time')
+        .string('id', { unique: true })
+        .bigInt('time')
 
-        .relation('moderation', ModerationModuleMode, { fields: ['moderationId'], references: ['id'] })
-        .string('moderationId', { unique: true })
+        .string('guildId', { unique: true })
+        .relation('moderation', ModerationModuleMode, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'moderationId'] });
+        .id({ fields: ['id', 'guildId'] });
 });

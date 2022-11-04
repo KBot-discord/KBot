@@ -2,9 +2,9 @@ import { createModel } from 'schemix';
 import TwitterFollowModel from './TwitterFollow.model';
 
 
-export default createModel((TwitterAccountModel) => {
+export default createModel('TwitterAccount', (TwitterAccountModel) => {
     TwitterAccountModel
-        .string('id')
+        .string('id', { unique: true })
         .string('name')
         .string('image')
 

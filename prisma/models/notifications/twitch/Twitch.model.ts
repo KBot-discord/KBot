@@ -3,13 +3,13 @@ import NotificationModule from '../NotificationModule.model';
 import TwitchFollowModel from './TwitchFollow.model';
 
 
-export default createModel((TwitchModel) => {
+export default createModel('Twitch', (TwitchModel) => {
     TwitchModel
         .string('id', { unique: true })
 
         .relation('follows', TwitchFollowModel, { list: true })
-        .relation('notifications', NotificationModule, { fields: ['notificationId'], references: ['id'] })
-        .string('notificationId', { unique: true })
+        .string('guildId', { unique: true })
+        .relation('notifications', NotificationModule, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'notificationId'] });
+        .id({ fields: ['id', 'guildId'] });
 });

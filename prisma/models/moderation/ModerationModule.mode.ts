@@ -4,7 +4,7 @@ import MuteModel from './Mute.model';
 import LockedChannelModel from './LockedChannel.model';
 
 
-export default createModel((ModerationModuleModel) => {
+export default createModel('ModerationModule', (ModerationModuleModel) => {
     ModerationModuleModel
         .string('id', { unique: true })
         .boolean('moduleEnabled')

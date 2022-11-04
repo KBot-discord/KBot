@@ -3,17 +3,17 @@ import TwitchChannelModel from './TwitchChannel.model';
 import TwitchModel from './Twitch.model';
 
 
-export default createModel((TwitchFollowModel) => {
+export default createModel('TwitchFollow', (TwitchFollowModel) => {
     TwitchFollowModel
         .string('id')
         .string('message')
         .string('webhookId')
         .string('webhookToken')
 
-        .relation('channel', TwitchChannelModel, { fields: ['channelId'], references: ['id'] })
         .string('channelId', { unique: true })
-        .relation('twitch', TwitchModel, { fields: ['twitchId'], references: ['id'] })
-        .string('twitchId', { unique: true })
+        .relation('channel', TwitchChannelModel, { fields: ['channelId'], references: ['id'] })
+        .string('guildId', { unique: true })
+        .relation('twitch', TwitchModel, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'twitchId', 'channelId'] });
+        .id({ fields: ['id', 'channelId', 'guildId'] });
 });

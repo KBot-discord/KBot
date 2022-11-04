@@ -2,15 +2,15 @@ import { createModel } from 'schemix';
 import ModerationModuleMode from './ModerationModule.mode';
 
 
-export default createModel((MuteModel) => {
+export default createModel('Mute', (MuteModel) => {
     MuteModel
-        .string('id')
+        .string('id', { unique: true })
         .string('userId')
-        .dateTime('time')
-        .dateTime('evadeTime')
+        .bigInt('time')
+        .bigInt('evadeTime')
 
-        .relation('moderation', ModerationModuleMode, { fields: ['moderationId'], references: ['id'] })
-        .string('moderationId', { unique: true })
+        .string('guildId', { unique: true })
+        .relation('moderation', ModerationModuleMode, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'moderationId'] });
+        .id({ fields: ['id', 'guildId'] });
 });

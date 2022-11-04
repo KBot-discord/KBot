@@ -5,7 +5,7 @@ import TwitchModel from './twitch/Twitch.model';
 import YoutubeModel from './youtube/Youtube.model';
 
 
-export default createModel((NotificationModuleModel) => {
+export default createModel('NotificationModule', (NotificationModuleModel) => {
     NotificationModuleModel
         .string('id', { unique: true })
         .boolean('moduleEnabled')

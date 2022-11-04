@@ -1,20 +1,20 @@
 import { createModel } from 'schemix';
-import GuildModel from '../Guild.model';
-import ScheduledEventModel from './ScheduledEvent.model';
+import UtilityModuleModel from './UtilityModule.model';
+import EventUser from './EventUser';
 
 
-export default createModel((EventModel) => {
+export default createModel('Event', (EventModel) => {
     EventModel
-        .string('id', { unique: true })
-        .string('stage')
-        .string('pinMsg')
+        .string('id', { unique: true }) // Voice channel id
         .string('channel')
-        .string('queue', { list: true })
-        .boolean('isQueueLocked')
+        .boolean('locked')
+        .string('pinMsg', { optional: true })
+        .string('scheduleId', { optional: true })
+        .string('role', { optional: true })
 
-        .relation('guild', GuildModel, { fields: ['guildId'], references: ['id'] })
+        .relation('queue', EventUser, { list: true })
         .string('guildId', { unique: true })
-        .relation('scheduledEvent', ScheduledEventModel, { list: true })
+        .relation('utility', UtilityModuleModel, { fields: ['guildId'], references: ['id'] })
 
         .id({ fields: ['id', 'guildId'] });
 });

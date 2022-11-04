@@ -3,13 +3,13 @@ import NotificationModuleModel from '../NotificationModule.model';
 import TwitterFollowModel from './TwitterFollow.model';
 
 
-export default createModel((TwitterModel) => {
+export default createModel('Twitter', (TwitterModel) => {
     TwitterModel
         .string('id', { unique: true })
 
         .relation('follows', TwitterFollowModel, { list: true })
-        .relation('notifications', NotificationModuleModel, { fields: ['notificationId'], references: ['id'] })
-        .string('notificationId', { unique: true })
+        .string('guildId', { unique: true })
+        .relation('notifications', NotificationModuleModel, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'notificationId'] });
+        .id({ fields: ['id', 'guildId'] });
 });

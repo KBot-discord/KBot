@@ -1,9 +1,9 @@
 import { createModel } from 'schemix';
 
 
-export default createModel((TwitchStreamModel) => {
+export default createModel('TwitchStream', (TwitchStreamModel) => {
     TwitchStreamModel
-        .string('id')
+        .string('id', { unique: true })
         .string('title')
         .string('messageIds', { list: true })
 

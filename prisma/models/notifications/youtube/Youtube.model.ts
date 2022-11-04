@@ -3,13 +3,13 @@ import SubscriptionModel from './Subscription.model';
 import NotificationModuleModel from '../NotificationModule.model';
 
 
-export default createModel((YoutubeModel) => {
+export default createModel('Youtube', (YoutubeModel) => {
     YoutubeModel
         .string('id', { unique: true })
 
         .relation('subscriptions', SubscriptionModel, { list: true })
-        .relation('notifications', NotificationModuleModel, { fields: ['notificationId'], references: ['id'] })
-        .string('notificationId', { unique: true })
+        .string('guildId', { unique: true })
+        .relation('notifications', NotificationModuleModel, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'notificationId'] });
+        .id({ fields: ['id', 'guildId'] });
 });

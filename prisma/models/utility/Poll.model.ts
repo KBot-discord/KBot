@@ -1,15 +1,17 @@
 import { createModel } from 'schemix';
 import UtilityModuleModel from './UtilityModule.model';
+import PollUserModel from './PollUser.model';
 
 
-export default createModel((PollModel) => {
+export default createModel('Poll', (PollModel) => {
     PollModel
-        .string('id')
+        .string('id', { unique: true }) // Message id
         .string('channel')
-        .dateTime('time')
+        .bigInt('time')
 
-        .relation('utility', UtilityModuleModel, { fields: ['utilityId'], references: ['id'] })
-        .string('utilityId', { unique: true })
+        .relation('users', PollUserModel, { list: true })
+        .string('guildId', { unique: true })
+        .relation('utility', UtilityModuleModel, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'utilityId'] });
+        .id({ fields: ['id', 'guildId'] });
 });
