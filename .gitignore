@@ -1,3 +1,14 @@
-node_modules
+## Builds ##
 dist
+
+## Development ##
+coverage
+
+## Dependencies
+node_modules
+
+## Env ##
 .env
+
+### WebStorm ###
+.idea/
