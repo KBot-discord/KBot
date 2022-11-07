@@ -1,11 +1,9 @@
 import { createModel } from 'schemix';
 
-
 export default createModel('YoutubeStream', (YoutubeStreamModel) => {
-    YoutubeStreamModel
-        .string('id')
-        .string('title')
-        .string('messageIds', { list: true })
-
-        .id({ fields: ['id'] });
+	// prettier-ignore
+	YoutubeStreamModel
+		.string('id', { id: true, unique: true }) // Stream ID
+		.string('title')
+		.string('messageIds', { list: true });
 });

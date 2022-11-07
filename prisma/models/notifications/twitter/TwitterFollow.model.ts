@@ -1,19 +1,20 @@
 import { createModel } from 'schemix';
-import TwitterModel from './Twitter.model';
+import UUIDMixin from '../../../mixins/UUID.mixin';
 import TwitterAccountModel from './TwitterAccount.model';
-
+import NotificationModuleModel from '../NotificationModule.model';
 
 export default createModel('TwitterFollow', (TwitterFollowModel) => {
-    TwitterFollowModel
-        .string('id')
-        .string('message')
-        .string('webhookId')
-        .string('webhookToken')
+	// prettier-ignore
+	TwitterFollowModel
+		.mixin(UUIDMixin)
+		.string('message')
+		.string('webhookId')
+		.string('webhookToken')
 
-        .string('accountId', { unique: true })
-        .relation('account', TwitterAccountModel, { fields: ['accountId'], references: ['id'] })
-        .string('guildId', { unique: true })
-        .relation('twitter', TwitterModel, { fields: ['guildId'], references: ['id'] })
+		.string('accountId', { unique: true })
+		.relation('account', TwitterAccountModel, { fields: ['accountId'], references: ['id'] })
+		.string('guildId', { unique: true })
+		.relation('notifications', NotificationModuleModel, { fields: ['guildId'], references: ['id'] })
 
-        .id({ fields: ['id', 'accountId', 'guildId'] });
+		.id({ fields: ['accountId', 'guildId'] });
 });

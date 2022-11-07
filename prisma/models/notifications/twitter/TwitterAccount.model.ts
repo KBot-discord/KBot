@@ -1,14 +1,12 @@
 import { createModel } from 'schemix';
 import TwitterFollowModel from './TwitterFollow.model';
 
-
 export default createModel('TwitterAccount', (TwitterAccountModel) => {
-    TwitterAccountModel
-        .string('id', { unique: true })
-        .string('name')
-        .string('image')
+	// prettier-ignore
+	TwitterAccountModel
+		.string('id', { id: true, unique: true })
+		.string('name')
+		.string('image')
 
-        .relation('follows', TwitterFollowModel, { list: true })
-
-        .id({ fields: ['id'] });
+		.relation('follows', TwitterFollowModel, { list: true });
 });

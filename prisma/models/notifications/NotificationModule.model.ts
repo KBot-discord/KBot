@@ -1,20 +1,15 @@
 import { createModel } from 'schemix';
-import GuildModel from '../Guild.model';
-import TwitterModel from './twitter/Twitter.model';
-import TwitchModel from './twitch/Twitch.model';
-import YoutubeModel from './youtube/Youtube.model';
+import TwitterFollowModel from './twitter/TwitterFollow.model';
+import SubscriptionModel from './youtube/Subscription.model';
+import TwitchFollowModel from './twitch/TwitchFollow.model';
 
+export default createModel('NotificationModule', (model) => {
+	// prettier-ignore
+	model
+		.string('id', { id: true, unique: true }) // Guild ID
+		.boolean('moduleEnabled')
 
-export default createModel('NotificationModule', (NotificationModuleModel) => {
-    NotificationModuleModel
-        .string('id', { unique: true })
-        .boolean('moduleEnabled')
-
-        .relation('twitter', TwitterModel, { optional: true })
-        .relation('youtube', YoutubeModel, { optional: true })
-        .relation('twitch', TwitchModel, { optional: true })
-        .relation('guild', GuildModel, { fields: ['guildId'], references: ['id'] })
-        .string('guildId', { unique: true })
-
-        .id({ fields: ['id', 'guildId'] });
+		.relation('twitter', TwitterFollowModel, { list: true })
+		.relation('youtube', SubscriptionModel, { list: true })
+		.relation('twitch', TwitchFollowModel, { list: true });
 });

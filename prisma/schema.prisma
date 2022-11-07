@@ -7,30 +7,143 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Settings {
-  id          String   @unique
-  staffRoles  String[]
-  botManagers String[]
-  guildId     String   @unique
-  guild       Guild    @relation(fields: [guildId], references: [id])
+model Mute {
+  userId     String
+  time       BigInt
+  evadeTime  BigInt
+  guildId    String           @unique
+  moderation ModerationModule @relation(fields: [guildId], references: [id])
+  id         String           @default(uuid()) @database.Uuid
+
+  @@id([userId, guildId])
+}
+
+model ModerationModule {
+  id               String          @id @unique
+  moduleEnabled    Boolean
+  logChannel       String
+  reportChannel    String
+  minAccountAgeReq Int
+  minAccountAgeMsg String
+  mutes            Mute[]
+  lockedChannels   LockedChannel[]
+}
+
+model LockedChannel {
+  id         String           @unique
+  time       BigInt
+  guildId    String           @unique
+  moderation ModerationModule @relation(fields: [guildId], references: [id])
 
   @@id([id, guildId])
 }
 
-model WelcomeModule {
-  id              String  @unique
-  moduleEnabled   Boolean
-  messagesEnabled Boolean
-  channel         String
-  message         String
-  title           String
-  description     String
-  image           String
-  color           String
-  guildId         String  @unique
-  guild           Guild   @relation(fields: [guildId], references: [id])
+model TwitterAccount {
+  id      String          @id @unique
+  name    String
+  image   String
+  follows TwitterFollow[]
+}
+
+model TwitterFollow {
+  message       String
+  webhookId     String
+  webhookToken  String
+  accountId     String             @unique
+  account       TwitterAccount     @relation(fields: [accountId], references: [id])
+  guildId       String             @unique
+  notifications NotificationModule @relation(fields: [guildId], references: [id])
+  id            String             @default(uuid()) @database.Uuid
+
+  @@id([accountId, guildId])
+}
+
+model YoutubeChannel {
+  id            String                @id @unique
+  name          String
+  image         String
+  subscriptions YoutubeSubscription[]
+}
+
+model YoutubeSubscription {
+  message       String
+  webhookId     String
+  webhookToken  String
+  channelId     String             @unique
+  channel       YoutubeChannel     @relation(fields: [channelId], references: [id])
+  guildId       String             @unique
+  notifications NotificationModule @relation(fields: [guildId], references: [id])
+  id            String             @default(uuid()) @database.Uuid
+
+  @@id([channelId, guildId])
+}
+
+model NotificationModule {
+  id            String                @id @unique
+  moduleEnabled Boolean
+  twitter       TwitterFollow[]
+  youtube       YoutubeSubscription[]
+  twitch        TwitchFollow[]
+}
+
+model TwitchFollow {
+  message       String
+  webhookId     String
+  webhookToken  String
+  channelId     String             @unique
+  channel       TwitchChannel      @relation(fields: [channelId], references: [id])
+  guildId       String             @unique
+  notifications NotificationModule @relation(fields: [guildId], references: [id])
+  id            String             @default(uuid()) @database.Uuid
+
+  @@id([channelId, guildId])
+}
+
+model TwitchChannel {
+  id      String         @id @unique
+  name    String
+  image   String
+  follows TwitchFollow[]
+}
+
+model TwitchStream {
+  id         String   @id @unique
+  title      String
+  messageIds String[]
+}
+
+model YoutubeStream {
+  id         String   @id @unique
+  title      String
+  messageIds String[]
+}
+
+model PollUser {
+  id     String @unique
+  option Int
+  pollId String @unique
+  poll   Poll   @relation(fields: [pollId], references: [id])
+
+  @@id([id, pollId])
+}
+
+model Poll {
+  id      String        @unique
+  channel String
+  time    BigInt
+  options String[]
+  users   PollUser[]
+  guildId String        @unique
+  utility UtilityModule @relation(fields: [guildId], references: [id])
 
   @@id([id, guildId])
+}
+
+model UtilityModule {
+  id            String  @id @unique
+  moduleEnabled Boolean
+  events        Event[]
+  polls         Poll[]
 }
 
 model EventUser {
@@ -48,6 +161,7 @@ model Event {
   id         String        @unique
   channel    String
   locked     Boolean
+  isActive   Boolean
   pinMsg     String?
   scheduleId String?
   role       String?
@@ -58,199 +172,21 @@ model Event {
   @@id([id, guildId])
 }
 
-model PollUser {
-  id     String @unique
-  option Int
-  pollId String @unique
-  poll   Poll   @relation(fields: [pollId], references: [id])
-
-  @@id([id, pollId])
-}
-
-model Poll {
-  id      String        @unique
-  channel String
-  time    BigInt
-  users   PollUser[]
-  guildId String        @unique
-  utility UtilityModule @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
-}
-
-model UtilityModule {
-  id            String  @unique
-  moduleEnabled Boolean
-  events        Event[]
-  polls         Poll[]
-  guildId       String  @unique
-  guild         Guild   @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
-}
-
-model TwitterAccount {
-  id      String          @unique
-  name    String
-  image   String
-  follows TwitterFollow[]
-
-  @@id([id])
-}
-
-model TwitterFollow {
-  id           String
-  message      String
-  webhookId    String
-  webhookToken String
-  accountId    String         @unique
-  account      TwitterAccount @relation(fields: [accountId], references: [id])
-  guildId      String         @unique
-  twitter      Twitter        @relation(fields: [guildId], references: [id])
-
-  @@id([id, accountId, guildId])
-}
-
-model Twitter {
-  id            String             @unique
-  follows       TwitterFollow[]
-  guildId       String             @unique
-  notifications NotificationModule @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
-}
-
-model TwitchChannel {
-  id      String         @unique
-  name    String
-  image   String
-  follows TwitchFollow[]
-
-  @@id([id])
-}
-
-model TwitchFollow {
-  id           String
-  message      String
-  webhookId    String
-  webhookToken String
-  channelId    String        @unique
-  channel      TwitchChannel @relation(fields: [channelId], references: [id])
-  guildId      String        @unique
-  twitch       Twitch        @relation(fields: [guildId], references: [id])
-
-  @@id([id, channelId, guildId])
-}
-
-model Twitch {
-  id            String             @unique
-  follows       TwitchFollow[]
-  guildId       String             @unique
-  notifications NotificationModule @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
-}
-
-model YoutubeChannel {
-  id            String                @unique
-  name          String
-  image         String
-  subscriptions YoutubeSubscription[]
-
-  @@id([id])
-}
-
-model YoutubeSubscription {
-  id           String
-  message      String
-  webhookId    String
-  webhookToken String
-  channelId    String         @unique
-  channel      YoutubeChannel @relation(fields: [channelId], references: [id])
-  guildId      String         @unique
-  youtube      Youtube        @relation(fields: [guildId], references: [id])
-
-  @@id([id, channelId, guildId])
-}
-
-model Youtube {
-  id            String                @unique
-  subscriptions YoutubeSubscription[]
-  guildId       String                @unique
-  notifications NotificationModule    @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
-}
-
-model NotificationModule {
-  id            String   @unique
-  moduleEnabled Boolean
-  twitter       Twitter?
-  youtube       Youtube?
-  twitch        Twitch?
-  guild         Guild    @relation(fields: [guildId], references: [id])
-  guildId       String   @unique
-
-  @@id([id, guildId])
+model WelcomeModule {
+  id              String  @id @unique
+  moduleEnabled   Boolean
+  messagesEnabled Boolean
+  channel         String
+  message         String
+  title           String
+  description     String
+  image           String
+  color           String
 }
 
 model Guild {
-  id            String              @id @unique
-  createdAt     DateTime            @default(now())
-  settings      Settings?
-  welcome       WelcomeModule?
-  moderation    ModerationModule?
-  utility       UtilityModule?
-  notifications NotificationModule?
-}
-
-model Mute {
-  id         String           @unique
-  userId     String
-  time       BigInt
-  evadeTime  BigInt
-  guildId    String           @unique
-  moderation ModerationModule @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
-}
-
-model ModerationModule {
-  id               String          @unique
-  moduleEnabled    Boolean
-  logChannel       String
-  reportChannel    String
-  minAccountAgeReq Int
-  minAccountAgeMsg String
-  mutes            Mute[]
-  lockedChannels   LockedChannel[]
-  guild            Guild           @relation(fields: [guildId], references: [id])
-  guildId          String          @unique
-
-  @@id([id, guildId])
-}
-
-model LockedChannel {
-  id         String           @unique
-  time       BigInt
-  guildId    String           @unique
-  moderation ModerationModule @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
-}
-
-model TwitchStream {
-  id         String   @unique
-  title      String
-  messageIds String[]
-
-  @@id([id])
-}
-
-model YoutubeStream {
-  id         String
-  title      String
-  messageIds String[]
-
-  @@id([id])
+  id          String   @id @unique
+  staffRoles  String[]
+  botManagers String[]
+  createdAt   DateTime @default(now())
 }
