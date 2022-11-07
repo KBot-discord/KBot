@@ -3,7 +3,7 @@
 	"version": "2.0.0",
 	"description": "A multi-feature Discord bot",
 	"author": "KBot",
-	"license": "GPL-3.0",
+	"license": "AGPL-3.0",
 	"main": "./dist/index.js",
 	"scripts": {
 		"build": "tsc -b src",
