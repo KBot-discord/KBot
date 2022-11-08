@@ -48,7 +48,7 @@ approve:
   when: manual
   allow_failure: false
   only:
-    - master
+    - main
 
 build:
   image: docker:latest
