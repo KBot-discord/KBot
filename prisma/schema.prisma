@@ -8,12 +8,12 @@ generator client {
 }
 
 model Mute {
+  id         String           @default(uuid()) @database.Uuid
   userId     String
   time       BigInt
   evadeTime  BigInt
   guildId    String           @unique
   moderation ModerationModule @relation(fields: [guildId], references: [id])
-  id         String           @default(uuid()) @database.Uuid
 
   @@id([userId, guildId])
 }
@@ -46,6 +46,7 @@ model TwitterAccount {
 }
 
 model TwitterFollow {
+  id            String             @default(uuid()) @database.Uuid
   message       String
   webhookId     String
   webhookToken  String
@@ -53,7 +54,6 @@ model TwitterFollow {
   account       TwitterAccount     @relation(fields: [accountId], references: [id])
   guildId       String             @unique
   notifications NotificationModule @relation(fields: [guildId], references: [id])
-  id            String             @default(uuid()) @database.Uuid
 
   @@id([accountId, guildId])
 }
@@ -66,6 +66,7 @@ model YoutubeChannel {
 }
 
 model YoutubeSubscription {
+  id            String             @default(uuid()) @database.Uuid
   message       String
   webhookId     String
   webhookToken  String
@@ -73,7 +74,6 @@ model YoutubeSubscription {
   channel       YoutubeChannel     @relation(fields: [channelId], references: [id])
   guildId       String             @unique
   notifications NotificationModule @relation(fields: [guildId], references: [id])
-  id            String             @default(uuid()) @database.Uuid
 
   @@id([channelId, guildId])
 }
@@ -87,6 +87,7 @@ model NotificationModule {
 }
 
 model TwitchFollow {
+  id            String             @default(uuid()) @database.Uuid
   message       String
   webhookId     String
   webhookToken  String
@@ -94,7 +95,6 @@ model TwitchFollow {
   channel       TwitchChannel      @relation(fields: [channelId], references: [id])
   guildId       String             @unique
   notifications NotificationModule @relation(fields: [guildId], references: [id])
-  id            String             @default(uuid()) @database.Uuid
 
   @@id([channelId, guildId])
 }
