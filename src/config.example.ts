@@ -23,7 +23,7 @@ const commandIds: IdHints = {
 };
 
 export const config: Config = {
-	isDev: process.env.NODE_ENV !== 'production', // Set env to dev if NODE_ENV is undefined
+	isDev: process.env.NODE_ENV !== 'production',
 	discord: {
 		token: process.env.DISCORD_TOKEN!,
 		id: process.env.CLIENT_ID!,
