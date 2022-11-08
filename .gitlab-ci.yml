@@ -60,11 +60,11 @@ build:
     - docker push "$CI_REGISTRY_IMAGE${tag}"
   after_script:
     - "docker logout ${CI_REGISTRY}"
+  when: manual
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
         - Dockerfile
-    - when: manual
 
 deploy:
   stage: deploy
