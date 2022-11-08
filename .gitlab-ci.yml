@@ -9,6 +9,7 @@ services:
 
 stages:
   - test
+  - approve
   - build
   - deploy
 
@@ -40,6 +41,13 @@ sast:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 
+approve:
+  stage: approve
+  when: manual
+  allow_failure: false
+  only:
+    - master
+
 build:
   image: docker:latest
   stage: build
@@ -60,7 +68,8 @@ build:
     - docker push "$CI_REGISTRY_IMAGE${tag}"
   after_script:
     - "docker logout ${CI_REGISTRY}"
-  when: manual
+  needs:
+    - approve
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
