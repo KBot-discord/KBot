@@ -13,9 +13,10 @@ import { KBotClient } from './lib/extensions/KBotClient';
 import { startMetricsServer } from './lib/util/metrics';
 import { rootFolder } from './lib/util/constants';
 import { getConfig } from './lib/util/config';
+import { isNullish } from '@sapphire/utilities';
 
 const config = getConfig();
-if (!config) {
+if (isNullish(config)) {
 	console.error('Invalid config, exiting.');
 	process.exit(1);
 }
@@ -27,7 +28,7 @@ const client = new KBotClient({
 		activities: [{ name: '/help', type: 0 }]
 	},
 	logger: {
-		level: LogLevel.Debug
+		level: config.isDev ? LogLevel.Debug : LogLevel.Info
 	},
 	api: {
 		listenOptions: {
@@ -48,7 +49,7 @@ const client = new KBotClient({
 });
 
 async function main() {
-	if (config!.sentry.enable) {
+	if (!config!.isDev && config!.sentry.dsn) {
 		Sentry.init({
 			dsn: config!.sentry.dsn,
 			integrations: [

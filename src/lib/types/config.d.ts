@@ -28,7 +28,6 @@ export interface Config {
 		port: number;
 	};
 	sentry: {
-		enable: boolean;
 		dsn: string;
 	};
 }

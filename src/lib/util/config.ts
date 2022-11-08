@@ -1,7 +1,6 @@
 // Imports
 import { container } from '@sapphire/framework';
 import type { Config, IdHints } from '../types/config';
-
 import { config } from '../../config';
 
 function flattenConfig(obj: any) {
@@ -36,8 +35,8 @@ function validateConfig(): boolean {
 export function getConfig(): Config | null {
 	const isConfigValid = validateConfig();
 	if (!isConfigValid) return null;
-	container.config = config as unknown as Config;
-	return config as unknown as Config;
+	container.config = config;
+	return config;
 }
 
 export function getIdHints(commandName: string): string[] | undefined {
