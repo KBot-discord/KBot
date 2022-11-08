@@ -43,6 +43,8 @@ sast:
 
 approve:
   stage: approve
+  script:
+    - echo approve
   when: manual
   allow_failure: false
   only:
