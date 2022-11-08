@@ -2,7 +2,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { type ButtonInteraction, MessageActionRow, Modal, TextInputComponent } from 'discord.js';
-import { TextInputStyles } from 'discord.js/typings/enums';
 import { KaraokeCustomIds } from '../../lib/types/enums';
 import { buildKey } from '../../lib/util/keys';
 
@@ -22,7 +21,7 @@ export class ButtonHandler extends InteractionHandler {
 						new TextInputComponent()
 							.setCustomId('karaokeCreateVoice')
 							.setLabel('The voice or stage channel for the event')
-							.setStyle(TextInputStyles.SHORT)
+							.setStyle('SHORT')
 							.setMinLength(1)
 							.setMaxLength(32)
 							.setRequired(true)
@@ -31,7 +30,7 @@ export class ButtonHandler extends InteractionHandler {
 						new TextInputComponent()
 							.setCustomId('karaokeCreateText')
 							.setLabel('The text channel for the event')
-							.setStyle(TextInputStyles.SHORT)
+							.setStyle('SHORT')
 							.setMinLength(1)
 							.setMaxLength(32)
 							.setRequired(true)
@@ -40,7 +39,7 @@ export class ButtonHandler extends InteractionHandler {
 						new TextInputComponent()
 							.setCustomId('karaokeCreateTopic')
 							.setLabel('The topic of the stage')
-							.setStyle(TextInputStyles.SHORT)
+							.setStyle('SHORT')
 							.setMinLength(0)
 							.setMaxLength(32)
 					),
@@ -48,7 +47,7 @@ export class ButtonHandler extends InteractionHandler {
 						new TextInputComponent()
 							.setCustomId('karaokeCreateRole')
 							.setLabel('The role to ping for the event')
-							.setStyle(TextInputStyles.SHORT)
+							.setStyle('SHORT')
 							.setMinLength(0)
 							.setMaxLength(32)
 					)

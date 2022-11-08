@@ -1,5 +1,4 @@
 import { GuildChannel, Message, MessageActionRow, MessageButton, MessageComponentInteraction, MessageEmbed } from 'discord.js';
-import { MessageButtonStyles } from 'discord.js/typings/enums';
 import { channelMention, time } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
 import type { Event } from '@prisma/client';
@@ -8,6 +7,7 @@ import { ArrowEmojis, BlankSpace, embedColors } from '../util/constants';
 import { buildKey, parseKey } from '../util/keys';
 import { ArrowCustomId, KaraokeCustomIds, MenuControl } from '../types/enums';
 import type { IArrowCustomId, IKaraokeMenuCustomId, Key } from '../types/keys';
+import { isNullish } from '@sapphire/utilities';
 
 export class KaraokeEventMenu extends BaseMenu {
 	private events: { event: Event; channel: GuildChannel }[] = [];
@@ -40,10 +40,10 @@ export class KaraokeEventMenu extends BaseMenu {
 		const pages = embeds.map((embed, index) => {
 			const { event } = this.events[index];
 
-			const components = embeds.length !== 0 ? [this.buildArrowButtons(index + 1)] : [];
+			const components = embeds.length > 0 ? [this.buildArrowButtons(index + 1)] : [];
 			components.push(
 				new MessageActionRow().addComponents(
-					!event.scheduleId
+					isNullish(event.scheduleId)
 						? [
 								{ id: KaraokeCustomIds.Add, text: 'Add to queue' },
 								{ id: KaraokeCustomIds.Remove, text: 'Remove from queue' },
@@ -53,14 +53,14 @@ export class KaraokeEventMenu extends BaseMenu {
 						  ].map(({ id, text }) =>
 								new MessageButton()
 									.setCustomId(buildKey<IKaraokeMenuCustomId>(id, { eventId: event.id }))
-									.setStyle(MessageButtonStyles.SECONDARY)
+									.setStyle('SECONDARY')
 									.setLabel(text)
 						  )
 						: event.id
 						? [
 								new MessageButton()
 									.setCustomId(buildKey<IKaraokeMenuCustomId>(KaraokeCustomIds.Start, { eventId: event.id }))
-									.setStyle(MessageButtonStyles.SECONDARY)
+									.setStyle('SECONDARY')
 									.setLabel('Start event')
 						  ]
 						: []
@@ -68,7 +68,7 @@ export class KaraokeEventMenu extends BaseMenu {
 			);
 			return { embeds: [embed], components };
 		});
-		const components = embeds.length !== 0 ? [this.buildArrowButtons(0)] : [];
+		const components = embeds.length > 0 ? [this.buildArrowButtons(0)] : [];
 		pages.unshift({
 			embeds: [
 				new MessageEmbed()
@@ -84,8 +84,8 @@ export class KaraokeEventMenu extends BaseMenu {
 			components: [
 				...components,
 				new MessageActionRow().addComponents([
-					new MessageButton().setCustomId(KaraokeCustomIds.Create).setStyle(MessageButtonStyles.SUCCESS).setLabel('Create an event'),
-					new MessageButton().setCustomId(KaraokeCustomIds.Schedule).setStyle(MessageButtonStyles.SUCCESS).setLabel('Schedule an event')
+					new MessageButton().setCustomId(KaraokeCustomIds.Create).setStyle('SUCCESS').setLabel('Create an event'),
+					new MessageButton().setCustomId(KaraokeCustomIds.Schedule).setStyle('SUCCESS').setLabel('Schedule an event')
 				])
 			]
 		});
@@ -134,23 +134,23 @@ export class KaraokeEventMenu extends BaseMenu {
 		return new MessageActionRow().addComponents([
 			new MessageButton()
 				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.First, index }))
-				.setStyle(MessageButtonStyles.SECONDARY)
+				.setStyle('SECONDARY')
 				.setEmoji(ArrowEmojis.Start),
 			new MessageButton()
 				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.Previous, index }))
-				.setStyle(MessageButtonStyles.SECONDARY)
+				.setStyle('SECONDARY')
 				.setEmoji(ArrowEmojis.Previous),
 			new MessageButton()
 				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.Next, index }))
-				.setStyle(MessageButtonStyles.SECONDARY)
+				.setStyle('SECONDARY')
 				.setEmoji(ArrowEmojis.Next),
 			new MessageButton()
 				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.Last, index }))
-				.setStyle(MessageButtonStyles.SECONDARY)
+				.setStyle('SECONDARY')
 				.setEmoji(ArrowEmojis.Last),
 			new MessageButton()
 				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.Stop, index }))
-				.setStyle(MessageButtonStyles.DANGER)
+				.setStyle('DANGER')
 				.setEmoji(ArrowEmojis.Stop)
 		]);
 	}

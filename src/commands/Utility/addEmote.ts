@@ -2,7 +2,6 @@
 import axios from 'axios';
 import { ChatInputCommand, Command, ContextMenuCommand } from '@sapphire/framework';
 import { MessageActionRow, MessageEmbed, Modal, ModalSubmitInteraction, TextInputComponent, type Message } from 'discord.js';
-import { TextInputStyles } from 'discord.js/typings/enums';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { getGuildEmoteSlots } from '../../lib/util/constants';
@@ -103,7 +102,7 @@ export class AddEmoteCommand extends Command {
 			new TextInputComponent()
 				.setCustomId('emoteNameInput')
 				.setLabel('Emote name')
-				.setStyle(TextInputStyles.SHORT)
+				.setStyle('SHORT')
 				.setMinLength(1)
 				.setMaxLength(32)
 				.setRequired(true)
