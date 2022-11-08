@@ -1,0 +1,20 @@
+{
+	"extends": "@sapphire",
+	"rules": {
+		"@typescript-eslint/no-base-to-string": 0
+	},
+	"overrides": [
+		{
+			"files": [".model.ts"],
+			"rules": {
+				"eslint-disable-next-line": 0
+			}
+		},
+		{
+			"files": ["**/vitest.setup.ts"],
+			"rules": {
+				"@typescript-eslint/no-floating-promises": 0
+			}
+		}
+	]
+}

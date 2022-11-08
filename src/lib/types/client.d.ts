@@ -1,9 +1,18 @@
-import { Counter, Histogram } from 'prom-client';
+// Imports
+import type { Counter } from 'prom-client';
 
-
-export interface Counters {
-    commands: {
-        count: Counter;
-        errors: Counter;
-    }
+export interface Metrics {
+	counters: {
+		commands: {
+			count: Counter;
+		};
+		/*
+        twitch: {
+            count: Counter;
+        }
+        youtube: {
+            count: Counter;
+        }
+        */
+	};
 }

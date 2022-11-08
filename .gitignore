@@ -1,3 +1,29 @@
-node_modules
+## Builds ##
 dist
+
+## Development ##
+coverage
+
+## Dependencies ##
+node_modules
+package-lock.json
+
+## Package manager ##
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+## Env ##
 .env
+src/config.ts
+
+### intellij ###
+.idea/
+
+## Logs ##
+logs
+*.log
