@@ -64,7 +64,7 @@ build:
     - if: $CI_COMMIT_BRANCH
       exists:
         - Dockerfile
-    - when: on_success
+    - when: manual
 
 deploy:
   stage: deploy
@@ -83,4 +83,6 @@ deploy:
     - echo y | docker image prune
   after_script:
     - "docker logout ${CI_REGISTRY}"
+  needs:
+    - build
   when: on_success
