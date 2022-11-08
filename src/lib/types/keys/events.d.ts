@@ -1,4 +1,5 @@
 // Imports
+import { KaraokeMethods } from '../enums';
 import type { IBaseData } from './index';
 
 export interface IKaraokeData extends IBaseData {
