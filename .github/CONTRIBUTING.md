@@ -2,7 +2,7 @@
 
 ## Setup
 
-### 1. Fork and clone the repository:
+### 1. Fork and clone the repository
 ```bash
 # After forking the repository, copy its url and run:
 $ git clone https://gitlab.com/[USERNAME]/kbot.git
@@ -33,9 +33,10 @@ $ yarn build
 
 ## Using Docker
 
-For quickly spinning up a development environment, you can run the follow `docker-compose.yml` file to get all the required services up and running.
+For quickly spinning up a development environment, you can run the following `docker-compose.yml` file to get all the required services up and running.
 
 After copying the file into the project directory, you can run it with `docker-compose up -d`.
+
 ```yml
 # docker-compose.yml
 version: "3.8"
@@ -58,7 +59,7 @@ services:
       - 127.0.0.1:6379:6379
     command: /bin/sh -c "redis-server --requirepass $$REDIS_PASS"
     env_file:
-      - .env
+      - ../.env
 ```
 
 ```bash
