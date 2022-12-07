@@ -1,16 +1,17 @@
-// Imports
 import { Command, type ChatInputCommand } from '@sapphire/framework';
 import { MessageEmbed, type Message } from 'discord.js';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds, getIdHints } from '../../lib/util/config';
+import { getGuildIds } from '../../lib/util/config';
 
 @ApplyOptions<ChatInputCommand.Options>({
-	description: 'Sends the provided message to the selected channel.'
+	description: 'Sends the provided message to the selected channel.',
+	preconditions: ['GuildOnly']
 })
 export class EchoCommand extends Command {
 	public constructor(context: ChatInputCommand.Context, options: ChatInputCommand.Options) {
 		super(context, { ...options });
+		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
 	public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
@@ -34,7 +35,7 @@ export class EchoCommand extends Command {
 							.setRequired(true)
 					),
 			{
-				idHints: getIdHints(this.name),
+				idHints: ['1035943944569225368', '1036013816951099402'],
 				guildIds: getGuildIds()
 			}
 		);

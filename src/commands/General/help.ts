@@ -1,25 +1,25 @@
-// Imports
 import { Collection, MessageEmbed } from 'discord.js';
 import { Command, container, type ChatInputCommand } from '@sapphire/framework';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import type { KBotCommand } from '../../lib/extensions/KBotCommand';
-import { embedColors } from '../../lib/util/constants';
-import { getGuildIds, getIdHints } from '../../lib/util/config';
+import { EmbedColors } from '../../lib/util/constants';
+import { getGuildIds } from '../../lib/util/config';
 
-function sortCommandsAlphabetically(_: KBotCommand[], __: KBotCommand[], firstCategory: string, secondCategory: string): 1 | -1 | 0 {
+function sortCommandsAlphabetically(_: Command[], __: Command[], firstCategory: string, secondCategory: string): 1 | -1 | 0 {
 	if (firstCategory > secondCategory) return 1;
 	if (secondCategory > firstCategory) return -1;
 	return 0;
 }
 
 @ApplyOptions<ChatInputCommand.Options>({
-	description: 'Make a poll with or without a time limit.'
+	description: 'Make a poll with or without a time limit.',
+	preconditions: ['GuildOnly']
 })
 export class HelpCommand extends Command {
 	public constructor(context: ChatInputCommand.Context, options: ChatInputCommand.Options) {
 		super(context, { ...options });
+		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
 	public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
@@ -29,7 +29,10 @@ export class HelpCommand extends Command {
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
 					.setName('help')
 					.setDescription(this.description),
-			{ idHints: getIdHints(this.name), guildIds: getGuildIds() }
+			{
+				idHints: ['1036723541049085993'],
+				guildIds: getGuildIds()
+			}
 		);
 	}
 
@@ -49,7 +52,7 @@ export class HelpCommand extends Command {
 		const commandsByCategory = await HelpCommand.getCommands();
 
 		const display = new PaginatedMessage({
-			template: new MessageEmbed().setColor(embedColors.default)
+			template: new MessageEmbed().setColor(EmbedColors.Default)
 		}).setSelectMenuOptions((pageIndex) => ({ label: commandsByCategory.keyAt(pageIndex - 1)! }));
 
 		display.addPageEmbed((embed) =>
@@ -75,20 +78,20 @@ export class HelpCommand extends Command {
 		return display;
 	}
 
-	private formatCommand(command: KBotCommand) {
+	private formatCommand(command: Command) {
 		return `**${command.supportsChatInputCommands() ? '[S]' : '[C]'} ${command.name}**\n${command.detailedDescription}`;
 	}
 
 	private static async getCommands() {
 		const commands = container.stores.get('commands');
-		const filtered = new Collection<string, KBotCommand[]>();
+		const filtered = new Collection<string, Command[]>();
 		filtered.set('Bot info', []);
 		await Promise.all(
 			commands.map((cmd) => {
-				const command = cmd as KBotCommand;
+				const command = cmd as Command;
 				const category = filtered.get(command.category!);
 				if (category) return category.push(command);
-				return filtered.set(command.category!, [command as KBotCommand]);
+				return filtered.set(command.category!, [command as Command]);
 			})
 		);
 		return filtered.sort(sortCommandsAlphabetically);

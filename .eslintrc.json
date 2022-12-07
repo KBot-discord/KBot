@@ -1,7 +1,8 @@
 {
 	"extends": "@sapphire",
 	"rules": {
-		"@typescript-eslint/no-base-to-string": 0
+		"@typescript-eslint/no-base-to-string": 0,
+		"@typescript-eslint/member-ordering": 0
 	},
 	"overrides": [
 		{
@@ -11,9 +12,9 @@
 			}
 		},
 		{
-			"files": ["**/vitest.setup.ts"],
+			"files": ["augments.ts"],
 			"rules": {
-				"@typescript-eslint/no-floating-promises": 0
+				"no-multi-assign": 0
 			}
 		}
 	]

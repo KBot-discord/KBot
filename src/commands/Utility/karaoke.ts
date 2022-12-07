@@ -1,13 +1,13 @@
-// Imports
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ButtonInteraction, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import { embedColors } from '../../lib/util/constants';
-import { getGuildIds, getIdHints } from '../../lib/util/config';
+import { EmbedColors } from '../../lib/util/constants';
+import { getGuildIds } from '../../lib/util/config';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Join or leave the karaoke queue',
+	preconditions: ['GuildOnly'],
 	subcommands: [
 		{ name: 'help', chatInputRun: 'chatInputHelp' },
 		{ name: 'list', chatInputRun: 'chatInputList' },
@@ -19,6 +19,7 @@ import { getGuildIds, getIdHints } from '../../lib/util/config';
 export class KaraokeCommand extends Subcommand {
 	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
 		super(context, { ...options });
+		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
 	public override registerApplicationCommands(registry: Subcommand.Registry) {
@@ -58,7 +59,7 @@ export class KaraokeCommand extends Subcommand {
 							.setName('leave')
 							.setDescription('Leave the queue')
 					),
-			{ idHints: getIdHints(this.name), guildIds: getGuildIds() }
+			{ idHints: ['1038252639810494474'], guildIds: getGuildIds() }
 		);
 	}
 
@@ -66,11 +67,11 @@ export class KaraokeCommand extends Subcommand {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 
-		const events = await karaoke.fetchEvents(interaction.guildId!);
+		const events = await karaoke.db.fetchEvents(interaction.guildId!);
 		const formattedEvents = events
 			? events.map((event, index) =>
 					new MessageEmbed()
-						.setColor(embedColors.default)
+						.setColor(EmbedColors.Default)
 						.setDescription(`**Event #${index + 1}** - ${event.id}`)
 						.addFields(
 							{ name: 'Voice channel', value: `<#${event.id}>`, inline: true },
@@ -82,7 +83,7 @@ export class KaraokeCommand extends Subcommand {
 		return interaction.editReply({
 			embeds: [
 				new MessageEmbed()
-					.setColor(embedColors.default)
+					.setColor(EmbedColors.Default)
 					.setTitle('Karaoke event commands:')
 					.setDescription(
 						[
@@ -109,10 +110,10 @@ export class KaraokeCommand extends Subcommand {
 		const eventId = await interaction.guild!.members.fetch(interaction.user.id).then((member) => member.voice.channelId);
 		if (isNullish(eventId)) return interaction.defaultReply('You are not in a voice channel.');
 
-		const isActive = await karaoke.isEventActive(eventId);
+		const isActive = await karaoke.db.isEventActive(eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to leave from.');
 
-		const queue = await karaoke.fetchQueue(eventId);
+		const queue = await karaoke.db.fetchQueue(eventId);
 		if (isNullish(queue)) return interaction.defaultReply('There is no queue.');
 
 		return interaction.editReply({
@@ -128,16 +129,16 @@ export class KaraokeCommand extends Subcommand {
 		const eventId = member.voice.channelId;
 		if (isNullish(eventId)) return interaction.defaultReply('You are not in a voice channel.');
 
-		const isActive = await karaoke.isEventActive(eventId);
+		const isActive = await karaoke.db.isEventActive(eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to join.');
 
-		const event = await karaoke.fetchEventWithQueue(eventId);
+		const event = await karaoke.db.fetchEventWithQueue(eventId);
 		if (isNullish(event)) return interaction.defaultReply('Something went wrong.');
 
 		const result = karaoke.isJoinValid(event, event.queue, member.id);
 		if (!result.isValid) return interaction.errorReply(result.reason!);
 
-		const newQueue = await karaoke.addToQueue(eventId, member.id, member.displayName);
+		const newQueue = await karaoke.db.addToQueue(eventId, member.id, member.displayName);
 		if (isNullish(newQueue)) return interaction.errorReply('Error when adding member to queue.');
 
 		const embed = karaoke.buildQueueEmbed(newQueue);
@@ -160,10 +161,10 @@ export class KaraokeCommand extends Subcommand {
 		const eventId = member.voice.channelId;
 		if (isNullish(eventId)) return interaction.defaultReply('You are not in a voice channel.');
 
-		const isActive = await karaoke.isEventActive(eventId);
+		const isActive = await karaoke.db.isEventActive(eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to join.');
 
-		const event = await karaoke.fetchEventWithQueue(eventId);
+		const event = await karaoke.db.fetchEventWithQueue(eventId);
 		if (isNullish(event)) return interaction.defaultReply('Something went wrong.');
 
 		const partner = await interaction.guild!.members.fetch(interaction.options.getUser('partner', true).id);
@@ -195,7 +196,7 @@ export class KaraokeCommand extends Subcommand {
 			.then(async (i) => {
 				if (i.customId === 'yesduet') {
 					await message.delete();
-					const newQueue = await karaoke.addToQueue(eventId, member.id, member.displayName, partner.id, partner.displayName);
+					const newQueue = await karaoke.db.addToQueue(eventId, member.id, member.displayName, partner.id, partner.displayName);
 					if (isNullish(newQueue)) return interaction.errorReply('Error when adding member to queue.');
 
 					await interaction.successReply(`Successfully joined queue as a duet with <@${partner.id}>.`);
@@ -222,7 +223,7 @@ export class KaraokeCommand extends Subcommand {
 				return interaction.defaultReply("Your duet partner didn't respond.");
 			});
 
-		const newQueue = await karaoke.addToQueue(eventId, member.id, member.displayName, partner.id, partner.displayName);
+		const newQueue = await karaoke.db.addToQueue(eventId, member.id, member.displayName, partner.id, partner.displayName);
 		if (isNullish(newQueue)) return interaction.errorReply('Error when adding member to queue.');
 
 		const embed = karaoke.buildQueueEmbed(newQueue);
@@ -245,10 +246,10 @@ export class KaraokeCommand extends Subcommand {
 		const eventId = member.voice.channelId;
 		if (isNullish(eventId)) return interaction.defaultReply('You are not in a voice channel.');
 
-		const isActive = await karaoke.isEventActive(eventId);
+		const isActive = await karaoke.db.isEventActive(eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to leave from.');
 
-		const queue = await karaoke.fetchQueue(eventId);
+		const queue = await karaoke.db.fetchQueue(eventId);
 		if (isNullish(queue)) return interaction.defaultReply('Something went wrong.');
 
 		const userEntry = queue.find((e) => e.id === member.id);
@@ -261,7 +262,7 @@ export class KaraokeCommand extends Subcommand {
 			return interaction.successReply('Successfully left queue.');
 		}
 
-		await karaoke.removeFromQueue(eventId, userEntry.id, userEntry.partnerId ?? undefined);
+		await karaoke.db.removeFromQueue(eventId, userEntry.id, userEntry.partnerId ?? undefined);
 		if (userEntry.partnerId) {
 			const ping = member.id === userEntry.id ? userEntry.partnerId : userEntry.id;
 			return interaction.channel!.send({

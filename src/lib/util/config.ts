@@ -1,7 +1,6 @@
-// Imports
 import { container } from '@sapphire/framework';
-import type { Config, IdHints } from '../types/config';
 import { config } from '../../config';
+import type { Config } from '../types/config';
 
 function flattenConfig(obj: any) {
 	const flattenedObj: any = {};
@@ -37,10 +36,6 @@ export function getConfig(): Config | null {
 	if (!isConfigValid) return null;
 	container.config = config;
 	return config;
-}
-
-export function getIdHints(commandName: string): string[] | undefined {
-	return container.config.discord.idHints[commandName.toLowerCase() as keyof IdHints];
 }
 
 export function getGuildIds(): string[] | undefined {

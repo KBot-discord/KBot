@@ -1,4 +1,3 @@
-// Imports
 import { getRootData } from '@sapphire/pieces';
 import { join } from 'node:path';
 
@@ -7,12 +6,22 @@ export const rootFolder = join(mainFolder, '..');
 export const assetsFolder = join(rootFolder, 'assets');
 export const imageFolder = join(assetsFolder, 'images');
 
+export const DISCORD_STATUS_BASE = 'https://srhpyqt94yxb.statuspage.io/api/v2/';
+
 export const BlankSpace = '\u200B';
 
-export const enum embedColors {
-	default = '#006BFC',
-	success = '#33B54E',
-	error = 'RED'
+export const enum StatusEmbed {
+	Green = '#43b581',
+	Yellow = '#faa61a',
+	Orange = '#f26522',
+	Red = '#f04747',
+	Black = '#737f8d'
+}
+
+export const enum EmbedColors {
+	Default = '#006BFC',
+	Success = '#33B54E',
+	Error = 'RED'
 }
 
 export const POLL_NUMBERS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];

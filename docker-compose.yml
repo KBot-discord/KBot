@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   kbot:
-    image: registry.gitlab.com/kbot1/kbot:latest
+    image: registry.gitlab.com/kbotdev/kbot:latest
     container_name: kbot
     restart: unless-stopped
     networks:

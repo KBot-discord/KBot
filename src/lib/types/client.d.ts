@@ -1,4 +1,3 @@
-// Imports
 import type { Counter } from 'prom-client';
 
 export interface Metrics {
@@ -6,13 +5,5 @@ export interface Metrics {
 		commands: {
 			count: Counter;
 		};
-		/*
-        twitch: {
-            count: Counter;
-        }
-        youtube: {
-            count: Counter;
-        }
-        */
 	};
 }

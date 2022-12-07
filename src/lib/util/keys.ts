@@ -1,4 +1,3 @@
-// Imports
 import { brotliCompressSync, brotliDecompressSync } from 'node:zlib';
 import { deserialize, serialize } from 'binarytf';
 import type { Key } from '../types/keys';

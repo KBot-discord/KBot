@@ -1,4 +1,3 @@
-// Imports
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { VoiceState } from 'discord.js';

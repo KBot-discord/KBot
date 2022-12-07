@@ -1,18 +1,18 @@
 import { GuildChannel, Message, MessageActionRow, MessageButton, MessageComponentInteraction, MessageEmbed } from 'discord.js';
 import { channelMention, time } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
-import type { Event } from '@prisma/client';
-import { BaseMenu } from '../extensions/BaseMenu';
-import { ArrowEmojis, BlankSpace, embedColors } from '../util/constants';
-import { buildKey, parseKey } from '../util/keys';
-import { ArrowCustomId, KaraokeCustomIds, MenuControl } from '../types/enums';
-import type { IArrowCustomId, IKaraokeMenuCustomId, Key } from '../types/keys';
 import { isNullish } from '@sapphire/utilities';
+import { BaseMenu, IArrowCustomId } from './BaseMenu';
+import { ArrowCustomId, KaraokeCustomIds } from '../types/enums';
+import { buildKey, parseKey } from '../util/keys';
+import { BlankSpace, EmbedColors } from '../util/constants';
+import type { IKaraokeMenuCustomId, Key } from '../types/keys';
+import type { Event } from '@prisma/client';
 
 export class KaraokeEventMenu extends BaseMenu {
 	private events: { event: Event; channel: GuildChannel }[] = [];
 
-	public async build() {
+	public async run() {
 		try {
 			this.reply = (await this.interaction.fetchReply()) as Message;
 
@@ -22,8 +22,8 @@ export class KaraokeEventMenu extends BaseMenu {
 			this.collector = this.reply.createMessageComponentCollector({
 				filter: (i) => i.user.id === this.interaction.user.id && i.customId.startsWith(ArrowCustomId)
 			});
-			this.collector.on('collect', (interaction) => this.parse(interaction));
-			this.collector.on('stop', (interaction) => this.handleStop(interaction, true));
+			this.collector.on('collect', this.parse);
+			this.collector.on('stop', this.handleStop);
 
 			return this.showMenu();
 		} catch (err) {
@@ -41,38 +41,14 @@ export class KaraokeEventMenu extends BaseMenu {
 			const { event } = this.events[index];
 
 			const components = embeds.length > 0 ? [this.buildArrowButtons(index + 1)] : [];
-			components.push(
-				new MessageActionRow().addComponents(
-					isNullish(event.scheduleId)
-						? [
-								{ id: KaraokeCustomIds.Add, text: 'Add to queue' },
-								{ id: KaraokeCustomIds.Remove, text: 'Remove from queue' },
-								{ id: KaraokeCustomIds.Lock, text: 'Lock queue' },
-								{ id: KaraokeCustomIds.Skip, text: 'Skip queue' },
-								{ id: KaraokeCustomIds.Stop, text: 'End the event' }
-						  ].map(({ id, text }) =>
-								new MessageButton()
-									.setCustomId(buildKey<IKaraokeMenuCustomId>(id, { eventId: event.id }))
-									.setStyle('SECONDARY')
-									.setLabel(text)
-						  )
-						: event.id
-						? [
-								new MessageButton()
-									.setCustomId(buildKey<IKaraokeMenuCustomId>(KaraokeCustomIds.Start, { eventId: event.id }))
-									.setStyle('SECONDARY')
-									.setLabel('Start event')
-						  ]
-						: []
-				)
-			);
+			components.push(...this.buildComponents(event));
 			return { embeds: [embed], components };
 		});
 		const components = embeds.length > 0 ? [this.buildArrowButtons(0)] : [];
 		pages.unshift({
 			embeds: [
 				new MessageEmbed()
-					.setColor(embedColors.default)
+					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Karaoke management', iconURL: this.interaction.guild!.iconURL()! })
 					.setTitle('Karaoke event management')
 					.addFields([
@@ -92,12 +68,57 @@ export class KaraokeEventMenu extends BaseMenu {
 		return pages;
 	}
 
+	private buildComponents(event: Event) {
+		return [
+			new MessageActionRow().addComponents(
+				isNullish(event.scheduleId)
+					? [
+							{ id: KaraokeCustomIds.Add, text: 'Add to queue' },
+							{ id: KaraokeCustomIds.Remove, text: 'Remove from queue' },
+							{ id: KaraokeCustomIds.Lock, text: 'Lock queue' },
+							{ id: KaraokeCustomIds.Unlock, text: 'Unlock queue' },
+							{ id: KaraokeCustomIds.Skip, text: 'Skip queue' }
+					  ].map(({ id, text }) =>
+							new MessageButton()
+								.setCustomId(buildKey<IKaraokeMenuCustomId>(id, { eventId: event.id }))
+								.setStyle('SECONDARY')
+								.setLabel(text)
+					  )
+					: event.id
+					? [
+							new MessageButton()
+								.setCustomId(buildKey<IKaraokeMenuCustomId>(KaraokeCustomIds.Start, { eventId: event.id }))
+								.setStyle('SECONDARY')
+								.setLabel('Start event')
+					  ]
+					: []
+			),
+			new MessageActionRow().addComponents(
+				isNullish(event.scheduleId)
+					? [{ id: KaraokeCustomIds.Stop, text: 'End the event' }].map(({ id, text }) =>
+							new MessageButton()
+								.setCustomId(buildKey<IKaraokeMenuCustomId>(id, { eventId: event.id }))
+								.setStyle('SECONDARY')
+								.setLabel(text)
+					  )
+					: event.id
+					? [
+							new MessageButton()
+								.setCustomId(buildKey<IKaraokeMenuCustomId>(KaraokeCustomIds.Start, { eventId: event.id }))
+								.setStyle('SECONDARY')
+								.setLabel('Start event')
+					  ]
+					: []
+			)
+		];
+	}
+
 	private async buildEmbeds(): Promise<MessageEmbed[]> {
 		const { karaoke, client } = container;
 		const { guild } = this.interaction;
 
 		this.events = await Promise.all(
-			((await karaoke.fetchEvents(guild!.id!)) ?? []).map(async (event) => ({
+			((await karaoke.db.fetchEvents(guild!.id!)) ?? []).map(async (event) => ({
 				event,
 				channel: (await client.channels.fetch(event.id)) as GuildChannel
 			}))
@@ -115,43 +136,16 @@ export class KaraokeEventMenu extends BaseMenu {
 					);
 				}
 				return new MessageEmbed()
-					.setColor(embedColors.default)
+					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Karaoke management', iconURL: this.interaction.guild!.iconURL()! })
 					.setTitle(`Event #${index + 1} | ${channel.name}`)
 					.addFields([
 						...fields,
 						{ name: 'Voice channel:', value: channelMention(event.id), inline: true },
-						{ name: 'Command channel:', value: channelMention(event.channel), inline: true },
-						{ name: 'Queue lock:', value: event.locked ? 'locked' : 'unlocked' }
+						{ name: 'Command channel:', value: channelMention(event.channel), inline: true }
 					])
 					.setFooter({ text: `${index + 2} / ${this.events.length + 1}` });
 			})
 		);
-	}
-
-	// TODO move to base class
-	private buildArrowButtons(index: number): MessageActionRow {
-		return new MessageActionRow().addComponents([
-			new MessageButton()
-				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.First, index }))
-				.setStyle('SECONDARY')
-				.setEmoji(ArrowEmojis.Start),
-			new MessageButton()
-				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.Previous, index }))
-				.setStyle('SECONDARY')
-				.setEmoji(ArrowEmojis.Previous),
-			new MessageButton()
-				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.Next, index }))
-				.setStyle('SECONDARY')
-				.setEmoji(ArrowEmojis.Next),
-			new MessageButton()
-				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.Last, index }))
-				.setStyle('SECONDARY')
-				.setEmoji(ArrowEmojis.Last),
-			new MessageButton()
-				.setCustomId(buildKey<IArrowCustomId>(ArrowCustomId, { dir: MenuControl.Stop, index }))
-				.setStyle('DANGER')
-				.setEmoji(ArrowEmojis.Stop)
-		]);
 	}
 }

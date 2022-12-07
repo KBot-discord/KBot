@@ -8,19 +8,34 @@ export const enum KaraokeCustomIds {
 	Add = 'karaoke-add',
 	Remove = 'karaoke-remove',
 	Lock = 'karaoke-lock',
+	Unlock = 'karaoke-unlock',
 	Skip = 'karaoke-skip'
 }
 
-export const enum KaraokeMethods {
-	Create = 'create',
-	Start = 'start',
-	Stop = 'stop',
-	Add = 'add',
-	Remove = 'remove',
-	Lock = 'lock',
-	Skip = 'skip'
+export const enum AddEmoteCustomIds {
+	Name = 'addemote-name',
+	Credits = 'addemote-credits',
+	ModalCredits = 'addemote-credits-modal',
+	Edit = 'addemote-edit',
+	ModalEdit = 'addemote-edit-modal'
 }
 
+export const enum AddEmoteFields {
+	Name = 'emoteName',
+	CreditLink = 'emoteCreditLink',
+	CreditDescription = 'emoteCreditDesc',
+	CreditArtistName = 'emoteCreditArtistName',
+	CreditArtistLink = 'emoteCreditArtistLink'
+}
+
+export const enum PollCustomIds {
+	Vote = 'poll-vote',
+	ResultsPublic = 'poll-results-public',
+	ResultsHidden = 'poll-results-hidden',
+	End = 'poll-end'
+}
+
+// Services
 export const enum ServiceType {
 	Karaoke = 'karaoke',
 	Poll = 'poll'
@@ -40,5 +55,3 @@ export const enum MenuControl {
 	Last,
 	Stop
 }
-
-export const PollCustomId = 'poll-button';

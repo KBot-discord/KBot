@@ -1,10 +1,11 @@
-// Register plugins
+import '@kbotdev/plugin-modules/register';
 import '@sapphire/plugin-api/register';
 import '@sapphire/plugin-logger/register';
 import '@sapphire/plugin-subcommands/register';
 import { ScheduledTaskRedisStrategy } from '@sapphire/plugin-scheduled-tasks/register-redis';
 
-// Imports
+import './lib/util/augments';
+
 import { container, LogLevel } from '@sapphire/framework';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
@@ -42,9 +43,14 @@ const client = new KBotClient({
 					host: config.redis.host,
 					port: config.redis.port,
 					password: config.redis.password
-				}
+				},
+				defaultJobOptions: { removeOnComplete: 0, removeOnFail: 0 }
 			}
 		})
+	},
+	modules: {
+		enabled: true,
+		loadModuleErrorListeners: true
 	}
 });
 

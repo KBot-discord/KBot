@@ -1,4 +1,3 @@
-// Imports
 import { MessageEmbed, type AllowedImageSize, type DynamicImageFormat } from 'discord.js';
 import { Duration } from '@sapphire/duration';
 import type { GuildMember, Guild, User, CommandInteraction } from 'discord.js';

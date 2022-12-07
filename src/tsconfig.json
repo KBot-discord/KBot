@@ -5,9 +5,7 @@
 		"rootDir": ".",
 		"typeRoots": ["./lib/types/*", "../node_modules/@types", "vitest/globals"],
 		"allowJs": true,
-		"checkJs": true,
 		"noImplicitAny": true,
-		"removeComments": true
 	},
 	"include": ["."],
 	"exclude": ["./tsconfig.json"]

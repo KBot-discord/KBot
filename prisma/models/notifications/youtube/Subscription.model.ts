@@ -3,18 +3,20 @@ import UUIDMixin from '../../../mixins/UUID.mixin';
 import YoutubeChannelModel from './YoutubeChannel.model';
 import NotificationModuleModel from '../NotificationModule.model';
 
-export default createModel('YoutubeSubscription', (SubscriptionModel) => {
+export default createModel('YoutubeSubscription', (model) => {
 	// prettier-ignore
-	SubscriptionModel
+	model
 		.mixin(UUIDMixin)
 		.string('message')
+		.string('role')
 		.string('webhookId')
 		.string('webhookToken')
 
 		.string('channelId', { unique: true })
-		.relation('channel', YoutubeChannelModel, { fields: ['channelId'], references: ['id'] })
+		.relation('channel', YoutubeChannelModel, { fields: ['channelId'], references: ['id'], onDelete: "Cascade" })
 		.string('guildId', { unique: true })
-		.relation('notifications', NotificationModuleModel, { fields: ['guildId'], references: ['id'] })
+		.relation('notifications', NotificationModuleModel, { fields: ['guildId'], references: ['id'], onDelete: "Cascade" })
 
-		.id({ fields: ['channelId', 'guildId'] });
+		.id({ fields: ['id'] })
+		.unique({ fields: ['webhookId', 'channelId'] });
 });

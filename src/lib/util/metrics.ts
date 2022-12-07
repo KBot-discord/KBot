@@ -1,4 +1,3 @@
-// Imports
 import express from 'express';
 import * as promClient from 'prom-client';
 import { container } from '@sapphire/framework';

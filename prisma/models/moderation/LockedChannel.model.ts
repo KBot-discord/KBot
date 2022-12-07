@@ -1,14 +1,12 @@
 import { createModel } from 'schemix';
-import ModerationModuleMode from './ModerationModule.mode';
+import ModerationModuleMode from './ModerationModule.model';
 
-export default createModel('LockedChannel', (LockedChannelModel) => {
+export default createModel('LockedChannel', (model) => {
 	// prettier-ignore
-	LockedChannelModel
-		.string('id', { unique: true })
+	model
+		.string('id', { id: true, unique: true }) // Channel ID
 		.bigInt('time')
 
 		.string('guildId', { unique: true })
-		.relation('moderation', ModerationModuleMode, { fields: ['guildId'], references: ['id'] })
-
-		.id({ fields: ['id', 'guildId'] });
+		.relation('moderation', ModerationModuleMode, { fields: ['guildId'], references: ['id'], onDelete: "Cascade" })
 });

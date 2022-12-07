@@ -4,38 +4,17 @@ datasource database {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 model Mute {
   id         String           @default(uuid()) @database.Uuid
-  userId     String
+  userId     String           @id @unique
   time       BigInt
   evadeTime  BigInt
   guildId    String           @unique
-  moderation ModerationModule @relation(fields: [guildId], references: [id])
-
-  @@id([userId, guildId])
-}
-
-model ModerationModule {
-  id               String          @id @unique
-  moduleEnabled    Boolean
-  logChannel       String
-  reportChannel    String
-  minAccountAgeReq Int
-  minAccountAgeMsg String
-  mutes            Mute[]
-  lockedChannels   LockedChannel[]
-}
-
-model LockedChannel {
-  id         String           @unique
-  time       BigInt
-  guildId    String           @unique
-  moderation ModerationModule @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
+  moderation ModerationModule @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model TwitterAccount {
@@ -48,14 +27,24 @@ model TwitterAccount {
 model TwitterFollow {
   id            String             @default(uuid()) @database.Uuid
   message       String
+  role          String
   webhookId     String
   webhookToken  String
   accountId     String             @unique
-  account       TwitterAccount     @relation(fields: [accountId], references: [id])
+  account       TwitterAccount     @relation(fields: [accountId], references: [id], onDelete: Cascade)
   guildId       String             @unique
-  notifications NotificationModule @relation(fields: [guildId], references: [id])
+  notifications NotificationModule @relation(fields: [guildId], references: [id], onDelete: Cascade)
 
-  @@id([accountId, guildId])
+  @@id([id])
+  @@unique([webhookId, accountId])
+}
+
+model YoutubeStream {
+  id         String         @id @unique
+  title      String
+  messageIds String[]
+  channelId  String         @unique
+  channel    YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 }
 
 model YoutubeChannel {
@@ -63,40 +52,30 @@ model YoutubeChannel {
   name          String
   image         String
   subscriptions YoutubeSubscription[]
+  streams       YoutubeStream[]
 }
 
 model YoutubeSubscription {
   id            String             @default(uuid()) @database.Uuid
   message       String
+  role          String
   webhookId     String
   webhookToken  String
   channelId     String             @unique
-  channel       YoutubeChannel     @relation(fields: [channelId], references: [id])
+  channel       YoutubeChannel     @relation(fields: [channelId], references: [id], onDelete: Cascade)
   guildId       String             @unique
-  notifications NotificationModule @relation(fields: [guildId], references: [id])
+  notifications NotificationModule @relation(fields: [guildId], references: [id], onDelete: Cascade)
 
-  @@id([channelId, guildId])
+  @@id([id])
+  @@unique([webhookId, channelId])
 }
 
-model NotificationModule {
-  id            String                @id @unique
-  moduleEnabled Boolean
-  twitter       TwitterFollow[]
-  youtube       YoutubeSubscription[]
-  twitch        TwitchFollow[]
-}
-
-model TwitchFollow {
-  id            String             @default(uuid()) @database.Uuid
-  message       String
-  webhookId     String
-  webhookToken  String
-  channelId     String             @unique
-  channel       TwitchChannel      @relation(fields: [channelId], references: [id])
-  guildId       String             @unique
-  notifications NotificationModule @relation(fields: [guildId], references: [id])
-
-  @@id([channelId, guildId])
+model TwitchStream {
+  id         String        @id @unique
+  title      String
+  messageIds String[]
+  channelId  String        @unique
+  channel    TwitchChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 }
 
 model TwitchChannel {
@@ -104,61 +83,45 @@ model TwitchChannel {
   name    String
   image   String
   follows TwitchFollow[]
+  streams TwitchStream[]
 }
 
-model TwitchStream {
-  id         String   @id @unique
-  title      String
-  messageIds String[]
+model TwitchFollow {
+  id            String             @default(uuid()) @database.Uuid
+  message       String
+  role          String
+  webhookId     String
+  webhookToken  String
+  channelId     String             @unique
+  channel       TwitchChannel      @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  guildId       String             @unique
+  notifications NotificationModule @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@id([id])
+  @@unique([webhookId, channelId])
 }
 
-model YoutubeStream {
-  id         String   @id @unique
-  title      String
-  messageIds String[]
-}
-
-model PollUser {
-  id     String @unique
-  option Int
-  pollId String @unique
-  poll   Poll   @relation(fields: [pollId], references: [id])
-
-  @@id([id, pollId])
-}
-
-model Poll {
-  id      String        @unique
-  channel String
-  time    BigInt
-  options String[]
-  users   PollUser[]
-  guildId String        @unique
-  utility UtilityModule @relation(fields: [guildId], references: [id])
-
-  @@id([id, guildId])
-}
-
-model UtilityModule {
-  id            String  @id @unique
-  moduleEnabled Boolean
-  events        Event[]
-  polls         Poll[]
+model NotificationModule {
+  id            String                @id @unique
+  moduleEnabled Boolean               @default(true)
+  twitter       TwitterFollow[]
+  youtube       YoutubeSubscription[]
+  twitch        TwitchFollow[]
+  guildId       String                @unique
+  guild         Guild                 @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model EventUser {
-  id          String  @unique
+  id          String  @id @unique
   name        String
   partnerId   String? @unique
   partnerName String?
   eventId     String  @unique
-  event       Event   @relation(fields: [eventId], references: [id])
-
-  @@id([id, eventId])
+  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Event {
-  id         String        @unique
+  id         String        @id @unique
   channel    String
   locked     Boolean
   isActive   Boolean
@@ -167,26 +130,96 @@ model Event {
   role       String?
   queue      EventUser[]
   guildId    String        @unique
-  utility    UtilityModule @relation(fields: [guildId], references: [id])
+  utility    UtilityModule @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
 
-  @@id([id, guildId])
+model PollUser {
+  id     String @unique
+  option Int
+  pollId String @unique
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@id([id, pollId])
+}
+
+model Poll {
+  id      String        @id @unique
+  title   String
+  channel String
+  time    BigInt
+  options String[]
+  users   PollUser[]
+  guildId String        @unique
+  utility UtilityModule @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model UtilityModule {
+  id              String  @id @unique
+  moduleEnabled   Boolean @default(true)
+  incidentChannel String? @unique
+  creditsChannel  String? @unique
+  events          Event[]
+  polls           Poll[]
+  guildId         String  @unique
+  guild           Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model WelcomeModule {
-  id              String  @id @unique
-  moduleEnabled   Boolean
-  messagesEnabled Boolean
-  channel         String
-  message         String
-  title           String
-  description     String
-  image           String
-  color           String
+  id              String   @id @unique
+  moduleEnabled   Boolean  @default(true)
+  messagesEnabled Boolean?
+  channel         String?  @unique
+  message         String?
+  title           String?
+  description     String?
+  image           String?
+  color           String?
+  guildId         String   @unique
+  guild           Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model Guild {
-  id          String   @id @unique
-  staffRoles  String[]
-  botManagers String[]
-  createdAt   DateTime @default(now())
+  id                 String              @id @unique
+  staffRoles         String[]
+  botManagers        String[]
+  createdAt          DateTime            @default(now())
+  moderationModule   ModerationModule?
+  notificationModule NotificationModule?
+  utilityModule      UtilityModule?
+  welcomeModule      WelcomeModule?
+}
+
+model ModerationModule {
+  id               String          @id @unique
+  moduleEnabled    Boolean         @default(true)
+  logChannel       String?         @unique
+  reportChannel    String?         @unique
+  minAccountAgeReq Int?
+  minAccountAgeMsg String?
+  mutes            Mute[]
+  lockedChannels   LockedChannel[]
+  guildId          String          @unique
+  guild            Guild           @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model LockedChannel {
+  id         String           @id @unique
+  time       BigInt
+  guildId    String           @unique
+  moderation ModerationModule @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model IncidentMessage {
+  id         String          @unique
+  channelId  String
+  incidentId String          @unique
+  incident   DiscordIncident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+}
+
+model DiscordIncident {
+  id        String            @id @unique
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  resolved  Boolean
+  messages  IncidentMessage[]
 }

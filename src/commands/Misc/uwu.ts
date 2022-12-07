@@ -1,20 +1,21 @@
-// Imports
 import { ChatInputCommand, Command, type ContextMenuCommand } from '@sapphire/framework';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '../../lib/util/constants';
-import { getGuildIds, getIdHints } from '../../lib/util/config';
+import { getGuildIds } from '../../lib/util/config';
 
 function getRandomInt(max: number) {
 	return Math.floor(Math.random() * max);
 }
 
 @ApplyOptions<ChatInputCommand.Options>({
-	detailedDescription: 'uwu-ify messages.'
+	detailedDescription: 'uwu-ify messages.',
+	preconditions: ['GuildOnly']
 })
 export class UwuCommand extends Command {
 	public constructor(context: ContextMenuCommand.Context, options: ContextMenuCommand.Options) {
 		super(context, { ...options });
+		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
 	public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
@@ -24,7 +25,7 @@ export class UwuCommand extends Command {
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
 					.setName('uwu')
 					.setType(ApplicationCommandType.Message),
-			{ idHints: getIdHints(this.name), guildIds: getGuildIds() }
+			{ idHints: ['1035728422854467634', '1035810693133373540'], guildIds: getGuildIds() }
 		);
 	}
 
