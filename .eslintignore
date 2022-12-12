@@ -5,3 +5,4 @@ assets
 coverage
 dist
 node_modules
+src/rpc/gen

@@ -10,4 +10,7 @@
 		"tests",
 		"vitest.config.ts"
 	],
+	"exclude": [
+		"src/rpc/gen"
+	]
 }
