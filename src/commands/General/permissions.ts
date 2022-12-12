@@ -37,10 +37,7 @@ export class PermissionsCommand extends Command {
                     The new system works the same as role, category, and channel permissions.
                     Any changes made to the permissions will override the defaults below.
 
-                    More info: <https://discord.com/blog/slash-commands-permissions-discord-apps-bots>
-
-                    __**Command Permission Defaults:**__
-                    Work in progress`)
+                    More info: https://docs.kbot.ca/permission-defaults`)
 			]
 		});
 	}

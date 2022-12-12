@@ -7,7 +7,8 @@ import type { RedisClient } from '../database/redis/RedisClient';
 import type { PrismaClient } from '@prisma/client';
 import type { PollService } from '../../services/PollService';
 import type { KaraokeService } from '../../services/KaraokeService';
-import type { ChannelValidator } from '../util/ChannelValidator';
+import { YoutubeService } from '../../services/YoutubeService';
+import { Validator } from '../util/validators';
 
 declare module 'discord.js' {
 	interface BaseCommandInteraction {
@@ -37,11 +38,12 @@ declare module 'discord.js' {
 declare module '@sapphire/pieces' {
 	interface Container {
 		config: Config;
+		validator: Validator;
 		metrics: Metrics;
 		db: PrismaClient;
 		redis: RedisClient;
 		polls: PollService;
 		karaoke: KaraokeService;
-		channels: ChannelValidator;
+		youtube: YoutubeService;
 	}
 }

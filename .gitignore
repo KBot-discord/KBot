@@ -1,5 +1,6 @@
 ## Builds ##
 dist
+src/rpc/gen
 
 ## Development ##
 coverage

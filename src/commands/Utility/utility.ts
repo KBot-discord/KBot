@@ -45,10 +45,9 @@ export class DiscordStatusCommand extends Subcommand {
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: 'Add emote config', iconURL: interaction.guild!.iconURL()! })
-					.setDescription(`Channel: ${config?.incidentChannel ? channelMention(config.incidentChannel) : 'No channel set'}`)
+					.setAuthor({ name: 'Utility module config', iconURL: interaction.guild!.iconURL()! })
 					.addFields([
-						{ name: 'Module enabled', value: `${config?.moduleEnabled ?? false}`, inline: true },
+						{ name: 'Module enabled', value: `${config?.moduleEnabled ?? false}` },
 						{
 							name: 'Discord status channel',
 							value: `${config?.incidentChannel ? channelMention(config.incidentChannel) : 'No channel set'}`,

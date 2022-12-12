@@ -1,5 +1,5 @@
 import { Command, type ChatInputCommand } from '@sapphire/framework';
-import { MessageEmbed, type Message } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { getGuildIds } from '../../lib/util/config';
@@ -46,20 +46,18 @@ export class EchoCommand extends Command {
 		const message = interaction.options.getString('message', true);
 		const channel: any = interaction.options.getChannel('channel', true);
 
-		return channel
-			.send({
-				content: message,
-				allowedMentions: { parse: ['users'] }
-			})
-			.then((msg: Message) =>
-				interaction.editReply({
-					embeds: [
-						new MessageEmbed()
-							.setColor('#33B54E')
-							.setAuthor({ name: 'Message sent' })
-							.setDescription(`**Channel:** <#${channel.id}>\n**Message:**\n\`\`\`${msg.content}\`\`\``)
-					]
-				})
-			);
+		const sentMessage = await channel.send({
+			content: message,
+			allowedMentions: { parse: ['users'] }
+		});
+
+		return interaction.editReply({
+			embeds: [
+				new MessageEmbed()
+					.setColor('#33B54E')
+					.setAuthor({ name: 'Message sent' })
+					.setDescription(`**Channel:** <#${channel.id}>\n**Message:**\n\`\`\`${sentMessage.content}\`\`\``)
+			]
+		});
 	}
 }

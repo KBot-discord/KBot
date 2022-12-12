@@ -19,9 +19,9 @@ function flattenConfig(obj: any) {
 	return flattenedObj;
 }
 
-function validateConfig(): boolean {
+export function validateConfig(cfg: Config): boolean {
 	let error = false;
-	const obj = flattenConfig(config);
+	const obj = flattenConfig(cfg);
 	for (const [key, value] of Object.entries(obj)) {
 		if (value === undefined) {
 			console.log(`Invalid value for: ${key}`);
@@ -32,7 +32,7 @@ function validateConfig(): boolean {
 }
 
 export function getConfig(): Config | null {
-	const isConfigValid = validateConfig();
+	const isConfigValid = validateConfig(config);
 	if (!isConfigValid) return null;
 	container.config = config;
 	return config;

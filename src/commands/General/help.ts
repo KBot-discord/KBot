@@ -38,11 +38,7 @@ export class HelpCommand extends Command {
 
 	public async chatInputRun(interaction: ChatInputCommand.Interaction) {
 		await interaction.deferReply();
-		const avatar = interaction.client.user!.avatarURL();
-		return this.display(interaction, avatar!);
-	}
-
-	private async display(interaction: ChatInputCommand.Interaction, avatar: string) {
+		const avatar = interaction.client.user!.displayAvatarURL();
 		const display = await this.createDisplay(avatar);
 		await display.run(interaction, interaction.user);
 		return interaction;

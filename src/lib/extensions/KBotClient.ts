@@ -3,12 +3,15 @@ import { PrismaClient } from '@prisma/client';
 import { RedisClient } from '../database/redis/RedisClient';
 import { PollService } from '../../services/PollService';
 import { KaraokeService } from '../../services/KaraokeService';
-import { ChannelValidator } from '../util/ChannelValidator';
 import type { ClientOptions } from 'discord.js';
+import { YoutubeService } from '../../services/YoutubeService';
+import { Validator } from '../util/validators';
 
 export class KBotClient extends SapphireClient {
 	public constructor(options: ClientOptions) {
 		super(options);
+		container.validator = new Validator();
+
 		container.db = new PrismaClient({
 			datasources: {
 				database: {
@@ -17,9 +20,10 @@ export class KBotClient extends SapphireClient {
 			}
 		});
 		container.redis = new RedisClient();
+
 		container.polls = new PollService();
 		container.karaoke = new KaraokeService();
-		container.channels = new ChannelValidator();
+		container.youtube = new YoutubeService();
 	}
 
 	public override async login(token: string) {

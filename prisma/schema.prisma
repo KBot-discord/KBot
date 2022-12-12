@@ -112,12 +112,13 @@ model NotificationModule {
 }
 
 model EventUser {
-  id          String  @id @unique
+  id          String   @id @unique
   name        String
-  partnerId   String? @unique
+  partnerId   String?  @unique
   partnerName String?
-  eventId     String  @unique
-  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  eventId     String   @unique
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Event {

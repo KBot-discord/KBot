@@ -1,0 +1,9 @@
+version: v1
+plugins:
+  - name: grpc
+    out: src/rpc/gen
+    opt: grpc_js
+    path: grpc_tools_node_protoc_plugin
+  - name: ts
+    out: src/rpc/gen
+    opt: grpc_js

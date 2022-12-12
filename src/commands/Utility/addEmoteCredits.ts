@@ -1,6 +1,6 @@
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds, getIdHints } from '../../lib/util/config';
+import { getGuildIds } from '../../lib/util/config';
 import { ChannelType } from 'discord-api-types/v10';
 import { GuildChannel, MessageEmbed } from 'discord.js';
 import { EmbedColors } from '../../lib/util/constants';
@@ -50,7 +50,7 @@ export class DiscordStatusCommand extends Subcommand {
 							.setName('config')
 							.setDescription('Show the current config')
 					),
-			{ idHints: getIdHints(this.name), guildIds: getGuildIds() }
+			{ idHints: [], guildIds: getGuildIds() }
 		);
 	}
 
