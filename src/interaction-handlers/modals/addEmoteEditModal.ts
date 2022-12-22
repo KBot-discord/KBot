@@ -2,7 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, ModalSubmitInteraction } from 'discord.js';
 import { EmbedColors } from '../../lib/util/constants';
-import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/enums';
+import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/CustomIds';
 import { parseCustomId } from '@kbotdev/custom-id';
 import type { EmoteEditModal } from '../../lib/types/CustomIds';
 

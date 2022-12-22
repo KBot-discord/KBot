@@ -2,7 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, type ButtonInteraction } from 'discord.js';
 import { EmbedColors } from '../../../lib/util/constants';
-import { PollCustomIds } from '../../../lib/types/enums';
+import { PollCustomIds } from '../../../lib/types/CustomIds';
 import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
 import type { PollOption } from '../../../lib/types/CustomIds';
 

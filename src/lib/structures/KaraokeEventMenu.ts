@@ -1,7 +1,7 @@
 import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
 import { Guild, GuildChannel, MessageButton, MessageEmbed } from 'discord.js';
 import { BlankSpace, EmbedColors } from '../util/constants';
-import { KaraokeCustomIds } from '../types/enums';
+import { KaraokeCustomIds } from '../types/CustomIds';
 import type { Event } from '@prisma/client';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';

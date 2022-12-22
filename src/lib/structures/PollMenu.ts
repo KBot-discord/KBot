@@ -1,7 +1,7 @@
 import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
 import { Guild, Message, MessageButton, MessageEmbed, User } from 'discord.js';
 import { EmbedColors } from '../util/constants';
-import { PollCustomIds } from '../types/enums';
+import { PollCustomIds } from '../types/CustomIds';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
 import type { Poll } from '@prisma/client';

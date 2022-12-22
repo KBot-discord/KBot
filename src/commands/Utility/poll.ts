@@ -6,7 +6,7 @@ import { isNullish } from '@sapphire/utilities';
 import { parseTimeString } from '../../lib/util/util';
 import { EmbedColors, POLL_NUMBERS, POLL_TIME_LIMIT } from '../../lib/util/constants';
 import { getGuildIds } from '../../lib/util/config';
-import { PollCustomIds } from '../../lib/types/enums';
+import { PollCustomIds } from '../../lib/types/CustomIds';
 import { PollMenu } from '../../lib/structures/PollMenu';
 import { buildCustomId } from '@kbotdev/custom-id';
 import type { PollOption } from '../../lib/types/CustomIds';

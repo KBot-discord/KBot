@@ -4,7 +4,7 @@ import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedColors, getGuildEmoteSlots } from '../../lib/util/constants';
 import { getGuildIds } from '../../lib/util/config';
-import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/enums';
+import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/CustomIds';
 import { buildCustomId } from '@kbotdev/custom-id';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EmoteCredit } from '../../lib/types/CustomIds';

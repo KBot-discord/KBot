@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
-import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/enums';
+import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/CustomIds';
 import { isNullish } from '@sapphire/utilities';
 import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
 import { buildCustomId } from '@kbotdev/custom-id';
