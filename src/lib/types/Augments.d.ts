@@ -1,16 +1,21 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { APIMessage } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
-import type { Config } from './config';
-import type { Metrics } from './client';
-import type { RedisClient } from '../database/redis/RedisClient';
+import type { Config } from './Config';
+import type { Metrics } from './Client';
+import type { RedisClient } from '../database/RedisClient';
 import type { PrismaClient } from '@prisma/client';
 import type { PollService } from '../../services/PollService';
 import type { KaraokeService } from '../../services/KaraokeService';
-import { YoutubeService } from '../../services/YoutubeService';
-import { Validator } from '../util/validators';
+import type { YoutubeService } from '../../services/YoutubeService';
+import type { Validator } from '../util/validators';
+import type { KBotErrors, Payload } from './Errors';
 
 declare module 'discord.js' {
+	interface Client {
+		emitError(event: KBotErrors, payload: Payload<typeof event>): boolean;
+	}
+
 	interface BaseCommandInteraction {
 		defaultReply(text: string): Promise<void | APIMessage | Message<boolean>>;
 		successReply(text: string): Promise<void | APIMessage | Message<boolean>>;
