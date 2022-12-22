@@ -5,7 +5,7 @@ import { MessageEmbed, TextChannel } from 'discord.js';
 import fetch from 'node-fetch';
 import { DISCORD_STATUS_BASE, StatusEmbed } from '../../lib/util/constants';
 import { isNullish } from '@sapphire/utilities';
-import type { StatusPageIncident, StatusPageResult } from '../../lib/types/discordStatus';
+import type { StatusPageIncident, StatusPageResult } from '../../lib/types/DiscordStatus';
 import type { IncidentMessage } from '@prisma/client';
 
 @ApplyOptions<ScheduledTask.Options>({
