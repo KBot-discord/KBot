@@ -1,6 +1,6 @@
 import { container, SapphireClient } from '@sapphire/framework';
 import { PrismaClient } from '@prisma/client';
-import { RedisClient } from '../database/redis/RedisClient';
+import { RedisClient } from '../database/RedisClient';
 import { PollService } from '../../services/PollService';
 import { KaraokeService } from '../../services/KaraokeService';
 import type { ClientOptions } from 'discord.js';
