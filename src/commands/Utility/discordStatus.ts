@@ -1,20 +1,23 @@
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType } from 'discord-api-types/v10';
+import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildChannel, MessageEmbed } from 'discord.js';
 import { EmbedColors } from '../../lib/util/constants';
 import { channelMention } from '@discordjs/builders';
 import type { UtilityModule } from '@prisma/client';
 import { getGuildIds } from '../../lib/util/config';
+import { KBotError } from '../../lib/structures/KBotError';
+import { KBotErrors } from '../../lib/types/Errors';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Discord status',
-	preconditions: ['GuildOnly'],
 	subcommands: [
 		{ name: 'set', chatInputRun: 'chatInputSet' },
 		{ name: 'unset', chatInputRun: 'chatInputUnset' },
 		{ name: 'config', chatInputRun: 'chatInputConfig' }
-	]
+	],
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class DiscordStatusCommand extends Subcommand {
 	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
@@ -56,22 +59,37 @@ export class DiscordStatusCommand extends Subcommand {
 
 	public async chatInputSet(interaction: Subcommand.ChatInputInteraction) {
 		await interaction.deferReply();
-		const { db, validator } = this.container;
+		const { client, db, validator } = this.container;
 		const channel = interaction.options.getChannel('channel', true) as GuildChannel;
 
 		const { valid, errors } = validator.channels.canSendEmbeds(channel);
 		if (!valid) {
-			return interaction.errorReply(
-				`I don't have the required permission(s) to send tweets in <#${channel.id}>\n\nRequired permission(s):${errors}`
-			);
+			const error = new KBotError({
+				identifier: KBotErrors.ChannelPermissions,
+				message: `I don't have the required permission(s) to send tweets in ${channelMention(channel.id)}\n\nRequired permission(s):${errors}`
+			});
+			return client.emitError(KBotErrors.ChannelPermissions, { interaction, error });
 		}
 
 		const config = await db.utilityModule
-			.update({
-				where: { id: interaction.guildId! },
-				data: { incidentChannel: channel.id }
+			.upsert({
+				where: {
+					id: interaction.guildId!
+				},
+				update: {
+					incidentChannel: channel.id
+				},
+				create: {
+					incidentChannel: channel.id,
+					guild: { connect: { id: interaction.guildId! } }
+				}
 			})
-			.catch(() => null);
+			.catch((err) => {
+				this.container.logger.error(err);
+				return null;
+			});
+
+		if (!config) return interaction.errorReply('Something went wrong.');
 		return this.showConfig(interaction, config);
 	}
 
@@ -80,12 +98,24 @@ export class DiscordStatusCommand extends Subcommand {
 		const { db } = this.container;
 
 		const config = await db.utilityModule
-			.update({
-				where: { id: interaction.guildId! },
-				data: { incidentChannel: null }
+			.upsert({
+				where: {
+					id: interaction.guildId!
+				},
+				update: {
+					incidentChannel: null
+				},
+				create: {
+					incidentChannel: null,
+					guild: { connect: { id: interaction.guildId! } }
+				}
 			})
-			.catch(() => null);
+			.catch((err) => {
+				this.container.logger.error(err);
+				return null;
+			});
 
+		if (!config) return interaction.errorReply('Something went wrong.');
 		return this.showConfig(interaction, config);
 	}
 
@@ -97,7 +127,10 @@ export class DiscordStatusCommand extends Subcommand {
 			.findUnique({
 				where: { id: interaction.guildId! }
 			})
-			.catch(() => null);
+			.catch((err) => {
+				this.container.logger.error(err);
+				return null;
+			});
 
 		return this.showConfig(interaction, config);
 	}

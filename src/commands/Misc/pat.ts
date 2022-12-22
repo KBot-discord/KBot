@@ -19,7 +19,8 @@ interface PatOptions {
 
 @ApplyOptions<ChatInputCommand.Options>({
 	detailedDescription: '(Used on members) Makes and sends a pat emote.',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.AttachFiles]
 })
 export class PatCommand extends Command {
 	private pats: Image[] = [];

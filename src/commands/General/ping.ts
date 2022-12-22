@@ -6,7 +6,8 @@ import { getGuildIds } from '../../lib/util/config';
 
 @ApplyOptions<ChatInputCommand.Options>({
 	description: 'Ping bot to see if it is alive.',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
 export class PingCommand extends Command {
 	public constructor(context: ChatInputCommand.Context, options: ChatInputCommand.Options) {

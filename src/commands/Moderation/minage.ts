@@ -4,15 +4,17 @@ import { getGuildIds } from '../../lib/util/config';
 import { MessageEmbed } from 'discord.js';
 import { EmbedColors } from '../../lib/util/constants';
 import type { ModerationModule } from '@prisma/client';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Minimum account age',
-	preconditions: ['GuildOnly'],
 	subcommands: [
 		{ name: 'set', chatInputRun: 'chatInputSet' },
 		{ name: 'unset', chatInputRun: 'chatInputUnset' },
 		{ name: 'config', chatInputRun: 'chatInputConfig' }
-	]
+	],
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class DiscordStatusCommand extends Subcommand {
 	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
@@ -81,8 +83,8 @@ export class DiscordStatusCommand extends Subcommand {
 			return prisma.moderationModule.update({
 				where: { id: interaction.guildId! },
 				data: {
-					minAccountAgeReq: days ?? res!.minAccountAgeReq,
-					minAccountAgeMsg: response ?? res!.minAccountAgeMsg
+					minAccountAgeReq: days ?? res?.minAccountAgeReq,
+					minAccountAgeMsg: response ?? res?.minAccountAgeMsg
 				}
 			});
 		});
@@ -106,8 +108,8 @@ export class DiscordStatusCommand extends Subcommand {
 			return prisma.moderationModule.update({
 				where: { id: interaction.guildId! },
 				data: {
-					minAccountAgeReq: days ? 0 : res!.minAccountAgeReq,
-					minAccountAgeMsg: response ? undefined : res!.minAccountAgeMsg
+					minAccountAgeReq: days ? 0 : res?.minAccountAgeReq,
+					minAccountAgeMsg: response ? null : res?.minAccountAgeMsg
 				}
 			});
 		});

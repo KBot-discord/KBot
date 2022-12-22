@@ -7,7 +7,8 @@ import { getGuildIds } from '../../lib/util/config';
 
 @ApplyOptions<ChatInputCommand.Options>({
 	description: 'Show information about command permissions.',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class PermissionsCommand extends Command {
 	public constructor(context: ChatInputCommand.Context, options: ChatInputCommand.Options) {

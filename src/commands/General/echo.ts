@@ -3,10 +3,14 @@ import { MessageEmbed } from 'discord.js';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { getGuildIds } from '../../lib/util/config';
+import { KBotError } from '../../lib/structures/KBotError';
+import { KBotErrors } from '../../lib/types/Errors';
+import { channelMention } from '@discordjs/builders';
 
 @ApplyOptions<ChatInputCommand.Options>({
 	description: 'Sends the provided message to the selected channel.',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class EchoCommand extends Command {
 	public constructor(context: ChatInputCommand.Context, options: ChatInputCommand.Options) {
@@ -43,8 +47,21 @@ export class EchoCommand extends Command {
 
 	public async chatInputRun(interaction: ChatInputCommand.Interaction) {
 		await interaction.deferReply();
+		const { client, validator } = this.container;
+
 		const message = interaction.options.getString('message', true);
 		const channel: any = interaction.options.getChannel('channel', true);
+
+		const { valid, errors } = validator.channels.canSendEmbeds(channel);
+		if (!valid) {
+			const error = new KBotError({
+				identifier: KBotErrors.ChannelPermissions,
+				message: `I don't have the required permission(s) to send messages in ${channelMention(
+					channel.id
+				)}\n\nRequired permission(s):${errors}`
+			});
+			return client.emitError(KBotErrors.ChannelPermissions, { interaction, error });
+		}
 
 		const sentMessage = await channel.send({
 			content: message,

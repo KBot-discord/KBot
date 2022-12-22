@@ -1,16 +1,17 @@
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
 import { getGuildIds } from '../../lib/util/config';
-import { ChannelType } from 'discord-api-types/v10';
+import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Discord status',
-	preconditions: ['GuildOnly'],
 	subcommands: [
 		{ name: 'set', chatInputRun: 'chatInputSet' },
 		{ name: 'unset', chatInputRun: 'chatInputUnset' },
 		{ name: 'config', chatInputRun: 'chatInputConfig' }
-	]
+	],
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class DiscordStatusCommand extends Subcommand {
 	public constructor(context: Subcommand.Context, options: Subcommand.Options) {

@@ -10,7 +10,8 @@ import type { ModerationModule } from '../../modules/ModerationModule';
 	description: 'Get info on the selected user or provided ID.',
 	detailedDescription:
 		'Displays all the info about a user such as: creation date, join date, if they are in the server, if they are banned (and ban reason if applicable).',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class UserInfoCommand extends ModuleCommand<ModerationModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
@@ -18,7 +19,7 @@ export class UserInfoCommand extends ModuleCommand<ModerationModule> {
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -35,7 +36,7 @@ export class UserInfoCommand extends ModuleCommand<ModerationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ChatInputCommand.Interaction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const embed = await getUserInfo(interaction, interaction.options.getUser('target', true).id);
 		return interaction.editReply({ embeds: [embed] });

@@ -6,10 +6,10 @@ import { isNullish } from '@sapphire/utilities';
 import { parseTimeString } from '../../lib/util/util';
 import { EmbedColors, POLL_NUMBERS, POLL_TIME_LIMIT } from '../../lib/util/constants';
 import { getGuildIds } from '../../lib/util/config';
-import { buildKey } from '../../lib/util/keys';
 import { PollCustomIds } from '../../lib/types/enums';
 import { PollMenu } from '../../lib/structures/PollMenu';
-import type { IPoll } from '../../lib/types/keys';
+import { buildCustomId } from '@kbotdev/custom-id';
+import type { PollOption } from '../../lib/types/CustomIds';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Get info on the selected user or provided ID',
@@ -127,10 +127,10 @@ export class PollCommand extends Subcommand {
 		}
 
 		const expiresIn = parseTimeString(time);
-		if (!isNullish(time) && !expiresIn) {
+		if (time && !expiresIn) {
 			return interaction.errorReply('Invalid time format');
 		}
-		if (!isNullish(expiresIn) && expiresIn > Date.now() + POLL_TIME_LIMIT) {
+		if (expiresIn && expiresIn > Date.now() + POLL_TIME_LIMIT) {
 			return interaction.errorReply('Cannot run a poll for longer than a week');
 		}
 
@@ -149,7 +149,7 @@ export class PollCommand extends Subcommand {
 
 	public async chatInputMenu(interaction: Subcommand.ChatInputInteraction) {
 		await interaction.deferReply({ ephemeral: true });
-		return new PollMenu(interaction).run();
+		return new PollMenu(interaction.guild!).run(interaction);
 	}
 
 	private formatOptions(interaction: Subcommand.ChatInputInteraction): string[] | null {
@@ -159,8 +159,7 @@ export class PollCommand extends Subcommand {
 				options.push(`${POLL_NUMBERS[i]} ${interaction.options.getString(`option${i + 1}`)}`);
 			} else break;
 		}
-		if (options.length < 2) return null;
-		return options;
+		return options.length < 2 ? null : options;
 	}
 
 	private createPollEmbeds(userTag: string, text: string, choices: string[], expiresAt?: number): MessageEmbed[] {
@@ -190,7 +189,7 @@ export class PollCommand extends Subcommand {
 			for (let j = 0; j < 5; j++) {
 				const iteration = j + i * 5;
 				if (options[iteration]) {
-					const key = buildKey<IPoll>(PollCustomIds.Vote, {
+					const key = buildCustomId<PollOption>(PollCustomIds.Vote, {
 						option: iteration
 					});
 					components.push(new MessageButton().setCustomId(key).setEmoji(POLL_NUMBERS[iteration]).setStyle('PRIMARY'));

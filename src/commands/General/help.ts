@@ -14,7 +14,8 @@ function sortCommandsAlphabetically(_: Command[], __: Command[], firstCategory: 
 
 @ApplyOptions<ChatInputCommand.Options>({
 	description: 'Make a poll with or without a time limit.',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class HelpCommand extends Command {
 	public constructor(context: ChatInputCommand.Context, options: ChatInputCommand.Options) {

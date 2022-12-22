@@ -1,20 +1,24 @@
-import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
 import { getGuildIds } from '../../lib/util/config';
-import { Command } from '@sapphire/framework';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { roleMention } from '@discordjs/builders';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { Role } from 'discord.js';
+import type { UtilityModule } from '../../modules/UtilityModule';
 
-@ApplyOptions<Subcommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Discord status',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
-export class KBotCommand extends Command {
-	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
+export class KBotCommand extends ModuleCommand<UtilityModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
-		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
+		if (this.description && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: Subcommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -30,7 +34,7 @@ export class KBotCommand extends Command {
 		);
 	}
 
-	public async chatInputRun(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const role = interaction.options.getRole('role', true) as Role;
 
@@ -39,14 +43,14 @@ export class KBotCommand extends Command {
 		}
 		if (role.members.size === 0) {
 			return interaction.editReply({
-				content: `Users which have: <@&${role.id}> (0)\n\nNo users`
+				content: `Users which have: ${roleMention(role.id)} (0)\n\nNo users`
 			});
 		}
 
 		const userList = role.members.map(({ user }) => `${user.tag} - \`\`${user.id}\`\``);
 
 		return interaction.editReply({
-			content: `Users which have: <@&${role.id}> (${userList.length}) \n\n${userList.join('\n')}`
+			content: `Users which have: ${roleMention(role.id)} (${userList.length}) \n\n${userList.join('\n')}`
 		});
 	}
 }

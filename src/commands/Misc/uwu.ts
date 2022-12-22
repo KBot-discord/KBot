@@ -10,7 +10,8 @@ function getRandomInt(max: number) {
 
 @ApplyOptions<ChatInputCommand.Options>({
 	detailedDescription: 'uwu-ify messages.',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
 export class UwuCommand extends Command {
 	public constructor(context: ContextMenuCommand.Context, options: ContextMenuCommand.Options) {
@@ -113,8 +114,6 @@ export class UwuCommand extends Command {
 			uwu = 'peenie';
 		} else if (uwu === 'cum' || uwu === 'semen') {
 			uwu = 'cummies';
-		} else if (uwu === 'ass') {
-			uwu = 'boi pussy';
 		} else if (uwu === 'dad' || uwu === 'father') {
 			uwu = 'daddy';
 		} else {

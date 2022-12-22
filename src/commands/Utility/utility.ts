@@ -4,11 +4,13 @@ import { getGuildIds } from '../../lib/util/config';
 import { MessageEmbed } from 'discord.js';
 import { EmbedColors } from '../../lib/util/constants';
 import { channelMention } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Utility module config',
-	preconditions: ['GuildOnly'],
-	subcommands: [{ name: 'config', chatInputRun: 'chatInputConfig' }]
+	subcommands: [{ name: 'config', chatInputRun: 'chatInputConfig' }],
+	preconditions: ['GuildOnly', 'ModuleEnabled'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class DiscordStatusCommand extends Subcommand {
 	public constructor(context: Subcommand.Context, options: Subcommand.Options) {

@@ -1,13 +1,14 @@
 import axios from 'axios';
-import { ChatInputCommand, Command, ContextMenuCommand } from '@sapphire/framework';
 import { MessageActionRow, MessageEmbed, Modal, ModalSubmitInteraction, TextInputComponent, type Message, MessageButton } from 'discord.js';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedColors, getGuildEmoteSlots } from '../../lib/util/constants';
 import { getGuildIds } from '../../lib/util/config';
-import { buildKey } from '../../lib/util/keys';
 import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/enums';
-import type { IEmoteCredit } from '../../lib/types/keys';
+import { buildCustomId } from '@kbotdev/custom-id';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { EmoteCredit } from '../../lib/types/CustomIds';
+import type { UtilityModule } from '../../modules/UtilityModule';
 
 interface EmojiData {
 	emojiName?: string;
@@ -15,19 +16,21 @@ interface EmojiData {
 	isAnimated: boolean;
 }
 
-@ApplyOptions<ChatInputCommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'UtilityModule',
 	name: 'Add emote',
 	detailedDescription:
 		'(Used on messages) Adds the image attachment, link, or emoji that is in the message. Priority is ``emoji > attachment > link``.',
-	preconditions: ['GuildOnly']
+	preconditions: ['GuildOnly', 'ModuleEnabled'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class AddEmoteCommand extends Command {
-	public constructor(context: ContextMenuCommand.Context, options: ContextMenuCommand.Options) {
+export class AddEmoteCommand extends ModuleCommand<UtilityModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -38,7 +41,7 @@ export class AddEmoteCommand extends Command {
 		);
 	}
 
-	public async contextMenuRun(interaction: ContextMenuCommand.Interaction) {
+	public async contextMenuRun(interaction: ModuleCommand.ContextMenuInteraction) {
 		const embed = new MessageEmbed();
 		const message = interaction.options.getMessage('message', true);
 
@@ -109,7 +112,7 @@ export class AddEmoteCommand extends Command {
 					new MessageActionRow().addComponents([
 						new MessageButton()
 							.setCustomId(
-								buildKey<IEmoteCredit>(AddEmoteCustomIds.Credits, {
+								buildCustomId<EmoteCredit>(AddEmoteCustomIds.Credits, {
 									name: emoteName,
 									id: newEmoji.id
 								})
@@ -126,7 +129,7 @@ export class AddEmoteCommand extends Command {
 		}
 	}
 
-	private async calculateSlots(interaction: ContextMenuCommand.Interaction) {
+	private async calculateSlots(interaction: ModuleCommand.ContextMenuInteraction) {
 		const allEmojis = await interaction.guild!.emojis.fetch();
 		const totalSlots = getGuildEmoteSlots(interaction.guild!.premiumTier);
 		return {
