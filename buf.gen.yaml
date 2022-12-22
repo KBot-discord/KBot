@@ -1,9 +1,8 @@
 version: v1
 plugins:
-  - name: grpc
+  - name: protoc-gen-twirpscript
+    path: ./node_modules/twirpscript/compiler.js
     out: src/rpc/gen
-    opt: grpc_js
-    path: grpc_tools_node_protoc_plugin
-  - name: ts
-    out: src/rpc/gen
-    opt: grpc_js
+    opt:
+      - language=typescript
+    strategy: all
