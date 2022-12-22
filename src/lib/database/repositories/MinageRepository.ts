@@ -1,12 +1,12 @@
 import { container } from '@sapphire/framework';
 import { minutesFromNow } from '../../util/util';
-import type { Key } from '../../types/Cache';
+import { minageKey } from '../../util/cacheKeys';
 
 export class MinageRepository {
 	private readonly db;
 	private readonly cache;
 
-	private readonly cacheKey = (guildId: string) => `kbot:core:guilds:${guildId}:minage` as Key;
+	private readonly cacheKey = minageKey;
 
 	public constructor() {
 		this.db = container.db.moderationModule;

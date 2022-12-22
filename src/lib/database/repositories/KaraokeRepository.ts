@@ -1,11 +1,11 @@
 import { container, Result } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
+import { karaokeEventActiveKey, karaokeEventExistsKey } from '../../util/cacheKeys';
 import type { Event, EventUser } from '@prisma/client';
-import type { Key } from '../../types/Cache';
 
 export class KaraokeRepository {
-	private readonly eventExistsKey = (guildId: string, eventId: string) => `kbot:core:guilds:${guildId}:karaoke:${eventId}:exists` as Key;
-	private readonly eventActiveKey = (guildId: string, eventId: string) => `kbot:core:guilds:${guildId}:karaoke:${eventId}:active` as Key;
+	private readonly existsKey = karaokeEventExistsKey;
+	private readonly isActiveKey = karaokeEventActiveKey;
 
 	public async createEvent(guildId: string, eventId: string, channelId: string, messageId: string): Promise<Event | null> {
 		const result = await Result.fromAsync(async () => {
@@ -171,7 +171,7 @@ export class KaraokeRepository {
 
 	public async doesEventExist(guildId: string, eventId: string): Promise<boolean | null> {
 		const result = await Result.fromAsync(async () => {
-			const key = this.eventExistsKey(guildId, eventId);
+			const key = this.existsKey(guildId, eventId);
 			return container.redis.get(key);
 		});
 		return result.match({ ok: (data) => data === 'true', err: () => null });
@@ -179,7 +179,7 @@ export class KaraokeRepository {
 
 	public async setEventExistence(guildId: string, eventId: string, eventExists: boolean): Promise<boolean | null> {
 		const result = await Result.fromAsync(async () => {
-			const key = this.eventExistsKey(guildId, eventId);
+			const key = this.existsKey(guildId, eventId);
 			return container.redis.set(key, `${eventExists}`);
 		});
 		return result.match({ ok: (data) => data === 'OK', err: () => null });
@@ -187,7 +187,7 @@ export class KaraokeRepository {
 
 	public async setEventStatus(guildId: string, eventId: string, status: boolean): Promise<boolean | null> {
 		const result = await Result.fromAsync(async () => {
-			const key = this.eventActiveKey(guildId, eventId);
+			const key = this.isActiveKey(guildId, eventId);
 			return container.redis.set(key, `${status}`);
 		});
 		return result.match({ ok: (data) => data === 'OK', err: () => null });
@@ -197,7 +197,7 @@ export class KaraokeRepository {
 		const result = await Result.fromAsync(async () => {
 			const doesEventExist = await this.doesEventExist(guildId, eventId);
 			if (!doesEventExist) return false;
-			const key = this.eventActiveKey(guildId, eventId);
+			const key = this.isActiveKey(guildId, eventId);
 			return container.redis.get(key);
 		});
 		return result.match({ ok: (data) => data === 'true', err: () => null });

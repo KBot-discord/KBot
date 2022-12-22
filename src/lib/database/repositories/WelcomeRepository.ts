@@ -1,14 +1,14 @@
 import { container } from '@sapphire/framework';
 import { minutesFromNow } from '../../util/util';
+import { welcomeEnabledKey, welcomeKey } from '../../util/cacheKeys';
 import type { WelcomeModule } from '@prisma/client';
-import type { Key } from '../../types/Cache';
 
 export class WelcomeRepository {
 	private readonly db;
 	private readonly cache;
 
-	private readonly configKey = (guildId: string) => `kbot:core:guilds:${guildId}:welcome` as Key;
-	private readonly enabledKey = (guildId: string) => `${this.configKey(guildId)}:enabled` as Key;
+	private readonly configKey = welcomeKey;
+	private readonly enabledKey = welcomeEnabledKey;
 
 	public constructor() {
 		this.db = container.db.welcomeModule;
