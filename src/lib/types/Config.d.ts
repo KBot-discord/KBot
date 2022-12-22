@@ -9,6 +9,15 @@ export interface Config {
 	api: {
 		port: number;
 	};
+	rpc: {
+		server: {
+			port: number;
+		};
+		youtube: {
+			url: string;
+			port: number;
+		};
+	};
 	db: {
 		url: string;
 	};
