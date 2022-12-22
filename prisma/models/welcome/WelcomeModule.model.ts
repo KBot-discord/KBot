@@ -14,6 +14,5 @@ export default createModel('WelcomeModule', (model) => {
 		.string('image', { optional: true })
 		.string('color', { optional: true })
 
-		.string('guildId', { unique: true })
-		.relation('guild', GuildModel, { fields: ['guildId'], references: ['id'], onDelete: "Cascade" })
+		.relation('guild', GuildModel, { fields: ['id'], references: ['id'], onDelete: "Cascade" })
 });

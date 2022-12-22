@@ -7,7 +7,6 @@ createSchema({
 		url: { env: 'DATABASE_URL' }
 	},
 	generator: {
-		provider: 'prisma-client-js',
-		previewFeatures: ['interactiveTransactions']
+		provider: 'prisma-client-js'
 	}
 }).export(__dirname, 'schema');

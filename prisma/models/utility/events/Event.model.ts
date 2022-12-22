@@ -1,5 +1,5 @@
 import { createModel } from 'schemix';
-import UtilityModuleModel from './UtilityModule.model';
+import UtilityModuleModel from '../UtilityModule.model';
 import EventUser from './EventUser.model';
 
 export default createModel('Event', (model) => {

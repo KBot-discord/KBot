@@ -1,6 +1,6 @@
 import { createModel } from 'schemix';
-import EventModel from './Event.model';
-import PollModel from './Poll.model';
+import EventModel from './events/Event.model';
+import PollModel from './polls/Poll.model';
 import GuildModel from '../Guild.model';
 
 export default createModel('UtilityModule', (model) => {
@@ -14,6 +14,5 @@ export default createModel('UtilityModule', (model) => {
 		.relation('events', EventModel, { list: true })
 		.relation('polls', PollModel, { list: true })
 
-		.string('guildId', { unique: true })
-		.relation('guild', GuildModel, { fields: ['guildId'], references: ['id'], onDelete: 'Cascade' })
+		.relation('guild', GuildModel, { fields: ['id'], references: ['id'], onDelete: 'Cascade' })
 });

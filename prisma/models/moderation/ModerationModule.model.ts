@@ -16,6 +16,5 @@ export default createModel('ModerationModule', (model) => {
 		.relation('mutes', MuteModel, { list: true })
 		.relation('lockedChannels', LockedChannelModel, { list: true })
 
-		.string('guildId', { unique: true })
-		.relation('guild', GuildModel, { fields: ['guildId'], references: ['id'], onDelete: 'Cascade' })
+		.relation('guild', GuildModel, { fields: ['id'], references: ['id'], onDelete: 'Cascade' })
 });

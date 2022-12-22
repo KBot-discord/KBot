@@ -4,8 +4,7 @@ datasource database {
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions"]
+  provider = "prisma-client-js"
 }
 
 model Mute {
@@ -37,37 +36,6 @@ model TwitterFollow {
 
   @@id([id])
   @@unique([webhookId, accountId])
-}
-
-model YoutubeStream {
-  id         String         @id @unique
-  title      String
-  messageIds String[]
-  channelId  String         @unique
-  channel    YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-}
-
-model YoutubeChannel {
-  id            String                @id @unique
-  name          String
-  image         String
-  subscriptions YoutubeSubscription[]
-  streams       YoutubeStream[]
-}
-
-model YoutubeSubscription {
-  id            String             @default(uuid()) @database.Uuid
-  message       String
-  role          String
-  webhookId     String
-  webhookToken  String
-  channelId     String             @unique
-  channel       YoutubeChannel     @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  guildId       String             @unique
-  notifications NotificationModule @relation(fields: [guildId], references: [id], onDelete: Cascade)
-
-  @@id([id])
-  @@unique([webhookId, channelId])
 }
 
 model TwitchStream {
@@ -102,13 +70,11 @@ model TwitchFollow {
 }
 
 model NotificationModule {
-  id            String                @id @unique
-  moduleEnabled Boolean               @default(true)
+  id            String          @id @unique
+  moduleEnabled Boolean         @default(true)
   twitter       TwitterFollow[]
-  youtube       YoutubeSubscription[]
   twitch        TwitchFollow[]
-  guildId       String                @unique
-  guild         Guild                 @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guild         Guild           @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model EventUser {
@@ -161,8 +127,7 @@ model UtilityModule {
   creditsChannel  String? @unique
   events          Event[]
   polls           Poll[]
-  guildId         String  @unique
-  guild           Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guild           Guild   @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model WelcomeModule {
@@ -175,8 +140,7 @@ model WelcomeModule {
   description     String?
   image           String?
   color           String?
-  guildId         String   @unique
-  guild           Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guild           Guild    @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model Guild {
@@ -199,8 +163,7 @@ model ModerationModule {
   minAccountAgeMsg String?
   mutes            Mute[]
   lockedChannels   LockedChannel[]
-  guildId          String          @unique
-  guild            Guild           @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guild            Guild           @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model LockedChannel {

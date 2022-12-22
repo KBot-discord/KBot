@@ -12,6 +12,5 @@ export default createModel('NotificationModule', (model) => {
 		.relation('twitter', TwitterFollowModel, { list: true })
 		.relation('twitch', TwitchFollowModel, { list: true })
 
-		.string('guildId', { unique: true })
-		.relation('guild', GuildModel, { fields: ['guildId'], references: ['id'], onDelete: 'Cascade' })
+		.relation('guild', GuildModel, { fields: ['id'], references: ['id'], onDelete: 'Cascade' })
 });
