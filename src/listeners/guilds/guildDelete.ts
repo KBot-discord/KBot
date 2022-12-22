@@ -7,6 +7,7 @@ import type { Guild } from 'discord.js';
 })
 export class GuildListener extends Listener {
 	public async run(guild: Guild) {
-		return container.db.guild.delete({ where: { id: guild.id } });
+		await container.db.guild.delete({ where: { id: guild.id } });
+		return container.redis.deleteScanKeys(`kbot:core:guilds:${guild.id}:*`);
 	}
 }

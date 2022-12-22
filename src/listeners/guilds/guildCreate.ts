@@ -8,15 +8,7 @@ import type { Guild } from 'discord.js';
 export class GuildListener extends Listener {
 	public async run(guild: Guild) {
 		return container.db.guild.create({
-			data: {
-				id: guild.id,
-				staffRoles: [],
-				botManagers: [],
-				moderationModule: { create: { id: guild.id } },
-				notificationModule: { create: { id: guild.id } },
-				utilityModule: { create: { id: guild.id } },
-				welcomeModule: { create: { id: guild.id } }
-			}
+			data: { id: guild.id }
 		});
 	}
 }

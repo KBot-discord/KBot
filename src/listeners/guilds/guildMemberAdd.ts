@@ -10,7 +10,7 @@ import type { GuildMember } from 'discord.js';
 export class GuildListener extends Listener {
 	public async run(member: GuildMember) {
 		const wasMemberKicked = await new MinageService(member).run();
-		if (wasMemberKicked) return;
+		if (wasMemberKicked || member.user.bot) return;
 		return new WelcomeService(member).run();
 	}
 }
