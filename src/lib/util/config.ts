@@ -1,6 +1,6 @@
 import { container } from '@sapphire/framework';
 import { config } from '../../config';
-import type { Config } from '../types/config';
+import type { Config } from '../types/Config';
 
 function flattenConfig(obj: any) {
 	const flattenedObj: any = {};

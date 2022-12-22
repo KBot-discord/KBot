@@ -4,7 +4,7 @@ import '@sapphire/plugin-logger/register';
 import '@sapphire/plugin-subcommands/register';
 import { ScheduledTaskRedisStrategy } from '@sapphire/plugin-scheduled-tasks/register-redis';
 
-import './lib/util/augments';
+import './lib/util/Augments';
 
 import { container, LogLevel } from '@sapphire/framework';
 import { RewriteFrames } from '@sentry/integrations';
