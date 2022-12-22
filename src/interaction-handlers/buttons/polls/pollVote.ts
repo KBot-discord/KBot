@@ -1,23 +1,26 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, type ButtonInteraction } from 'discord.js';
 import { EmbedColors } from '../../../lib/util/constants';
-import { parseKey } from '../../../lib/util/keys';
 import { PollCustomIds } from '../../../lib/types/enums';
-import type { IPoll, Key } from '../../../lib/types/keys';
+import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
+import type { PollOption } from '../../../lib/types/CustomIds';
 
-@ApplyOptions<InteractionHandler.Options>({
+@ApplyOptions<MenuInteractionHandler.Options>({
+	customIdPrefix: [PollCustomIds.Vote],
+	defer: DeferOptions.Reply,
+	ephemeral: true,
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction, { selectedOption }: InteractionHandler.ParseResult<this>) {
+export class ButtonHandler extends MenuInteractionHandler {
+	public override async run(interaction: ButtonInteraction, { data: { option } }: MenuInteractionHandler.Result<PollOption>) {
 		try {
-			await this.container.polls.db.updatePollUser(interaction.user.id, interaction.message.id, selectedOption);
+			await this.container.polls.db.updatePollUser(interaction.user.id, interaction.message.id, option);
 			return interaction.editReply({
 				embeds: [
 					new MessageEmbed()
 						.setColor(EmbedColors.Success)
-						.setDescription(`Vote added to option ${selectedOption + 1}\n(only the latest vote counts)`)
+						.setDescription(`Vote added to option ${option + 1}\n(only the latest vote counts)`)
 				]
 			});
 		} catch (err) {
@@ -26,14 +29,5 @@ export class ButtonHandler extends InteractionHandler {
 				embeds: [new MessageEmbed().setColor(EmbedColors.Error).setDescription('Something went wrong')]
 			});
 		}
-	}
-
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.customId.startsWith(PollCustomIds.Vote)) return this.none();
-		await interaction.deferReply({ ephemeral: true });
-
-		const { option } = parseKey<IPoll>(interaction.customId as Key);
-
-		return this.some({ selectedOption: option });
 	}
 }

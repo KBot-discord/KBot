@@ -1,18 +1,20 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandlerTypes } from '@sapphire/framework';
 import { type ButtonInteraction, MessageActionRow, Modal, TextInputComponent } from 'discord.js';
 import { KaraokeCustomIds } from '../../../lib/types/enums';
-import { buildKey } from '../../../lib/util/keys';
+import { MenuInteractionHandler } from '@kbotdev/menus';
+import { buildCustomId } from '@kbotdev/custom-id';
 
-@ApplyOptions<InteractionHandler.Options>({
+@ApplyOptions<MenuInteractionHandler.Options>({
+	customIdPrefix: [KaraokeCustomIds.Create],
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends InteractionHandler {
+export class ButtonHandler extends MenuInteractionHandler {
 	public override async run(interaction: ButtonInteraction) {
 		// TODO need voice, text, topic, role menus (new select menus are not available yet for Sapphire)
 		return interaction.showModal(
 			new Modal()
-				.setCustomId(buildKey(KaraokeCustomIds.ModalCreate, { message: interaction.message.id }))
+				.setCustomId(buildCustomId(KaraokeCustomIds.ModalCreate, { message: interaction.message.id }))
 				.setTitle('Create a karaoke event')
 				.addComponents(
 					new MessageActionRow<TextInputComponent>().addComponents(
@@ -51,10 +53,5 @@ export class ButtonHandler extends InteractionHandler {
 					)
 				)
 		);
-	}
-
-	public override parse(interaction: ButtonInteraction) {
-		if (!interaction.customId.startsWith(KaraokeCustomIds.Create)) return this.none();
-		return this.some();
 	}
 }

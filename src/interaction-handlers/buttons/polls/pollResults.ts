@@ -1,17 +1,22 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, type ButtonInteraction } from 'discord.js';
 import { EmbedColors } from '../../../lib/util/constants';
-import { parseKey } from '../../../lib/util/keys';
 import { PollCustomIds } from '../../../lib/types/enums';
 import { isNullish } from '@sapphire/utilities';
-import type { Key, IPollMenuCustomId } from '../../../lib/types/keys';
+import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
+import type { PollMenuButton } from '../../../lib/types/CustomIds';
 
-@ApplyOptions<InteractionHandler.Options>({
+@ApplyOptions<MenuInteractionHandler.Options>({
+	customIdPrefix: [PollCustomIds.ResultsPublic, PollCustomIds.ResultsHidden],
+	defer: DeferOptions.Reply,
+	ephemeral: true,
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction, { pollId, hide }: InteractionHandler.ParseResult<this>) {
+export class ButtonHandler extends MenuInteractionHandler {
+	public override async run(interaction: ButtonInteraction, { identifier, data: { pollId } }: MenuInteractionHandler.Result<PollMenuButton>) {
+		const hide = identifier === PollCustomIds.ResultsHidden;
+
 		const { polls } = this.container;
 		try {
 			const poll = await polls.db.getPollWithUsers(pollId);
@@ -58,16 +63,5 @@ export class ButtonHandler extends InteractionHandler {
 			this.container.logger.error(err);
 			return interaction.errorReply('Something went wrong.');
 		}
-	}
-
-	public override async parse(interaction: ButtonInteraction) {
-		if (interaction.customId.startsWith(PollCustomIds.ResultsPublic) || interaction.customId.startsWith(PollCustomIds.ResultsHidden)) {
-			await interaction.deferReply({ ephemeral: true });
-
-			const { pollId } = parseKey<IPollMenuCustomId>(interaction.customId as Key);
-
-			return this.some({ pollId, hide: interaction.customId.startsWith(PollCustomIds.ResultsHidden) });
-		}
-		return this.none();
 	}
 }

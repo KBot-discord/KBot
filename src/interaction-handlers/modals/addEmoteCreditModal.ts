@@ -3,9 +3,9 @@ import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework
 import { MessageActionRow, MessageButton, MessageEmbed, ModalSubmitInteraction, TextChannel } from 'discord.js';
 import { EmbedColors } from '../../lib/util/constants';
 import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/enums';
-import { buildKey, parseKey } from '../../lib/util/keys';
 import { messageLink } from '@discordjs/builders';
-import type { IEmoteCredit, IEmoteCreditModal, Key } from '../../lib/types/keys';
+import { buildCustomId, parseCustomId } from '@kbotdev/custom-id';
+import type { EmoteCredit, EmoteCreditModal } from '../../lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
@@ -33,7 +33,7 @@ export class ModalHandler extends InteractionHandler {
 				components: [
 					new MessageActionRow().addComponents([
 						new MessageButton()
-							.setCustomId(buildKey<IEmoteCredit>(AddEmoteCustomIds.Edit, { name, id }))
+							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Edit, { name, id }))
 							.setLabel('Edit info')
 							.setStyle('SECONDARY')
 					])
@@ -49,7 +49,9 @@ export class ModalHandler extends InteractionHandler {
 		if (!modal.customId.startsWith(AddEmoteCustomIds.ModalCredits)) return this.none();
 		await modal.deferReply({ ephemeral: true });
 
-		const { channelId, name, id } = parseKey<IEmoteCreditModal>(modal.customId as Key);
+		const {
+			data: { channelId, name, id }
+		} = parseCustomId<EmoteCreditModal>(modal.customId);
 		const imageSource = modal.fields.getTextInputValue(AddEmoteFields.CreditLink);
 		const description = modal.fields.getTextInputValue(AddEmoteFields.CreditDescription);
 		const artistName = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistName);

@@ -1,15 +1,18 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { parseKey } from '../../../lib/util/keys';
+import { InteractionHandlerTypes } from '@sapphire/framework';
 import { PollCustomIds } from '../../../lib/types/enums';
+import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
 import type { ButtonInteraction } from 'discord.js';
-import type { IPollMenuCustomId, Key } from '../../../lib/types/keys';
+import type { PollMenuButton } from '../../../lib/types/CustomIds';
 
-@ApplyOptions<InteractionHandler.Options>({
+@ApplyOptions<MenuInteractionHandler.Options>({
+	customIdPrefix: [PollCustomIds.End],
+	defer: DeferOptions.Reply,
+	ephemeral: true,
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction, { pollId }: InteractionHandler.ParseResult<this>) {
+export class ButtonHandler extends MenuInteractionHandler {
+	public override async run(interaction: ButtonInteraction, { data: { pollId } }: MenuInteractionHandler.Result<PollMenuButton>) {
 		try {
 			const success = await this.container.polls.endPoll(pollId);
 			if (success) return interaction.successReply('Poll ended.');
@@ -17,14 +20,5 @@ export class ButtonHandler extends InteractionHandler {
 		} catch (err) {
 			this.container.logger.error(err);
 		}
-	}
-
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.customId.startsWith(PollCustomIds.End)) return this.none();
-		await interaction.deferReply({ ephemeral: true });
-
-		const { pollId } = parseKey<IPollMenuCustomId>(interaction.customId as Key);
-
-		return this.some({ pollId });
 	}
 }

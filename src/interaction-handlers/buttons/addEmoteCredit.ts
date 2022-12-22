@@ -1,24 +1,31 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { buildKey, parseKey } from '../../lib/util/keys';
+import { InteractionHandlerTypes } from '@sapphire/framework';
 import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/enums';
 import { isNullish } from '@sapphire/utilities';
 import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
+import { buildCustomId } from '@kbotdev/custom-id';
+import { MenuInteractionHandler } from '@kbotdev/menus';
 import type { ButtonInteraction } from 'discord.js';
-import type { IEmoteCredit, IEmoteCreditModal, Key } from '../../lib/types/keys';
+import type { EmoteCredit, EmoteCreditModal } from '../../lib/types/CustomIds';
 
-@ApplyOptions<InteractionHandler.Options>({
+@ApplyOptions<MenuInteractionHandler.Options>({
+	customIdPrefix: [AddEmoteCustomIds.Credits],
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction, { channel, name, id }: InteractionHandler.ParseResult<this>) {
-		if (isNullish(channel)) {
+export class ButtonHandler extends MenuInteractionHandler {
+	public override async run(interaction: ButtonInteraction, { data: { name, id } }: MenuInteractionHandler.Result<EmoteCredit>) {
+		const channel = await this.container.db.utilityModule.findUnique({
+			where: { id: interaction.guildId! },
+			select: { creditsChannel: true }
+		});
+
+		if (isNullish(channel) || isNullish(channel.creditsChannel)) {
 			return interaction.editReply('Theres no channel set up for credits');
 		}
 		return interaction.showModal(
 			new Modal()
 				// TODO need to make this custom id smaller
-				.setCustomId(buildKey<IEmoteCreditModal>(AddEmoteCustomIds.ModalCredits, { channelId: channel, name, id }))
+				.setCustomId(buildCustomId<EmoteCreditModal>(AddEmoteCustomIds.ModalCredits, { channelId: channel.creditsChannel, name, id }))
 				.setTitle('Create a karaoke event')
 				.addComponents(
 					new MessageActionRow<TextInputComponent>().addComponents(
@@ -56,17 +63,5 @@ export class ButtonHandler extends InteractionHandler {
 					)
 				)
 		);
-	}
-
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.customId.startsWith(AddEmoteCustomIds.Credits)) return this.none();
-
-		const { name, id } = parseKey<IEmoteCredit>(interaction.customId as Key);
-		const channel = await this.container.db.utilityModule.findUnique({
-			where: { id: interaction.guildId! },
-			select: { creditsChannel: true }
-		});
-
-		return this.some({ channel: channel?.creditsChannel, name, id });
 	}
 }

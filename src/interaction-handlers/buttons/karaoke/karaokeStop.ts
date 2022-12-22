@@ -1,20 +1,24 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandlerTypes } from '@sapphire/framework';
 import { type ButtonInteraction, MessageEmbed, StageChannel, VoiceChannel } from 'discord.js';
-import type { IKaraokeMenuCustomId, Key } from '../../../lib/types/keys';
-import { parseKey } from '../../../lib/util/keys';
 import { KaraokeCustomIds } from '../../../lib/types/enums';
 import { EmbedColors } from '../../../lib/util/constants';
+import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
+import type { KaraokeMenuButton } from '../../../lib/types/CustomIds';
 
-@ApplyOptions<InteractionHandler.Options>({
+@ApplyOptions<MenuInteractionHandler.Options>({
+	customIdPrefix: [KaraokeCustomIds.Stop],
+	defer: DeferOptions.Reply,
+	ephemeral: true,
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction, { eventId }: InteractionHandler.ParseResult<this>) {
+export class ButtonHandler extends MenuInteractionHandler {
+	public override async run(interaction: ButtonInteraction, { data: { eventId } }: MenuInteractionHandler.Result<KaraokeMenuButton>) {
 		const { karaoke } = this.container;
+		const guildId = interaction.guildId!;
 
 		try {
-			const eventExists = await karaoke.db.doesEventExist(eventId);
+			const eventExists = await karaoke.db.doesEventExist(guildId, eventId);
 			if (!eventExists) {
 				return interaction.editReply({
 					embeds: [new MessageEmbed().setColor(EmbedColors.Default).setDescription('There is no event to end.')]
@@ -25,7 +29,7 @@ export class ButtonHandler extends InteractionHandler {
 			if (eventChannel.type === 'GUILD_STAGE_VOICE') {
 				if (eventChannel.stageInstance) await eventChannel.stageInstance.delete();
 			}
-			await karaoke.db.setEventStatus(eventId, false);
+			await karaoke.db.setEventStatus(guildId, eventId, false);
 			await karaoke.db.deleteEvent(eventId);
 
 			return interaction.successReply('Karaoke event ended.');
@@ -33,14 +37,5 @@ export class ButtonHandler extends InteractionHandler {
 			this.container.logger.error(err);
 			return interaction.errorReply('There was an error trying to end the event.');
 		}
-	}
-
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.customId.startsWith(KaraokeCustomIds.Stop)) return this.none();
-
-		const { eventId } = parseKey<IKaraokeMenuCustomId>(interaction.customId as Key);
-		await interaction.deferReply({ ephemeral: true });
-
-		return this.some({ eventId });
 	}
 }

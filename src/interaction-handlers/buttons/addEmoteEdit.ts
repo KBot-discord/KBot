@@ -1,15 +1,17 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandlerTypes } from '@sapphire/framework';
 import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/enums';
 import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
-import { buildKey } from '../../lib/util/keys';
+import { MenuInteractionHandler } from '@kbotdev/menus';
+import { buildCustomId } from '@kbotdev/custom-id';
 import type { ButtonInteraction } from 'discord.js';
-import type { IEmoteEditModal } from '../../lib/types/keys';
+import type { EmoteEditModal } from '../../lib/types/CustomIds';
 
-@ApplyOptions<InteractionHandler.Options>({
+@ApplyOptions<MenuInteractionHandler.Options>({
+	customIdPrefix: [AddEmoteCustomIds.Edit],
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends InteractionHandler {
+export class ButtonHandler extends MenuInteractionHandler {
 	public override async run(interaction: ButtonInteraction) {
 		const oldName = interaction.message!.embeds[0].title;
 		const oldDesc = interaction.message!.embeds[0].fields!.find((e) => e.name === 'Description');
@@ -19,7 +21,7 @@ export class ButtonHandler extends InteractionHandler {
 
 		return interaction.showModal(
 			new Modal()
-				.setCustomId(buildKey<IEmoteEditModal>(AddEmoteCustomIds.ModalEdit, { id: interaction.message.id }))
+				.setCustomId(buildCustomId<EmoteEditModal>(AddEmoteCustomIds.ModalEdit, { id: interaction.message.id }))
 				.setTitle('Edit emote credits info')
 				.addComponents(
 					new MessageActionRow<TextInputComponent>().addComponents(
@@ -69,10 +71,5 @@ export class ButtonHandler extends InteractionHandler {
 					)
 				)
 		);
-	}
-
-	public override parse(interaction: ButtonInteraction) {
-		if (!interaction.customId.startsWith(AddEmoteCustomIds.Edit)) return this.none();
-		return this.some();
 	}
 }
