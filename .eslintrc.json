@@ -13,7 +13,7 @@
 			}
 		},
 		{
-			"files": ["augments.ts"],
+			"files": ["Augments.ts"],
 			"rules": {
 				"no-multi-assign": 0
 			}
