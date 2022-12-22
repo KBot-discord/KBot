@@ -30,7 +30,8 @@ export class KaraokeService {
 		pingRole: string
 	): Promise<boolean | null> {
 		const result = await Result.fromAsync(async () => {
-			const eventExists = await this.db.doesEventExist(voiceChannel.id);
+			const guildId = interaction.guildId!;
+			const eventExists = await this.db.doesEventExist(guildId, voiceChannel.id);
 			if (eventExists) {
 				return interaction.followUp({
 					embeds: [new MessageEmbed().setColor(EmbedColors.Default).setDescription('There is already a karaoke event')]
@@ -78,8 +79,8 @@ export class KaraokeService {
 			});
 			await announcement.pin();
 
-			await this.db.setEventExistence(voiceChannel.id, true);
-			await this.db.setEventStatus(voiceChannel.id, true);
+			await this.db.setEventExistence(guildId, voiceChannel.id, true);
+			await this.db.setEventStatus(guildId, voiceChannel.id, true);
 			return this.db.createEvent(voiceChannel.guildId, voiceChannel.id, textChannel.id, announcement.id);
 		});
 		return result.match({ ok: () => true, err: () => null });
@@ -151,29 +152,29 @@ export class KaraokeService {
 	 * @param partner The GuildMember object of the partner, if applicable
 	 * @returns If the member/partner is allowed to join and, if applicable, the reason for denial
 	 */
-	public isJoinValid(event: Event, queue: EventUser[], memberId: string, partner?: GuildMember): { isValid: boolean; reason?: string } {
+	public isJoinValid(event: Event, queue: EventUser[], memberId: string, partner?: GuildMember): { valid: boolean; reason?: string } {
 		if (event.locked) {
-			return { isValid: false, reason: 'The karaoke queue is locked.' };
+			return { valid: false, reason: 'The karaoke queue is locked.' };
 		}
 		if (queue.length > 50) {
-			return { isValid: false, reason: 'Queue limit of 50 people has been reached.' };
+			return { valid: false, reason: 'Queue limit of 50 people has been reached.' };
 		}
 		if (memberId === partner?.id) {
-			return { isValid: false, reason: 'You cannot duet with yourself.' };
+			return { valid: false, reason: 'You cannot duet with yourself.' };
 		}
 		if (partner && (!partner.voice.channelId || partner.voice.channelId !== event.id)) {
 			return {
-				isValid: false,
+				valid: false,
 				reason: `Tell your partner to please join the stage, then run this command again.\n\n**Stage:** <#${event.id}>`
 			};
 		}
 		if (queue.some((member) => member.id === memberId)) {
-			return { isValid: false, reason: 'You are already in queue.' };
+			return { valid: false, reason: 'You are already in queue.' };
 		}
 		if (partner && queue.some((member) => member.id === partner.id)) {
-			return { isValid: false, reason: 'You or your partner are already in the queue.' };
+			return { valid: false, reason: 'You or your partner are already in the queue.' };
 		}
-		return { isValid: true };
+		return { valid: true };
 	}
 
 	/**

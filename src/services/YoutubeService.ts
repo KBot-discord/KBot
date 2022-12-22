@@ -1,15 +1,27 @@
 import { container } from '@sapphire/framework';
-import { ChannelsClient, StreamsClient, SubscriptionClient } from '../rpc';
+import { GetGuildSubscriptions, GetSubscription, Subscription } from '../rpc/gen/subscriptions/v1/subscriptions.pb';
+import { GetAutocompleteChannel } from '../rpc/gen/channels/autocomplete/v1/autocomplete.pb';
 
 export class YoutubeService {
-	public readonly channels;
-	public readonly streams;
-	public readonly subscriptions;
+	private readonly baseUrl;
 
 	public constructor() {
-		this.channels = new ChannelsClient();
-		this.streams = new StreamsClient();
-		this.subscriptions = new SubscriptionClient();
-		container.logger.info('Youtube service loaded.');
+		const { url, port } = container.config.rpc.youtube;
+		this.baseUrl = `${url}:${port}`;
+	}
+
+	public async getAutocompleteChannel(input: string) {
+		return GetAutocompleteChannel({ channelName: input }) //
+			.then((res) => res.channels);
+	}
+
+	public async getSubscription(guildId: string, channelId: string): Promise<Subscription | null> {
+		return GetSubscription({ guildId, channelId }, { baseURL: this.baseUrl }) //
+			.then((res) => res.subscription);
+	}
+
+	public async getGuildSubscriptions(guildId: string): Promise<Subscription[] | null> {
+		return GetGuildSubscriptions({ guildId }, { baseURL: this.baseUrl }) //
+			.then((res) => res.subscriptions);
 	}
 }
