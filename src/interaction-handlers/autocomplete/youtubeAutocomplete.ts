@@ -18,6 +18,7 @@ export class AutocompleteHandler extends InteractionHandler {
 		switch (focusedOption.name) {
 			case 'account': {
 				const channels = await this.container.youtube.getAutocompleteChannel(focusedOption.value);
+				if (!channels) return this.some([]);
 				return this.some(channels.map(({ id, name }) => ({ name, value: id })));
 			}
 			default:
