@@ -1,12 +1,14 @@
 import { createModel } from 'schemix';
 import TwitchFollowModel from './TwitchFollow.model';
+import TwitchStreamModel from './TwitchStream.model';
 
-export default createModel('TwitchChannel', (TwitchChannelModel) => {
+export default createModel('TwitchChannel', (model) => {
 	// prettier-ignore
-	TwitchChannelModel
-	.string('id', { id: true, unique: true }) // Twitch channel ID
+	model
+		.string('id', { id: true, unique: true }) // Twitch channel ID
 		.string('name')
 		.string('image')
 
-		.relation('follows', TwitchFollowModel, { list: true });
+		.relation('follows', TwitchFollowModel, { list: true })
+		.relation('streams', TwitchStreamModel, { list: true });
 });

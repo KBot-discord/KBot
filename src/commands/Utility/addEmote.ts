@@ -1,11 +1,14 @@
-// Imports
 import axios from 'axios';
-import { ChatInputCommand, Command, ContextMenuCommand } from '@sapphire/framework';
-import { MessageActionRow, MessageEmbed, Modal, ModalSubmitInteraction, TextInputComponent, type Message } from 'discord.js';
+import { MessageActionRow, MessageEmbed, Modal, ModalSubmitInteraction, TextInputComponent, type Message, MessageButton } from 'discord.js';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildEmoteSlots } from '../../lib/util/constants';
-import { getGuildIds, getIdHints } from '../../lib/util/config';
+import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '../../lib/util/constants';
+import { getGuildIds } from '../../lib/util/config';
+import { buildCustomId } from '@kbotdev/custom-id';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { EmoteCredit } from '../../lib/types/CustomIds';
+import type { UtilityModule } from '../../modules/UtilityModule';
+import { getGuildEmoteSlots } from '../../lib/util/util';
 
 interface EmojiData {
 	emojiName?: string;
@@ -13,63 +16,77 @@ interface EmojiData {
 	isAnimated: boolean;
 }
 
-@ApplyOptions<ChatInputCommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'UtilityModule',
 	name: 'Add emote',
 	detailedDescription:
-		'(Used on messages) Adds the image attachment, link, or emoji that is in the message. Priority is ``emoji > attachment > link``.'
+		'(Used on messages) Adds the image attachment, link, or emoji that is in the message. Priority is ``emoji > attachment > link``.',
+	preconditions: ['GuildOnly', 'ModuleEnabled'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class AddEmoteCommand extends Command {
-	public constructor(context: ContextMenuCommand.Context, options: ContextMenuCommand.Options) {
+export class AddEmoteCommand extends ModuleCommand<UtilityModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
+		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageEmojisAndStickers)
 					.setName('Add emote')
 					.setType(ApplicationCommandType.Message),
-			{ idHints: getIdHints(this.name), guildIds: getGuildIds() }
+			{ idHints: ['1037024438350254200', '1036013815189491772'], guildIds: getGuildIds() }
 		);
 	}
 
-	public async contextMenuRun(interaction: ContextMenuCommand.Interaction) {
+	public async contextMenuRun(interaction: ModuleCommand.ContextMenuInteraction) {
 		const embed = new MessageEmbed();
 		const message = interaction.options.getMessage('message', true);
 
-		const emojiData = await this.getEmojiData(message as Message);
-		if (!emojiData) {
+		const emoji = await this.getEmoji(message as Message);
+		if (!emoji) {
 			return interaction.followUp({
 				embeds: [embed.setColor('RED').setDescription('There is no emoji')]
 			});
 		}
 
 		const { staticSlots, animSlots, totalSlots } = await this.calculateSlots(interaction);
-		const slotsLeft = emojiData.isAnimated
+		const slotsLeft = emoji.isAnimated
 			? `**Animated emote slots left:** ${animSlots - 1}/${totalSlots}`
 			: `**Static emote slots left:** ${staticSlots - 1}/${totalSlots}`;
 
-		if (emojiData.isAnimated && staticSlots === 0) {
+		if (emoji.isAnimated && staticSlots === 0) {
 			return interaction.followUp({
 				embeds: [embed.setColor('RED').setDescription('No animated emoji slots left.')]
 			});
 		}
-		if (!emojiData.isAnimated && animSlots === 0) {
+		if (!emoji.isAnimated && animSlots === 0) {
 			return interaction.followUp({
 				embeds: [embed.setColor('RED').setDescription('No static emoji slots left.')]
 			});
 		}
 
-		const modal = this.createModal();
-		const filter = (i: ModalSubmitInteraction) => i.customId === 'addEmoteModal';
-
 		try {
-			await interaction.showModal(modal);
-			return interaction.awaitModalSubmit({ filter, time: 60_000 }).then(async (mdl) => {
-				emojiData.emojiName = mdl.fields.getTextInputValue('emoteNameInput');
-				await this.handleSubmit(mdl, emojiData, embed, slotsLeft);
-			});
+			await interaction.showModal(
+				new Modal()
+					.setCustomId(AddEmoteCustomIds.Name)
+					.setTitle('Emote name')
+					.addComponents(
+						new MessageActionRow<TextInputComponent>().addComponents(
+							new TextInputComponent()
+								.setCustomId(AddEmoteFields.Name)
+								.setLabel('Emote name')
+								.setStyle('SHORT')
+								.setMinLength(1)
+								.setMaxLength(32)
+								.setRequired(true)
+						)
+					)
+			);
+			const filter = (i: ModalSubmitInteraction) => i.customId === AddEmoteCustomIds.Name;
+			return interaction.awaitModalSubmit({ filter, time: 60_000 }).then(async (mdl) => this.handleSubmit(mdl, emoji, slotsLeft));
 		} catch {
 			return interaction.editReply({
 				embeds: [embed.setColor('RED').setDescription('Failed to add emoji')]
@@ -77,42 +94,42 @@ export class AddEmoteCommand extends Command {
 		}
 	}
 
-	private async handleSubmit(modal: ModalSubmitInteraction, emoji: any, embed: MessageEmbed, slotsLeft: string) {
+	private async handleSubmit(modal: ModalSubmitInteraction, emojiData: EmojiData, slotsLeft: string) {
 		try {
 			await modal.deferReply();
-			await modal.guild!.emojis.create(emoji.emojiUrl, emoji.emojiName);
-			if (emoji.emojiUrl.startsWith('http')) {
-				embed.setThumbnail(emoji.emojiUrl);
-			}
+			const embed = new MessageEmbed();
+			const { emojiUrl } = emojiData;
 
+			const emoteName = modal.fields.getTextInputValue(AddEmoteFields.Name);
+			const newEmoji = await modal.guild!.emojis.create(emojiUrl, emoteName);
+
+			if (emojiUrl.startsWith('https')) {
+				embed.setThumbnail(emojiUrl);
+			}
 			return modal.editReply({
-				embeds: [embed.setColor('#33B54E').setDescription(`**${emoji.emojiName}** has been added\n\n${slotsLeft}`)]
+				embeds: [embed.setColor(EmbedColors.Success).setDescription(`**${emoteName}** has been added\n\n${slotsLeft}`)],
+				components: [
+					new MessageActionRow().addComponents([
+						new MessageButton()
+							.setCustomId(
+								buildCustomId<EmoteCredit>(AddEmoteCustomIds.Credits, {
+									name: emoteName,
+									id: newEmoji.id
+								})
+							)
+							.setLabel('Add to credits channel')
+							.setStyle('SUCCESS')
+					])
+				]
 			});
 		} catch {
 			return modal.editReply({
-				embeds: [embed.setColor('RED').setDescription('Failed to add emoji')]
+				embeds: [new MessageEmbed().setColor('RED').setDescription('Failed to add emoji')]
 			});
 		}
 	}
 
-	private createModal(): Modal {
-		const modal = new Modal().setCustomId('addEmoteModal').setTitle('Emote name');
-
-		const components = new MessageActionRow<TextInputComponent>().addComponents(
-			new TextInputComponent()
-				.setCustomId('emoteNameInput')
-				.setLabel('Emote name')
-				.setStyle('SHORT')
-				.setMinLength(1)
-				.setMaxLength(32)
-				.setRequired(true)
-		);
-
-		modal.addComponents(components);
-		return modal;
-	}
-
-	private async calculateSlots(interaction: ContextMenuCommand.Interaction) {
+	private async calculateSlots(interaction: ModuleCommand.ContextMenuInteraction) {
 		const allEmojis = await interaction.guild!.emojis.fetch();
 		const totalSlots = getGuildEmoteSlots(interaction.guild!.premiumTier);
 		return {
@@ -122,7 +139,7 @@ export class AddEmoteCommand extends Command {
 		};
 	}
 
-	private async getEmojiData(message: Message): Promise<EmojiData | null> {
+	private async getEmoji(message: Message): Promise<EmojiData | null> {
 		const emojiData = message.content.match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/);
 		const emojiEmbed = message.content.match(/https\S*?([a-zA-z0-9]+)(?:\.\w+)?(?:\s|$)/);
 

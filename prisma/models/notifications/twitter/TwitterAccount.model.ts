@@ -1,9 +1,9 @@
 import { createModel } from 'schemix';
 import TwitterFollowModel from './TwitterFollow.model';
 
-export default createModel('TwitterAccount', (TwitterAccountModel) => {
+export default createModel('TwitterAccount', (model) => {
 	// prettier-ignore
-	TwitterAccountModel
+	model
 		.string('id', { id: true, unique: true })
 		.string('name')
 		.string('image')

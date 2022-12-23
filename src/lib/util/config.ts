@@ -1,7 +1,6 @@
-// Imports
 import { container } from '@sapphire/framework';
-import type { Config, IdHints } from '../types/config';
 import { config } from '../../config';
+import type { Config } from '../types/Config';
 
 function flattenConfig(obj: any) {
 	const flattenedObj: any = {};
@@ -20,9 +19,9 @@ function flattenConfig(obj: any) {
 	return flattenedObj;
 }
 
-function validateConfig(): boolean {
+export function validateConfig(cfg: Config): boolean {
 	let error = false;
-	const obj = flattenConfig(config);
+	const obj = flattenConfig(cfg);
 	for (const [key, value] of Object.entries(obj)) {
 		if (value === undefined) {
 			console.log(`Invalid value for: ${key}`);
@@ -33,14 +32,10 @@ function validateConfig(): boolean {
 }
 
 export function getConfig(): Config | null {
-	const isConfigValid = validateConfig();
+	const isConfigValid = validateConfig(config);
 	if (!isConfigValid) return null;
 	container.config = config;
 	return config;
-}
-
-export function getIdHints(commandName: string): string[] | undefined {
-	return container.config.discord.idHints[commandName.toLowerCase() as keyof IdHints];
 }
 
 export function getGuildIds(): string[] | undefined {

@@ -1,7 +1,7 @@
-// Imports
 import { MessageEmbed, type AllowedImageSize, type DynamicImageFormat } from 'discord.js';
 import { Duration } from '@sapphire/duration';
 import type { GuildMember, Guild, User, CommandInteraction } from 'discord.js';
+import { guildEmoteSlots } from './constants';
 
 interface ImageOptions {
 	dynamicFormat?: boolean;
@@ -9,10 +9,17 @@ interface ImageOptions {
 	size?: AllowedImageSize;
 }
 
+export const getGuildEmoteSlots = (tier: string): number => guildEmoteSlots[tier];
+
+export function minutesFromNow(minutes: number, time?: number) {
+	if (time) return Math.floor((time + minutes * 60000) / 1000);
+	return Math.floor((Date.now() + minutes * 60000) / 1000);
+}
+
 export function parseTimeString(input: string | null): number | null {
 	if (!input) return null;
 	const duration = new Duration(input);
-	return duration ? duration.offset : null;
+	return isNaN(duration.offset) ? null : duration.offset;
 }
 
 export async function getUserInfo(interaction: CommandInteraction, userId: string): Promise<MessageEmbed> {

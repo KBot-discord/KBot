@@ -3,11 +3,9 @@
 	"compilerOptions": {
 		"outDir": "../dist",
 		"rootDir": ".",
-		"typeRoots": ["./lib/types/*", "../node_modules/@types", "vitest/globals"],
+		"typeRoots": ["./lib/types/**/*", "../node_modules/@types"],
 		"allowJs": true,
-		"checkJs": true,
-		"noImplicitAny": true,
-		"removeComments": true
+		"noImplicitAny": true
 	},
 	"include": ["."],
 	"exclude": ["./tsconfig.json"]

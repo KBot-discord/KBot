@@ -1,5 +1,4 @@
-// Imports
-import { ChatInputCommand, Command, type ContextMenuCommand } from '@sapphire/framework';
+import { Command, type ContextMenuCommand } from '@sapphire/framework';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
@@ -10,7 +9,7 @@ import { buffer } from 'node:stream/consumers';
 import { readdirSync } from 'fs';
 import { imageFolder } from '../../lib/util/constants';
 import { getMemberAvatarUrl, getUserAvatarUrl } from '../../lib/util/util';
-import { getGuildIds, getIdHints } from '../../lib/util/config';
+import { getGuildIds } from '../../lib/util/config';
 import { isNullish } from '@sapphire/utilities';
 
 interface PatOptions {
@@ -18,14 +17,17 @@ interface PatOptions {
 	delay?: number;
 }
 
-@ApplyOptions<ChatInputCommand.Options>({
-	detailedDescription: '(Used on members) Makes and sends a pat emote.'
+@ApplyOptions<ContextMenuCommand.Options>({
+	detailedDescription: '(Used on members) Makes and sends a pat emote.',
+	preconditions: ['GuildOnly'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.AttachFiles]
 })
 export class PatCommand extends Command {
 	private pats: Image[] = [];
 
 	public constructor(context: ContextMenuCommand.Context, options: ContextMenuCommand.Options) {
 		super(context, { ...options });
+		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
 	public override registerApplicationCommands(registry: ContextMenuCommand.Registry) {
@@ -35,7 +37,7 @@ export class PatCommand extends Command {
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
 					.setName('Pat')
 					.setType(ApplicationCommandType.User),
-			{ idHints: getIdHints(this.name), guildIds: getGuildIds() }
+			{ idHints: ['1037026182975193132'], guildIds: getGuildIds() }
 		);
 	}
 

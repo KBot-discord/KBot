@@ -1,5 +1,6 @@
 ## Builds ##
 dist
+src/rpc/gen
 
 ## Development ##
 coverage
@@ -19,7 +20,6 @@ package-lock.json
 
 ## Env ##
 .env
-src/config.ts
 
 ### intellij ###
 .idea/

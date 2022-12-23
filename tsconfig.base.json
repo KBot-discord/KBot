@@ -3,6 +3,5 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"removeComments": true,
-		"moduleResolution":"node",
 	}
 }
