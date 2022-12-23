@@ -1,6 +1,12 @@
 import { getRootData } from '@sapphire/pieces';
 import { join } from 'node:path';
 
+export * from './addEmote';
+export * from './Errors';
+export * from './Events';
+export * from './karaoke';
+export * from './poll';
+
 export const mainFolder = getRootData().root;
 export const rootFolder = join(mainFolder, '..');
 export const assetsFolder = join(rootFolder, 'assets');
@@ -49,4 +55,3 @@ export const guildEmoteSlots: {
 	TIER_2: 150,
 	TIER_3: 250
 };
-export const getGuildEmoteSlots = (tier: string): number => guildEmoteSlots[tier];

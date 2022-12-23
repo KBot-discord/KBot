@@ -1,7 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
 import { type ButtonInteraction, MessageActionRow, Modal, TextInputComponent } from 'discord.js';
-import { KaraokeCustomIds } from '../../../lib/types/CustomIds';
+import { KaraokeCustomIds } from '../../../lib/util/constants';
 import { MenuInteractionHandler } from '@kbotdev/menus';
 import { buildCustomId } from '@kbotdev/custom-id';
 

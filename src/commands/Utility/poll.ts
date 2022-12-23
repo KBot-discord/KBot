@@ -4,9 +4,8 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { parseTimeString } from '../../lib/util/util';
-import { EmbedColors, POLL_NUMBERS, POLL_TIME_LIMIT } from '../../lib/util/constants';
+import { EmbedColors, PollCustomIds, POLL_NUMBERS, POLL_TIME_LIMIT } from '../../lib/util/constants';
 import { getGuildIds } from '../../lib/util/config';
-import { PollCustomIds } from '../../lib/types/CustomIds';
 import { PollMenu } from '../../lib/structures/PollMenu';
 import { buildCustomId } from '@kbotdev/custom-id';
 import type { PollOption } from '../../lib/types/CustomIds';
@@ -141,7 +140,7 @@ export class PollCommand extends Subcommand {
 		});
 
 		if (expiresAt) {
-			await polls.db.createPoll(message, text, options, expiresAt);
+			await polls.repo.createPoll(message, text, options, expiresAt);
 			polls.createPollTask(message, expiresIn!);
 		}
 		return interaction.successReply(':white_check_mark: Poll created');

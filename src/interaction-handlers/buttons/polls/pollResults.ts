@@ -1,8 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, type ButtonInteraction } from 'discord.js';
-import { EmbedColors } from '../../../lib/util/constants';
-import { PollCustomIds } from '../../../lib/types/CustomIds';
+import { EmbedColors, PollCustomIds } from '../../../lib/util/constants';
 import { isNullish } from '@sapphire/utilities';
 import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
 import type { PollMenuButton } from '../../../lib/types/CustomIds';

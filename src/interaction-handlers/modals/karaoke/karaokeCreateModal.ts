@@ -1,8 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, ModalSubmitInteraction, StageChannel, TextChannel, VoiceChannel } from 'discord.js';
-import { EmbedColors } from '../../../lib/util/constants';
-import { KaraokeCustomIds } from '../../../lib/types/CustomIds';
+import { EmbedColors, KaraokeCustomIds } from '../../../lib/util/constants';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit

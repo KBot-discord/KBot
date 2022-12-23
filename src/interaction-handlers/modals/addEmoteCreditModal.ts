@@ -1,8 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageActionRow, MessageButton, MessageEmbed, ModalSubmitInteraction, TextChannel } from 'discord.js';
-import { EmbedColors } from '../../lib/util/constants';
-import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/types/CustomIds';
+import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '../../lib/util/constants';
 import { messageLink } from '@discordjs/builders';
 import { buildCustomId, parseCustomId } from '@kbotdev/custom-id';
 import type { EmoteCredit, EmoteCreditModal } from '../../lib/types/CustomIds';

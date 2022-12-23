@@ -1,6 +1,6 @@
 import { Client, BaseCommandInteraction, BaseGuildVoiceChannel, MessageComponentInteraction, MessageEmbed, ModalSubmitInteraction } from 'discord.js';
-import { EmbedColors } from './constants';
-import type { Payload, KBotErrors } from '../types/Errors';
+import { EmbedColors, KBotErrors } from './constants';
+import type { Payload } from '../types/Errors';
 
 Client.prototype.emitError = function emitError(event: KBotErrors, payload: Payload<typeof event>) {
 	return this.emit(event, payload);

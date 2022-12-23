@@ -9,7 +9,10 @@ import type { PollService } from '../../services/PollService';
 import type { KaraokeService } from '../../services/KaraokeService';
 import type { YoutubeService } from '../../services/YoutubeService';
 import type { Validator } from '../util/validators';
-import type { KBotErrors, Payload } from './Errors';
+import type { KBotErrors } from '../util/constants';
+import type { Payload } from './Errors';
+import type { ModerationService } from '../../services/ModerationService';
+import type { UtilityService } from '../../services/UtilityService';
 
 declare module 'discord.js' {
 	interface Client {
@@ -47,7 +50,9 @@ declare module '@sapphire/pieces' {
 		metrics: Metrics;
 		db: PrismaClient;
 		redis: RedisClient;
+		moderation: ModerationService;
 		polls: PollService;
+		utility: UtilityService;
 		karaoke: KaraokeService;
 		youtube: YoutubeService;
 	}

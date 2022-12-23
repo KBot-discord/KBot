@@ -2,12 +2,11 @@ import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildChannel, MessageEmbed } from 'discord.js';
-import { EmbedColors } from '../../lib/util/constants';
+import { EmbedColors, KBotErrors } from '../../lib/util/constants';
 import { channelMention } from '@discordjs/builders';
 import type { UtilityModule } from '@prisma/client';
 import { getGuildIds } from '../../lib/util/config';
 import { KBotError } from '../../lib/structures/KBotError';
-import { KBotErrors } from '../../lib/types/Errors';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Discord status',

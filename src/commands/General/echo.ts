@@ -4,8 +4,8 @@ import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { getGuildIds } from '../../lib/util/config';
 import { KBotError } from '../../lib/structures/KBotError';
-import { KBotErrors } from '../../lib/types/Errors';
 import { channelMention } from '@discordjs/builders';
+import { KBotErrors } from '../../lib/util/constants';
 
 @ApplyOptions<ChatInputCommand.Options>({
 	description: 'Sends the provided message to the selected channel.',

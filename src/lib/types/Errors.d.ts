@@ -1,9 +1,6 @@
+import { KBotErrors } from '../util/constants';
 import type { KBotError } from '../structures/KBotError';
 import type { BaseCommandInteraction } from 'discord.js';
-
-export const enum KBotErrors {
-	ChannelPermissions = 'channelPermissions'
-}
 
 export interface ErrorPayload {
 	error: KBotError;
