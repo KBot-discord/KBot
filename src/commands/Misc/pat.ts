@@ -1,4 +1,4 @@
-import { ChatInputCommand, Command, type ContextMenuCommand } from '@sapphire/framework';
+import { Command, type ContextMenuCommand } from '@sapphire/framework';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
@@ -17,7 +17,7 @@ interface PatOptions {
 	delay?: number;
 }
 
-@ApplyOptions<ChatInputCommand.Options>({
+@ApplyOptions<ContextMenuCommand.Options>({
 	detailedDescription: '(Used on members) Makes and sends a pat emote.',
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.AttachFiles]
