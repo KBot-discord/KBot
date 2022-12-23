@@ -6,6 +6,8 @@ import { KaraokeService } from '../../services/KaraokeService';
 import type { ClientOptions } from 'discord.js';
 import { YoutubeService } from '../../services/YoutubeService';
 import { Validator } from '../util/validators';
+import { ModerationService } from '../../services/ModerationService';
+import { UtilityService } from '../../services/UtilityService';
 
 export class KBotClient extends SapphireClient {
 	public constructor(options: ClientOptions) {
@@ -21,7 +23,9 @@ export class KBotClient extends SapphireClient {
 		});
 		container.redis = new RedisClient();
 
+		container.moderation = new ModerationService();
 		container.polls = new PollService();
+		container.utility = new UtilityService();
 		container.karaoke = new KaraokeService();
 		container.youtube = new YoutubeService();
 	}
