@@ -70,7 +70,7 @@ export class KaraokeCommand extends Subcommand {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 
-		const events = await karaoke.db.fetchEvents(interaction.guildId!);
+		const events = await karaoke.repo.fetchEvents(interaction.guildId!);
 		const formattedEvents = events
 			? events.map((event, index) =>
 					new MessageEmbed()
@@ -117,10 +117,10 @@ export class KaraokeCommand extends Subcommand {
 			.catch(() => null);
 		if (isNullish(eventId)) return interaction.defaultReply('You are not in a voice channel.');
 
-		const isActive = await karaoke.db.isEventActive(guildId, eventId);
+		const isActive = await karaoke.repo.isEventActive(guildId, eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to show the list for.');
 
-		const queue = await karaoke.db.fetchQueue(eventId);
+		const queue = await karaoke.repo.fetchQueue(eventId);
 		if (isNullish(queue)) return interaction.defaultReply('There is no queue to show.');
 
 		return interaction.editReply({
@@ -137,16 +137,16 @@ export class KaraokeCommand extends Subcommand {
 		const eventId = member.voice.channelId;
 		if (isNullish(eventId)) return interaction.defaultReply('You are not in a voice channel.');
 
-		const isActive = await karaoke.db.isEventActive(guildId, eventId);
+		const isActive = await karaoke.repo.isEventActive(guildId, eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to join.');
 
-		const event = await karaoke.db.fetchEventWithQueue(eventId);
+		const event = await karaoke.repo.fetchEventWithQueue(eventId);
 		if (isNullish(event)) return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
 
 		const result = karaoke.isJoinValid(event, event.queue, member.id);
 		if (!result.valid) return interaction.errorReply(result.reason!);
 
-		const newQueue = await karaoke.db.addToQueue(eventId, member.id, member.displayName);
+		const newQueue = await karaoke.repo.addToQueue(eventId, member.id, member.displayName);
 		if (isNullish(newQueue)) return interaction.errorReply('There was an error when adding you to the queue.');
 
 		const embed = karaoke.buildQueueEmbed(newQueue);
@@ -170,10 +170,10 @@ export class KaraokeCommand extends Subcommand {
 		const eventId = member.voice.channelId;
 		if (isNullish(eventId)) return interaction.defaultReply('You are not in a voice channel.');
 
-		const isActive = await karaoke.db.isEventActive(guildId, eventId);
+		const isActive = await karaoke.repo.isEventActive(guildId, eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to join.');
 
-		const event = await karaoke.db.fetchEventWithQueue(eventId);
+		const event = await karaoke.repo.fetchEventWithQueue(eventId);
 		if (isNullish(event)) return interaction.defaultReply("Something went wrong. The bot's dev had been notified of the error.");
 
 		const partner = await interaction.guild!.members.fetch(interaction.options.getUser('partner', true).id);
@@ -204,7 +204,7 @@ export class KaraokeCommand extends Subcommand {
 			.then(async (i) => {
 				if (i.customId === 'yesduet') {
 					await message.delete();
-					const newQueue = await karaoke.db.addToQueue(eventId, member.id, member.displayName, partner.id, partner.displayName);
+					const newQueue = await karaoke.repo.addToQueue(eventId, member.id, member.displayName, partner.id, partner.displayName);
 					if (isNullish(newQueue)) return interaction.errorReply('Error when adding member to queue.');
 
 					await interaction.successReply(`Successfully joined queue as a duet with ${userMention(partner.id)}.`);
@@ -231,7 +231,7 @@ export class KaraokeCommand extends Subcommand {
 				return interaction.defaultReply("Your duet partner didn't respond to the confirmation.");
 			});
 
-		const newQueue = await karaoke.db.addToQueue(eventId, member.id, member.displayName, partner.id, partner.displayName);
+		const newQueue = await karaoke.repo.addToQueue(eventId, member.id, member.displayName, partner.id, partner.displayName);
 		if (isNullish(newQueue)) return interaction.errorReply('Error when adding member to queue.');
 
 		const embed = karaoke.buildQueueEmbed(newQueue);
@@ -255,10 +255,10 @@ export class KaraokeCommand extends Subcommand {
 		const eventId = member.voice.channelId;
 		if (isNullish(eventId)) return interaction.defaultReply('You are not in a voice channel.');
 
-		const isActive = await karaoke.db.isEventActive(guildId, eventId);
+		const isActive = await karaoke.repo.isEventActive(guildId, eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to leave from.');
 
-		const queue = await karaoke.db.fetchQueue(eventId);
+		const queue = await karaoke.repo.fetchQueue(eventId);
 		if (isNullish(queue)) return interaction.defaultReply("Something went wrong. The bot's dev had been notified of the error.");
 
 		const userEntry = queue.find((e) => e.id === member.id);
@@ -271,7 +271,7 @@ export class KaraokeCommand extends Subcommand {
 			return interaction.successReply('Successfully left queue.');
 		}
 
-		await karaoke.db.removeFromQueue(eventId, userEntry.id, userEntry.partnerId ?? undefined);
+		await karaoke.repo.removeFromQueue(eventId, userEntry.id, userEntry.partnerId ?? undefined);
 		if (userEntry.partnerId) {
 			const ping = member.id === userEntry.id ? userEntry.partnerId : userEntry.id;
 			return interaction.channel!.send({
