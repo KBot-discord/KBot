@@ -18,7 +18,7 @@ export class ButtonHandler extends MenuInteractionHandler {
 		const guildId = interaction.guildId!;
 
 		try {
-			const event = await this.container.karaoke.db.fetchEvent(eventId);
+			const event = await this.container.karaoke.repo.fetchEvent(eventId);
 			const scheduledEvent = await interaction.guild!.scheduledEvents.fetch(event!.scheduleId!);
 
 			const [voiceChannel, textChannel] = await Promise.all([
@@ -26,7 +26,7 @@ export class ButtonHandler extends MenuInteractionHandler {
 				(await interaction.guild!.channels.fetch(event!.channel)) as TextChannel
 			]);
 
-			const eventExists = await karaoke.db.doesEventExist(guildId, voiceChannel.id);
+			const eventExists = await karaoke.repo.doesEventExist(guildId, voiceChannel.id);
 			if (eventExists) {
 				return interaction.editReply({
 					embeds: [new MessageEmbed().setColor(EmbedColors.Default).setDescription('There is already an event going on.')]
@@ -35,7 +35,7 @@ export class ButtonHandler extends MenuInteractionHandler {
 
 			await scheduledEvent.setStatus('ACTIVE');
 			await this.container.karaoke.startEvent(interaction, voiceChannel, textChannel, scheduledEvent.name, event!.role!);
-			await karaoke.db.setEventStatus(guildId, voiceChannel.id, true);
+			await karaoke.repo.setEventStatus(guildId, voiceChannel.id, true);
 
 			return interaction.defaultReply('Event started.');
 		} catch (err) {

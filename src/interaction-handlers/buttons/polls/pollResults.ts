@@ -18,7 +18,7 @@ export class ButtonHandler extends MenuInteractionHandler {
 
 		const { polls } = this.container;
 		try {
-			const poll = await polls.db.getPollWithUsers(pollId);
+			const poll = await polls.repo.getPollWithUsers(pollId);
 			if (isNullish(poll)) {
 				return interaction.defaultReply('Poll already ended.');
 			}

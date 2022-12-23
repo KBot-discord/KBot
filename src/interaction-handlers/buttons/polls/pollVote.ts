@@ -14,7 +14,7 @@ import type { PollOption } from '../../../lib/types/CustomIds';
 export class ButtonHandler extends MenuInteractionHandler {
 	public override async run(interaction: ButtonInteraction, { data: { option } }: MenuInteractionHandler.Result<PollOption>) {
 		try {
-			await this.container.polls.db.updatePollUser(interaction.user.id, interaction.message.id, option);
+			await this.container.polls.repo.updatePollUser(interaction.user.id, interaction.message.id, option);
 			return interaction.editReply({
 				embeds: [
 					new MessageEmbed()

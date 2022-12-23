@@ -17,7 +17,7 @@ export class ButtonHandler extends MenuInteractionHandler {
 		const guildId = interaction.guildId!;
 
 		try {
-			const eventExists = await karaoke.db.doesEventExist(guildId, eventId);
+			const eventExists = await karaoke.repo.doesEventExist(guildId, eventId);
 			if (!eventExists) {
 				return interaction.editReply({
 					embeds: [new MessageEmbed().setColor(EmbedColors.Default).setDescription('There is no event to end.')]
@@ -28,8 +28,8 @@ export class ButtonHandler extends MenuInteractionHandler {
 			if (eventChannel.type === 'GUILD_STAGE_VOICE') {
 				if (eventChannel.stageInstance) await eventChannel.stageInstance.delete();
 			}
-			await karaoke.db.setEventStatus(guildId, eventId, false);
-			await karaoke.db.deleteEvent(eventId);
+			await karaoke.repo.setEventStatus(guildId, eventId, false);
+			await karaoke.repo.deleteEvent(eventId);
 
 			return interaction.successReply('Karaoke event ended.');
 		} catch (err) {

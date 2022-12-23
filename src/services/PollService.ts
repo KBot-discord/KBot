@@ -6,10 +6,10 @@ import { EmbedColors } from '../lib/util/constants';
 import type { Poll, PollUser } from '@prisma/client';
 
 export class PollService {
-	public readonly db;
+	public readonly repo;
 
 	public constructor() {
-		this.db = new PollRepository();
+		this.repo = new PollRepository();
 		container.logger.info('Poll service loaded.');
 	}
 
@@ -51,14 +51,14 @@ export class PollService {
 	 */
 	public async endPoll(messageId: string): Promise<boolean> {
 		try {
-			const poll = await this.db.getPollWithUsers(messageId);
+			const poll = await this.repo.getPollWithUsers(messageId);
 			if (isNullish(poll)) return false;
 
 			const message = await container.client.channels
 				.fetch(poll.channel)
 				.then((channel) => (channel?.isText() ? channel.messages.fetch(messageId) : null));
 			if (!message) {
-				await this.db.deletePoll(messageId);
+				await this.repo.deletePoll(messageId);
 				return false;
 			}
 
@@ -78,7 +78,7 @@ export class PollService {
 						.setTimestamp()
 				]
 			});
-			await this.db.deletePoll(messageId);
+			await this.repo.deletePoll(messageId);
 			return true;
 		} catch (error: any) {
 			container.logger.error(error);

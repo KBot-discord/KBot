@@ -16,10 +16,10 @@ export class ButtonHandler extends MenuInteractionHandler {
 		const { karaoke } = this.container;
 
 		try {
-			const event = await karaoke.db.fetchEvent(eventId);
+			const event = await karaoke.repo.fetchEvent(eventId);
 			if (event!.locked) return interaction.followUp('Queue is already locked.');
 
-			await karaoke.db.updateQueueLock(eventId, true);
+			await karaoke.repo.updateQueueLock(eventId, true);
 			return interaction.followUp('Queue locked.');
 		} catch (err) {
 			this.container.logger.error(err);

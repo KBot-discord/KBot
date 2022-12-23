@@ -8,8 +8,8 @@ export class MinageService {
 	private readonly member: GuildMember;
 
 	public constructor(member: GuildMember) {
-		this.member = member;
 		this.repo = new MinageRepository();
+		this.member = member;
 	}
 
 	public async run(): Promise<boolean> {

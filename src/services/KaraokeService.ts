@@ -15,10 +15,10 @@ import { EmbedColors } from '../lib/util/constants';
 import type { Event, EventUser } from '@prisma/client';
 
 export class KaraokeService {
-	public readonly db;
+	public readonly repo;
 
 	public constructor() {
-		this.db = new KaraokeRepository();
+		this.repo = new KaraokeRepository();
 		container.logger.info('Karaoke service loaded.');
 	}
 
@@ -31,7 +31,7 @@ export class KaraokeService {
 	): Promise<boolean | null> {
 		const result = await Result.fromAsync(async () => {
 			const guildId = interaction.guildId!;
-			const eventExists = await this.db.doesEventExist(guildId, voiceChannel.id);
+			const eventExists = await this.repo.doesEventExist(guildId, voiceChannel.id);
 			if (eventExists) {
 				return interaction.followUp({
 					embeds: [new MessageEmbed().setColor(EmbedColors.Default).setDescription('There is already a karaoke event')]
@@ -79,19 +79,19 @@ export class KaraokeService {
 			});
 			await announcement.pin();
 
-			await this.db.setEventExistence(guildId, voiceChannel.id, true);
-			await this.db.setEventStatus(guildId, voiceChannel.id, true);
-			return this.db.createEvent(voiceChannel.guildId, voiceChannel.id, textChannel.id, announcement.id);
+			await this.repo.setEventExistence(guildId, voiceChannel.id, true);
+			await this.repo.setEventStatus(guildId, voiceChannel.id, true);
+			return this.repo.createEvent(voiceChannel.guildId, voiceChannel.id, textChannel.id, announcement.id);
 		});
 		return result.match({ ok: () => true, err: () => null });
 	}
 
 	public async skipUser(eventId: string, memberManager: GuildMemberManager, memberId: string): Promise<EventUser[] | null> {
 		const result = await Result.fromAsync(async () => {
-			const eventUser = await this.db.fetchEventUser(eventId, memberId);
+			const eventUser = await this.repo.fetchEventUser(eventId, memberId);
 			if (isNullish(eventUser)) return eventUser;
 			await this.setUserToAudience(memberManager, eventUser);
-			return this.db.removeFromQueue(eventId, eventUser.id, eventUser.partnerId ?? undefined);
+			return this.repo.removeFromQueue(eventId, eventUser.id, eventUser.partnerId ?? undefined);
 		});
 		return result.match({ ok: (data) => data, err: () => null });
 	}

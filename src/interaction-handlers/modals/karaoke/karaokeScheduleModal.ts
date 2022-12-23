@@ -12,7 +12,7 @@ export class ModalHandler extends InteractionHandler {
 		{ voiceChannel, textChannel, scheduleId, pingRole }: InteractionHandler.ParseResult<this>
 	) {
 		try {
-			await this.container.karaoke.db.createScheduledEvent(modal.guildId!, voiceChannel!.id, textChannel.id, scheduleId, pingRole);
+			await this.container.karaoke.repo.createScheduledEvent(modal.guildId!, voiceChannel!.id, textChannel.id, scheduleId, pingRole);
 			return modal.followUp('scheduled');
 		} catch {
 			return modal.followUp({
