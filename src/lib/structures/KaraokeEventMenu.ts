@@ -1,13 +1,13 @@
 import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
-import { Guild, GuildChannel, MessageButton, MessageEmbed } from 'discord.js';
-import { BlankSpace, EmbedColors } from '../util/constants';
-import { KaraokeCustomIds } from '../types/CustomIds';
+import { Guild, GuildChannel, Message, MessageButton, MessageEmbed, User } from 'discord.js';
+import { BlankSpace, EmbedColors, KaraokeCustomIds } from '../util/constants';
 import type { Event } from '@prisma/client';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
 import { buildCustomId } from '@kbotdev/custom-id';
 import type { KaraokeMenuButton } from '../types/CustomIds';
+import type { NonModalInteraction } from '@sapphire/discord.js-utilities';
 
 const KaraokeEventActions = [
 	{ id: KaraokeCustomIds.Add, text: 'Add to queue' },
@@ -26,6 +26,11 @@ export class KaraokeEventMenu extends Menu {
 		this.guild = guild;
 	}
 
+	public override async run(messageOrInteraction: Message | NonModalInteraction, target?: User) {
+		await this.build();
+		return super.run(messageOrInteraction, target);
+	}
+
 	public async build() {
 		const embeds = await this.buildEmbeds();
 		const pages = this.buildPages(embeds);
@@ -42,7 +47,6 @@ export class KaraokeEventMenu extends Menu {
 								{ name: 'Instructions:', value: 'text' },
 								{ name: 'More text:', value: 'even more text' }
 							])
-							.setFooter({ text: `1 / ${this.events.length + 1}` })
 					];
 				})
 				.setComponentRows((row) => {
@@ -109,7 +113,7 @@ export class KaraokeEventMenu extends Menu {
 		const { guild } = this;
 
 		this.events = await Promise.all(
-			((await karaoke.db.fetchEvents(guild.id!)) ?? []).map(async (event) => ({
+			((await karaoke.repo.fetchEvents(guild.id!)) ?? []).map(async (event) => ({
 				event,
 				channel: (await client.channels.fetch(event.id)) as GuildChannel
 			}))
@@ -134,8 +138,7 @@ export class KaraokeEventMenu extends Menu {
 						...fields,
 						{ name: 'Voice channel:', value: channelMention(event.id), inline: true },
 						{ name: 'Command channel:', value: channelMention(event.channel), inline: true }
-					])
-					.setFooter({ text: `${index + 2} / ${this.events.length + 1}` });
+					]);
 			})
 		);
 	}

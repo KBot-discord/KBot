@@ -1,7 +1,6 @@
 import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
 import { Guild, Message, MessageButton, MessageEmbed, User } from 'discord.js';
-import { EmbedColors } from '../util/constants';
-import { PollCustomIds } from '../types/CustomIds';
+import { EmbedColors, PollCustomIds } from '../util/constants';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
 import type { Poll } from '@prisma/client';
@@ -73,7 +72,7 @@ export class PollMenu extends Menu {
 		const { polls } = container;
 		const { guild } = this;
 
-		this.polls = (await polls.db.getPollsWithUsers(guild.id!)) ?? [];
+		this.polls = (await polls.repo.getPollsWithUsers(guild.id!)) ?? [];
 
 		return Promise.all(
 			this.polls.map((poll, index) => {
