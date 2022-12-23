@@ -1,14 +1,13 @@
 import { container } from '@sapphire/framework';
-import { minutesFromNow } from '../../util/util';
-import { welcomeEnabledKey, welcomeKey } from '../../util/cacheKeys';
+import { welcomeEnabledCacheKey, welcomeCacheKey } from '../../util/cacheKeys';
 import type { WelcomeModule } from '@prisma/client';
 
 export class WelcomeRepository {
 	private readonly db;
 	private readonly cache;
 
-	private readonly configKey = welcomeKey;
-	private readonly enabledKey = welcomeEnabledKey;
+	private readonly configKey = welcomeCacheKey;
+	private readonly enabledKey = welcomeEnabledCacheKey;
 
 	public constructor() {
 		this.db = container.db.welcomeModule;
@@ -19,7 +18,7 @@ export class WelcomeRepository {
 		const key = this.configKey(guildId);
 		const cacheResult = await this.cache.get<WelcomeModule>(key);
 		if (cacheResult) {
-			await this.cache.expire(key, minutesFromNow(60));
+			await this.cache.update(key, 60);
 			return cacheResult;
 		}
 
@@ -27,7 +26,7 @@ export class WelcomeRepository {
 			where: { id: guildId }
 		});
 		if (!dbResult) return null;
-		await this.cache.setEx(key, dbResult, minutesFromNow(60));
+		await this.cache.setEx(key, dbResult, 60);
 		return dbResult;
 	}
 
@@ -38,7 +37,7 @@ export class WelcomeRepository {
 			update: newConfig,
 			create: newConfig
 		});
-		await this.cache.setEx(key, result, minutesFromNow(60));
+		await this.cache.setEx(key, result, 60);
 		await this.setEnabled(guildId, result.moduleEnabled);
 		return result;
 	}
@@ -50,6 +49,6 @@ export class WelcomeRepository {
 
 	private async setEnabled(guildId: string, isEnabled: boolean) {
 		const key = this.enabledKey(guildId);
-		return this.cache.setEx(key, isEnabled ? 'true' : 'false', minutesFromNow(60));
+		return this.cache.setEx(key, isEnabled ? 'true' : 'false', 60);
 	}
 }

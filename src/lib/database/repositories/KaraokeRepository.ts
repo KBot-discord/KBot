@@ -1,11 +1,11 @@
 import { container, Result } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import { karaokeEventActiveKey, karaokeEventExistsKey } from '../../util/cacheKeys';
+import { karaokeEventActiveCacheKey, karaokeEventExistsCacheKey } from '../../util/cacheKeys';
 import type { Event, EventUser } from '@prisma/client';
 
 export class KaraokeRepository {
-	private readonly existsKey = karaokeEventExistsKey;
-	private readonly isActiveKey = karaokeEventActiveKey;
+	private readonly existsKey = karaokeEventExistsCacheKey;
+	private readonly isActiveKey = karaokeEventActiveCacheKey;
 
 	public async createEvent(guildId: string, eventId: string, channelId: string, messageId: string): Promise<Event | null> {
 		const result = await Result.fromAsync(async () => {

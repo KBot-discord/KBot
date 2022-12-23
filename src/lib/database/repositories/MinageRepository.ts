@@ -1,12 +1,11 @@
 import { container } from '@sapphire/framework';
-import { minutesFromNow } from '../../util/util';
-import { minageKey } from '../../util/cacheKeys';
+import { minageCacheKey } from '../../util/cacheKeys';
 
 export class MinageRepository {
 	private readonly db;
 	private readonly cache;
 
-	private readonly cacheKey = minageKey;
+	private readonly cacheKey = minageCacheKey;
 
 	public constructor() {
 		this.db = container.db.moderationModule;
@@ -17,7 +16,7 @@ export class MinageRepository {
 		const key = this.cacheKey(guildId);
 		const cacheResult = await this.cache.get<{ req: string; msg: string }>(key);
 		if (cacheResult) {
-			await this.cache.expire(key, minutesFromNow(5));
+			await this.cache.update(key, 5);
 			return { req: parseInt(cacheResult.req, 10), msg: cacheResult.msg };
 		}
 
@@ -29,7 +28,7 @@ export class MinageRepository {
 		await this.cache.setEx<{ req: number | null; msg: string | null }>(
 			key,
 			{ req: dbResult.minAccountAgeReq, msg: dbResult.minAccountAgeMsg },
-			minutesFromNow(5)
+			5
 		);
 		return { req: dbResult.minAccountAgeReq, msg: dbResult.minAccountAgeMsg };
 	}
@@ -41,11 +40,7 @@ export class MinageRepository {
 			update: { minAccountAgeReq: req, minAccountAgeMsg: msg },
 			create: { minAccountAgeReq: req, minAccountAgeMsg: msg, guild: { connect: { id: guildId } } }
 		});
-		await this.cache.setEx<{ req: number | null; msg: string | null }>(
-			key,
-			{ req: result.minAccountAgeReq, msg: result.minAccountAgeMsg },
-			minutesFromNow(60)
-		);
+		await this.cache.setEx<{ req: number | null; msg: string | null }>(key, { req: result.minAccountAgeReq, msg: result.minAccountAgeMsg }, 60);
 		return { req: result.minAccountAgeReq, msg: result.minAccountAgeMsg };
 	}
 }
