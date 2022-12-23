@@ -90,7 +90,7 @@ export class DiscordStatusCommand extends Subcommand {
 							.setName('config')
 							.setDescription('Show the current config')
 					),
-			{ idHints: ['1040042392482496616'], guildIds: getGuildIds() }
+			{ idHints: ['1055671595676479518'], guildIds: getGuildIds() }
 		);
 	}
 
