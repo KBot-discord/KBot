@@ -3,14 +3,14 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { getUserInfo } from '../../lib/util/util';
 import { getGuildIds } from '../../lib/util/config';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import type { ChatInputCommand } from '@sapphire/framework';
 import type { ModerationModule } from '../../modules/ModerationModule';
 
-@ApplyOptions<ChatInputCommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'ModerationModule',
 	description: 'Get info on the selected user or provided ID.',
 	detailedDescription:
 		'Displays all the info about a user such as: creation date, join date, if they are in the server, if they are banned (and ban reason if applicable).',
-	preconditions: ['GuildOnly'],
+	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
 export class UserInfoCommand extends ModuleCommand<ModerationModule> {

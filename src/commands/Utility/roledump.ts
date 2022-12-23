@@ -9,7 +9,7 @@ import type { UtilityModule } from '../../modules/UtilityModule';
 @ApplyOptions<ModuleCommand.Options>({
 	module: 'UtilityModule',
 	description: 'Discord status',
-	preconditions: ['GuildOnly'],
+	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
 export class KBotCommand extends ModuleCommand<UtilityModule> {

@@ -3,9 +3,10 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { getGuildIds } from '../../lib/util/config';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { ModerationModule } from '../../modules/ModerationModule';
-import type { ChatInputCommand, ContextMenuCommand } from '@sapphire/framework';
+import type { ContextMenuCommand } from '@sapphire/framework';
 
-@ApplyOptions<ChatInputCommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'ModerationModule',
 	detailedDescription: 'Send the selected message to the set moderator channel.',
 	preconditions: ['GuildOnly', 'ModuleEnabled']
 })
