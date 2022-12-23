@@ -3,5 +3,5 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"removeComments": true,
-	},
+	}
 }
