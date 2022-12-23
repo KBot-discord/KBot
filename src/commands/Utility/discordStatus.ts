@@ -65,7 +65,9 @@ export class DiscordStatusCommand extends Subcommand {
 		if (!valid) {
 			const error = new KBotError({
 				identifier: KBotErrors.ChannelPermissions,
-				message: `I don't have the required permission(s) to send tweets in ${channelMention(channel.id)}\n\nRequired permission(s):${errors}`
+				message: `I don't have the required permission(s) to send messages in ${channelMention(
+					channel.id
+				)}\n\nRequired permission(s):${errors}`
 			});
 			return client.emitError(KBotErrors.ChannelPermissions, { interaction, error });
 		}
