@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest';
 import { minutesFromNow } from '../../../src/lib/util/util';
+import { describe, expect, test } from 'vitest';
 
 describe('minutesFromNow', () => {
 	test('GIVEN the amount of minutes from now -> RETURN proper UNIX time', () => {

@@ -1,6 +1,6 @@
-import { describe, expect, test } from 'vitest';
 import { getMockConfig } from '../../mocks/config';
 import { validateConfig } from '../../../src/lib/util/config';
+import { describe, expect, test } from 'vitest';
 import type { Config } from '../../../src/lib/types/Config';
 
 describe('ConfigValidator', () => {
