@@ -1,5 +1,5 @@
-import { createModel } from 'schemix';
 import IncidentMessage from './IncidentMessage.model';
+import { createModel } from 'schemix';
 
 export default createModel('DiscordIncident', (model) => {
 	// prettier-ignore

@@ -1,7 +1,7 @@
-import { createModel } from 'schemix';
-import UUIDMixin from '../../../mixins/UUID.mixin';
 import TwitterAccountModel from './TwitterAccount.model';
+import UUIDMixin from '../../../mixins/UUID.mixin';
 import NotificationModuleModel from '../NotificationModule.model';
+import { createModel } from 'schemix';
 
 export default createModel('TwitterFollow', (model) => {
 	// prettier-ignore

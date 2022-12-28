@@ -1,5 +1,5 @@
-import { createModel } from 'schemix';
 import TwitterFollowModel from './TwitterFollow.model';
+import { createModel } from 'schemix';
 
 export default createModel('TwitterAccount', (model) => {
 	// prettier-ignore

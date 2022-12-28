@@ -1,6 +1,6 @@
-import { createModel } from 'schemix';
-import UtilityModuleModel from '../UtilityModule.model';
 import PollUserModel from './PollUser.model';
+import UtilityModuleModel from '../UtilityModule.model';
+import { createModel } from 'schemix';
 
 export default createModel('Poll', (model) => {
 	// prettier-ignore

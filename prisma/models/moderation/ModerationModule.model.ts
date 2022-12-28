@@ -1,7 +1,7 @@
-import { createModel } from 'schemix';
 import MuteModel from './Mute.model';
 import LockedChannelModel from './LockedChannel.model';
 import GuildModel from '../Guild.model';
+import { createModel } from 'schemix';
 
 export default createModel('ModerationModule', (model) => {
 	// prettier-ignore
