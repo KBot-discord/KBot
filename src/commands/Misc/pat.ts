@@ -1,16 +1,16 @@
+import { imageFolder } from '#utils/constants';
+import { getMemberAvatarUrl, getUserAvatarUrl } from '#utils/util';
+import { getGuildIds } from '#utils/config';
 import { Command, type ContextMenuCommand } from '@sapphire/framework';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage, Image } from 'canvas-constructor/cairo';
 import { MessageAttachment } from 'discord.js';
+import { isNullish } from '@sapphire/utilities';
 import { join } from 'node:path';
 import { buffer } from 'node:stream/consumers';
 import { readdirSync } from 'fs';
-import { imageFolder } from '../../lib/util/constants';
-import { getMemberAvatarUrl, getUserAvatarUrl } from '../../lib/util/util';
-import { getGuildIds } from '../../lib/util/config';
-import { isNullish } from '@sapphire/utilities';
 
 interface PatOptions {
 	resolution?: number;

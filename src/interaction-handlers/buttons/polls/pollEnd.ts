@@ -1,9 +1,9 @@
+import { PollCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
-import { PollCustomIds } from '../../../lib/util/constants';
 import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
 import type { ButtonInteraction } from 'discord.js';
-import type { PollMenuButton } from '../../../lib/types/CustomIds';
+import type { PollMenuButton } from '#lib/types/CustomIds';
 
 @ApplyOptions<MenuInteractionHandler.Options>({
 	customIdPrefix: [PollCustomIds.End],

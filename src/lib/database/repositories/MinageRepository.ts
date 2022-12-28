@@ -1,5 +1,5 @@
+import { minageCacheKey } from '#utils/cacheKeys';
 import { container } from '@sapphire/framework';
-import { minageCacheKey } from '../../util/cacheKeys';
 
 export class MinageRepository {
 	private readonly db;

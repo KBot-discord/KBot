@@ -1,3 +1,5 @@
+import { KaraokeRepository } from '#lib/database/repositories/KaraokeRepository';
+import { EmbedColors } from '#utils/constants';
 import { container, Result } from '@sapphire/framework';
 import {
 	ButtonInteraction,
@@ -10,8 +12,6 @@ import {
 	VoiceChannel
 } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import { KaraokeRepository } from '../lib/database/repositories/KaraokeRepository';
-import { EmbedColors } from '../lib/util/constants';
 import type { Event, EventUser } from '@prisma/client';
 
 export class KaraokeService {

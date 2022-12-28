@@ -1,5 +1,5 @@
+import { ModerationRepository } from '#lib/database/repositories/ModerationRepository';
 import { container } from '@sapphire/framework';
-import { ModerationRepository } from '../lib/database/repositories/ModerationRepository';
 
 export class ModerationService {
 	public readonly repo;

@@ -1,5 +1,5 @@
+import { moderationCacheKey, moderationEnabledCacheKey } from '#utils/cacheKeys';
 import { container } from '@sapphire/framework';
-import { moderationCacheKey, moderationEnabledCacheKey } from '../../util/cacheKeys';
 import type { ModerationModule } from '@prisma/client';
 
 export class ModerationRepository {

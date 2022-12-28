@@ -1,9 +1,9 @@
+import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, ModalSubmitInteraction } from 'discord.js';
-import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '../../lib/util/constants';
 import { parseCustomId } from '@kbotdev/custom-id';
-import type { EmoteEditModal } from '../../lib/types/CustomIds';
+import type { EmoteEditModal } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit

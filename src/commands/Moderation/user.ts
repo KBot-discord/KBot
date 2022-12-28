@@ -1,7 +1,7 @@
+import { getUserInfo } from '#utils/util';
+import { getGuildIds } from '#utils/config';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getUserInfo } from '../../lib/util/util';
-import { getGuildIds } from '../../lib/util/config';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { ModerationModule } from '../../modules/ModerationModule';
 

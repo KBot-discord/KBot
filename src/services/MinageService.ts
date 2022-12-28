@@ -1,7 +1,7 @@
+import { getServerIcon } from '#utils/util';
+import { EmbedColors } from '#utils/constants';
+import { MinageRepository } from '#lib/database/repositories/MinageRepository';
 import { GuildMember, MessageEmbed } from 'discord.js';
-import { getServerIcon } from '../lib/util/util';
-import { EmbedColors } from '../lib/util/constants';
-import { MinageRepository } from '../lib/database/repositories/MinageRepository';
 
 export class MinageService {
 	private readonly repo;

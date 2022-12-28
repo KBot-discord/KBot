@@ -1,5 +1,5 @@
+import { utilityCacheKey, utilityEnabledCacheKey } from '#utils/cacheKeys';
 import { container } from '@sapphire/framework';
-import { utilityCacheKey, utilityEnabledCacheKey } from '../../util/cacheKeys';
 import type { UtilityModule } from '@prisma/client';
 
 export class UtilityRepository {

@@ -1,10 +1,10 @@
+import { EmbedColors } from '#utils/constants';
+import { getGuildIds } from '#utils/config';
 import { Collection, MessageEmbed } from 'discord.js';
 import { Command, container, type ChatInputCommand } from '@sapphire/framework';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedColors } from '../../lib/util/constants';
-import { getGuildIds } from '../../lib/util/config';
 
 function sortCommandsAlphabetically(_: Command[], __: Command[], firstCategory: string, secondCategory: string): 1 | -1 | 0 {
 	if (firstCategory > secondCategory) return 1;

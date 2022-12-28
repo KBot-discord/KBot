@@ -1,12 +1,12 @@
+import { EmbedColors } from '#utils/constants';
+import { getGuildIds } from '#utils/config';
+import { YoutubeMenu } from '#lib/structures/YoutubeMenu';
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { YoutubeMenu } from '../../lib/structures/YoutubeMenu';
 import { MessageEmbed } from 'discord.js';
-import { EmbedColors } from '../../lib/util/constants';
-import type { Subscription } from '../../rpc/gen/subscriptions/v1/subscriptions.pb';
 import { channelMention, roleMention } from '@discordjs/builders';
+import type { Subscription } from '../../rpc/gen/subscriptions/v1/subscriptions.pb';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Youtube module',
@@ -149,7 +149,7 @@ export class DiscordStatusCommand extends Subcommand {
 
 		const account = interaction.options.getString('account', true);
 
-		const success = await youtube.deleteSubscriptionByName(interaction.guildId!, account);
+		const success = await youtube.deleteSubscription(interaction.guildId!, account);
 		if (!success) {
 			return interaction.errorReply("KBot's Youtube module is down at the moment.");
 		}

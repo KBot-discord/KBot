@@ -1,9 +1,9 @@
+import { EmbedColors } from '#utils/constants';
+import { getGuildIds } from '#utils/config';
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ButtonInteraction, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import { EmbedColors } from '../../lib/util/constants';
-import { getGuildIds } from '../../lib/util/config';
 import { channelMention, userMention } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 

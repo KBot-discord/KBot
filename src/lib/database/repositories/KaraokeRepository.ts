@@ -1,6 +1,6 @@
+import { karaokeEventActiveCacheKey, karaokeEventExistsCacheKey } from '#utils/cacheKeys';
 import { container, Result } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import { karaokeEventActiveCacheKey, karaokeEventExistsCacheKey } from '../../util/cacheKeys';
 import type { Event, EventUser } from '@prisma/client';
 
 export class KaraokeRepository {

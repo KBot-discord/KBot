@@ -1,10 +1,10 @@
+import { EmbedColors, KaraokeCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
-import type { ButtonInteraction } from 'discord.js';
 import { MessageEmbed, StageChannel, TextChannel, VoiceChannel } from 'discord.js';
-import { EmbedColors, KaraokeCustomIds } from '../../../lib/util/constants';
 import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
-import type { KaraokeMenuButton } from '../../../lib/types/CustomIds';
+import type { ButtonInteraction } from 'discord.js';
+import type { KaraokeMenuButton } from '#lib/types/CustomIds';
 
 @ApplyOptions<MenuInteractionHandler.Options>({
 	customIdPrefix: [KaraokeCustomIds.Start],

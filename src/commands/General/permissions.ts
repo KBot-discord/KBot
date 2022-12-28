@@ -1,9 +1,9 @@
+import { EmbedColors } from '#utils/constants';
+import { getGuildIds } from '#utils/config';
 import { Command, type ChatInputCommand } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { MessageEmbed } from 'discord.js';
-import { EmbedColors } from '../../lib/util/constants';
-import { getGuildIds } from '../../lib/util/config';
 
 @ApplyOptions<ChatInputCommand.Options>({
 	description: 'Show information about command permissions.',

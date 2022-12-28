@@ -1,7 +1,7 @@
+import { getGuildIds } from '#utils/config';
+import { KaraokeEventMenu } from '#lib/structures/KaraokeEventMenu';
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
-import { KaraokeEventMenu } from '../../lib/structures/KaraokeEventMenu';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 
 @ApplyOptions<Subcommand.Options>({

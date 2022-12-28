@@ -1,10 +1,10 @@
+import { getGuildIds } from '#utils/config';
+import { EmbedColors } from '#utils/constants';
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
 import { MessageEmbed } from 'discord.js';
-import { EmbedColors } from '../../lib/util/constants';
-import type { ModerationModule } from '@prisma/client';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
+import type { ModerationModule } from '@prisma/client';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Minimum account age',

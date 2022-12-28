@@ -1,6 +1,5 @@
-import { container } from '@sapphire/framework';
 import {
-	DeleteSubscriptionByName,
+	DeleteSubscription,
 	GetGuildSubscriptions,
 	GetSubscription,
 	PostSubscription,
@@ -8,6 +7,7 @@ import {
 } from '../rpc/gen/subscriptions/v1/subscriptions.pb';
 import { GetAutocompleteChannel } from '../rpc/gen/channels/autocomplete/v1/autocomplete.pb';
 import { GetChannel } from '../rpc/gen/channels/v1/channels.pb';
+import { container } from '@sapphire/framework';
 import type { Channel } from '../rpc/gen/channels/v1/channels.pb';
 
 export class YoutubeService {
@@ -57,8 +57,8 @@ export class YoutubeService {
 			.catch(() => null);
 	}
 
-	public async deleteSubscriptionByName(guildId: string, channelName: string): Promise<boolean | null> {
-		return DeleteSubscriptionByName({ guildId, channelName }, { baseURL: this.baseUrl }) //
+	public async deleteSubscription(guildId: string, channelId: string): Promise<boolean | null> {
+		return DeleteSubscription({ guildId, channelId }, { baseURL: this.baseUrl }) //
 			.then(() => true)
 			.catch(() => null);
 	}

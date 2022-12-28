@@ -1,8 +1,8 @@
+import { getGuildIds } from '#utils/config';
 import { isMessageInstance } from '@sapphire/discord.js-utilities';
 import { type ChatInputCommand, Command } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
 
 @ApplyOptions<ChatInputCommand.Options>({
 	description: 'Ping bot to see if it is alive.',

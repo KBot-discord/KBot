@@ -1,5 +1,5 @@
+import { getGuildIds } from '#utils/config';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { roleMention } from '@discordjs/builders';
 import { ModuleCommand } from '@kbotdev/plugin-modules';

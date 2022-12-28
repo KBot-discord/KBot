@@ -1,6 +1,6 @@
+import { getGuildIds } from '#utils/config';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { ModerationModule } from '../../modules/ModerationModule';
 import type { ContextMenuCommand } from '@sapphire/framework';

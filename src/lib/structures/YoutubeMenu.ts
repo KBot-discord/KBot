@@ -1,6 +1,6 @@
+import { EmbedColors } from '#utils/constants';
 import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
 import { Guild, Message, MessageEmbed, User } from 'discord.js';
-import { EmbedColors } from '../util/constants';
 import { channelMention, roleMention } from '@discordjs/builders';
 import type { NonModalInteraction } from '@sapphire/discord.js-utilities';
 import type { Subscription } from '../../rpc/gen/subscriptions/v1/subscriptions.pb';

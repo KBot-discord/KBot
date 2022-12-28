@@ -1,7 +1,7 @@
+import { EmbedColors } from '#utils/constants';
 import { Events, Listener, UserError, type ChatInputCommandDeniedPayload } from '@sapphire/framework';
 import { MessageEmbed } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedColors } from '../../lib/util/constants';
 
 @ApplyOptions<Listener.Options>({
 	name: Events.ChatInputCommandDenied

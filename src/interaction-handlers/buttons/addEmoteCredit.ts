@@ -1,12 +1,12 @@
+import { AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
-import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/util/constants';
 import { isNullish } from '@sapphire/utilities';
 import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
 import { buildCustomId } from '@kbotdev/custom-id';
 import { MenuInteractionHandler } from '@kbotdev/menus';
 import type { ButtonInteraction } from 'discord.js';
-import type { EmoteCredit, EmoteCreditModal } from '../../lib/types/CustomIds';
+import type { EmoteCredit, EmoteCreditModal } from '#lib/types/CustomIds';
 
 @ApplyOptions<MenuInteractionHandler.Options>({
 	customIdPrefix: [AddEmoteCustomIds.Credits],

@@ -1,10 +1,10 @@
+import { EmbedColors, PollCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, type ButtonInteraction } from 'discord.js';
-import { EmbedColors, PollCustomIds } from '../../../lib/util/constants';
 import { isNullish } from '@sapphire/utilities';
 import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
-import type { PollMenuButton } from '../../../lib/types/CustomIds';
+import type { PollMenuButton } from '#lib/types/CustomIds';
 
 @ApplyOptions<MenuInteractionHandler.Options>({
 	customIdPrefix: [PollCustomIds.ResultsPublic, PollCustomIds.ResultsHidden],

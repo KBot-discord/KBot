@@ -1,6 +1,6 @@
+import { minutesFromNow } from '#utils/util';
 import Redis from 'ioredis';
 import { container } from '@sapphire/framework';
-import { minutesFromNow } from '../util/util';
 import type { Key } from '../types/Cache';
 
 export class RedisClient extends Redis {

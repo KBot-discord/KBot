@@ -1,11 +1,11 @@
+import { EmbedColors, PollCustomIds } from '#utils/constants';
 import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
 import { Guild, Message, MessageButton, MessageEmbed, User } from 'discord.js';
-import { EmbedColors, PollCustomIds } from '../util/constants';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
+import { buildCustomId } from '@kbotdev/custom-id';
 import type { Poll } from '@prisma/client';
 import type { NonModalInteraction } from '@sapphire/discord.js-utilities';
-import { buildCustomId } from '@kbotdev/custom-id';
 import type { PollMenuButton } from '../types/CustomIds';
 
 export class PollMenu extends Menu {

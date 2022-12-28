@@ -1,11 +1,11 @@
+import { AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandlerTypes } from '@sapphire/framework';
-import { AddEmoteCustomIds, AddEmoteFields } from '../../lib/util/constants';
 import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
 import { MenuInteractionHandler } from '@kbotdev/menus';
 import { buildCustomId } from '@kbotdev/custom-id';
 import type { ButtonInteraction } from 'discord.js';
-import type { EmoteEditModal } from '../../lib/types/CustomIds';
+import type { EmoteEditModal } from '#lib/types/CustomIds';
 
 @ApplyOptions<MenuInteractionHandler.Options>({
 	customIdPrefix: [AddEmoteCustomIds.Edit],

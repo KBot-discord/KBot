@@ -1,14 +1,14 @@
+import { parseTimeString } from '#utils/util';
+import { EmbedColors, PollCustomIds, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
+import { getGuildIds } from '#utils/config';
+import { PollMenu } from '#lib/structures/PollMenu';
 import { Subcommand } from '@sapphire/plugin-subcommands';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import { parseTimeString } from '../../lib/util/util';
-import { EmbedColors, PollCustomIds, POLL_NUMBERS, POLL_TIME_LIMIT } from '../../lib/util/constants';
-import { getGuildIds } from '../../lib/util/config';
-import { PollMenu } from '../../lib/structures/PollMenu';
 import { buildCustomId } from '@kbotdev/custom-id';
-import type { PollOption } from '../../lib/types/CustomIds';
+import type { PollOption } from '#lib/types/CustomIds';
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Get info on the selected user or provided ID',

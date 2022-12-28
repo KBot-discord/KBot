@@ -1,5 +1,5 @@
+import { welcomeEnabledCacheKey, welcomeCacheKey } from '#utils/cacheKeys';
 import { container } from '@sapphire/framework';
-import { welcomeEnabledCacheKey, welcomeCacheKey } from '../../util/cacheKeys';
 import type { WelcomeModule } from '@prisma/client';
 
 export class WelcomeRepository {

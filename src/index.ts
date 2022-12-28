@@ -2,6 +2,10 @@ import '@kbotdev/plugin-modules/register';
 import '@sapphire/plugin-api/register';
 import '@sapphire/plugin-logger/register';
 import '@sapphire/plugin-subcommands/register';
+import { KBotClient } from '#lib/extensions/KBotClient';
+import { startMetricsServer } from '#utils/metrics';
+import { rootFolder } from '#utils/constants';
+import { getConfig } from '#utils/config';
 import { ScheduledTaskRedisStrategy } from '@sapphire/plugin-scheduled-tasks/register-redis';
 
 import './lib/util/Augments';
@@ -10,10 +14,6 @@ import { container, LogLevel } from '@sapphire/framework';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import { Intents } from 'discord.js';
-import { KBotClient } from './lib/extensions/KBotClient';
-import { startMetricsServer } from './lib/util/metrics';
-import { rootFolder } from './lib/util/constants';
-import { getConfig } from './lib/util/config';
 import { isNullish } from '@sapphire/utilities';
 
 const config = getConfig();
