@@ -1,4 +1,4 @@
-import { KBotErrors } from '../util/constants';
+import { KBotErrors } from '#utils/constants';
 import type { KBotError } from '../structures/KBotError';
 import type { BaseCommandInteraction } from 'discord.js';
 
