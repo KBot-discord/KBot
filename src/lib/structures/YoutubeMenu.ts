@@ -1,5 +1,5 @@
 import { EmbedColors } from '#utils/constants';
-import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
+import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { Guild, Message, MessageEmbed, User } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
 import type { NonModalInteraction } from '@sapphire/discord.js-utilities';
@@ -23,8 +23,10 @@ export class YoutubeMenu extends Menu {
 	public async build() {
 		const embeds = await this.buildEmbeds();
 		const pages = this.buildPages(embeds);
-		this.setPages(pages);
-		this.setHomePage((builder) =>
+
+		await this.setPages(pages);
+
+		await this.setHomePage((builder) =>
 			builder.setEmbeds((embed) => {
 				return [
 					embed
@@ -39,10 +41,10 @@ export class YoutubeMenu extends Menu {
 		);
 	}
 
-	private buildPages(embeds: MessageEmbed[]): PagesBuilder {
-		return new PagesBuilder().setPages(
+	private buildPages(embeds: MessageEmbed[]): MenuPagesBuilder {
+		return new MenuPagesBuilder().setPages(
 			embeds.map((embed) => {
-				return new PageBuilder() //
+				return new MenuPageBuilder() //
 					.setEmbeds([embed]);
 			})
 		);

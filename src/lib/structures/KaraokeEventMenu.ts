@@ -1,6 +1,6 @@
-import { BlankSpace, EmbedColors, KaraokeCustomIds } from '#utils/constants';
+import { BlankSpace, EmbedColors, Emoji, KaraokeCustomIds } from '#utils/constants';
 import { Guild, GuildChannel, Message, MessageButton, MessageEmbed, User } from 'discord.js';
-import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
+import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
@@ -34,6 +34,14 @@ export class KaraokeEventMenu extends Menu {
 	public async build() {
 		const embeds = await this.buildEmbeds();
 		const pages = this.buildPages(embeds);
+
+		this.setSelectMenuPlaceholder('Select an event');
+
+		this.setSelectMenuOptions((pageIndex) => {
+			if (pageIndex === 1) return { label: `Home page` };
+			return { label: `Event #${pageIndex - 1} | ${this.events[pageIndex - 2].channel.name}` };
+		});
+
 		this.setPages(pages);
 		this.setHomePage((builder) =>
 			builder
@@ -60,11 +68,11 @@ export class KaraokeEventMenu extends Menu {
 		);
 	}
 
-	private buildPages(embeds: MessageEmbed[]): PagesBuilder {
-		return new PagesBuilder().setPages(
+	private buildPages(embeds: MessageEmbed[]): MenuPagesBuilder {
+		return new MenuPagesBuilder().setPages(
 			embeds.map((embed, index) => {
 				const { event } = this.events[index];
-				return new PageBuilder() //
+				return new MenuPageBuilder() //
 					.setEmbeds([embed])
 					.setComponentRows((row1, row2) => {
 						return [
@@ -137,9 +145,31 @@ export class KaraokeEventMenu extends Menu {
 					.addFields([
 						...fields,
 						{ name: 'Voice channel:', value: channelMention(event.id), inline: true },
-						{ name: 'Command channel:', value: channelMention(event.channel), inline: true }
+						{ name: 'Command channel:', value: channelMention(event.channel), inline: true },
+						{ name: 'Queue lock:', value: event.locked ? `${Emoji.Locked} locked` : `${Emoji.Unlocked} unlocked`, inline: true }
 					]);
 			})
 		);
+	}
+
+	public static pageUpdateLock(menu: Menu, event: Event): MenuPageBuilder {
+		const page = menu.getCurrentPage();
+
+		// use !event.locked since we are looking for the old value
+		const index = page.embeds[0].fields.indexOf({ name: 'Queue lock:', value: `${!event.locked}`, inline: true });
+		const lockString = event!.locked ? `${Emoji.Locked} locked` : `${Emoji.Unlocked} unlocked`;
+
+		const embed = new MessageEmbed(page.embeds[0]).spliceFields(index, 1, [{ name: 'Queue lock:', value: lockString, inline: true }]);
+
+		return new MenuPageBuilder(page).setEmbeds([embed]);
+	}
+
+	public static pageStopEvent(menu: Menu): MenuPageBuilder {
+		const page = menu.getCurrentPage();
+
+		const embed = new MessageEmbed(page.embeds[0]).setFields([]).setDescription('Event has ended.');
+		const defaultRows = [page.components[0], page.components[1]];
+
+		return new MenuPageBuilder(page).setEmbeds([embed]).setComponentRows(defaultRows);
 	}
 }

@@ -1,5 +1,5 @@
 import { EmbedColors, PollCustomIds } from '#utils/constants';
-import { Menu, PageBuilder, PagesBuilder } from '@kbotdev/menus';
+import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { Guild, Message, MessageButton, MessageEmbed, User } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
@@ -25,8 +25,10 @@ export class PollMenu extends Menu {
 	public async build() {
 		const embeds = await this.buildEmbeds();
 		const pages = this.buildPages(embeds);
-		this.setPages(pages);
-		this.setHomePage((builder) =>
+
+		await this.setPages(pages);
+
+		await this.setHomePage((builder) =>
 			builder.setEmbeds((embed) => {
 				return [
 					embed
@@ -36,17 +38,16 @@ export class PollMenu extends Menu {
 							{ name: 'Instructions:', value: 'text' },
 							{ name: 'More text:', value: 'even more text' }
 						])
-						.setFooter({ text: `1 / ${this.polls.length + 1}` })
 				];
 			})
 		);
 	}
 
-	private buildPages(embeds: MessageEmbed[]): PagesBuilder {
-		return new PagesBuilder().setPages(
+	private buildPages(embeds: MessageEmbed[]): MenuPagesBuilder {
+		return new MenuPagesBuilder().setPages(
 			embeds.map((embed, index) => {
 				const poll = this.polls[index];
-				return new PageBuilder() //
+				return new MenuPageBuilder() //
 					.setEmbeds([embed])
 					.setComponentRows((row) => {
 						return [
@@ -83,8 +84,7 @@ export class PollMenu extends Menu {
 					.addFields([
 						{ name: 'Options', value: poll.options.join('\n') },
 						{ name: 'Ends at:', value: time(Math.floor(Number(poll.time) / 1000)) }
-					])
-					.setFooter({ text: `${index + 2} / ${this.polls.length + 1}` });
+					]);
 			})
 		);
 	}
