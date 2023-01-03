@@ -10,7 +10,6 @@ export class PollService {
 
 	public constructor() {
 		this.repo = new PollRepository();
-		container.logger.info('Poll service loaded.');
 	}
 
 	/**

@@ -4,11 +4,11 @@ import {
 	GetSubscription,
 	PostSubscription,
 	type Subscription
-} from '../rpc/gen/subscriptions/v1/subscriptions.pb';
-import { GetAutocompleteChannel } from '../rpc/gen/channels/autocomplete/v1/autocomplete.pb';
-import { GetChannel } from '../rpc/gen/channels/v1/channels.pb';
+} from '../../rpc/gen/subscriptions/v1/subscriptions.pb';
+import { GetAutocompleteChannel } from '../../rpc/gen/channels/autocomplete/v1/autocomplete.pb';
+import { GetChannel } from '../../rpc/gen/channels/v1/channels.pb';
 import { container } from '@sapphire/framework';
-import type { Channel } from '../rpc/gen/channels/v1/channels.pb';
+import type { Channel } from '../../rpc/gen/channels/v1/channels.pb';
 
 export class YoutubeService {
 	private readonly baseUrl;
