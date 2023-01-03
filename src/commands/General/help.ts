@@ -13,7 +13,7 @@ function sortCommandsAlphabetically(_: Command[], __: Command[], firstCategory: 
 }
 
 @ApplyOptions<ChatInputCommand.Options>({
-	description: 'Make a poll with or without a time limit.',
+	description: "Get info about the bot and all of it's commands.",
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })

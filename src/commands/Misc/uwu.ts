@@ -9,7 +9,7 @@ function getRandomInt(max: number) {
 }
 
 @ApplyOptions<ChatInputCommand.Options>({
-	detailedDescription: 'uwu-ify messages.',
+	detailedDescription: 'uwu-ify a message.',
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })

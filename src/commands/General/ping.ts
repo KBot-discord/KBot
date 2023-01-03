@@ -5,7 +5,7 @@ import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 
 @ApplyOptions<ChatInputCommand.Options>({
-	description: 'Ping bot to see if it is alive.',
+	description: 'Ping the bot to see if it is alive.',
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
