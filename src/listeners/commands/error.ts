@@ -18,8 +18,10 @@ export class CommandErrorListener extends Listener {
 				return;
 			}
 		}
+
 		Sentry.captureException(error);
 		logger.fatal(`[COMMAND] Error while executing: ${command.location.full}\n${error.stack || error.message}`);
+
 		return interaction.errorReply('Something went wrong, please try that command again.');
 	}
 }

@@ -1,5 +1,5 @@
-import { MinageService } from '../../services/MinageService';
-import { WelcomeService } from '../../services/WelcomeService';
+import { MinageService } from '#services/MinageService';
+import { WelcomeService } from '#services/WelcomeService';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { GuildMember } from 'discord.js';
