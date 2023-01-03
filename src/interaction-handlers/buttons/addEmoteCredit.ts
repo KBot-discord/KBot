@@ -1,19 +1,19 @@
 import { AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
-import { buildCustomId } from '@kbotdev/custom-id';
-import { MenuInteractionHandler } from '@kbotdev/menus';
+import { buildCustomId, parseCustomId } from '@kbotdev/custom-id';
 import type { ButtonInteraction } from 'discord.js';
 import type { EmoteCredit, EmoteCreditModal } from '#lib/types/CustomIds';
 
-@ApplyOptions<MenuInteractionHandler.Options>({
-	customIdPrefix: [AddEmoteCustomIds.Credits],
+@ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends MenuInteractionHandler {
-	public override async run(interaction: ButtonInteraction, { data: { name, id } }: MenuInteractionHandler.Result<EmoteCredit>) {
+export class ButtonHandler extends InteractionHandler {
+	private readonly customIds = [AddEmoteCustomIds.Credits];
+
+	public override async run(interaction: ButtonInteraction, { name, id }: InteractionHandler.ParseResult<this>) {
 		const channel = await this.container.db.utilityModule.findUnique({
 			where: { id: interaction.guildId! },
 			select: { creditsChannel: true }
@@ -63,5 +63,15 @@ export class ButtonHandler extends MenuInteractionHandler {
 					)
 				)
 		);
+	}
+
+	public override async parse(interaction: ButtonInteraction) {
+		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
+
+		const {
+			data: { name, id }
+		} = parseCustomId<EmoteCredit>(interaction.customId);
+
+		return this.some({ name, id });
 	}
 }

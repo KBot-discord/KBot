@@ -1,7 +1,7 @@
-import { EmbedColors, KaraokeCustomIds } from '#utils/constants';
+import { KaraokeCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { MessageEmbed, ModalSubmitInteraction, StageChannel, TextChannel, VoiceChannel } from 'discord.js';
+import type { ModalSubmitInteraction, StageChannel, TextChannel, VoiceChannel } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
@@ -12,12 +12,11 @@ export class ModalHandler extends InteractionHandler {
 		{ voiceChannel, textChannel, stageTopic, pingRole }: InteractionHandler.ParseResult<this>
 	) {
 		try {
-			return this.container.karaoke.startEvent(modal, voiceChannel, textChannel, stageTopic, pingRole);
-		} catch {
-			return modal.followUp({
-				embeds: [new MessageEmbed().setColor(EmbedColors.Error).setDescription('Failed to create event')],
-				ephemeral: true
-			});
+			await this.container.karaoke.startEvent(modal, voiceChannel, textChannel, stageTopic, pingRole);
+			return modal.successFollowup('Karaoke event started.', true);
+		} catch (err) {
+			this.container.logger.error(err);
+			return modal.errorFollowup('Failed to create event.', true);
 		}
 	}
 

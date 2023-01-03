@@ -1,19 +1,18 @@
 import { EmbedColors, KaraokeCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, StageChannel, TextChannel, VoiceChannel } from 'discord.js';
-import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
+import { parseCustomId } from '@kbotdev/custom-id';
 import type { ButtonInteraction } from 'discord.js';
 import type { KaraokeMenuButton } from '#lib/types/CustomIds';
 
-@ApplyOptions<MenuInteractionHandler.Options>({
-	customIdPrefix: [KaraokeCustomIds.Start],
-	defer: DeferOptions.Reply,
-	ephemeral: true,
+@ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends MenuInteractionHandler {
-	public override async run(interaction: ButtonInteraction, { data: { eventId } }: MenuInteractionHandler.Result<KaraokeMenuButton>) {
+export class ButtonHandler extends InteractionHandler {
+	private readonly customIds = [KaraokeCustomIds.Start];
+
+	public override async run(interaction: ButtonInteraction, { eventId }: InteractionHandler.ParseResult<this>) {
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;
 
@@ -42,5 +41,15 @@ export class ButtonHandler extends MenuInteractionHandler {
 			this.container.logger.error(err);
 			return interaction.errorReply('There was an error trying to start the event.');
 		}
+	}
+
+	public override async parse(interaction: ButtonInteraction) {
+		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
+
+		const {
+			data: { eventId }
+		} = parseCustomId<KaraokeMenuButton>(interaction.customId);
+
+		return this.some({ eventId });
 	}
 }

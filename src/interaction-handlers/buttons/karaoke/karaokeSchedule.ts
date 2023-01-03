@@ -1,15 +1,15 @@
 import { KaraokeCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { type ButtonInteraction, MessageActionRow, Modal, TextInputComponent } from 'discord.js';
-import { MenuInteractionHandler } from '@kbotdev/menus';
 import { buildCustomId } from '@kbotdev/custom-id';
 
-@ApplyOptions<MenuInteractionHandler.Options>({
-	customIdPrefix: [KaraokeCustomIds.Schedule],
+@ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends MenuInteractionHandler {
+export class ButtonHandler extends InteractionHandler {
+	private readonly customIds = [KaraokeCustomIds.Schedule];
+
 	public override async run(interaction: ButtonInteraction) {
 		// TODO need voice, text, topic, role menus (new select menus are not available yet for Sapphire)
 		return interaction.showModal(
@@ -54,5 +54,10 @@ export class ButtonHandler extends MenuInteractionHandler {
 					)
 				)
 		);
+	}
+
+	public override async parse(interaction: ButtonInteraction) {
+		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
+		return this.some();
 	}
 }

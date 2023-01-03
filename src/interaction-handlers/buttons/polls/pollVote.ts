@@ -1,18 +1,17 @@
 import { EmbedColors, PollCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, type ButtonInteraction } from 'discord.js';
-import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
+import { parseCustomId } from '@kbotdev/custom-id';
 import type { PollOption } from '#lib/types/CustomIds';
 
-@ApplyOptions<MenuInteractionHandler.Options>({
-	customIdPrefix: [PollCustomIds.Vote],
-	defer: DeferOptions.Reply,
-	ephemeral: true,
+@ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends MenuInteractionHandler {
-	public override async run(interaction: ButtonInteraction, { data: { option } }: MenuInteractionHandler.Result<PollOption>) {
+export class ButtonHandler extends InteractionHandler {
+	private readonly customIds = [PollCustomIds.Vote];
+
+	public override async run(interaction: ButtonInteraction, { option }: InteractionHandler.ParseResult<this>) {
 		try {
 			await this.container.polls.repo.updatePollUser(interaction.user.id, interaction.message.id, option);
 			return interaction.editReply({
@@ -28,5 +27,15 @@ export class ButtonHandler extends MenuInteractionHandler {
 				embeds: [new MessageEmbed().setColor(EmbedColors.Error).setDescription('Something went wrong')]
 			});
 		}
+	}
+
+	public override async parse(interaction: ButtonInteraction) {
+		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
+
+		const {
+			data: { option }
+		} = parseCustomId<PollOption>(interaction.customId);
+
+		return this.some({ option });
 	}
 }
