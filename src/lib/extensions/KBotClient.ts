@@ -24,6 +24,7 @@ export class KBotClient extends SapphireClient {
 		container.redis = new RedisClient();
 
 		container.moderation = new ModerationService();
+		container.notifications = new NotificationService();
 		container.polls = new PollService();
 		container.utility = new UtilityService();
 		container.karaoke = new KaraokeService();
