@@ -1,12 +1,13 @@
 import { RedisClient } from '../database/RedisClient';
-import { PollService } from '../../services/PollService';
-import { KaraokeService } from '../../services/KaraokeService';
-import { YoutubeService } from '../../services/YoutubeService';
-import { ModerationService } from '../../services/ModerationService';
-import { UtilityService } from '../../services/UtilityService';
 import { Validator } from '#utils/validators';
-import { PrismaClient } from '@prisma/client';
+import { PollService } from '#services/PollService';
+import { KaraokeService } from '#services/KaraokeService';
+import { YoutubeService } from '#services/YoutubeService';
+import { ModerationService } from '#services/ModerationService';
+import { UtilityService } from '#services/UtilityService';
+import { NotificationService } from '#services/NotificationService';
 import { container, SapphireClient } from '@sapphire/framework';
+import { PrismaClient } from '@prisma/client';
 import type { ClientOptions } from 'discord.js';
 
 export class KBotClient extends SapphireClient {
