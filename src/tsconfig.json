@@ -8,7 +8,7 @@
 		"paths": {
 			"#utils/*": ["lib/util/*"],
 			"#lib/*": ["lib/*"],
-			"#root/*": ["*"]
+			"#services/*": ["lib/services/*"]
 		},
 		"allowJs": true,
 		"noImplicitAny": true
