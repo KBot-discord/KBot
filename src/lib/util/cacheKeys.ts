@@ -10,6 +10,9 @@ export const minageCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:min
 export const moderationCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:moderation` as Key;
 export const moderationEnabledCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:moderation:enabled` as Key;
 
+export const notificationCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:notification` as Key;
+export const notificationEnabledCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:notification:enabled` as Key;
+
 export const utilityCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:utility` as Key;
 export const utilityEnabledCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:utility:enabled` as Key;
 
