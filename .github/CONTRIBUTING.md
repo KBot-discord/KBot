@@ -46,7 +46,7 @@ services:
     image: postgres:15-alpine
     container_name: postgres
     ports:
-      - 127.0.0.1:5432:5432
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_DB: kbot-dev
       POSTGRES_USER: user
@@ -56,7 +56,7 @@ services:
     image: redis:7-alpine
     container_name: redis
     ports:
-      - 127.0.0.1:6379:6379
+      - "127.0.0.1:6379:6379"
     command: /bin/sh -c "redis-server --requirepass $$REDIS_PASS"
     env_file:
       - ../.env
