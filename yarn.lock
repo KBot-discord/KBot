@@ -609,8 +609,8 @@ __metadata:
   resolution: "@kbotdev/bot@workspace:."
   dependencies:
     "@discordjs/builders": ^1.3.0
-    "@kbotdev/custom-id": ^0.0.4
-    "@kbotdev/menus": "file:../kbot_utilities/packages/menus#../kbot_utilities/packages/menus::hash=1b9cb9&locator=%40kbotdev%2Fbot%40workspace%3A."
+    "@kbotdev/custom-id": ^0.0.5
+    "@kbotdev/menus": ^0.1.6
     "@kbotdev/plugin-modules": ^0.1.6
     "@microsoft/tsdoc": ^0.14.2
     "@prisma/client": ^4.8.0
@@ -666,23 +666,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kbotdev/custom-id@npm:^0.0.4":
-  version: 0.0.4
-  resolution: "@kbotdev/custom-id@npm:0.0.4"
+"@kbotdev/custom-id@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "@kbotdev/custom-id@npm:0.0.5"
   dependencies:
     binarytf: ^2.1.2
-  checksum: a848ed6343b4970883b002deb49e63803862a06346657615173fc9fb41e02dadbedf684ee7ec03585bd9342a2e8be7f4d8f9494958116097814e08c0b1ac3962
+  checksum: 43b35185145451814622a315be1d1a460605075ae1f43eee67803a631b8ad9407b63eb35d900aa0b57bf9d1a2ceb083765220c23826003732c240ed7d78ca60c
   languageName: node
   linkType: hard
 
-"@kbotdev/menus@file:../kbot_utilities/packages/menus#../kbot_utilities/packages/menus::hash=1b9cb9&locator=%40kbotdev%2Fbot%40workspace%3A.":
-  version: 0.0.6
-  resolution: "@kbotdev/menus@file:../kbot_utilities/packages/menus#../kbot_utilities/packages/menus::hash=1b9cb9&locator=%40kbotdev%2Fbot%40workspace%3A."
+"@kbotdev/menus@npm:^0.1.6":
+  version: 0.1.6
+  resolution: "@kbotdev/menus@npm:0.1.6"
   dependencies:
     "@sapphire/discord.js-utilities": ^5.1.2
     discord.js: ^13.12.0
     tslib: ^2.4.1
-  checksum: 40a337b147e62916be72b987a9478b69660e4ce0258c42f1f499d65977d8a710154db904ee06c857f58a4212844ff7677de4b63cbdeda190b056182e02b50d96
+  checksum: e421daf8ec8fee06252eb8332c564e477553bcc2f2350c92b80325746c50bdc4b3a47bb45cd6c5d194d03cd28526769c955fe13c446d29ec6fad9307508692f1
   languageName: node
   linkType: hard
 
@@ -6108,11 +6108,11 @@ __metadata:
 
 "typescript@patch:typescript@^4.9.4#~builtin<compat/typescript>":
   version: 4.9.4
-  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=d73830"
+  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=ad5954"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 37f6e2c3c5e2aa5934b85b0fddbf32eeac8b1bacf3a5b51d01946936d03f5377fe86255d4e5a4ae628fd0cd553386355ad362c57f13b4635064400f3e8e05b9d
+  checksum: 1caaea6cb7f813e64345190fddc4e6c924d0b698ab81189b503763c4a18f7f5501c69362979d36e19c042d89d936443e768a78b0675690b35eb663d19e0eae71
   languageName: node
   linkType: hard
 
