@@ -640,7 +640,7 @@ __metadata:
     canvas: 2.10.2
     canvas-constructor: ^7.0.0
     deepl: ^1.0.13
-    discord-api-types: ^0.33.5
+    discord-api-types: ^0.37.0
     discord.js: ^13.12.0
     eslint: ^8.31.0
     eslint-config-prettier: ^8.6.0
@@ -2414,6 +2414,13 @@ __metadata:
   version: 0.36.3
   resolution: "discord-api-types@npm:0.36.3"
   checksum: 3089c0fb37425dc5df03c76d82988d43fcc272699b06a02fc830d0a3bef550009aaebdf6d646529e8a7ccea76ae3f43b099d736ea5ef37a0be143142ab49871d
+  languageName: node
+  linkType: hard
+
+"discord-api-types@npm:^0.37.0":
+  version: 0.37.25
+  resolution: "discord-api-types@npm:0.37.25"
+  checksum: 92cc48421f475cb9a3b840f5375e4272d388c52f73536e7943224dfbb718fe43bfaef2873f506a614f769897b969d07810943f3ca1805bbb02d85c7cc0ba8ea5
   languageName: node
   linkType: hard
 
