@@ -35,5 +35,8 @@ export const config: Config = {
 	},
 	sentry: {
 		dsn: process.env.SENTRY_DSN!
+	},
+	deepl: {
+		key: process.env.DEEPL_AUTH!
 	}
 };
