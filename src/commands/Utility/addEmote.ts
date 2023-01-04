@@ -1,14 +1,14 @@
+import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
+import { getGuildIds } from '#utils/config';
+import { getGuildEmoteSlots } from '#utils/util';
 import axios from 'axios';
 import { MessageActionRow, MessageEmbed, Modal, ModalSubmitInteraction, TextInputComponent, type Message, MessageButton } from 'discord.js';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '../../lib/util/constants';
-import { getGuildIds } from '../../lib/util/config';
 import { buildCustomId } from '@kbotdev/custom-id';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import type { EmoteCredit } from '../../lib/types/CustomIds';
+import type { EmoteCredit } from '#lib/types/CustomIds';
 import type { UtilityModule } from '../../modules/UtilityModule';
-import { getGuildEmoteSlots } from '../../lib/util/util';
 
 interface EmojiData {
 	emojiName?: string;
@@ -24,7 +24,7 @@ interface EmojiData {
 	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class AddEmoteCommand extends ModuleCommand<UtilityModule> {
+export class UtilityCommand extends ModuleCommand<UtilityModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;

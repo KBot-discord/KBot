@@ -1,7 +1,7 @@
-import { createModel } from 'schemix';
 import EventModel from './events/Event.model';
 import PollModel from './polls/Poll.model';
 import GuildModel from '../Guild.model';
+import { createModel } from 'schemix';
 
 export default createModel('UtilityModule', (model) => {
 	// prettier-ignore

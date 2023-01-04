@@ -1,7 +1,7 @@
-import { createServer } from 'http';
-import { createTwirpServer } from 'twirpscript';
-import { config } from '../config';
 import { channelHandler } from './handlers/discord/ChannelHandler';
+import { config } from '../config';
+import { createTwirpServer } from 'twirpscript';
+import { createServer } from 'http';
 
 const { port } = config.rpc.server;
 

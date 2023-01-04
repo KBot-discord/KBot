@@ -1,19 +1,19 @@
+import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '#utils/constants';
+import { getGuildIds } from '#utils/config';
 import { ChatInputCommand, Command, type ContextMenuCommand } from '@sapphire/framework';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '../../lib/util/constants';
-import { getGuildIds } from '../../lib/util/config';
 
 function getRandomInt(max: number) {
 	return Math.floor(Math.random() * max);
 }
 
 @ApplyOptions<ChatInputCommand.Options>({
-	detailedDescription: 'uwu-ify messages.',
+	detailedDescription: 'uwu-ify a message.',
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
-export class UwuCommand extends Command {
+export class MiscCommand extends Command {
 	public constructor(context: ContextMenuCommand.Context, options: ContextMenuCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;

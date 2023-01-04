@@ -1,8 +1,8 @@
-import { createModel } from 'schemix';
 import ModerationModule from './moderation/ModerationModule.model';
 import NotificationModule from './notifications/NotificationModule.model';
 import UtilityModule from './utility/UtilityModule.model';
 import WelcomeModule from './welcome/WelcomeModule.model';
+import { createModel } from 'schemix';
 
 export default createModel('Guild', (model) => {
 	// prettier-ignore

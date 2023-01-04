@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest';
 import { parseTimeString } from '../../../src/lib/util/util';
+import { describe, expect, test } from 'vitest';
 
 describe('parseTimeString', () => {
 	test('GIVEN null -> RETURN null', () => {

@@ -1,6 +1,6 @@
-import { createModel } from 'schemix';
-import UtilityModuleModel from '../UtilityModule.model';
 import EventUser from './EventUser.model';
+import UtilityModuleModel from '../UtilityModule.model';
+import { createModel } from 'schemix';
 
 export default createModel('Event', (model) => {
 	// prettier-ignore

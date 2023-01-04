@@ -1,7 +1,7 @@
+import { initMetrics } from '#utils/metrics';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { initMetrics } from '../lib/util/metrics';
-import type { KBotClient } from '../lib/extensions/KBotClient';
+import type { KBotClient } from '#lib/extensions/KBotClient';
 
 @ApplyOptions<Listener.Options>({
 	name: 'ready',

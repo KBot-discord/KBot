@@ -1,30 +1,26 @@
-import { Subcommand } from '@sapphire/plugin-subcommands';
+import { getGuildIds } from '#utils/config';
+import { EmbedColors, KBotErrors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildChannel, MessageEmbed } from 'discord.js';
-import { EmbedColors, KBotErrors } from '../../lib/util/constants';
 import { channelMention } from '@discordjs/builders';
-import { KBotError } from '../../lib/structures/KBotError';
-import type { UtilityModule } from '@prisma/client';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { UtilityModule } from '../../modules/UtilityModule';
+import type { UtilityModule as UtilityConfig } from '@prisma/client';
 
-@ApplyOptions<Subcommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Add emote credits',
-	subcommands: [
-		{ name: 'set', chatInputRun: 'chatInputSet' },
-		{ name: 'unset', chatInputRun: 'chatInputUnset' },
-		{ name: 'config', chatInputRun: 'chatInputConfig' }
-	],
-	preconditions: ['GuildOnly'],
+	preconditions: ['ModuleEnabled', 'GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class DiscordStatusCommand extends Subcommand {
-	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
+export class UtilityCommand extends ModuleCommand<UtilityModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: Subcommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -56,17 +52,27 @@ export class DiscordStatusCommand extends Subcommand {
 		);
 	}
 
-	public async chatInputSet(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+		switch (interaction.options.getSubcommand(true)) {
+			case 'set': {
+				return this.chatInputSet(interaction);
+			}
+			case 'unset': {
+				return this.chatInputUnset(interaction);
+			}
+			default: {
+				return this.chatInputConfig(interaction);
+			}
+		}
+	}
+
+	public async chatInputSet(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { client, db, validator } = this.container;
 		const channel = interaction.options.getChannel('channel', true) as GuildChannel;
 
-		const { valid, errors } = validator.channels.canSendEmbeds(channel);
-		if (!valid) {
-			const error = new KBotError({
-				identifier: KBotErrors.ChannelPermissions,
-				message: `I don't have the required permission(s) to send credits in <#${channel.id}>\n\nRequired permission(s):${errors}`
-			});
+		const { result, error } = validator.channels.canSendEmbeds(channel);
+		if (!result) {
 			return client.emitError(KBotErrors.ChannelPermissions, { interaction, error });
 		}
 
@@ -82,7 +88,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showConfig(interaction, config);
 	}
 
-	public async chatInputUnset(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -99,7 +105,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showConfig(interaction, config);
 	}
 
-	public async chatInputConfig(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -115,7 +121,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showConfig(interaction, config);
 	}
 
-	private showConfig(interaction: Subcommand.ChatInputInteraction, config: UtilityModule | null) {
+	private showConfig(interaction: ModuleCommand.ChatInputInteraction, config: UtilityConfig | null) {
 		return interaction.editReply({
 			embeds: [
 				new MessageEmbed()

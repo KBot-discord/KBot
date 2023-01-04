@@ -32,4 +32,7 @@ export interface Config {
 	sentry: {
 		dsn: string;
 	};
+	deepl: {
+		key: string;
+	};
 }

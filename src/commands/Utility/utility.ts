@@ -1,24 +1,25 @@
-import { Subcommand } from '@sapphire/plugin-subcommands';
+import { getGuildIds } from '#utils/config';
+import { EmbedColors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
 import { MessageEmbed } from 'discord.js';
-import { EmbedColors } from '../../lib/util/constants';
 import { channelMention } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { UtilityModule } from '../../modules/UtilityModule';
 
-@ApplyOptions<Subcommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Utility module config',
-	subcommands: [{ name: 'config', chatInputRun: 'chatInputConfig' }],
-	preconditions: ['GuildOnly', 'ModuleEnabled'],
+	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class DiscordStatusCommand extends Subcommand {
-	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
+export class UtilityCommand extends ModuleCommand<UtilityModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: Subcommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -33,7 +34,11 @@ export class DiscordStatusCommand extends Subcommand {
 		);
 	}
 
-	public async chatInputConfig(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+		return this.chatInputConfig(interaction);
+	}
+
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 

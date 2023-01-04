@@ -34,18 +34,15 @@ export const POLL_NUMBERS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️�
 
 export const POLL_TIME_LIMIT = 604800000; // 7 days
 
-export const enum ArrowEmojis {
-	Start = '⏪',
-	Previous = '◀️',
-	Next = '▶️',
-	Last = '⏩',
-	Stop = '⏹️'
-}
-
 export const KAOMOJI_JOY = [' (\\* ^ ω ^)', ' (o^▽^o)', ' (≧◡≦)', ' ☆⌒ヽ(\\*"､^\\*) chu', ' ( ˘⌣˘)♡(˘⌣˘ )', ' xD'];
 export const KAOMOJI_EMBARRASSED = [' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)..', ' (\\*^.^\\*)..,', '..,', ',,,', '... ', '.. ', ' mmm..', 'O.o'];
 export const KAOMOJI_CONFUSE = [' (o_O)?', ' (°ロ°) !?', ' (ーー;)?', ' owo?'];
 export const KAOMOJI_SPARKLES = [' \\*:･ﾟ✧\\*:･ﾟ✧ ', ' ☆\\*:・ﾟ ', '〜☆ ', ' uguu.., ', ' -.-'];
+
+export const Emoji = {
+	Locked: '🔒',
+	Unlocked: '🔓'
+};
 
 export const guildEmoteSlots: {
 	[key: string]: number;

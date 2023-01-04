@@ -1,9 +1,9 @@
+import { DISCORD_STATUS_BASE } from '#utils/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { container } from '@sapphire/framework';
 import fetch from 'node-fetch';
-import { DISCORD_STATUS_BASE } from '../../lib/util/constants';
-import type { StatusPageResult } from '../../lib/types/DiscordStatus';
+import type { StatusPageResult } from '#lib/types/DiscordStatus';
 
 @ApplyOptions<ScheduledTask.Options>({
 	pattern: '0 0 0 1 * ?' // The first of every month

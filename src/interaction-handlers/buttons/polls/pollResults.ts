@@ -1,21 +1,18 @@
+import { EmbedColors, PollCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandlerTypes } from '@sapphire/framework';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { MessageEmbed, type ButtonInteraction } from 'discord.js';
-import { EmbedColors, PollCustomIds } from '../../../lib/util/constants';
 import { isNullish } from '@sapphire/utilities';
-import { DeferOptions, MenuInteractionHandler } from '@kbotdev/menus';
-import type { PollMenuButton } from '../../../lib/types/CustomIds';
+import { parseCustomId } from '@kbotdev/custom-id';
+import type { PollMenuButton } from '#lib/types/CustomIds';
 
-@ApplyOptions<MenuInteractionHandler.Options>({
-	customIdPrefix: [PollCustomIds.ResultsPublic, PollCustomIds.ResultsHidden],
-	defer: DeferOptions.Reply,
-	ephemeral: true,
+@ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
-export class ButtonHandler extends MenuInteractionHandler {
-	public override async run(interaction: ButtonInteraction, { identifier, data: { pollId } }: MenuInteractionHandler.Result<PollMenuButton>) {
-		const hide = identifier === PollCustomIds.ResultsHidden;
+export class ButtonHandler extends InteractionHandler {
+	private readonly customIds = [PollCustomIds.ResultsPublic, PollCustomIds.ResultsHidden];
 
+	public override async run(interaction: ButtonInteraction, { hidden, pollId }: InteractionHandler.ParseResult<this>) {
 		const { polls } = this.container;
 		try {
 			const poll = await polls.repo.getPollWithUsers(pollId);
@@ -30,12 +27,12 @@ export class ButtonHandler extends MenuInteractionHandler {
 				return interaction.errorReply('no message');
 			}
 
-			const results = await polls.calculateResults(poll);
+			const results = polls.calculateResults(poll);
 			if (isNullish(results)) {
 				return interaction.errorReply('no results');
 			}
 
-			if (hide) {
+			if (hidden) {
 				return interaction.followUp({
 					embeds: [
 						new MessageEmbed()
@@ -62,5 +59,17 @@ export class ButtonHandler extends MenuInteractionHandler {
 			this.container.logger.error(err);
 			return interaction.errorReply('Something went wrong.');
 		}
+	}
+
+	public override async parse(interaction: ButtonInteraction) {
+		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
+
+		const {
+			prefix,
+			data: { pollId }
+		} = parseCustomId<PollMenuButton>(interaction.customId);
+		const hidden = prefix === PollCustomIds.ResultsHidden;
+
+		return this.some({ hidden, pollId });
 	}
 }

@@ -1,7 +1,7 @@
+import { guildEmoteSlots } from './constants';
 import { MessageEmbed, type AllowedImageSize, type DynamicImageFormat } from 'discord.js';
 import { Duration } from '@sapphire/duration';
 import type { GuildMember, Guild, User, CommandInteraction } from 'discord.js';
-import { guildEmoteSlots } from './constants';
 
 interface ImageOptions {
 	dynamicFormat?: boolean;
@@ -35,7 +35,7 @@ export async function getUserInfo(interaction: CommandInteraction, userId: strin
 	const createdAt = `<t:${Math.floor(user.createdAt.getTime() / 1000)}:F>`;
 
 	if (member) {
-		const avatar = await getMemberAvatarUrl(member);
+		const avatar = getMemberAvatarUrl(member);
 
 		const formattedRoles =
 			member.roles.cache.size <= 1
@@ -57,7 +57,7 @@ export async function getUserInfo(interaction: CommandInteraction, userId: strin
 			)
 			.setFooter({ text: 'Present in server: ✔️' });
 	}
-	const avatar = await getUserAvatarUrl(user);
+	const avatar = getUserAvatarUrl(user);
 	const banned = await interaction
 		.guild!.bans.fetch(userId)
 		.then((ban) => `:white_check_mark: User is banned\nReason: ${ban.reason}`)

@@ -1,7 +1,7 @@
-import { createModel } from 'schemix';
 import TwitterFollowModel from './twitter/TwitterFollow.model';
 import TwitchFollowModel from './twitch/TwitchFollow.model';
 import GuildModel from '../Guild.model';
+import { createModel } from 'schemix';
 
 export default createModel('NotificationModule', (model) => {
 	// prettier-ignore

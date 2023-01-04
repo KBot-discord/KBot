@@ -1,5 +1,5 @@
-import { createModel } from 'schemix';
 import ModerationModuleMode from './ModerationModule.model';
+import { createModel } from 'schemix';
 
 export default createModel('LockedChannel', (model) => {
 	// prettier-ignore

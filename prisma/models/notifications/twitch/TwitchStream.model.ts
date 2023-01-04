@@ -1,5 +1,5 @@
-import { createModel } from 'schemix';
 import TwitchChannelModel from './TwitchChannel.model';
+import { createModel } from 'schemix';
 
 export default createModel('TwitchStream', (model) => {
 	// prettier-ignore

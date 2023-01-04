@@ -1,5 +1,5 @@
-import { createModel } from 'schemix';
 import GuildModel from '../Guild.model';
+import { createModel } from 'schemix';
 
 export default createModel('WelcomeModule', (model) => {
 	// prettier-ignore

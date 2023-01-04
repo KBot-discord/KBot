@@ -1,5 +1,5 @@
-import { container } from '@sapphire/framework';
 import { createChannelService, GetTextChannelsResponse, GetVoiceChannelsResponse } from '../../gen/discord/channels/v1/channels.pb';
+import { container } from '@sapphire/framework';
 
 export const channelHandler = createChannelService({
 	GetTextChannels: async ({ guildId }): Promise<GetTextChannelsResponse> => {

@@ -1,7 +1,7 @@
+import { KBotErrors } from '#utils/constants';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { KBotErrors } from '../../lib/util/constants';
-import type { Payload } from '../../lib/types/Errors';
+import type { Payload } from '#lib/types/Errors';
 
 @ApplyOptions<Listener.Options>({
 	name: KBotErrors.ChannelPermissions

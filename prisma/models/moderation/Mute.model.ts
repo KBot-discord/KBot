@@ -1,6 +1,6 @@
-import { createModel } from 'schemix';
 import ModerationModuleMode from './ModerationModule.model';
 import UUIDMixin from '../../mixins/UUID.mixin';
+import { createModel } from 'schemix';
 
 export default createModel('Mute', (model) => {
 	// prettier-ignore

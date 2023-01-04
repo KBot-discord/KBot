@@ -1,6 +1,6 @@
+import { WelcomeRepository } from '#lib/database/repositories/WelcomeRepository';
 import { container } from '@sapphire/framework';
 import { HexColorString, MessageEmbed } from 'discord.js';
-import { WelcomeRepository } from '../lib/database/repositories/WelcomeRepository';
 import type { GuildMember, GuildTextBasedChannel } from 'discord.js';
 import type { WelcomeModule } from '@prisma/client';
 

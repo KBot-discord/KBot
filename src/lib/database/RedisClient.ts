@@ -1,6 +1,6 @@
+import { minutesFromNow } from '#utils/util';
 import Redis from 'ioredis';
 import { container } from '@sapphire/framework';
-import { minutesFromNow } from '../util/util';
 import type { Key } from '../types/Cache';
 
 export class RedisClient extends Redis {
@@ -19,7 +19,7 @@ export class RedisClient extends Redis {
 		return super.setex(key, minutesFromNow(minutes), JSON.stringify(data));
 	}
 
-	public override async get<T = unknown>(key: Key) {
+	public override async get<T = unknown>(key: Key): Promise<T | null> {
 		const result = await super.get(key);
 		if (result === null) return result;
 		return JSON.parse(result) as T;

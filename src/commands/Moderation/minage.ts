@@ -1,28 +1,25 @@
-import { Subcommand } from '@sapphire/plugin-subcommands';
+import { getGuildIds } from '#utils/config';
+import { EmbedColors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { getGuildIds } from '../../lib/util/config';
 import { MessageEmbed } from 'discord.js';
-import { EmbedColors } from '../../lib/util/constants';
-import type { ModerationModule } from '@prisma/client';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { ModerationModule } from '../../modules/ModerationModule';
+import type { ModerationModule as ModuleConfig } from '@prisma/client';
 
-@ApplyOptions<Subcommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'ModerationModule',
 	description: 'Minimum account age',
-	subcommands: [
-		{ name: 'set', chatInputRun: 'chatInputSet' },
-		{ name: 'unset', chatInputRun: 'chatInputUnset' },
-		{ name: 'config', chatInputRun: 'chatInputConfig' }
-	],
-	preconditions: ['GuildOnly'],
+	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class DiscordStatusCommand extends Subcommand {
-	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
+export class ModerationCommand extends ModuleCommand<ModerationModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: Subcommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -67,7 +64,21 @@ export class DiscordStatusCommand extends Subcommand {
 		);
 	}
 
-	public async chatInputSet(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+		switch (interaction.options.getSubcommand(true)) {
+			case 'set': {
+				return this.chatInputSet(interaction);
+			}
+			case 'unset': {
+				return this.chatInputUnset(interaction);
+			}
+			default: {
+				return this.chatInputConfig(interaction);
+			}
+		}
+	}
+
+	public async chatInputSet(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -92,7 +103,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showConfig(interaction, newModule);
 	}
 
-	public async chatInputUnset(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -117,7 +128,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showConfig(interaction, newModule);
 	}
 
-	public async chatInputConfig(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -130,7 +141,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showConfig(interaction, module);
 	}
 
-	private showConfig(interaction: Subcommand.ChatInputInteraction, config: ModerationModule | null) {
+	private showConfig(interaction: ModuleCommand.ChatInputInteraction, config: ModuleConfig | null) {
 		return interaction.editReply({
 			embeds: [
 				new MessageEmbed()

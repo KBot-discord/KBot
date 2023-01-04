@@ -1,6 +1,6 @@
 process.env.NODE_ENV ??= 'dev'; // Set env to dev if NODE_ENV is undefined
 
-import type { Config } from './lib/types/Config';
+import type { Config } from '#lib/types/Config';
 
 export const config: Config = {
 	isDev: process.env.NODE_ENV !== 'production',
@@ -35,5 +35,8 @@ export const config: Config = {
 	},
 	sentry: {
 		dsn: process.env.SENTRY_DSN!
+	},
+	deepl: {
+		key: process.env.DEEPL_AUTH!
 	}
 };

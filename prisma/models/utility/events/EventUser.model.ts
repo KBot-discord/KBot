@@ -1,5 +1,5 @@
-import { createModel } from 'schemix';
 import EventModel from './Event.model';
+import { createModel } from 'schemix';
 
 export default createModel('EventUser', (model) => {
 	// prettier-ignore

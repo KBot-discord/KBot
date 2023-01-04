@@ -1,8 +1,8 @@
+import { PollRepository } from '#lib/database/repositories/PollRepository';
+import { EmbedColors } from '#utils/constants';
 import { container } from '@sapphire/framework';
 import { type Message, MessageEmbed } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import { PollRepository } from '../lib/database/repositories/PollRepository';
-import { EmbedColors } from '../lib/util/constants';
 import type { Poll, PollUser } from '@prisma/client';
 
 export class PollService {
@@ -10,7 +10,6 @@ export class PollService {
 
 	public constructor() {
 		this.repo = new PollRepository();
-		container.logger.info('Poll service loaded.');
 	}
 
 	/**

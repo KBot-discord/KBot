@@ -1,7 +1,7 @@
-import { createModel } from 'schemix';
 import MuteModel from './Mute.model';
 import LockedChannelModel from './LockedChannel.model';
 import GuildModel from '../Guild.model';
+import { createModel } from 'schemix';
 
 export default createModel('ModerationModule', (model) => {
 	// prettier-ignore
@@ -10,6 +10,7 @@ export default createModel('ModerationModule', (model) => {
 		.boolean('moduleEnabled', { default: true })
 		.string('logChannel', { unique: true, optional: true })
 		.string('reportChannel', { unique: true, optional: true })
+		.string('muteRole', { optional: true })
 		.int('minAccountAgeReq', { optional: true })
 		.string('minAccountAgeMsg', { optional: true })
 

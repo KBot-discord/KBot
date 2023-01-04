@@ -159,6 +159,7 @@ model ModerationModule {
   moduleEnabled    Boolean         @default(true)
   logChannel       String?         @unique
   reportChannel    String?         @unique
+  muteRole         String?
   minAccountAgeReq Int?
   minAccountAgeMsg String?
   mutes            Mute[]
