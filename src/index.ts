@@ -1,7 +1,6 @@
 import '@kbotdev/plugin-modules/register';
 import '@sapphire/plugin-api/register';
 import '@sapphire/plugin-logger/register';
-import '@sapphire/plugin-subcommands/register';
 import './lib/util/Augments';
 
 import { KBotClient } from '#lib/extensions/KBotClient';
