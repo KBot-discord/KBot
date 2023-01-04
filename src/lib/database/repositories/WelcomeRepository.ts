@@ -6,7 +6,7 @@ export class WelcomeRepository {
 	private readonly db;
 	private readonly cache;
 
-	private readonly configKey = welcomeCacheKey;
+	private readonly settingsKey = welcomeCacheKey;
 	private readonly enabledKey = welcomeEnabledCacheKey;
 
 	public constructor() {
@@ -14,28 +14,34 @@ export class WelcomeRepository {
 		this.cache = container.redis;
 	}
 
-	public async getConfig(guildId: string): Promise<WelcomeModule | null> {
-		const key = this.configKey(guildId);
-		const cacheResult = await this.cache.get<WelcomeModule>(key);
+	public async getSettings(guildId: string): Promise<WelcomeModule | null> {
+		const key = this.settingsKey(guildId);
+
+		const cacheResult = await this.cache.get(key);
 		if (cacheResult) {
 			await this.cache.update(key, 60);
-			return cacheResult;
+			if (cacheResult === 'null') return null;
+			return cacheResult as WelcomeModule;
 		}
 
 		const dbResult = await this.db.findUnique({
 			where: { id: guildId }
 		});
-		if (!dbResult) return null;
+		if (!dbResult) {
+			await this.cache.setEx(key, null, 60);
+			return null;
+		}
+
 		await this.cache.setEx(key, dbResult, 60);
 		return dbResult;
 	}
 
-	public async upsertConfig(guildId: string, newConfig: WelcomeModule) {
-		const key = this.configKey(guildId);
+	public async upsertSettings(guildId: string, newSettings: WelcomeModule) {
+		const key = this.settingsKey(guildId);
 		const result = await this.db.upsert({
 			where: { id: guildId },
-			update: newConfig,
-			create: newConfig
+			update: newSettings,
+			create: newSettings
 		});
 		await this.cache.setEx(key, result, 60);
 		await this.setEnabled(guildId, result.moduleEnabled);
@@ -49,6 +55,6 @@ export class WelcomeRepository {
 
 	private async setEnabled(guildId: string, isEnabled: boolean) {
 		const key = this.enabledKey(guildId);
-		return this.cache.setEx(key, isEnabled ? 'true' : 'false', 60);
+		return this.cache.setEx(key, isEnabled, 60);
 	}
 }
