@@ -1,3 +1,4 @@
 export const enum KBotErrors {
-	ChannelPermissions = 'channelPermissions'
+	ChannelPermissions = 'channelPermissions',
+	ModerationPermissions = 'moderationPermissions'
 }
