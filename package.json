@@ -39,7 +39,6 @@
 		"@sapphire/plugin-api": "^4.0.1",
 		"@sapphire/plugin-logger": "^3.0.1",
 		"@sapphire/plugin-scheduled-tasks": "^6.0.0",
-		"@sapphire/plugin-subcommands": "^3.2.4",
 		"@sapphire/utilities": "^3.11.0",
 		"@sentry/integrations": "^7.28.1",
 		"@sentry/node": "^7.28.1",
