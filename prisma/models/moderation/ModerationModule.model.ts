@@ -10,6 +10,7 @@ export default createModel('ModerationModule', (model) => {
 		.boolean('moduleEnabled', { default: true })
 		.string('logChannel', { unique: true, optional: true })
 		.string('reportChannel', { unique: true, optional: true })
+		.string('muteRole', { optional: true })
 		.int('minAccountAgeReq', { optional: true })
 		.string('minAccountAgeMsg', { optional: true })
 
