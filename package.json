@@ -92,5 +92,12 @@
 			"prettier --write --loglevel=warn \"{src,tests,prisma}/**/*.{js,ts,json}\""
 		]
 	},
-	"packageManager": "yarn@3.3.0"
+	"packageManager": "yarn@3.3.1",
+	"imports": {
+		"#lib/*": "./dist/lib/*.js",
+		"#utils/*": "./dist/lib/util/*.js",
+		"#utils/validators": "./dist/lib/util/validators/index.js",
+		"#utils/constants": "./dist/lib/util/constants/index.js",
+		"#services/*": "./dist/lib/services/*.js"
+	}
 }
