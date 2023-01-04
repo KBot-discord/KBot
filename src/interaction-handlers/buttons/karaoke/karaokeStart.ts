@@ -1,9 +1,8 @@
-import { EmbedColors, KaraokeCustomIds } from '#utils/constants';
+import { KaraokeCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { MessageEmbed, StageChannel, TextChannel, VoiceChannel } from 'discord.js';
 import { parseCustomId } from '@kbotdev/custom-id';
-import type { ButtonInteraction } from 'discord.js';
+import type { StageChannel, TextChannel, VoiceChannel, ButtonInteraction } from 'discord.js';
 import type { KaraokeMenuButton } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -17,7 +16,17 @@ export class ButtonHandler extends InteractionHandler {
 		const guildId = interaction.guildId!;
 
 		try {
-			const event = await this.container.karaoke.repo.fetchEvent(eventId);
+			const eventExists = await karaoke.repo.doesEventExist(guildId, eventId);
+			if (!eventExists) {
+				return interaction.defaultReply('There is no event to start');
+			}
+
+			const isActive = await karaoke.repo.isEventActive(guildId, eventId);
+			if (isActive) {
+				return interaction.defaultReply('The event is already active');
+			}
+
+			const event = await karaoke.repo.fetchEvent(eventId);
 			const scheduledEvent = await interaction.guild!.scheduledEvents.fetch(event!.scheduleId!);
 
 			const [voiceChannel, textChannel] = await Promise.all([
@@ -25,16 +34,7 @@ export class ButtonHandler extends InteractionHandler {
 				(await interaction.guild!.channels.fetch(event!.channel)) as TextChannel
 			]);
 
-			const eventExists = await karaoke.repo.doesEventExist(guildId, voiceChannel.id);
-			if (eventExists) {
-				return interaction.editReply({
-					embeds: [new MessageEmbed().setColor(EmbedColors.Default).setDescription('There is already an event going on.')]
-				});
-			}
-
-			await scheduledEvent.setStatus('ACTIVE');
-			await this.container.karaoke.startEvent(interaction, voiceChannel, textChannel, scheduledEvent.name, event!.role!);
-			await karaoke.repo.setEventStatus(guildId, voiceChannel.id, true);
+			await karaoke.startEvent(interaction, voiceChannel, textChannel, scheduledEvent.name, event!.role);
 
 			return interaction.defaultReply('Event started.');
 		} catch (err) {
