@@ -4,11 +4,9 @@
 [![Discord Shield](https://discordapp.com/api/guilds/953375922990506005/widget.png)](https://kbot.ca/discord)
 [![Uptime Kuma](https://status.kbot.ca/api/badge/8/status?upLabel=online&downLabel=offline&label=Bot+status)](https://status.kbot.ca/status/kbot)
 
-[![Gitlab Pipeline](https://gitlab.com/kbotdev/kbot/badges/main/pipeline.svg)](https://gitlab.com/kbotdev/kbot/)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0bb508304df14d0a9d8110070b3cd036)](https://www.codacy.com/gl/kbotdev/kbot/dashboard?utm_source=gitlab.com&amp;utm_medium=referral&amp;utm_content=kbotdev/kbot&amp;utm_campaign=Badge_Grade)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgitlab.com%2Fkbotdev%2Fkbot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgitlab.com%2Fkbotdev%2Fkbot?ref=badge_shield)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-
 ### A multi-feature Discord bot using [Sapphire](https://www.sapphirejs.dev/) and [discord.js](https://discord.js.org).
 
 This repository holds the rewrite for v2.
