@@ -10,7 +10,7 @@ import { MessageEmbed } from 'discord.js';
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class PermissionsCommand extends Command {
+export class GeneralCommand extends Command {
 	public constructor(context: ChatInputCommand.Context, options: ChatInputCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;

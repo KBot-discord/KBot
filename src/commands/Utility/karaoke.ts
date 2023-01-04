@@ -1,31 +1,26 @@
 import { EmbedColors } from '#utils/constants';
 import { getGuildIds } from '#utils/config';
-import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ButtonInteraction, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { channelMention, userMention } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { UtilityModule } from '../../modules/UtilityModule';
 
-@ApplyOptions<Subcommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Join or leave the karaoke queue',
-	subcommands: [
-		{ name: 'help', chatInputRun: 'chatInputHelp' },
-		{ name: 'list', chatInputRun: 'chatInputList' },
-		{ name: 'join', chatInputRun: 'chatInputJoin' },
-		{ name: 'duet', chatInputRun: 'chatInputDuet' },
-		{ name: 'leave', chatInputRun: 'chatInputLeave' }
-	],
-	preconditions: ['GuildOnly'],
+	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class KaraokeCommand extends Subcommand {
-	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
+export class UtilityCommand extends ModuleCommand<UtilityModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: Subcommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -66,7 +61,27 @@ export class KaraokeCommand extends Subcommand {
 		);
 	}
 
-	public async chatInputHelp(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+		switch (interaction.options.getSubcommand(true)) {
+			case 'help': {
+				return this.chatInputHelp(interaction);
+			}
+			case 'list': {
+				return this.chatInputList(interaction);
+			}
+			case 'join': {
+				return this.chatInputJoin(interaction);
+			}
+			case 'duet': {
+				return this.chatInputDuet(interaction);
+			}
+			default: {
+				return this.chatInputLeave(interaction);
+			}
+		}
+	}
+
+	public async chatInputHelp(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 
@@ -106,7 +121,7 @@ export class KaraokeCommand extends Subcommand {
 		});
 	}
 
-	public async chatInputList(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputList(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;
@@ -128,7 +143,7 @@ export class KaraokeCommand extends Subcommand {
 		});
 	}
 
-	public async chatInputJoin(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputJoin(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;
@@ -161,7 +176,7 @@ export class KaraokeCommand extends Subcommand {
 		return interaction.successReply('You have successfully joined the queue.');
 	}
 
-	public async chatInputDuet(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputDuet(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;
@@ -246,7 +261,7 @@ export class KaraokeCommand extends Subcommand {
 		return interaction.successReply('Successfully joined queue.');
 	}
 
-	public async chatInputLeave(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputLeave(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;

@@ -13,7 +13,7 @@ import type { ModerationModule } from '../../modules/ModerationModule';
 	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class UserInfoCommand extends ModuleCommand<ModerationModule> {
+export class ModerationCommand extends ModuleCommand<ModerationModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;

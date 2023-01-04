@@ -9,7 +9,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
-export class PingCommand extends Command {
+export class GeneralCommand extends Command {
 	public constructor(context: ChatInputCommand.Context, options: ChatInputCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;

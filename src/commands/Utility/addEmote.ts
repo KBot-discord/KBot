@@ -24,7 +24,7 @@ interface EmojiData {
 	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class AddEmoteCommand extends ModuleCommand<UtilityModule> {
+export class UtilityCommand extends ModuleCommand<UtilityModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;

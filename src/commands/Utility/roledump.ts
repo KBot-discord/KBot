@@ -12,7 +12,7 @@ import type { UtilityModule } from '../../modules/UtilityModule';
 	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
-export class KBotCommand extends ModuleCommand<UtilityModule> {
+export class UtilityCommand extends ModuleCommand<UtilityModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (this.description && !this.detailedDescription) this.detailedDescription = this.description;

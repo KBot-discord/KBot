@@ -13,7 +13,7 @@ function getRandomInt(max: number) {
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages]
 })
-export class UwuCommand extends Command {
+export class MiscCommand extends Command {
 	public constructor(context: ContextMenuCommand.Context, options: ContextMenuCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;

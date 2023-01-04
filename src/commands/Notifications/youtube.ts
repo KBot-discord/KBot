@@ -1,32 +1,27 @@
 import { EmbedColors } from '#utils/constants';
 import { getGuildIds } from '#utils/config';
 import { YoutubeMenu } from '#lib/structures/YoutubeMenu';
-import { Subcommand } from '@sapphire/plugin-subcommands';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { MessageEmbed } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { NotificationModule } from '../../modules/NotificationModule';
 import type { Subscription } from '../../rpc/gen/subscriptions/v1/subscriptions.pb';
 
-@ApplyOptions<Subcommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'NotificationModule',
 	description: 'Youtube module',
-	subcommands: [
-		{ name: 'subscribe', chatInputRun: 'chatInputSubscribe' },
-		{ name: 'unsubscribe', chatInputRun: 'chatInputUnsubscribe' },
-		{ name: 'set', chatInputRun: 'chatInputSet' },
-		{ name: 'unset', chatInputRun: 'chatInputUnset' },
-		{ name: 'config', chatInputRun: 'chatInputConfig' }
-	],
-	preconditions: ['GuildOnly'],
+	preconditions: ['GuildOnly', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class DiscordStatusCommand extends Subcommand {
-	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
+export class NotificationCommand extends ModuleCommand<NotificationModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: Subcommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -120,7 +115,27 @@ export class DiscordStatusCommand extends Subcommand {
 		);
 	}
 
-	public async chatInputSubscribe(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+		switch (interaction.options.getSubcommand(true)) {
+			case 'subscribe': {
+				return this.chatInputSubscribe(interaction);
+			}
+			case 'unsubscribe': {
+				return this.chatInputUnsubscribe(interaction);
+			}
+			case 'set': {
+				return this.chatInputSet(interaction);
+			}
+			case 'unset': {
+				return this.chatInputUnset(interaction);
+			}
+			default: {
+				return this.chatInputConfig(interaction);
+			}
+		}
+	}
+
+	public async chatInputSubscribe(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -143,7 +158,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showNewConfig(interaction, newSubscription);
 	}
 
-	public async chatInputUnsubscribe(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputUnsubscribe(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -157,7 +172,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return interaction.defaultReply(`Successfully unsubscribed from ${account}`);
 	}
 
-	public async chatInputSet(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputSet(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -183,7 +198,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showNewConfig(interaction, newSubscription);
 	}
 
-	public async chatInputUnset(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -209,7 +224,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return this.showNewConfig(interaction, newSubscription);
 	}
 
-	public async chatInputConfig(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -221,7 +236,7 @@ export class DiscordStatusCommand extends Subcommand {
 		return new YoutubeMenu(interaction.guild!, subscriptions).run(interaction, interaction.user);
 	}
 
-	private showNewConfig(interaction: Subcommand.ChatInputInteraction, subscription: Subscription) {
+	private showNewConfig(interaction: ModuleCommand.ChatInputInteraction, subscription: Subscription) {
 		return interaction.editReply({
 			embeds: [
 				new MessageEmbed() //

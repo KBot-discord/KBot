@@ -2,34 +2,30 @@ import { parseTimeString } from '#utils/util';
 import { EmbedColors, PollCustomIds, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
 import { getGuildIds } from '#utils/config';
 import { PollMenu } from '#lib/structures/PollMenu';
-import { Subcommand } from '@sapphire/plugin-subcommands';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { buildCustomId } from '@kbotdev/custom-id';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { UtilityModule } from '../../modules/UtilityModule';
 import type { PollOption } from '#lib/types/CustomIds';
 
-@ApplyOptions<Subcommand.Options>({
+@ApplyOptions<ModuleCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Get info on the selected user or provided ID',
 	detailedDescription:
 		'Displays all the info about a user such as: creation date, join date, if they are in the server, if they are banned (and ban reason if applicable).',
-	preconditions: ['GuildOnly'],
+	preconditions: ['ModuleEnabled', 'GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class PollCommand extends Subcommand {
-	public constructor(context: Subcommand.Context, options: Subcommand.Options) {
-		super(context, {
-			...options,
-			subcommands: [
-				{ name: 'create', chatInputRun: 'chatInputCreate' },
-				{ name: 'menu', chatInputRun: 'chatInputMenu' }
-			]
-		});
+export class UtilityCommand extends ModuleCommand<UtilityModule> {
+	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
+		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public override registerApplicationCommands(registry: Subcommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -113,7 +109,18 @@ export class PollCommand extends Subcommand {
 		);
 	}
 
-	public async chatInputCreate(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+		switch (interaction.options.getSubcommand(true)) {
+			case 'create': {
+				return this.chatInputCreate(interaction);
+			}
+			default: {
+				return this.chatInputMenu(interaction);
+			}
+		}
+	}
+
+	public async chatInputCreate(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { polls } = this.container;
 
@@ -146,12 +153,12 @@ export class PollCommand extends Subcommand {
 		return interaction.successReply(':white_check_mark: Poll created');
 	}
 
-	public async chatInputMenu(interaction: Subcommand.ChatInputInteraction) {
+	public async chatInputMenu(interaction: ModuleCommand.ChatInputInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		return new PollMenu(interaction.guild!).run(interaction);
 	}
 
-	private formatOptions(interaction: Subcommand.ChatInputInteraction): string[] | null {
+	private formatOptions(interaction: ModuleCommand.ChatInputInteraction): string[] | null {
 		const options: string[] = [];
 		for (let i = 0; i < 10; i++) {
 			if (interaction.options.getString(`option${i + 1}`)) {

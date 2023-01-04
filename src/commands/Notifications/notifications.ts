@@ -2,18 +2,17 @@ import { getGuildIds } from '#utils/config';
 import { EmbedColors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { MessageEmbed } from 'discord.js';
-import { channelMention } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import type { UtilityModule } from '../../modules/UtilityModule';
+import type { NotificationModule } from '../../modules/NotificationModule';
 
 @ApplyOptions<ModuleCommand.Options>({
-	module: 'UtilityModule',
-	description: 'Utility module config',
+	module: 'NotificationModule',
+	description: 'Notification module config',
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 })
-export class UtilityCommand extends ModuleCommand<UtilityModule> {
+export class ModerationCommand extends ModuleCommand<NotificationModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
 		super(context, { ...options });
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
@@ -23,14 +22,14 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
-					.setName('utility')
-					.setDescription('Show the current utility module configuration')
+					.setName('notifications')
+					.setDescription('Show the current notification module configuration')
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('config')
 							.setDescription('Show the current config')
 					),
-			{ idHints: ['1040515910433263706'], guildIds: getGuildIds() }
+			{ idHints: ['1059985549722648646'], guildIds: getGuildIds() }
 		);
 	}
 
@@ -42,31 +41,20 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		await interaction.deferReply();
 		const { db } = this.container;
 
-		const [config, eventCount, pollCount] = await db.$transaction([
-			db.utilityModule.findUnique({ where: { id: interaction.guildId! } }),
-			db.event.count({ where: { guildId: interaction.guildId! } }),
-			db.poll.count({ where: { guildId: interaction.guildId! } })
-		]);
+		const config = await db.notificationModule.findUnique({
+			where: { id: interaction.guildId! },
+			include: { twitter: true, twitch: true }
+		});
 
 		return interaction.editReply({
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: 'Utility module config', iconURL: interaction.guild!.iconURL()! })
+					.setAuthor({ name: 'Moderation module config', iconURL: interaction.guild!.iconURL()! })
 					.addFields([
 						{ name: 'Module enabled', value: `${config?.moduleEnabled ?? false}` },
-						{
-							name: 'Discord status channel',
-							value: `${config?.incidentChannel ? channelMention(config.incidentChannel) : 'No channel set'}`,
-							inline: true
-						},
-						{
-							name: 'Emote credits channel',
-							value: `${config?.creditsChannel ? channelMention(config.creditsChannel) : 'No channel set'}`,
-							inline: true
-						},
-						{ name: '# of events', value: `${eventCount}`, inline: true },
-						{ name: '# of polls', value: `${pollCount}`, inline: true }
+						{ name: 'Twitter accounts followed', value: `${config?.twitter.length ?? false}` },
+						{ name: 'Twitch accounts followed', value: `${config?.twitch.length ?? false}` }
 					])
 			]
 		});

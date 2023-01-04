@@ -22,7 +22,7 @@ interface PatOptions {
 	preconditions: ['GuildOnly'],
 	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.AttachFiles]
 })
-export class PatCommand extends Command {
+export class MiscCommand extends Command {
 	private pats: Image[] = [];
 
 	public constructor(context: ContextMenuCommand.Context, options: ContextMenuCommand.Options) {
