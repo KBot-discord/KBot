@@ -46,7 +46,7 @@
 		"axios": "^1.2.2",
 		"binarytf": "^2.1.2",
 		"bullmq": "^3.4.1",
-		"canvas": "2.10.2",
+		"canvas": "2.11.0",
 		"canvas-constructor": "^7.0.0",
 		"deepl": "^1.0.13",
 		"discord-api-types": "^0.33.5",
