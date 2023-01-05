@@ -16,29 +16,29 @@ This repository holds the rewrite for v2.
 
 
 ## Features
-- Moderation commands to help server staff keep your Discord server safe.
-- Twitter functionality so tweets can be relayed to whichever channel you want.
-- Welcome messages whenever a new user joins your servers.
+-  Moderation commands to help server staff keep your Discord server safe.
+-  Twitter functionality so tweets can be relayed to whichever channel you want.
+-  Welcome messages whenever a new user joins your servers.
 
 ## Planned features
-- YouTube and Twitch notifications.
+-  YouTube and Twitch notifications.
 
 ## Links
-- [Bot invite (v1)](https://kbot.ca/invite) (v2 can be tested in the support server)
-- [Dashboard](https://kbot.ca/)
-- [Documentation](https://docs.kbot.ca/)
-- [Status page](https://kuma.kbot.ca/status/kbot)
-- [Support server](https://kbot.ca/discord)
+-  [Bot invite (v1)](https://kbot.ca/invite) (v2 can be tested in the support server)
+-  [Dashboard](https://kbot.ca/)
+-  [Documentation](https://docs.kbot.ca/)
+-  [Status page](https://kuma.kbot.ca/status/kbot)
+-  [Support server](https://kbot.ca/discord)
 
 ## Developing on KBot
 ### Requirements:
-- [Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/)
-- [Docker](https://www.docker.com/community-edition) and [Docker Compose](https://docs.docker.com/compose/install/)
-- [Redis](https://redis.io/)
-- [PostgreSQL](https://www.postgresql.org/)
+-  [Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/)
+-  [Docker](https://www.docker.com/community-edition) and [Docker Compose](https://docs.docker.com/compose/install/)
+-  [Redis](https://redis.io/)
+-  [PostgreSQL](https://www.postgresql.org/)
 
 ### Optional requirements:
-- [Grafana](https://grafana.com/) and [Prometheus](https://prometheus.io/) for metrics.
+-  [Grafana](https://grafana.com/) and [Prometheus](https://prometheus.io/) for metrics.
 
 ## Contributing
 See the [contribution guide](.github/CONTRIBUTING.md) for how to contribute.
