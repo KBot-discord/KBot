@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   test:
-    name: Run tests
+    name: Tests
     runs-on: ubuntu-latest
 
     strategy:
