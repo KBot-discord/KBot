@@ -4,13 +4,13 @@ on:
   push:
     branches:
       - main
-  pull_request:
   schedule:
     - cron: "0 0 * * 6"
 
 permissions:
   actions: read
   contents: read
+  pull-requests: read
   security-events: write
 
 concurrency:
