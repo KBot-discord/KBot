@@ -16,7 +16,7 @@
 		"lint": "eslint --fix --ext ts src tests prisma",
 		"format": "prettier --write --loglevel=warn \"{src,tests,prisma}/**/*.{js,ts,json}\"",
 		"test": "vitest",
-		"ci:build": "yarn db:generate && yarn build",
+		"ci:build": "yarn db:generate && yarn buf:generate && yarn build",
 		"ci:test": "vitest run --coverage",
 		"db:generate": "ts-node ./prisma && prisma generate",
 		"db:dev": "prisma migrate dev",
