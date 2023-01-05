@@ -141,7 +141,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 
 	private async getEmoji(message: Message): Promise<EmojiData | null> {
 		const emojiData = message.content.match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/);
-		const emojiEmbed = message.content.match(/https\S*?([a-zA-z0-9]+)(?:\.\w+)?(?:\s|$)/);
+		const emojiEmbed = message.content.match(/https\S*?([a-zA-Z0-9]+)(?:\.\w+)?(?:\s|$)/);
 
 		// Priority: emoji -> attachment -> links
 		if (emojiData) {
@@ -152,7 +152,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		}
 		if (message.attachments.size > 0) {
 			const attachmentUrl = message.attachments.at(0)!.url;
-			const parsedUrl = attachmentUrl.match(/([a-zA-z0-9]+)(.png|.jpg|.gif)$/);
+			const parsedUrl = attachmentUrl.match(/([a-zA-Z0-9]+)(.png|.jpg|.gif)$/);
 			if (!parsedUrl) return null;
 
 			return {
