@@ -7,7 +7,7 @@ on:
     paths:
       - 'src/**'
       - 'Dockerfile'
-      - '.github/workflows/continuous-delivery.yml'
+      - '.github/workflows/publish.yaml'
       - 'package.json'
 
 permissions:
