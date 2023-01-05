@@ -18,7 +18,7 @@ COPY .yarn/ .yarn/
 COPY src/ src/
 
 RUN yarn install --immutable && \
-	yarn run build && \
+	yarn ci:build && \
 	apk del -q .build-deps
 
 ## Publish ##
