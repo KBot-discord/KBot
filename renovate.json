@@ -4,5 +4,8 @@
     "config:base",
     "group:allNonMajor"
   ],
-  "labels": ["dependencies"]
+  "labels": ["dependencies"],
+  "github-actions": {
+    "enabled": false
+  }
 }
