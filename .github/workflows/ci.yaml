@@ -27,13 +27,24 @@ jobs:
         with:
           github_token: ${{ github.token }}
 
-      - name: Build
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Generate protobuf
         run: yarn buf:generate
 
       - uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: src/rpc/gen
+          path: |
+            node_modules
+            src/rpc/gen
 
   lint:
     name: Lint
@@ -44,19 +55,18 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: build-artifact
-          path: src/rpc/gen
-
       - name: Set up NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: yarn
 
-      - name: Install dependencies
-        run: yarn --immutable
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-artifact
+          path: |
+            node_modules
+            src/rpc/gen
 
       - name: Lint
         run: yarn lint --fix=false
@@ -73,19 +83,18 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: build-artifact
-          path: src/rpc/gen
-
       - name: Set up NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: yarn
 
-      - name: Install dependencies
-        run: yarn --immutable
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-artifact
+          path: |
+            node_modules
+            src/rpc/gen
 
       - name: Run tests
         run: yarn ci:test
