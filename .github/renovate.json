@@ -4,8 +4,10 @@
     "config:base",
     "group:allNonMajor"
   ],
-  "labels": ["dependencies"],
-  "github-actions": {
-    "enabled": false
-  }
+  "schedule": [
+    "before 10am on Saturday"
+  ],
+  "labels": [
+    "dependencies"
+  ]
 }
