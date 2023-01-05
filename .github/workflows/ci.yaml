@@ -37,6 +37,7 @@ jobs:
 
   lint:
     name: Lint
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -62,6 +63,7 @@ jobs:
 
   test:
     name: Test
+    needs: build
     runs-on: ubuntu-latest
 
     strategy:
