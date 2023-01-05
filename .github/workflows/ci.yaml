@@ -93,31 +93,31 @@ jobs:
       - name: Run tests
         run: yarn ci:test
 
-      # - name: Save coverage report
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: nodejs-coverage
-      #     path: coverage/
+      - name: Save coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: nodejs-coverage
+          path: coverage/
 
-  # coverage:
-  #   name: Coverage
-  #   needs: test
-  #   runs-on: ubuntu-latest
+  coverage:
+    name: Coverage
+    needs: test
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout Project
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 2
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
 
-  #     - name: Download NodeJS Unit Test Coverage report
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: nodejs-coverage
-  #         path: coverage/
+      - name: Download NodeJS Unit Test Coverage report
+        uses: actions/download-artifact@v3
+        with:
+          name: nodejs-coverage
+          path: coverage/
 
-  #     - name: Codecov Upload
-  #       uses: codecov/codecov-action@v3.1.1
-  #       with:
-  #         token: ${{ secrets.CODECOV_TOKEN }}
-  #         fail_ci_if_error: true
+      - name: Codecov Upload
+        uses: codecov/codecov-action@v3.1.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
