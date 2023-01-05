@@ -27,12 +27,6 @@ jobs:
         with:
           github_token: ${{ github.token }}
 
-      - name: Set up NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
-
       - name: Install dependencies
         run: yarn --immutable
 
@@ -42,9 +36,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: |
-            node_modules
-            src/rpc/gen
+          path: src/rpc/gen
 
   lint:
     name: Lint
@@ -64,9 +56,10 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: build-artifact
-          path: |
-            node_modules
-            src/rpc/gen
+          path: src/rpc/gen
+
+      - name: Install dependencies
+        run: yarn --immutable
 
       - name: Lint
         run: yarn lint --fix=false
@@ -92,9 +85,10 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: build-artifact
-          path: |
-            node_modules
-            src/rpc/gen
+          path: src/rpc/gen
+
+      - name: Install dependencies
+        run: yarn --immutable
 
       - name: Run tests
         run: yarn ci:test
