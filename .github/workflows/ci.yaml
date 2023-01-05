@@ -15,21 +15,25 @@ concurrency:
 
 jobs:
   build:
-    - name: Check out Git repository
-      uses: actions/checkout@v3
+    name: Build
+    runs-on: ubuntu-latest
 
-    - name: Set up Buf
-      uses: bufbuild/buf-setup-action@v1
-      with:
-        github_token: ${{ github.token }}
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
 
-    - name: Build
-      run: yarn buf:generate
+      - name: Set up Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: build-artifact
-        path: src/rpc/gen
+      - name: Build
+        run: yarn buf:generate
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: src/rpc/gen
 
   lint:
     name: Lint
@@ -57,7 +61,7 @@ jobs:
         run: yarn lint --fix=false
 
   test:
-    name: Tests
+    name: Test
     runs-on: ubuntu-latest
 
     strategy:
@@ -91,7 +95,7 @@ jobs:
       #     path: coverage/
 
   # coverage:
-  #   name: Upload coverage report to codecov
+  #   name: Coverage
   #   needs: test
   #   runs-on: ubuntu-latest
 
