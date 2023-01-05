@@ -35,7 +35,7 @@ export class ButtonHandler extends InteractionHandler {
 				await event.setStatus('COMPLETED');
 			}
 
-			await karaoke.repo.setEventStatus(guildId, eventId, false);
+			await karaoke.repo.setEventActive(guildId, eventId, false);
 			await karaoke.repo.deleteEvent(eventId);
 
 			const updatedPage = KaraokeEventMenu.pageStopEvent(menu);

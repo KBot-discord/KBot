@@ -16,7 +16,7 @@ export class WelcomeService {
 	public async run() {
 		const { client } = container;
 
-		const config = await this.repo.getConfig(this.member.guild.id);
+		const config = await this.repo.getSettings(this.member.guild.id);
 		if (!config?.channel) return;
 		if (!config.message && !config.title && !config.description) return;
 

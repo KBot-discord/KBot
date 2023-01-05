@@ -7,7 +7,7 @@ import type { Guild } from 'discord.js';
 	fullName: 'Moderation Module'
 })
 export class ModerationModule extends Module {
-	private readonly service;
+	public readonly service;
 
 	public constructor(context: Module.Context, options: Module.Options) {
 		super(context, { ...options });
