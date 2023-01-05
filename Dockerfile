@@ -1,25 +1,30 @@
 ## Base ##
 FROM node:18-alpine as builder
 
-ENV CI=true
+ENV CI=true NODE_ENV=production
 
 # canvas build deps
 RUN apk add -q --update && \
-	apk add -q --no-cache --virtual .build-deps cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make
+	apk add -q --no-cache --virtual .build-deps cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make curl && \
+    curl -sSL \
+      "https://github.com/bufbuild/buf/releases/download/v1.11.0/buf-$(uname -s)-$(uname -m)" \
+      -o "/usr/local/bin/buf" && \
+    chmod +x "/usr/local/bin/buf"
 
 COPY assets/ assets/
 
 WORKDIR /temp
 
-COPY tsconfig.base.json .yarnrc.yml ./
+COPY tsconfig.base.json .yarnrc.yml buf.gen.yaml ./
 COPY prisma/ prisma/
 COPY yarn.lock package.json ./
 COPY .yarn/ .yarn/
 COPY src/ src/
 
 RUN yarn install --immutable && \
-	yarn ci:build && \
-	apk del -q .build-deps
+    yarn buf:generate && \
+	yarn build && \
+    apk del -q .build-deps
 
 ## Publish ##
 FROM node:18-alpine as app

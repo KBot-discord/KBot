@@ -1,4 +1,4 @@
-name: Publish
+name: CD
 
 on:
   push:
@@ -39,5 +39,4 @@ jobs:
         with:
           push: true
           context: .
-          tags: |
-            ghcr.io/kbot-discord/kbot:latest
+          tags: ghcr.io/kbot-discord/kbot:latest
