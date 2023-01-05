@@ -57,8 +57,8 @@ export class KaraokeRepository {
 		});
 	}
 
-	public async fetchEventWithQueue(eventId: string): Promise<[Event | null, EventUser[]]> {
-		return container.db.$transaction([
+	public async fetchEventWithQueue(eventId: string): Promise<{ event: Event | null; users: EventUser[] }> {
+		const [event, users] = await container.db.$transaction([
 			this.eventDb.findUnique({
 				where: { id: eventId }
 			}),
@@ -69,6 +69,7 @@ export class KaraokeRepository {
 				}
 			})
 		]);
+		return { event, users };
 	}
 
 	public async fetchEvents(guildId: string): Promise<Event[] | null> {

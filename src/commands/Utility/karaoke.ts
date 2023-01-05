@@ -155,10 +155,10 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		const isActive = await karaoke.repo.isEventActive(guildId, eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to join.');
 
-		const event = await karaoke.repo.fetchEventWithQueue(eventId);
+		const { event, users } = await karaoke.repo.fetchEventWithQueue(eventId);
 		if (isNullish(event)) return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
 
-		const result = karaoke.isJoinValid(event, event.queue, member.id);
+		const result = karaoke.isJoinValid(event, users, member.id);
 		if (!result.valid) return interaction.errorReply(result.reason!);
 
 		const newQueue = await karaoke.repo.addToQueue(eventId, member.id, member.displayName);
@@ -188,11 +188,11 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		const isActive = await karaoke.repo.isEventActive(guildId, eventId);
 		if (!isActive) return interaction.defaultReply('There is no karaoke event to join.');
 
-		const event = await karaoke.repo.fetchEventWithQueue(eventId);
+		const { event, users } = await karaoke.repo.fetchEventWithQueue(eventId);
 		if (isNullish(event)) return interaction.defaultReply("Something went wrong. The bot's dev had been notified of the error.");
 
 		const partner = await interaction.guild!.members.fetch(interaction.options.getUser('partner', true).id);
-		const result = karaoke.isJoinValid(event, event.queue, member.id, partner);
+		const result = karaoke.isJoinValid(event, users, member.id, partner);
 		if (!result.valid) return interaction.errorReply(result.reason!);
 
 		const message = await interaction.channel!.send({
