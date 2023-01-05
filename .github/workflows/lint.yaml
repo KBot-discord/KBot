@@ -35,6 +35,6 @@ jobs:
         run: yarn --immutable
 
       - name: Lint
-        run:
-          - yarn ci:build
-          - yarn lint --fix=false
+        run: |
+          yarn ci:build
+          yarn lint --fix=false
