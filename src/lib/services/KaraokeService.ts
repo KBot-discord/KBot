@@ -20,12 +20,13 @@ export class KaraokeService {
 		this.repo = new KaraokeRepository();
 	}
 
+	// TODO make a startScheduledEvent function since setEventExistence will overlap
 	public async startEvent(
 		interaction: ModalSubmitInteraction | ButtonInteraction,
 		voiceChannel: StageChannel | VoiceChannel,
 		textChannel: TextChannel,
 		stageTopic: string,
-		pingRole: string
+		pingRole: string | null
 	): Promise<Event | null> {
 		const guildId = interaction.guildId!;
 		const eventExists = await this.repo.doesEventExist(guildId, voiceChannel.id);
@@ -64,7 +65,7 @@ export class KaraokeService {
 			.then((scheduleEvent) => scheduleEvent.setStatus('ACTIVE'));
 
 		const announcement = await textChannel.send({
-			content: `${pingRole || ''}A karaoke event has started!`,
+			content: `${pingRole ?? ''}A karaoke event has started!`,
 			embeds: [
 				embed.setColor(EmbedColors.Default).addFields(
 					{ name: '**Voice channel:** ', value: `<#${voiceChannel.id}>` },
@@ -82,7 +83,7 @@ export class KaraokeService {
 		await announcement.pin();
 
 		await this.repo.setEventExistence(guildId, voiceChannel.id, true);
-		await this.repo.setEventStatus(guildId, voiceChannel.id, true);
+		await this.repo.setEventActive(guildId, voiceChannel.id, true);
 		return this.repo.createEvent(voiceChannel.guildId, voiceChannel.id, textChannel.id, announcement.id);
 	}
 
@@ -93,12 +94,6 @@ export class KaraokeService {
 		return this.repo.removeFromQueue(eventId, eventUser.id, eventUser.partnerId ?? undefined);
 	}
 
-	/**
-	 *
-	 * @param memberManager
-	 * @param eventUser
-	 * @returns If the operation succeeded
-	 */
 	public async setUserToSinger(memberManager: GuildMemberManager, eventUser: EventUser): Promise<boolean | null> {
 		const member = await memberManager.fetch(eventUser.id);
 		if (member.voice.channelId) {
@@ -115,12 +110,6 @@ export class KaraokeService {
 		return true;
 	}
 
-	/**
-	 * Set the member/partner to the voice channel's speaker
-	 * @param memberManager The GuildMemberManager of the client
-	 * @param eventUser The EventUser entry of the member
-	 * @returns If the operation succeeded
-	 */
 	public async setUserToAudience(memberManager: GuildMemberManager, eventUser: EventUser): Promise<boolean | null> {
 		const member = await memberManager.fetch(eventUser.id);
 		if (member.voice.channelId) {
@@ -137,14 +126,6 @@ export class KaraokeService {
 		return true;
 	}
 
-	/**
-	 * Check if the member is allowed to join the karaoke queue
-	 * @param event The ID of the event
-	 * @param queue An array of objects containing the user ID and name
-	 * @param memberId The ID of the member
-	 * @param partner The GuildMember object of the partner, if applicable
-	 * @returns If the member/partner is allowed to join and, if applicable, the reason for denial
-	 */
 	public isJoinValid(event: Event, queue: EventUser[], memberId: string, partner?: GuildMember): { valid: boolean; reason?: string } {
 		if (event.locked) {
 			return { valid: false, reason: 'The karaoke queue is locked.' };
@@ -170,11 +151,6 @@ export class KaraokeService {
 		return { valid: true };
 	}
 
-	/**
-	 * Build a message embed based on the provided queue
-	 * @param queue An array of objects containing the user ID and name
-	 * @returns A formatted message embed
-	 */
 	public buildQueueEmbed(queue: EventUser[]): MessageEmbed {
 		const embed = new MessageEmbed().setColor(EmbedColors.Default).setAuthor({ name: 'Karaoke queue' }).setTitle('Queue is empty');
 		if (queue.length === 0) return embed.setTitle('Queue is empty');
