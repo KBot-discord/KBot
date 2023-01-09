@@ -131,7 +131,7 @@ jobs:
 
   build:
     name: Build
-    needs: build
+    needs: generate-rpc
     runs-on: ubuntu-latest
 
     steps:
