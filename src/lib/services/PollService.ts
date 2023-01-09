@@ -1,7 +1,7 @@
 import { PollRepository } from '#lib/database/repositories/PollRepository';
 import { EmbedColors } from '#utils/constants';
 import { container } from '@sapphire/framework';
-import { type Message, MessageEmbed } from 'discord.js';
+import { ChannelType, type Message, EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import type { Poll, PollUser } from '@prisma/client';
 
@@ -55,7 +55,7 @@ export class PollService {
 
 			const message = await container.client.channels
 				.fetch(poll.channel)
-				.then((channel) => (channel?.isText() ? channel.messages.fetch(messageId) : null));
+				.then((channel) => (channel?.type === ChannelType.GuildText ? channel.messages.fetch(messageId) : null));
 			if (!message) {
 				await this.repo.deletePoll(messageId);
 				return false;
@@ -64,12 +64,12 @@ export class PollService {
 			const results = this.calculateResults(poll);
 			const embed = message.embeds[0];
 			await message.edit({
-				embeds: [embed, new MessageEmbed().setColor('RED').setTitle('Poll has ended')],
+				embeds: [embed, new EmbedBuilder().setColor(EmbedColors.Error).setTitle('Poll has ended')],
 				components: []
 			});
 			await message.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
 						.setTitle(`Results: ${embed.title}`)
 						.setDescription(results.join('\n'))

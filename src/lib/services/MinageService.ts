@@ -1,7 +1,7 @@
 import { getServerIcon } from '#utils/util';
 import { EmbedColors } from '#utils/constants';
 import { ModerationService } from '#services/ModerationService';
-import { GuildMember, MessageEmbed } from 'discord.js';
+import { GuildMember, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 
 export class MinageService {
@@ -48,7 +48,7 @@ export class MinageService {
 		const properMessage = ModerationService.formatMinageMessage(message, this.member, req, reqDate);
 		const icon = getServerIcon(this.member.guild);
 
-		return new MessageEmbed()
+		return new EmbedBuilder()
 			.setColor(EmbedColors.Default)
 			.setAuthor({ name: 'You have been kicked due to your account being too new' })
 			.setThumbnail(icon!)

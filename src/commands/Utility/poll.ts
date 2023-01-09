@@ -1,10 +1,10 @@
 import { parseTimeString } from '#utils/util';
-import { EmbedColors, PollCustomIds, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
+import { EmbedColors, POLL_NUMBERS, POLL_TIME_LIMIT, PollCustomIds } from '#utils/constants';
 import { getGuildIds } from '#utils/config';
 import { PollMenu } from '#lib/structures/PollMenu';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { buildCustomId } from '@kbotdev/custom-id';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
@@ -109,7 +109,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'create': {
 				return this.chatInputCreate(interaction);
@@ -120,7 +120,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		}
 	}
 
-	public async chatInputCreate(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputCreate(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { polls } = this.container;
 
@@ -153,12 +153,12 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		return interaction.successReply(':white_check_mark: Poll created');
 	}
 
-	public async chatInputMenu(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputMenu(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		return new PollMenu(interaction.guild!).run(interaction);
 	}
 
-	private formatOptions(interaction: ModuleCommand.ChatInputInteraction): string[] | null {
+	private formatOptions(interaction: ModuleCommand.ChatInputCommandInteraction): string[] | null {
 		const options: string[] = [];
 		for (let i = 0; i < 10; i++) {
 			if (interaction.options.getString(`option${i + 1}`)) {
@@ -168,9 +168,9 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		return options.length < 2 ? null : options;
 	}
 
-	private createPollEmbeds(userTag: string, text: string, choices: string[], expiresAt?: number): MessageEmbed[] {
+	private createPollEmbeds(userTag: string, text: string, choices: string[], expiresAt?: number): EmbedBuilder[] {
 		const embeds = [
-			new MessageEmbed()
+			new EmbedBuilder()
 				.setColor(EmbedColors.Default)
 				.setTitle(text)
 				.setDescription(choices.join('\n'))
@@ -179,7 +179,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		];
 		if (expiresAt) {
 			embeds.push(
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(EmbedColors.Success)
 					.setTitle('Poll ends in:')
 					.setDescription(`<t:${Math.floor(expiresAt! / 1000)}:R>`)
@@ -188,20 +188,20 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		return embeds;
 	}
 
-	private createPollButtons(options: string[]): MessageActionRow[] {
+	private createPollButtons(options: string[]): ActionRowBuilder<ButtonBuilder>[] {
 		const rows = [];
 		for (let i = 0; i < Math.ceil(options.length / 5); i++) {
-			const components: MessageButton[] = [];
+			const components: ButtonBuilder[] = [];
 			for (let j = 0; j < 5; j++) {
 				const iteration = j + i * 5;
 				if (options[iteration]) {
 					const key = buildCustomId<PollOption>(PollCustomIds.Vote, {
 						option: iteration
 					});
-					components.push(new MessageButton().setCustomId(key).setEmoji(POLL_NUMBERS[iteration]).setStyle('PRIMARY'));
+					components.push(new ButtonBuilder().setCustomId(key).setEmoji(POLL_NUMBERS[iteration]).setStyle(ButtonStyle.Primary));
 				} else break;
 			}
-			rows.push(new MessageActionRow().addComponents(components));
+			rows.push(new ActionRowBuilder<ButtonBuilder>().addComponents(components));
 		}
 		return rows;
 	}

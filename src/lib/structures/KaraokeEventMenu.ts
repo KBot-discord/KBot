@@ -1,5 +1,5 @@
 import { BlankSpace, EmbedColors, Emoji, KaraokeCustomIds } from '#utils/constants';
-import { Guild, GuildChannel, Message, MessageButton, MessageEmbed, User } from 'discord.js';
+import { ButtonBuilder, ButtonStyle, EmbedBuilder, Guild, GuildChannel, Message, User } from 'discord.js';
 import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
@@ -7,7 +7,7 @@ import { channelMention, time } from '@discordjs/builders';
 import { buildCustomId } from '@kbotdev/custom-id';
 import type { Event } from '@prisma/client';
 import type { KaraokeMenuButton } from '../types/CustomIds';
-import type { NonModalInteraction } from '@sapphire/discord.js-utilities';
+import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 
 const KaraokeEventActions = [
 	{ id: KaraokeCustomIds.Add, text: 'Add to queue' },
@@ -26,7 +26,7 @@ export class KaraokeEventMenu extends Menu {
 		this.guild = guild;
 	}
 
-	public override async run(messageOrInteraction: Message | NonModalInteraction, target?: User) {
+	public override async run(messageOrInteraction: Message | AnyInteractableInteraction, target?: User) {
 		await this.build();
 		return super.run(messageOrInteraction, target);
 	}
@@ -60,15 +60,15 @@ export class KaraokeEventMenu extends Menu {
 				.setComponentRows((row) => {
 					return [
 						row.addComponents([
-							new MessageButton().setCustomId(KaraokeCustomIds.Create).setStyle('SUCCESS').setLabel('Create an event'),
-							new MessageButton().setCustomId(KaraokeCustomIds.Schedule).setStyle('SUCCESS').setLabel('Schedule an event')
+							new ButtonBuilder().setCustomId(KaraokeCustomIds.Create).setStyle(ButtonStyle.Success).setLabel('Create an event'),
+							new ButtonBuilder().setCustomId(KaraokeCustomIds.Schedule).setStyle(ButtonStyle.Success).setLabel('Schedule an event')
 						])
 					];
 				})
 		);
 	}
 
-	private buildPages(embeds: MessageEmbed[]): MenuPagesBuilder {
+	private buildPages(embeds: EmbedBuilder[]): MenuPagesBuilder {
 		return new MenuPagesBuilder().setPages(
 			embeds.map((embed, index) => {
 				const { event } = this.events[index];
@@ -79,16 +79,16 @@ export class KaraokeEventMenu extends Menu {
 							row1.addComponents(
 								isNullish(event.scheduleId)
 									? KaraokeEventActions.map(({ id, text }) =>
-											new MessageButton()
+											new ButtonBuilder()
 												.setCustomId(buildCustomId<KaraokeMenuButton>(id, { eventId: event.id }))
-												.setStyle('SECONDARY')
+												.setStyle(ButtonStyle.Secondary)
 												.setLabel(text)
 									  )
 									: event.id
 									? [
-											new MessageButton()
+											new ButtonBuilder()
 												.setCustomId(buildCustomId<KaraokeMenuButton>(KaraokeCustomIds.Start, { eventId: event.id }))
-												.setStyle('SECONDARY')
+												.setStyle(ButtonStyle.Secondary)
 												.setLabel('Start event')
 									  ]
 									: []
@@ -96,16 +96,16 @@ export class KaraokeEventMenu extends Menu {
 							row2.addComponents(
 								isNullish(event.scheduleId)
 									? [{ id: KaraokeCustomIds.Stop, text: 'End the event' }].map(({ id, text }) =>
-											new MessageButton()
+											new ButtonBuilder()
 												.setCustomId(buildCustomId<KaraokeMenuButton>(id, { eventId: event.id }))
-												.setStyle('SECONDARY')
+												.setStyle(ButtonStyle.Secondary)
 												.setLabel(text)
 									  )
 									: event.id
 									? [
-											new MessageButton()
+											new ButtonBuilder()
 												.setCustomId(buildCustomId<KaraokeMenuButton>(KaraokeCustomIds.Start, { eventId: event.id }))
-												.setStyle('SECONDARY')
+												.setStyle(ButtonStyle.Secondary)
 												.setLabel('Start event')
 									  ]
 									: []
@@ -116,7 +116,7 @@ export class KaraokeEventMenu extends Menu {
 		);
 	}
 
-	private async buildEmbeds(): Promise<MessageEmbed[]> {
+	private async buildEmbeds(): Promise<EmbedBuilder[]> {
 		const { karaoke, client } = container;
 		const { guild } = this;
 
@@ -138,7 +138,7 @@ export class KaraokeEventMenu extends Menu {
 						{ name: BlankSpace, value: BlankSpace, inline: false }
 					);
 				}
-				return new MessageEmbed()
+				return new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Karaoke management', iconURL: guild.iconURL()! })
 					.setTitle(`Event #${index + 1} | ${channel.name}`)
@@ -156,10 +156,10 @@ export class KaraokeEventMenu extends Menu {
 		const page = menu.getCurrentPage();
 
 		// use !event.locked since we are looking for the old value
-		const index = page.embeds[0].fields.indexOf({ name: 'Queue lock:', value: `${!event.locked}`, inline: true });
+		const index = page.embeds[0].data.fields!.indexOf({ name: 'Queue lock:', value: `${!event.locked}`, inline: true });
 		const lockString = event!.locked ? `${Emoji.Locked} locked` : `${Emoji.Unlocked} unlocked`;
 
-		const embed = new MessageEmbed(page.embeds[0]).spliceFields(index, 1, [{ name: 'Queue lock:', value: lockString, inline: true }]);
+		const embed = new EmbedBuilder(page.embeds[0].data).spliceFields(index, 1, { name: 'Queue lock:', value: lockString, inline: true });
 
 		return new MenuPageBuilder(page).setEmbeds([embed]);
 	}
@@ -167,7 +167,7 @@ export class KaraokeEventMenu extends Menu {
 	public static pageStopEvent(menu: Menu): MenuPageBuilder {
 		const page = menu.getCurrentPage();
 
-		const embed = new MessageEmbed(page.embeds[0]).setFields([]).setDescription('Event has ended.');
+		const embed = new EmbedBuilder(page.embeds[0].data).setFields([]).setDescription('Event has ended.');
 		const defaultRows = [page.components[0], page.components[1]];
 
 		return new MenuPageBuilder(page).setEmbeds([embed]).setComponentRows(defaultRows);

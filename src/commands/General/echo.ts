@@ -1,7 +1,7 @@
-import { KBotErrors } from '#utils/constants';
+import { EmbedColors, KBotErrors } from '#utils/constants';
 import { getGuildIds } from '#utils/config';
 import { Command, type ChatInputCommand } from '@sapphire/framework';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 
@@ -62,8 +62,8 @@ export class GeneralCommand extends Command {
 
 		return interaction.editReply({
 			embeds: [
-				new MessageEmbed()
-					.setColor('#33B54E')
+				new EmbedBuilder()
+					.setColor(EmbedColors.Success)
 					.setAuthor({ name: 'Message sent' })
 					.setDescription(`**Channel:** <#${channel.id}>\n**Message:**\n\`\`\`${sentMessage.content}\`\`\``)
 			]

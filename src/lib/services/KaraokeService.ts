@@ -2,9 +2,13 @@ import { KaraokeRepository } from '#lib/database/repositories/KaraokeRepository'
 import { EmbedColors } from '#utils/constants';
 import {
 	ButtonInteraction,
+	ChannelType,
+	EmbedBuilder,
 	type GuildMember,
 	type GuildMemberManager,
-	MessageEmbed,
+	GuildScheduledEventEntityType,
+	GuildScheduledEventPrivacyLevel,
+	GuildScheduledEventStatus,
 	ModalSubmitInteraction,
 	StageChannel,
 	TextChannel,
@@ -36,10 +40,10 @@ export class KaraokeService {
 
 		// TODO check if bot has proper perms for voice and/or text channel
 
-		const embed = new MessageEmbed();
+		const embed = new EmbedBuilder();
 		const eventName = stageTopic ? `${stageTopic}` : 'Karaoke Event';
 
-		if (voiceChannel.type === 'GUILD_STAGE_VOICE') {
+		if (voiceChannel.type === ChannelType.GuildStageVoice) {
 			if (isNullish(voiceChannel.stageInstance)) {
 				embed.setTitle(`Event: ${eventName}`);
 				await voiceChannel.createStageInstance({ topic: eventName });
@@ -56,13 +60,16 @@ export class KaraokeService {
 
 		await interaction
 			.guild!.scheduledEvents.create({
-				entityType: voiceChannel.type === 'GUILD_STAGE_VOICE' ? 'STAGE_INSTANCE' : 'VOICE',
+				entityType:
+					voiceChannel.type === ChannelType.GuildStageVoice
+						? GuildScheduledEventEntityType.StageInstance
+						: GuildScheduledEventEntityType.Voice,
 				channel: voiceChannel,
-				privacyLevel: 'GUILD_ONLY',
+				privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
 				scheduledStartTime: Date.now() + 1000000,
 				name: eventName
 			})
-			.then((scheduleEvent) => scheduleEvent.setStatus('ACTIVE'));
+			.then((scheduleEvent) => scheduleEvent.setStatus(GuildScheduledEventStatus.Active));
 
 		const announcement = await textChannel.send({
 			content: `${pingRole ?? ''}A karaoke event has started!`,
@@ -97,13 +104,13 @@ export class KaraokeService {
 	public async setUserToSinger(memberManager: GuildMemberManager, eventUser: EventUser): Promise<boolean | null> {
 		const member = await memberManager.fetch(eventUser.id);
 		if (member.voice.channelId) {
-			if (member.voice.channel!.isStageChannel()) await member.voice.setSuppressed(false).catch();
+			if (member.voice.channel!.type === ChannelType.GuildStageVoice) await member.voice.setSuppressed(false).catch();
 			else await member.voice.setMute(false).catch();
 		}
 		if (eventUser.partnerId) {
 			const partner = await memberManager.fetch(eventUser.partnerId);
 			if (partner.voice.channelId) {
-				if (partner.voice.channel!.isStageChannel()) await partner.voice.setSuppressed(false).catch();
+				if (partner.voice.channel!.type === ChannelType.GuildStageVoice) await partner.voice.setSuppressed(false).catch();
 				else await partner.voice.setMute(false).catch();
 			}
 		}
@@ -113,13 +120,13 @@ export class KaraokeService {
 	public async setUserToAudience(memberManager: GuildMemberManager, eventUser: EventUser): Promise<boolean | null> {
 		const member = await memberManager.fetch(eventUser.id);
 		if (member.voice.channelId) {
-			if (member.voice.channel!.isStageChannel()) await member.voice.setSuppressed(true).catch();
+			if (member.voice.channel!.type === ChannelType.GuildStageVoice) await member.voice.setSuppressed(true).catch();
 			else await member.voice.setMute(true).catch();
 		}
 		if (eventUser.partnerId) {
 			const partner = await memberManager.fetch(eventUser.partnerId);
 			if (partner.voice.channelId) {
-				if (partner.voice.channel!.isStageChannel()) await partner.voice.setSuppressed(true).catch();
+				if (partner.voice.channel!.type === ChannelType.GuildStageVoice) await partner.voice.setSuppressed(true).catch();
 				else await partner.voice.setMute(true).catch();
 			}
 		}
@@ -151,8 +158,8 @@ export class KaraokeService {
 		return { valid: true };
 	}
 
-	public buildQueueEmbed(queue: EventUser[]): MessageEmbed {
-		const embed = new MessageEmbed().setColor(EmbedColors.Default).setAuthor({ name: 'Karaoke queue' }).setTitle('Queue is empty');
+	public buildQueueEmbed(queue: EventUser[]): EmbedBuilder {
+		const embed = new EmbedBuilder().setColor(EmbedColors.Default).setAuthor({ name: 'Karaoke queue' }).setTitle('Queue is empty');
 		if (queue.length === 0) return embed.setTitle('Queue is empty');
 
 		const description = queue.map((entry, index) => `**${index}.** ${entry.name}`);

@@ -1,6 +1,7 @@
 import { WelcomeRepository } from '#lib/database/repositories/WelcomeRepository';
 import { container } from '@sapphire/framework';
-import { HexColorString, MessageEmbed } from 'discord.js';
+import { HexColorString, EmbedBuilder } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildMember, GuildTextBasedChannel } from 'discord.js';
 import type { WelcomeModule } from '@prisma/client';
 
@@ -20,7 +21,7 @@ export class WelcomeService {
 		if (!config?.channel) return;
 		if (!config.message && !config.title && !config.description) return;
 
-		const channel = (await client.channels.fetch(config.channel)) as GuildTextBasedChannel;
+		const channel = (await client.channels.fetch(config.channel)) as GuildTextBasedChannel | null;
 		if (!channel) return;
 
 		const validPermissions = this.checkPerms(channel);
@@ -80,14 +81,14 @@ export class WelcomeService {
 
 	private parseText(inputString: string) {
 		return inputString
-			.replaceAll(/(\[nl\])/, '\n')
-			.replaceAll(/(\[@member\])/, `<@${this.member.id}>`)
-			.replaceAll(/(\[membertag\])/, `${this.member.user.tag}`)
-			.replaceAll(/(\[server\])/, `${this.member.guild.name}`);
+			.replaceAll(/({nl})/, '\n')
+			.replaceAll(/({@member})/, `<@${this.member.id}>`)
+			.replaceAll(/({membertag})/, `${this.member.user.tag}`)
+			.replaceAll(/({server})/, `${this.member.guild.name}`);
 	}
 
 	private createTemplateEmbed(color: string | null, image: string | null) {
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor(<HexColorString>color ?? '#006BFC')
 			.setFooter({ text: `Total members: ${this.member.guild.memberCount}` })
 			.setTimestamp();
@@ -96,9 +97,10 @@ export class WelcomeService {
 	}
 
 	private checkPerms(channel: GuildTextBasedChannel): boolean {
-		if (channel.guild.me!.permissions.has('ADMINISTRATOR')) return true;
+		const { me } = channel.guild.members;
+		if (me!.permissions.has(PermissionFlagsBits.Administrator)) return true;
 		if (!channel.viewable) return false;
-		if (!channel.permissionsFor(channel.guild.me!).has('SEND_MESSAGES')) return false;
-		return channel.permissionsFor(channel.guild.me!).has('EMBED_LINKS');
+		if (!channel.permissionsFor(me!).has(PermissionFlagsBits.SendMessages)) return false;
+		return channel.permissionsFor(me!).has(PermissionFlagsBits.EmbedLinks);
 	}
 }

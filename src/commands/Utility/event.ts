@@ -17,7 +17,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		return this.chatInputKaraoke(interaction);
 	}
 
@@ -36,7 +36,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		);
 	}
 
-	public async chatInputKaraoke(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputKaraoke(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		return new KaraokeEventMenu(interaction.guild!).run(interaction);
 	}

@@ -2,7 +2,7 @@ import { EmbedColors, KaraokeCustomIds } from '#utils/constants';
 import { KaraokeEventMenu } from '#lib/structures/KaraokeEventMenu';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { type ButtonInteraction, MessageEmbed, StageChannel, VoiceChannel } from 'discord.js';
+import { type ButtonInteraction, ChannelType, GuildScheduledEventStatus, EmbedBuilder, StageChannel, VoiceChannel } from 'discord.js';
 import { parseCustomId } from '@kbotdev/custom-id';
 import type { KaraokeMenuButton } from '#lib/types/CustomIds';
 
@@ -20,19 +20,19 @@ export class ButtonHandler extends InteractionHandler {
 			const eventExists = await karaoke.repo.doesEventExist(guildId, eventId);
 			if (!eventExists) {
 				return interaction.editReply({
-					embeds: [new MessageEmbed().setColor(EmbedColors.Default).setDescription('There is no event to end.')]
+					embeds: [new EmbedBuilder().setColor(EmbedColors.Default).setDescription('There is no event to end.')]
 				});
 			}
 
 			const eventChannel = (await interaction.guild!.channels.fetch(eventId)) as StageChannel | VoiceChannel;
-			if (eventChannel.type === 'GUILD_STAGE_VOICE') {
+			if (eventChannel.type === ChannelType.GuildStageVoice) {
 				if (eventChannel.stageInstance) await eventChannel.stageInstance.delete();
 			}
 
 			const events = await interaction.guild!.scheduledEvents.fetch();
 			const event = events.find((event) => event.channelId === eventChannel.id);
 			if (event) {
-				await event.setStatus('COMPLETED');
+				await event.setStatus(GuildScheduledEventStatus.Completed);
 			}
 
 			await karaoke.repo.setEventActive(guildId, eventId, false);

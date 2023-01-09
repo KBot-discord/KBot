@@ -4,6 +4,7 @@
 		"outDir": "../dist",
 		"rootDir": ".",
 		"baseUrl": ".",
+		"noEmit": true,
 		"typeRoots": ["./lib/types/**/*", "../node_modules/@types"],
 		"paths": {
 			"#utils/*": ["lib/util/*"],

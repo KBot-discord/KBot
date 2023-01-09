@@ -11,7 +11,7 @@ import * as Sentry from '@sentry/node';
 import { ScheduledTaskRedisStrategy } from '@sapphire/plugin-scheduled-tasks/register-redis';
 import { container, LogLevel } from '@sapphire/framework';
 import { RewriteFrames } from '@sentry/integrations';
-import { Intents } from 'discord.js';
+import { IntentsBitField } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 
 const config = getConfig();
@@ -21,7 +21,12 @@ if (isNullish(config)) {
 }
 
 const client = new KBotClient({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_SCHEDULED_EVENTS],
+	intents: [
+		IntentsBitField.Flags.Guilds,
+		IntentsBitField.Flags.GuildMembers,
+		IntentsBitField.Flags.GuildVoiceStates,
+		IntentsBitField.Flags.GuildScheduledEvents
+	],
 	presence: {
 		status: 'online',
 		activities: [{ name: '/help', type: 0 }]

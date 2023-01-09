@@ -1,7 +1,7 @@
 import { getGuildIds } from '#utils/config';
 import { EmbedColors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { ModerationModule } from '../../modules/ModerationModule';
@@ -64,7 +64,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'set': {
 				return this.chatInputSet(interaction);
@@ -78,7 +78,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		}
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -103,7 +103,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		return this.showConfig(interaction, newModule);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -128,7 +128,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		return this.showConfig(interaction, newModule);
 	}
 
-	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -141,10 +141,10 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		return this.showConfig(interaction, module);
 	}
 
-	private showConfig(interaction: ModuleCommand.ChatInputInteraction, config: ModuleConfig | null) {
+	private showConfig(interaction: ModuleCommand.ChatInputCommandInteraction, config: ModuleConfig | null) {
 		return interaction.editReply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Discord status config', iconURL: interaction.guild!.iconURL()! })
 					.setDescription(`Channel: ${config?.minAccountAgeReq ? config.minAccountAgeReq : 'No requirement set'}`)

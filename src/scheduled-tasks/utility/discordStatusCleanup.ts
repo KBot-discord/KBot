@@ -2,7 +2,6 @@ import { DISCORD_STATUS_BASE } from '#utils/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { container } from '@sapphire/framework';
-import fetch from 'node-fetch';
 import type { StatusPageResult } from '#lib/types/DiscordStatus';
 
 @ApplyOptions<ScheduledTask.Options>({

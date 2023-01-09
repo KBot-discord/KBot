@@ -1,7 +1,7 @@
 import { EmbedColors, PollCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { MessageEmbed, type ButtonInteraction } from 'discord.js';
+import { EmbedBuilder, type ButtonInteraction } from 'discord.js';
 import { parseCustomId } from '@kbotdev/custom-id';
 import type { PollOption } from '#lib/types/CustomIds';
 
@@ -16,7 +16,7 @@ export class ButtonHandler extends InteractionHandler {
 			await this.container.polls.repo.updatePollUser(interaction.user.id, interaction.message.id, option);
 			return interaction.editReply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(EmbedColors.Success)
 						.setDescription(`Vote added to option ${option + 1}\n(only the latest vote counts)`)
 				]
@@ -24,7 +24,7 @@ export class ButtonHandler extends InteractionHandler {
 		} catch (err) {
 			this.container.logger.error(err);
 			return interaction.editReply({
-				embeds: [new MessageEmbed().setColor(EmbedColors.Error).setDescription('Something went wrong')]
+				embeds: [new EmbedBuilder().setColor(EmbedColors.Error).setDescription('Something went wrong')]
 			});
 		}
 	}

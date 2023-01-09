@@ -1,7 +1,7 @@
 import { getGuildIds } from '#utils/config';
 import { EmbedColors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
@@ -34,11 +34,11 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		return this.chatInputConfig(interaction);
 	}
 
-	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -50,7 +50,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 
 		return interaction.editReply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Moderation module config', iconURL: interaction.guild!.iconURL()! })
 					.addFields([
@@ -73,7 +73,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 						{ name: '# of mutes', value: `${muteCount}`, inline: true },
 						{ name: '# of locked channels', value: `${lockedChannelCount}`, inline: true }
 					]),
-				new MessageEmbed() //
+				new EmbedBuilder() //
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Minimum account age settings' })
 					.addFields([

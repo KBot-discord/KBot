@@ -27,7 +27,7 @@ export const enum StatusEmbed {
 export const enum EmbedColors {
 	Default = '#006BFC',
 	Success = '#33B54E',
-	Error = 'RED'
+	Error = 'Red'
 }
 
 export const POLL_NUMBERS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
@@ -44,11 +44,9 @@ export const Emoji = {
 	Unlocked: '🔓'
 };
 
-export const guildEmoteSlots: {
-	[key: string]: number;
-} = {
-	NONE: 50,
-	TIER_1: 100,
-	TIER_2: 150,
-	TIER_3: 250
-};
+export const guildEmoteSlots = [
+	50, // None
+	100, // Tier 1
+	150, // Tier 2
+	250 // Tier 3
+];

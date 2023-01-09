@@ -1,7 +1,7 @@
 import { EmbedColors, PollCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { MessageEmbed, type ButtonInteraction } from 'discord.js';
+import { type ButtonInteraction, ChannelType, EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { parseCustomId } from '@kbotdev/custom-id';
 import type { PollMenuButton } from '#lib/types/CustomIds';
@@ -22,7 +22,7 @@ export class ButtonHandler extends InteractionHandler {
 
 			const message = await this.container.client.channels
 				.fetch(poll.channel)
-				.then((channel) => (channel?.isText() ? channel.messages.fetch(poll.id) : null));
+				.then((channel) => (channel!.type === ChannelType.GuildText ? channel.messages.fetch(poll.id) : null));
 			if (isNullish(message)) {
 				return interaction.errorReply('no message');
 			}
@@ -35,7 +35,7 @@ export class ButtonHandler extends InteractionHandler {
 			if (hidden) {
 				return interaction.followUp({
 					embeds: [
-						new MessageEmbed()
+						new EmbedBuilder()
 							.setColor(EmbedColors.Default)
 							.setTitle(`Results: ${message.embeds[0].title}`)
 							.setDescription(results.join('\n'))
@@ -47,7 +47,7 @@ export class ButtonHandler extends InteractionHandler {
 			await interaction.defaultReply('Results sent.');
 			return interaction.channel!.send({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
 						.setTitle(`Results: ${message.embeds[0].title}`)
 						.setDescription(results.join('\n'))

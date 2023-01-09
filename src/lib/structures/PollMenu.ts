@@ -1,11 +1,11 @@
 import { EmbedColors, PollCustomIds } from '#utils/constants';
 import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
-import { Guild, Message, MessageButton, MessageEmbed, User } from 'discord.js';
+import { ButtonBuilder, ButtonStyle, EmbedBuilder, Guild, Message, User } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
 import { buildCustomId } from '@kbotdev/custom-id';
 import type { Poll } from '@prisma/client';
-import type { NonModalInteraction } from '@sapphire/discord.js-utilities';
+import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 import type { PollMenuButton } from '../types/CustomIds';
 
 export class PollMenu extends Menu {
@@ -17,7 +17,7 @@ export class PollMenu extends Menu {
 		this.guild = guild;
 	}
 
-	public override async run(messageOrInteraction: Message | NonModalInteraction, target?: User) {
+	public override async run(messageOrInteraction: Message | AnyInteractableInteraction, target?: User) {
 		await this.build();
 		return super.run(messageOrInteraction, target);
 	}
@@ -43,7 +43,7 @@ export class PollMenu extends Menu {
 		);
 	}
 
-	private buildPages(embeds: MessageEmbed[]): MenuPagesBuilder {
+	private buildPages(embeds: EmbedBuilder[]): MenuPagesBuilder {
 		return new MenuPagesBuilder().setPages(
 			embeds.map((embed, index) => {
 				const poll = this.polls[index];
@@ -57,9 +57,9 @@ export class PollMenu extends Menu {
 									{ id: PollCustomIds.ResultsPublic, text: 'Show results (public)' },
 									{ id: PollCustomIds.End, text: 'End a poll' }
 								].map(({ id, text }) =>
-									new MessageButton()
+									new ButtonBuilder()
 										.setCustomId(buildCustomId<PollMenuButton>(id, { pollId: poll.id }))
-										.setStyle('PRIMARY')
+										.setStyle(ButtonStyle.Primary)
 										.setLabel(text)
 								)
 							)
@@ -69,7 +69,7 @@ export class PollMenu extends Menu {
 		);
 	}
 
-	private async buildEmbeds(): Promise<MessageEmbed[]> {
+	private async buildEmbeds(): Promise<EmbedBuilder[]> {
 		const { polls } = container;
 		const { guild } = this;
 
@@ -77,7 +77,7 @@ export class PollMenu extends Menu {
 
 		return Promise.all(
 			this.polls.map((poll, index) => {
-				return new MessageEmbed()
+				return new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Poll management', iconURL: guild.iconURL()! })
 					.setTitle(`Poll #${index + 1} | ${poll.title}`)

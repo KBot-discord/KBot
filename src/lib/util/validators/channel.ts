@@ -2,11 +2,13 @@ import { KBotError } from '#lib/structures/KBotError';
 import { KBotErrors } from '#utils/constants';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ChannelType } from 'discord.js';
 import type { GuildChannel, GuildTextBasedChannel } from 'discord.js';
 
 export class ChannelValidator {
 	public canSendEmbeds(channel: GuildChannel | GuildTextBasedChannel): { result: true; error?: undefined } | { result: false; error: KBotError } {
-		if (!channel.isText()) {
+		if (channel.type !== ChannelType.GuildText) {
 			return {
 				result: false,
 				error: new KBotError({
@@ -15,7 +17,7 @@ export class ChannelValidator {
 			};
 		}
 
-		if (channel.permissionsFor(channel.guild.me!).has('ADMINISTRATOR')) return { result: true };
+		if (channel.permissionsFor(channel.guild.members.me!).has(PermissionFlagsBits.Administrator)) return { result: true };
 
 		const errors = [];
 		if (!channel.viewable) {

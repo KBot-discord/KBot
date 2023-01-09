@@ -2,7 +2,7 @@ import { EmbedColors, KBotErrors } from '#utils/constants';
 import { getGuildIds } from '#utils/config';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { GuildChannel, MessageEmbed } from 'discord.js';
+import { GuildChannel, EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { UtilityModule } from '../../modules/UtilityModule';
@@ -52,7 +52,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'set': {
 				return this.chatInputSet(interaction);
@@ -66,7 +66,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		}
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { client, db, validator } = this.container;
 		const channel = interaction.options.getChannel('channel', true) as GuildChannel;
@@ -98,7 +98,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		return this.showConfig(interaction, config);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -124,7 +124,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		return this.showConfig(interaction, config);
 	}
 
-	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -140,10 +140,10 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		return this.showConfig(interaction, config);
 	}
 
-	private showConfig(interaction: ModuleCommand.ChatInputInteraction, config: UtilityConfig | null) {
+	private showConfig(interaction: ModuleCommand.ChatInputCommandInteraction, config: UtilityConfig | null) {
 		return interaction.editReply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Discord status config', iconURL: interaction.guild!.iconURL()! })
 					.setDescription(`Channel: ${config?.incidentChannel ? channelMention(config.incidentChannel) : 'No channel set'}`)
