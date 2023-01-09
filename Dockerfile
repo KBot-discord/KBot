@@ -1,5 +1,5 @@
 ## Base ##
-FROM node:18-alpine as builder
+FROM node:19-alpine as builder
 
 ENV CI=true NODE_ENV=production
 
@@ -27,7 +27,7 @@ RUN yarn install --immutable && \
     apk del -q .build-deps
 
 ## Publish ##
-FROM node:18-alpine as app
+FROM node:19-alpine as app
 
 # canvas deps
 RUN apk add -q --update && \
