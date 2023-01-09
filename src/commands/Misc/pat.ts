@@ -6,7 +6,7 @@ import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v
 import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage, Image } from 'canvas-constructor/cairo';
-import { MessageAttachment } from 'discord.js';
+import { AttachmentBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { join } from 'node:path';
 import { buffer } from 'node:stream/consumers';
@@ -50,16 +50,16 @@ export class MiscCommand extends Command {
 		if (isNullish(member)) {
 			const user = interaction.options.getUser('user', true);
 			({ username } = user);
-			avatar = getUserAvatarUrl(user, { defaultFormat: 'png', size: 512 });
+			avatar = getUserAvatarUrl(user);
 		} else {
 			({ username } = member.user);
-			avatar = getMemberAvatarUrl(member, { defaultFormat: 'png', size: 512 });
+			avatar = getMemberAvatarUrl(member);
 		}
 
 		const gif = await this.createPatGif(avatar, { resolution: 64 });
 
 		return interaction.editReply({
-			files: [new MessageAttachment(gif, `${username}Pat.gif`)]
+			files: [new AttachmentBuilder(gif, { name: `${username}Pat.gif` })]
 		});
 	}
 

@@ -1,7 +1,7 @@
-import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
+import { AddEmoteCustomIds, AddEmoteFields, EmbedColors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { MessageActionRow, MessageButton, MessageEmbed, ModalSubmitInteraction, TextChannel } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction, TextChannel } from 'discord.js';
 import { messageLink } from '@discordjs/builders';
 import { buildCustomId, parseCustomId } from '@kbotdev/custom-id';
 import type { EmoteCredit, EmoteCreditModal } from '#lib/types/CustomIds';
@@ -23,18 +23,18 @@ export class ModalHandler extends InteractionHandler {
 			const creditsChannel = (await modal.guild!.channels.fetch(channelId)) as TextChannel;
 			const message = await creditsChannel.send({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
 						.setTitle(name)
 						.setThumbnail(`https://cdn.discordapp.com/emojis/${id}`)
 						.addFields([...fields, { name: 'Image source', value: imageSource }])
 				],
 				components: [
-					new MessageActionRow().addComponents([
-						new MessageButton()
+					new ActionRowBuilder<ButtonBuilder>().addComponents([
+						new ButtonBuilder()
 							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Edit, { name, id }))
 							.setLabel('Edit info')
-							.setStyle('SECONDARY')
+							.setStyle(ButtonStyle.Secondary)
 					])
 				]
 			});

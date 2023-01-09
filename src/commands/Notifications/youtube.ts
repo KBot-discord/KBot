@@ -3,7 +3,7 @@ import { getGuildIds } from '#utils/config';
 import { YoutubeMenu } from '#lib/structures/YoutubeMenu';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { NotificationModule } from '../../modules/NotificationModule';
@@ -115,7 +115,7 @@ export class NotificationCommand extends ModuleCommand<NotificationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'subscribe': {
 				return this.chatInputSubscribe(interaction);
@@ -135,7 +135,7 @@ export class NotificationCommand extends ModuleCommand<NotificationModule> {
 		}
 	}
 
-	public async chatInputSubscribe(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputSubscribe(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -158,7 +158,7 @@ export class NotificationCommand extends ModuleCommand<NotificationModule> {
 		return this.showNewConfig(interaction, newSubscription);
 	}
 
-	public async chatInputUnsubscribe(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputUnsubscribe(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -172,7 +172,7 @@ export class NotificationCommand extends ModuleCommand<NotificationModule> {
 		return interaction.defaultReply(`Successfully unsubscribed from ${account}`);
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -198,7 +198,7 @@ export class NotificationCommand extends ModuleCommand<NotificationModule> {
 		return this.showNewConfig(interaction, newSubscription);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -224,7 +224,7 @@ export class NotificationCommand extends ModuleCommand<NotificationModule> {
 		return this.showNewConfig(interaction, newSubscription);
 	}
 
-	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { youtube } = this.container;
 
@@ -236,10 +236,10 @@ export class NotificationCommand extends ModuleCommand<NotificationModule> {
 		return new YoutubeMenu(interaction.guild!, subscriptions).run(interaction, interaction.user);
 	}
 
-	private showNewConfig(interaction: ModuleCommand.ChatInputInteraction, subscription: Subscription) {
+	private showNewConfig(interaction: ModuleCommand.ChatInputCommandInteraction, subscription: Subscription) {
 		return interaction.editReply({
 			embeds: [
-				new MessageEmbed() //
+				new EmbedBuilder() //
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'YouTube notifications config', iconURL: interaction.guild!.iconURL()! })
 					.setTitle(subscription.channelName)

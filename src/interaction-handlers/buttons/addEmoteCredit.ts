@@ -2,7 +2,7 @@ import { AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { buildCustomId, parseCustomId } from '@kbotdev/custom-id';
 import type { ButtonInteraction } from 'discord.js';
 import type { EmoteCredit, EmoteCreditModal } from '#lib/types/CustomIds';
@@ -23,41 +23,41 @@ export class ButtonHandler extends InteractionHandler {
 			return interaction.editReply('Theres no channel set up for credits');
 		}
 		return interaction.showModal(
-			new Modal()
+			new ModalBuilder()
 				// TODO need to make this custom id smaller
 				.setCustomId(buildCustomId<EmoteCreditModal>(AddEmoteCustomIds.ModalCredits, { channelId: channel.creditsChannel, name, id }))
 				.setTitle('Create a karaoke event')
 				.addComponents(
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.CreditLink)
 							.setLabel('Source link')
-							.setStyle('SHORT')
+							.setStyle(TextInputStyle.Short)
 							.setMinLength(1)
 							.setMaxLength(100)
 							.setRequired(true)
 					),
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.CreditDescription)
 							.setLabel('Description')
-							.setStyle('SHORT')
+							.setStyle(TextInputStyle.Short)
 							.setMinLength(0)
 							.setMaxLength(100)
 					),
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.CreditArtistName)
 							.setLabel('Artist name')
-							.setStyle('SHORT')
+							.setStyle(TextInputStyle.Short)
 							.setMinLength(0)
 							.setMaxLength(100)
 					),
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.CreditArtistLink)
 							.setLabel('Artist link')
-							.setStyle('SHORT')
+							.setStyle(TextInputStyle.Short)
 							.setMinLength(0)
 							.setMaxLength(100)
 					)

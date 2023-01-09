@@ -1,9 +1,10 @@
 import { getGuildIds } from '#utils/config';
+import { EmbedColors } from '#utils/constants';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import axios from 'axios';
 import translate from 'deepl';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Command } from '@sapphire/framework';
 import * as url from 'url';
 
@@ -29,7 +30,7 @@ export class UtilityCommand extends Command {
 		);
 	}
 
-	public async contextMenuRun(interaction: Command.ContextMenuInteraction) {
+	public async contextMenuRun(interaction: Command.ContextMenuCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { key } = this.container.config.deepl;
 		const message = await interaction.channel!.messages.fetch(interaction.targetId);
@@ -50,8 +51,8 @@ export class UtilityCommand extends Command {
 
 		return interaction.editReply({
 			embeds: [
-				new MessageEmbed()
-					.setColor('#006BFC')
+				new EmbedBuilder()
+					.setColor(EmbedColors.Default)
 					.setAuthor({ name: `From ${tl.data.translations[0].detected_source_language} to EN` })
 					.setDescription(`${tl.data.translations[0].text}`)
 			]

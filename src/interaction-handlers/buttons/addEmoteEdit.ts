@@ -1,7 +1,7 @@
 import { AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { buildCustomId } from '@kbotdev/custom-id';
 import type { ButtonInteraction } from 'discord.js';
 import type { EmoteEditModal } from '#lib/types/CustomIds';
@@ -20,51 +20,51 @@ export class ButtonHandler extends InteractionHandler {
 		const oldSource = interaction.message!.embeds[0].fields!.find((e) => e.name === 'Image source');
 
 		return interaction.showModal(
-			new Modal()
+			new ModalBuilder()
 				.setCustomId(buildCustomId<EmoteEditModal>(AddEmoteCustomIds.ModalEdit, { id: interaction.message.id }))
 				.setTitle('Edit emote credits info')
 				.addComponents(
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.Name)
 							.setLabel('Emote name (this will edit the emote too)')
-							.setStyle('SHORT')
+							.setStyle(TextInputStyle.Short)
 							.setMinLength(3)
 							.setMaxLength(100)
 							.setValue(oldName!)
 					),
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.CreditDescription)
 							.setLabel('Description')
-							.setStyle('SHORT')
+							.setStyle(TextInputStyle.Short)
 							.setMinLength(0)
 							.setMaxLength(100)
 							.setValue(oldDesc?.value ?? '')
 					),
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.CreditArtistName)
 							.setLabel('Artist name')
-							.setStyle('SHORT')
+							.setStyle(TextInputStyle.Short)
 							.setMinLength(0)
 							.setMaxLength(100)
 							.setValue(oldArtName?.value ?? '')
 					),
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.CreditArtistLink)
 							.setLabel('Artist link')
-							.setStyle('PARAGRAPH')
+							.setStyle(TextInputStyle.Paragraph)
 							.setMinLength(0)
 							.setMaxLength(250)
 							.setValue(oldArtLink?.value ?? '')
 					),
-					new MessageActionRow<TextInputComponent>().addComponents(
-						new TextInputComponent()
+					new ActionRowBuilder<TextInputBuilder>().addComponents(
+						new TextInputBuilder()
 							.setCustomId(AddEmoteFields.CreditLink)
 							.setLabel('Image source')
-							.setStyle('PARAGRAPH')
+							.setStyle(TextInputStyle.Paragraph)
 							.setMinLength(0)
 							.setMaxLength(250)
 							.setValue(oldSource?.value ?? '')

@@ -36,7 +36,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const embed = await getUserInfo(interaction, interaction.options.getUser('target', true).id);
 		return interaction.editReply({ embeds: [embed] });

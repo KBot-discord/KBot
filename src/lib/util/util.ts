@@ -1,15 +1,13 @@
 import { guildEmoteSlots } from './constants';
-import { MessageEmbed, type AllowedImageSize, type DynamicImageFormat } from 'discord.js';
+import { EmbedBuilder, GuildPremiumTier } from 'discord.js';
 import { Duration } from '@sapphire/duration';
-import type { GuildMember, Guild, User, CommandInteraction } from 'discord.js';
+import type { CommandInteraction, Guild, GuildMember, User } from 'discord.js';
 
 interface ImageOptions {
-	dynamicFormat?: boolean;
-	defaultFormat?: DynamicImageFormat;
-	size?: AllowedImageSize;
+	forceStatic?: boolean;
 }
 
-export const getGuildEmoteSlots = (tier: string): number => guildEmoteSlots[tier];
+export const getGuildEmoteSlots = (tier: GuildPremiumTier): number => guildEmoteSlots[tier];
 
 export function minutesFromNow(minutes: number, time?: number) {
 	if (time) return Math.floor((time + minutes * 60000) / 1000);
@@ -22,11 +20,11 @@ export function parseTimeString(input: string | null): number | null {
 	return isNaN(duration.offset) ? null : duration.offset;
 }
 
-export async function getUserInfo(interaction: CommandInteraction, userId: string): Promise<MessageEmbed> {
+export async function getUserInfo(interaction: CommandInteraction, userId: string): Promise<EmbedBuilder> {
 	const user = await interaction.client.users.fetch(userId, { force: true });
 	const member = await interaction.guild!.members.fetch(userId).catch(() => null);
 	const userBanner = await getUserBannerUrl(user);
-	const embed = new MessageEmbed()
+	const embed = new EmbedBuilder()
 		.setAuthor({ name: `${user.tag} - ${user.id}` })
 		.setImage(userBanner!)
 		.setTimestamp();
@@ -64,7 +62,7 @@ export async function getUserInfo(interaction: CommandInteraction, userId: strin
 		.catch(() => ':x: User is not banned');
 
 	return embed
-		.setColor('RED')
+		.setColor('Red')
 		.setThumbnail(avatar || 'https://i.imgur.com/W1TlEwP.jpg')
 		.setDescription(`<@${user.id}> | ${bot}`)
 		.addFields(
@@ -75,20 +73,18 @@ export async function getUserInfo(interaction: CommandInteraction, userId: strin
 		.setFooter({ text: 'Present in server: ❌' });
 }
 
-export function getUserAvatarUrl(user: User, { dynamicFormat = true, defaultFormat = 'webp', size = 512 }: ImageOptions = {}): string {
-	return user.avatar ? user.avatarURL({ dynamic: dynamicFormat, format: defaultFormat, size })! : user.defaultAvatarURL;
+export function getUserAvatarUrl(user: User, { forceStatic = false }: ImageOptions = {}): string {
+	return user.avatar ? user.avatarURL({ forceStatic })! : user.defaultAvatarURL;
 }
 
-export function getMemberAvatarUrl(member: GuildMember, { dynamicFormat = true, defaultFormat = 'webp', size = 512 }: ImageOptions = {}): string {
-	return member.avatar
-		? member.avatarURL({ dynamic: dynamicFormat, format: defaultFormat, size })!
-		: getUserAvatarUrl(member.user, { dynamicFormat, defaultFormat, size });
+export function getMemberAvatarUrl(member: GuildMember, { forceStatic = false }: ImageOptions = {}): string {
+	return member.avatar ? member.avatarURL({ forceStatic })! : getUserAvatarUrl(member.user, { forceStatic });
 }
 
-export function getUserBannerUrl(user: User, { dynamicFormat = true, defaultFormat = 'webp', size = 512 }: ImageOptions = {}): string | null {
-	return user.bannerURL({ dynamic: dynamicFormat, format: defaultFormat, size });
+export function getUserBannerUrl(user: User, { forceStatic = false }: ImageOptions = {}): string | null | undefined {
+	return user.bannerURL({ forceStatic });
 }
 
-export function getServerIcon(guild: Guild, { dynamicFormat = true, defaultFormat = 'webp', size = 512 }: ImageOptions = {}): string | null {
-	return guild.iconURL({ dynamic: dynamicFormat, format: defaultFormat, size });
+export function getServerIcon(guild: Guild, { forceStatic = false }: ImageOptions = {}): string | null {
+	return guild.iconURL({ forceStatic });
 }

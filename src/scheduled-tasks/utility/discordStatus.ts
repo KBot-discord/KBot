@@ -2,8 +2,7 @@ import { DISCORD_STATUS_BASE, StatusEmbed } from '#utils/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { container } from '@sapphire/framework';
-import { MessageEmbed, TextChannel } from 'discord.js';
-import fetch from 'node-fetch';
+import { EmbedBuilder, TextChannel } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import type { StatusPageIncident, StatusPageResult } from '#lib/types/DiscordStatus';
 import type { IncidentMessage } from '@prisma/client';
@@ -77,7 +76,7 @@ export class DiscordStatusTask extends ScheduledTask {
 		}
 	}
 
-	private async editMessages(incident: StatusPageIncident, embed: MessageEmbed, messages: IncidentMessage[]) {
+	private async editMessages(incident: StatusPageIncident, embed: EmbedBuilder, messages: IncidentMessage[]) {
 		const invalidChannels: string[] = [];
 		await Promise.all(
 			messages.map(async ({ id, channelId }) => {
@@ -107,7 +106,7 @@ export class DiscordStatusTask extends ScheduledTask {
 		});
 	}
 
-	private async sendMessage(incident: StatusPageIncident, embed: MessageEmbed, channels: string[], isNew = false) {
+	private async sendMessage(incident: StatusPageIncident, embed: EmbedBuilder, channels: string[], isNew = false) {
 		const invalidChannels: string[] = [];
 		const newMessages: IncidentMessage[] = [];
 
@@ -165,7 +164,7 @@ export class DiscordStatusTask extends ScheduledTask {
 		return incidents.map((incident) => ({ incident, entry: data.find((entry) => entry.id === incident.id) }));
 	}
 
-	private embedFromIncident(incident: StatusPageIncident): MessageEmbed {
+	private embedFromIncident(incident: StatusPageIncident): EmbedBuilder {
 		const color =
 			incident.status === 'resolved' || incident.status === 'postmortem'
 				? StatusEmbed.Green
@@ -179,7 +178,7 @@ export class DiscordStatusTask extends ScheduledTask {
 
 		const affectedNames = incident.components.map((c) => c.name);
 
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor(color)
 			.setTimestamp(new Date(incident.started_at))
 			.setURL(incident.shortlink)

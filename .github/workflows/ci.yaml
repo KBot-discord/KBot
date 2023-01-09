@@ -18,8 +18,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build
+  generate-rpc:
+    name: Generate RPC
     runs-on: ubuntu-latest
 
     steps:
@@ -37,14 +37,15 @@ jobs:
       - name: Generate protobuf
         run: yarn buf:generate
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload RPC artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: build-artifact
+          name: rpc-artifact
           path: src/rpc/gen
 
   lint:
     name: Lint
-    needs: build
+    needs: generate-rpc
     runs-on: ubuntu-latest
 
     steps:
@@ -57,9 +58,10 @@ jobs:
           node-version: 18
           cache: yarn
 
-      - uses: actions/download-artifact@v3
+      - name: Download RPC artifact
+        uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          name: rpc-artifact
           path: src/rpc/gen
 
       - name: Install dependencies
@@ -70,7 +72,7 @@ jobs:
 
   test:
     name: Test
-    needs: build
+    needs: generate-rpc
     runs-on: ubuntu-latest
 
     strategy:
@@ -86,9 +88,10 @@ jobs:
           node-version: 18
           cache: yarn
 
-      - uses: actions/download-artifact@v3
+      - name: Download RPC artifact
+        uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          name: rpc-artifact
           path: src/rpc/gen
 
       - name: Install dependencies
@@ -125,3 +128,30 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+
+  build:
+    name: Build
+    needs: generate-rpc
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Download RPC artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: rpc-artifact
+          path: src/rpc/gen
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Run build
+        run: yarn build

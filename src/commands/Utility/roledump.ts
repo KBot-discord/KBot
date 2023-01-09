@@ -34,7 +34,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const role = interaction.options.getRole('role', true) as Role;
 

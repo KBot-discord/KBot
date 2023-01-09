@@ -1,7 +1,7 @@
 import { getGuildIds } from '#utils/config';
 import { EmbedColors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { NotificationModule } from '../../modules/NotificationModule';
@@ -33,11 +33,11 @@ export class ModerationCommand extends ModuleCommand<NotificationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		return this.chatInputConfig(interaction);
 	}
 
-	public async chatInputConfig(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputConfig(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const { db } = this.container;
 
@@ -48,7 +48,7 @@ export class ModerationCommand extends ModuleCommand<NotificationModule> {
 
 		return interaction.editReply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Moderation module config', iconURL: interaction.guild!.iconURL()! })
 					.addFields([

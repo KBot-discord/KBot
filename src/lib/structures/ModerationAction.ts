@@ -1,7 +1,7 @@
 import { getMemberAvatarUrl, getServerIcon } from '#utils/util';
 import { EmbedColors } from '#utils/constants';
 import { container } from '@sapphire/framework';
-import { GuildTextBasedChannel, MessageEmbed } from 'discord.js';
+import { GuildTextBasedChannel, EmbedBuilder } from 'discord.js';
 import { userMention } from '@discordjs/builders';
 import type { GuildMember } from 'discord.js';
 import type { BanContext, KickContext, ModerationLogContext, MuteContext, TimeoutContext } from '#lib/types/Moderation';
@@ -39,7 +39,7 @@ export class ModerationAction {
 
 		await this.moderator.guild.members.ban(this.target, {
 			reason: `${reason || 'No reason provided'} (Banned by: ${this.target.user.tag})`,
-			days: daysToPurge
+			deleteMessageDays: daysToPurge
 		});
 
 		if (!silent) {
@@ -118,7 +118,7 @@ export class ModerationAction {
 			const icon = getServerIcon(guild);
 			await this.target.send({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
 						.setThumbnail(icon!)
 						.setDescription(description)
@@ -152,7 +152,7 @@ export class ModerationAction {
 				? EmbedColors.Success
 				: EmbedColors.Error;
 
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor(embedColor)
 			.setAuthor({ name: `${action} | ${this.target.user.tag}`, iconURL: avatar })
 			.addFields(
@@ -164,7 +164,7 @@ export class ModerationAction {
 			.setTimestamp();
 
 		if (action === (ModerationActionType.Mute || ModerationActionType.Timeout)) {
-			embed.fields.splice(2, 0, { name: 'Duration', value: duration ?? 'Indefinite', inline: true });
+			embed.spliceFields(2, 0, { name: 'Duration', value: duration ?? 'Indefinite', inline: true });
 		}
 
 		return modlogChannel.send({ embeds: [embed] });

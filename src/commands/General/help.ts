@@ -1,6 +1,6 @@
 import { EmbedColors } from '#utils/constants';
 import { getGuildIds } from '#utils/config';
-import { Collection, MessageEmbed } from 'discord.js';
+import { Collection, EmbedBuilder } from 'discord.js';
 import { Command, container, type ChatInputCommand } from '@sapphire/framework';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
@@ -49,7 +49,7 @@ export class HelpCommand extends Command {
 		const commandsByCategory = await HelpCommand.getCommands();
 
 		const display = new PaginatedMessage({
-			template: new MessageEmbed().setColor(EmbedColors.Default)
+			template: new EmbedBuilder().setColor(EmbedColors.Default)
 		}).setSelectMenuOptions((pageIndex) => ({ label: commandsByCategory.keyAt(pageIndex - 1)! }));
 
 		display.addPageEmbed((embed) =>

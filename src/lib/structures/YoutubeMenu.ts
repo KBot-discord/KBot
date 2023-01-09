@@ -1,8 +1,8 @@
 import { EmbedColors } from '#utils/constants';
 import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
-import { Guild, Message, MessageEmbed, User } from 'discord.js';
+import { Guild, Message, EmbedBuilder, User } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
-import type { NonModalInteraction } from '@sapphire/discord.js-utilities';
+import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 import type { Subscription } from '../../rpc/gen/subscriptions/v1/subscriptions.pb';
 
 export class YoutubeMenu extends Menu {
@@ -15,7 +15,7 @@ export class YoutubeMenu extends Menu {
 		this.subscriptions = subscriptions;
 	}
 
-	public override async run(messageOrInteraction: Message | NonModalInteraction, target?: User) {
+	public override async run(messageOrInteraction: Message | AnyInteractableInteraction, target?: User) {
 		await this.build();
 		return super.run(messageOrInteraction, target);
 	}
@@ -41,7 +41,7 @@ export class YoutubeMenu extends Menu {
 		);
 	}
 
-	private buildPages(embeds: MessageEmbed[]): MenuPagesBuilder {
+	private buildPages(embeds: EmbedBuilder[]): MenuPagesBuilder {
 		return new MenuPagesBuilder().setPages(
 			embeds.map((embed) => {
 				return new MenuPageBuilder() //
@@ -50,12 +50,12 @@ export class YoutubeMenu extends Menu {
 		);
 	}
 
-	private async buildEmbeds(): Promise<MessageEmbed[]> {
+	private async buildEmbeds(): Promise<EmbedBuilder[]> {
 		const { guild } = this;
 
 		return Promise.all(
 			this.subscriptions.map((subscription) => {
-				return new MessageEmbed() //
+				return new EmbedBuilder() //
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'YouTube notifications config', iconURL: guild.iconURL()! })
 					.setTitle(subscription.channelName)

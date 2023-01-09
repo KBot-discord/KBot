@@ -14,7 +14,7 @@ export class CommandErrorListener extends Listener {
 		const { logger } = this.container;
 
 		if (error instanceof DiscordAPIError || error instanceof HTTPError) {
-			if (codesToIgnore.includes(error.code)) {
+			if (codesToIgnore.includes(error.status)) {
 				return;
 			}
 		}

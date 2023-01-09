@@ -65,7 +65,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const settings = await this.module.service.repo.getSettings(interaction.guildId!);
 

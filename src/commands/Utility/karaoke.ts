@@ -1,7 +1,7 @@
 import { EmbedColors } from '#utils/constants';
 import { getGuildIds } from '#utils/config';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ButtonInteraction, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { channelMention, userMention } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
@@ -61,7 +61,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'help': {
 				return this.chatInputHelp(interaction);
@@ -81,14 +81,14 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		}
 	}
 
-	public async chatInputHelp(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputHelp(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 
 		const events = await karaoke.repo.fetchEvents(interaction.guildId!);
 		const formattedEvents = events
 			? events.map((event, index) =>
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
 						.setDescription(`**Event #${index + 1}** - ${event.id}`)
 						.addFields(
@@ -100,7 +100,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 
 		return interaction.editReply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setTitle('Karaoke event commands:')
 					.setDescription(
@@ -121,7 +121,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		});
 	}
 
-	public async chatInputList(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputList(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;
@@ -143,7 +143,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		});
 	}
 
-	public async chatInputJoin(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputJoin(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;
@@ -176,7 +176,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		return interaction.successReply('You have successfully joined the queue.');
 	}
 
-	public async chatInputDuet(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputDuet(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;
@@ -198,14 +198,14 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		const message = await interaction.channel!.send({
 			content: userMention(partner.id),
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setDescription(`Would you like to the queue as a duet with <@${member.id}>?\n(This will expire in 30 seconds)`)
 			],
 			components: [
-				new MessageActionRow()
-					.addComponents(new MessageButton().setCustomId('yesduet').setLabel('Yes').setStyle('SUCCESS'))
-					.addComponents(new MessageButton().setCustomId('noduet').setLabel('No').setStyle('DANGER'))
+				new ActionRowBuilder<ButtonBuilder>()
+					.addComponents(new ButtonBuilder().setCustomId('yesduet').setLabel('Yes').setStyle(ButtonStyle.Success))
+					.addComponents(new ButtonBuilder().setCustomId('noduet').setLabel('No').setStyle(ButtonStyle.Danger))
 			],
 			allowedMentions: { users: [partner.id] }
 		});
@@ -213,7 +213,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		message
 			.awaitMessageComponent({
 				filter: (i: ButtonInteraction) => i.user.id === partner.id,
-				componentType: 'BUTTON',
+				componentType: ComponentType.Button,
 				time: 30000
 			})
 			.then(async (i) => {
@@ -261,7 +261,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		return interaction.successReply('Successfully joined queue.');
 	}
 
-	public async chatInputLeave(interaction: ModuleCommand.ChatInputInteraction) {
+	public async chatInputLeave(interaction: ModuleCommand.ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		const { karaoke } = this.container;
 		const guildId = interaction.guildId!;

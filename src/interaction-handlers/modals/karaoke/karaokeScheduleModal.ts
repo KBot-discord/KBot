@@ -1,7 +1,7 @@
 import { EmbedColors, KaraokeCustomIds } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { MessageEmbed, ModalSubmitInteraction, TextChannel } from 'discord.js';
+import { EmbedBuilder, ModalSubmitInteraction, TextChannel } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
@@ -16,7 +16,7 @@ export class ModalHandler extends InteractionHandler {
 			return modal.followUp('scheduled');
 		} catch {
 			return modal.followUp({
-				embeds: [new MessageEmbed().setColor(EmbedColors.Error).setDescription('Failed to create event')],
+				embeds: [new EmbedBuilder().setColor(EmbedColors.Error).setDescription('Failed to create event')],
 				ephemeral: true
 			});
 		}

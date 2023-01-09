@@ -1,4 +1,4 @@
-import { ChatInputModuleCommand, Module } from '@kbotdev/plugin-modules';
+import { Module, ModuleCommandInteractionUnion, ModuleCommandUnion } from '@kbotdev/plugin-modules';
 import { container } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { Guild } from 'discord.js';
@@ -14,7 +14,7 @@ export class NotificationModule extends Module {
 		this.service = container.notifications;
 	}
 
-	public async isEnabled(_command: ChatInputModuleCommand, guild: Guild): Promise<boolean> {
+	public async isEnabled(guild: Guild, _interaction: ModuleCommandInteractionUnion, _command: ModuleCommandUnion): Promise<boolean> {
 		return this.service.repo.isEnabled(guild.id);
 	}
 }

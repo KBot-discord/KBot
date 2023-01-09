@@ -1,7 +1,7 @@
 import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { MessageEmbed, ModalSubmitInteraction } from 'discord.js';
+import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import { parseCustomId } from '@kbotdev/custom-id';
 import type { EmoteEditModal } from '#lib/types/CustomIds';
 
@@ -26,7 +26,7 @@ export class ModalHandler extends InteractionHandler {
 
 			await message.edit({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
 						.setTitle(emoteName ?? message.embeds[0].title)
 						.setThumbnail(message.embeds[0].thumbnail!.url)
