@@ -38,9 +38,9 @@ jobs:
         run: yarn buf:generate
 
       - name: Upload RPC artifact
-        uses: actions/download-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
-          name: build-artifact
+          name: rpc-artifact
           path: src/rpc/gen
 
   lint:
@@ -61,7 +61,7 @@ jobs:
       - name: Download RPC artifact
         uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          name: rpc-artifact
           path: src/rpc/gen
 
       - name: Install dependencies
@@ -91,7 +91,7 @@ jobs:
       - name: Download RPC artifact
         uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          name: rpc-artifact
           path: src/rpc/gen
 
       - name: Install dependencies
@@ -147,7 +147,7 @@ jobs:
       - name: Download RPC artifact
         uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          name: rpc-artifact
           path: src/rpc/gen
 
       - name: Install dependencies
