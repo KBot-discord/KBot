@@ -10,24 +10,18 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FKBot-discord%2FKBot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FKBot-discord%2FKBot?ref=badge_shield)
 ### A multi-feature Discord bot using [Sapphire](https://www.sapphirejs.dev/) and [discord.js](https://discord.js.org).
 
-This repository holds the rewrite for v2.
-
 </div>
-
 
 ## Features
 -  Moderation commands to help server staff keep your Discord server safe.
--  Twitter functionality so tweets can be relayed to whichever channel you want.
+-  Social media notifications can be relayed to whichever channel you want.
 -  Welcome messages whenever a new user joins your servers.
 
-## Planned features
--  YouTube and Twitch notifications.
-
 ## Links
--  [Bot invite (v1)](https://kbot.ca/invite) (v2 can be tested in the support server)
+-  [Bot invite (v1)](https://kbot.ca/invite)
 -  [Dashboard](https://kbot.ca/)
 -  [Documentation](https://docs.kbot.ca/)
--  [Status page](https://kuma.kbot.ca/status/kbot)
+-  [Status page](https://status.kbot.ca/)
 -  [Support server](https://kbot.ca/discord)
 
 ## Developing on KBot
@@ -36,6 +30,7 @@ This repository holds the rewrite for v2.
 -  [Docker](https://www.docker.com/community-edition) and [Docker Compose](https://docs.docker.com/compose/install/)
 -  [Redis](https://redis.io/)
 -  [PostgreSQL](https://www.postgresql.org/)
+-  [Buf](https://github.com/bufbuild/buf)
 
 ### Optional requirements:
 -  [Grafana](https://grafana.com/) and [Prometheus](https://prometheus.io/) for metrics.

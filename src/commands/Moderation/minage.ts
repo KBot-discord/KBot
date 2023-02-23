@@ -1,17 +1,23 @@
-import { getGuildIds } from '#utils/config';
-import { EmbedColors } from '#utils/constants';
+import { EmbedColors, Emoji } from '#utils/constants';
+import { getGuildIcon } from '#utils/Discord';
+import { MinageHandler } from '#lib/structures/handlers/MinageHandler';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import type { ModerationModule } from '../../modules/ModerationModule';
-import type { ModerationModule as ModuleConfig } from '@prisma/client';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { ModerationModule } from '#modules/ModerationModule';
+import type { ModerationSettings } from '#prisma';
 
 @ApplyOptions<ModuleCommand.Options>({
 	module: 'ModerationModule',
-	description: 'Minimum account age',
-	preconditions: ['GuildOnly', 'ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
+	description: 'Set a minimum required account age for users to join the server.',
+	preconditions: ['ModuleEnabled'],
+	requiredClientPermissions: [PermissionFlagsBits.KickMembers, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
+	runIn: [CommandOptionsRunTypeEnum.GuildAny],
+	deferOptions: {
+		defer: true
+	}
 })
 export class ModerationCommand extends ModuleCommand<ModerationModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
@@ -19,53 +25,80 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
+	public disabledMessage = (moduleFullName: string): string => {
+		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
+	};
+
 	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
 					.setName('minage')
-					.setDescription('Have accounts under a certain age kicked')
+					.setDescription(this.description)
+					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+					.setDMPermission(false)
+					.addSubcommand((subcommand) =>
+						subcommand //
+							.setName('toggle')
+							.setDescription('Enable or disable minage')
+							.addBooleanOption((option) =>
+								option //
+									.setName('value')
+									.setDescription('True: minage is enabled. False: minage is disabled.')
+									.setRequired(true)
+							)
+					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('set')
-							.setDescription('Set the channel to send notifications to')
+							.setDescription('Set the account age requirements and kick message')
 							.addIntegerOption((option) =>
 								option //
 									.setName('days')
 									.setDescription('New users below the set age will be kicked and sent a message')
+									.setRequired(false)
 							)
 							.addStringOption((msg) =>
 								msg //
-									.setName('response')
+									.setName('message')
 									.setDescription('Message to be sent on kick')
+									.setRequired(false)
 							)
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('unset')
-							.setDescription('Unset the current configuration')
+							.setDescription('Unset the current settings')
 							.addBooleanOption((msg) =>
 								msg //
 									.setName('days')
 									.setDescription('Reset the required days to 0')
+									.setRequired(false)
 							)
 							.addBooleanOption((msg) =>
 								msg //
-									.setName('response')
+									.setName('message')
 									.setDescription('Reset the kick message to default')
+									.setRequired(false)
 							)
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
-							.setName('config')
-							.setDescription('Show the current config')
+							.setName('settings')
+							.setDescription('Show the current settings')
 					),
-			{ idHints: ['1041955417888145460'], guildIds: getGuildIds() }
+			{
+				idHints: [],
+				guildIds: this.container.config.discord.devServers
+			}
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		switch (interaction.options.getSubcommand(true)) {
+			case 'toggle': {
+				return this.chatInputToggle(interaction);
+			}
 			case 'set': {
 				return this.chatInputSet(interaction);
 			}
@@ -73,81 +106,77 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 				return this.chatInputUnset(interaction);
 			}
 			default: {
-				return this.chatInputConfig(interaction);
+				return this.chatInputSettings(interaction);
 			}
 		}
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction) {
-		await interaction.deferReply();
-		const { db } = this.container;
+	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const value = interaction.options.getBoolean('value', true);
 
-		const days = interaction.options.getInteger('days');
-		const response = interaction.options.getString('response');
-
-		const newModule = await db.$transaction(async (prisma) => {
-			const res = await prisma.moderationModule.findUnique({
-				where: {
-					id: interaction.guildId!
-				}
-			});
-			return prisma.moderationModule.update({
-				where: { id: interaction.guildId! },
-				data: {
-					minAccountAgeReq: days ?? res?.minAccountAgeReq,
-					minAccountAgeMsg: response ?? res?.minAccountAgeMsg
-				}
-			});
+		const settings = await this.module.upsertSettings(interaction.guildId, {
+			minAccountAgeEnabled: value
 		});
 
-		return this.showConfig(interaction, newModule);
-	}
-
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction) {
-		await interaction.deferReply();
-		const { db } = this.container;
-
-		const days = interaction.options.getBoolean('days');
-		const response = interaction.options.getBoolean('response');
-
-		const newModule = await db.$transaction(async (prisma) => {
-			const res = await prisma.moderationModule.findUnique({
-				where: {
-					id: interaction.guildId!
-				}
-			});
-			return prisma.moderationModule.update({
-				where: { id: interaction.guildId! },
-				data: {
-					minAccountAgeReq: days ? 0 : res?.minAccountAgeReq,
-					minAccountAgeMsg: response ? null : res?.minAccountAgeMsg
-				}
-			});
-		});
-
-		return this.showConfig(interaction, newModule);
-	}
-
-	public async chatInputConfig(interaction: ModuleCommand.ChatInputCommandInteraction) {
-		await interaction.deferReply();
-		const { db } = this.container;
-
-		const module = await db.moderationModule.findUnique({
-			where: {
-				id: interaction.guildId!
-			}
-		});
-
-		return this.showConfig(interaction, module);
-	}
-
-	private showConfig(interaction: ModuleCommand.ChatInputCommandInteraction, config: ModuleConfig | null) {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: 'Discord status config', iconURL: interaction.guild!.iconURL()! })
-					.setDescription(`Channel: ${config?.minAccountAgeReq ? config.minAccountAgeReq : 'No requirement set'}`)
+					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
+					.setDescription(`${settings.enabled ? Emoji.GreenCheck : Emoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+			]
+		});
+	}
+
+	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const days = interaction.options.getInteger('days');
+		const response = interaction.options.getString('message');
+
+		const settings = await this.module.upsertSettings(interaction.guildId, {
+			minAccountAgeReq: days,
+			minAccountAgeMsg: response
+		});
+
+		return this.showSettings(interaction, settings);
+	}
+
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const days = interaction.options.getBoolean('days');
+		const response = interaction.options.getBoolean('message');
+
+		const settings = await this.module.upsertSettings(interaction.guildId, {
+			minAccountAgeReq: days ? null : undefined,
+			minAccountAgeMsg: response ? null : undefined
+		});
+
+		return this.showSettings(interaction, settings);
+	}
+
+	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const settings = await this.module.getSettings(interaction.guildId);
+
+		return this.showSettings(interaction, settings);
+	}
+
+	private showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: ModerationSettings | null) {
+		return interaction.editReply({
+			embeds: [
+				new EmbedBuilder()
+					.setColor(EmbedColors.Default)
+					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
+					.addFields([
+						{ name: 'Enabled', value: `${settings?.minAccountAgeEnabled ? `true ${Emoji.GreenCheck}` : `false ${Emoji.RedX}`}` },
+						{
+							name: 'Account age requirement',
+							value: `${settings?.minAccountAgeReq ?? 0}`,
+							inline: true
+						},
+						{
+							name: 'Kick message',
+							value: `${settings?.minAccountAgeMsg ?? MinageHandler.defaultMessage}`,
+							inline: true
+						}
+					])
 			]
 		});
 	}

@@ -1,167 +1,142 @@
 import { DISCORD_STATUS_BASE, StatusEmbed } from '#utils/constants';
+import { IncidentNotification } from '#lib/structures/IncidentNotification';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
-import { container } from '@sapphire/framework';
-import { EmbedBuilder, TextChannel } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
+import { EmbedBuilder } from 'discord.js';
+import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
 import type { StatusPageIncident, StatusPageResult } from '#lib/types/DiscordStatus';
-import type { IncidentMessage } from '@prisma/client';
+import type { IncidentMessage } from '#prisma';
+
+interface DatabaseIncidentData {
+	updatedAt: Date | undefined;
+	notifications: IncidentNotification[];
+}
 
 @ApplyOptions<ScheduledTask.Options>({
-	pattern: '0 */5 * ? * *'
+	pattern: '0 */5 * ? * *' // Every 5 minutes
 })
 export class DiscordStatusTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
 		super(context, { ...options });
 	}
 
-	// TODO use redis lists?
-	public override async run() {
+	public override async run(): Promise<void> {
 		try {
-			const channels = await container.db.utilityModule
-				.findMany({
-					where: { moduleEnabled: true, NOT: [{ incidentChannel: null }] },
-					select: { incidentChannel: true }
-				})
-				.then((res) => res.map((e) => e.incidentChannel!));
-			if (isNullish(channels) || channels.length === 0) return;
+			const channelData = await this.container.utility.fetchIncidentChannels();
+			if (channelData.length === 0) return;
 
-			const { incidents } = (await fetch(`${DISCORD_STATUS_BASE}/incidents.json`).then((res) => res.json())) as StatusPageResult;
+			const { incidents } = await fetch<StatusPageResult>(
+				`${DISCORD_STATUS_BASE}/incidents.json`,
+				{
+					method: FetchMethods.Get
+				},
+				FetchResultTypes.JSON
+			);
 
-			const formattedData = await this.mergeData(incidents);
+			const dbIncidents = await this.container.prisma.discordIncident.findMany({
+				where: { id: { in: incidents.map((incident) => incident.id) } },
+				select: { id: true, updatedAt: true, messages: true }
+			});
 
-			for (const { incident, entry } of formattedData.reverse()) {
-				const embed = this.embedFromIncident(incident);
+			const formattedData: { incident: StatusPageIncident; data: DatabaseIncidentData }[] = incidents.map((incident) => {
+				const entry = dbIncidents.find((dbIncident) => dbIncident.id === incident.id);
 
-				if (!entry) {
-					await this.sendMessage(incident, embed, channels, true);
-					continue;
-				}
+				const notifications = channelData.map(({ guildId, channelId }) => {
+					if (!entry) return new IncidentNotification(incident.id, guildId, channelId);
 
-				const incidentUpdate = new Date(incident.updated_at ?? incident.created_at);
-				if (new Date(entry.updatedAt) < incidentUpdate) {
-					const newChannels = channels.filter((ch) => !entry.messages.map((c) => c.channelId).includes(ch));
-
-					await this.sendMessage(incident, embed, newChannels);
-					await this.editMessages(incident, embed, entry.messages);
-				}
-			}
-
-			for (const incident of incidents.reverse()) {
-				const data = await container.db.discordIncident.findUnique({
-					where: { id: incident.id },
-					select: {
-						id: true,
-						updatedAt: true,
-						messages: true
-					}
+					const message = entry.messages.find((message) => message.channelId === channelId);
+					return new IncidentNotification(incident.id, guildId, channelId, message);
 				});
+
+				return { incident, data: { notifications, updatedAt: entry?.updatedAt ?? undefined } };
+			});
+
+			for (const { incident, data } of formattedData.reverse()) {
 				const embed = this.embedFromIncident(incident);
 
-				if (!data) {
-					await this.sendMessage(incident, embed, channels, true);
+				if (!data.updatedAt) {
+					await this.handleNotifications(incident, embed, data.notifications, true);
 					continue;
 				}
 
 				const incidentUpdate = new Date(incident.updated_at ?? incident.created_at);
 				if (new Date(data.updatedAt) < incidentUpdate) {
-					const newChannels = channels.filter((ch) => !data.messages.map((c) => c.channelId).includes(ch));
-
-					await this.sendMessage(incident, embed, newChannels);
-					await this.editMessages(incident, embed, data.messages);
+					await this.handleNotifications(incident, embed, data.notifications);
 				}
 			}
 		} catch (error) {
-			container.logger.error(`Error during discord incident task:\n`, error);
+			this.container.logger.error(`Error during discord incident task:\n`, error);
 		}
 	}
 
-	private async editMessages(incident: StatusPageIncident, embed: EmbedBuilder, messages: IncidentMessage[]) {
-		const invalidChannels: string[] = [];
-		await Promise.all(
-			messages.map(async ({ id, channelId }) => {
-				const channel = (await container.client.channels.fetch(channelId).catch(() => null)) as TextChannel | null;
-				if (isNullish(channel)) return invalidChannels.push(channelId);
-				return channel.messages.fetch(id).then((message) => message.edit({ embeds: [embed] }));
-			})
+	private async handleNotifications(incident: StatusPageIncident, embed: EmbedBuilder, notifications: IncidentNotification[], newIncident = false) {
+		const { prisma, utility } = this.container;
+
+		const validNotifications: IncidentNotification[] = [];
+		const invalidNotifications: IncidentNotification[] = [];
+
+		const fetchedNotifications = await Promise.all(
+			notifications.map((notification) => notification.fetchChannel()) //
 		);
-		await container.db.$transaction(async (prisma) => {
-			if (invalidChannels.length > 0) {
-				for (const channel of invalidChannels) {
-					await prisma.utilityModule.update({
-						where: { incidentChannel: channel },
-						data: { incidentChannel: null }
-					});
-					await prisma.incidentMessage.deleteMany({
-						where: { channelId: channel }
-					});
-				}
-			}
-			await container.db.discordIncident.update({
-				where: { id: incident.id },
-				data: {
-					resolved: incident.status === 'resolved' || incident.status === 'postmortem'
-				}
-			});
-		});
-	}
 
-	private async sendMessage(incident: StatusPageIncident, embed: EmbedBuilder, channels: string[], isNew = false) {
-		const invalidChannels: string[] = [];
-		const newMessages: IncidentMessage[] = [];
+		for (const notification of fetchedNotifications) {
+			const result = await notification.validateChannel();
+			if (result === undefined) {
+				invalidNotifications.push(notification);
+			} else if (result) {
+				validNotifications.push(notification);
+			}
+		}
+
+		const sendMessageResult = await Promise.all(
+			validNotifications.map((notification) => notification.sendMessage(embed)) //
+		);
 
 		await Promise.all(
-			channels.map(async (channel) => {
-				const fetchedCh = (await container.client.channels.fetch(channel).catch(() => null)) as TextChannel | null;
-				if (isNullish(fetchedCh)) return invalidChannels.push(channel);
-				return newMessages.push({
-					id: (await fetchedCh.send({ embeds: [embed] })).id,
-					channelId: fetchedCh.id,
-					incidentId: incident.id
+			invalidNotifications.map(({ guildId }) => {
+				return utility.upsertSettings(guildId, {
+					incidentChannelId: null
 				});
 			})
 		);
 
-		await container.db.$transaction(async (prisma) => {
-			if (invalidChannels.length > 0) {
-				for (const channel of invalidChannels) {
-					await prisma.utilityModule.update({
-						where: { incidentChannel: channel },
-						data: { incidentChannel: null }
+		if (newIncident) {
+			const messages: IncidentMessage[] = sendMessageResult.map((notification) => notification.getData());
+
+			await prisma.$transaction([
+				...invalidNotifications.map(({ channelId }) => {
+					return prisma.incidentMessage.deleteMany({
+						where: { channelId }
 					});
-					await prisma.incidentMessage.deleteMany({
-						where: { channelId: channel }
-					});
-				}
-			}
-			if (isNew) {
-				await prisma.discordIncident.create({
+				}),
+				prisma.discordIncident.create({
 					data: {
 						id: incident.id,
-						messages: {
-							createMany: {
-								data: newMessages.map((m) => ({ id: m.id, channelId: m.channelId }))
-							}
-						},
-						resolved: incident.status === 'resolved' || incident.status === 'postmortem'
+						resolved: incident.status === 'resolved' || incident.status === 'postmortem',
+						messages: { createMany: { data: messages } }
 					}
-				});
-			} else {
-				await prisma.incidentMessage.createMany({ data: newMessages });
-			}
-		});
-	}
+				})
+			]);
+		} else {
+			const newNotifications: IncidentMessage[] = sendMessageResult
+				.filter((result) => {
+					return !result.incidentMessage && result.messageId;
+				})
+				.map((notification) => notification.getData());
 
-	private async mergeData(incidents: StatusPageIncident[]) {
-		const data = await container.db.discordIncident.findMany({
-			where: { id: { in: incidents.map((i) => i.id) } },
-			select: {
-				id: true,
-				updatedAt: true,
-				messages: true
-			}
-		});
-		return incidents.map((incident) => ({ incident, entry: data.find((entry) => entry.id === incident.id) }));
+			await prisma.$transaction([
+				...invalidNotifications.map(({ channelId }) => {
+					return prisma.incidentMessage.deleteMany({
+						where: { channelId }
+					});
+				}),
+				prisma.discordIncident.update({
+					where: { id: incident.id },
+					data: { resolved: incident.status === 'resolved' || incident.status === 'postmortem' }
+				}),
+				prisma.incidentMessage.createMany({ data: newNotifications })
+			]);
+		}
 	}
 
 	private embedFromIncident(incident: StatusPageIncident): EmbedBuilder {
@@ -176,7 +151,7 @@ export class DiscordStatusTask extends ScheduledTask {
 				? StatusEmbed.Yellow
 				: StatusEmbed.Black;
 
-		const affectedNames = incident.components.map((c) => c.name);
+		const affectedComponents = incident.components.map((c) => c.name);
 
 		const embed = new EmbedBuilder()
 			.setColor(color)
@@ -193,8 +168,8 @@ export class DiscordStatusTask extends ScheduledTask {
 
 		const descriptionParts = [`• Impact: ${incident.impact}`];
 
-		if (affectedNames.length) {
-			descriptionParts.push(`• Affected Components: ${affectedNames.join(', ')}`);
+		if (affectedComponents.length) {
+			descriptionParts.push(`• Affected Components: ${affectedComponents.join(', ')}`);
 		}
 
 		embed.setDescription(descriptionParts.join('\n'));

@@ -3,82 +3,26 @@ import '@sapphire/plugin-api/register';
 import '@sapphire/plugin-logger/register';
 import './lib/util/Augments';
 
+import { loadConfig } from './config';
 import { KBotClient } from '#lib/extensions/KBotClient';
-import { startMetricsServer } from '#utils/metrics';
-import { rootFolder } from '#utils/constants';
-import { getConfig } from '#utils/config';
-import * as Sentry from '@sentry/node';
-import { ScheduledTaskRedisStrategy } from '@sapphire/plugin-scheduled-tasks/register-redis';
-import { container, LogLevel } from '@sapphire/framework';
-import { RewriteFrames } from '@sentry/integrations';
-import { IntentsBitField } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
+import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';
 
-const config = getConfig();
-if (isNullish(config)) {
-	console.error('Invalid config, exiting.');
-	process.exit(1);
-}
+loadConfig();
 
-const client = new KBotClient({
-	intents: [
-		IntentsBitField.Flags.Guilds,
-		IntentsBitField.Flags.GuildMembers,
-		IntentsBitField.Flags.GuildVoiceStates,
-		IntentsBitField.Flags.GuildScheduledEvents
-	],
-	presence: {
-		status: 'online',
-		activities: [{ name: '/help', type: 0 }]
-	},
-	logger: {
-		level: config.isDev ? LogLevel.Debug : LogLevel.Info
-	},
-	api: {
-		listenOptions: {
-			port: config.api.port
-		}
-	},
-	tasks: {
-		strategy: new ScheduledTaskRedisStrategy({
-			bull: {
-				connection: {
-					host: config.redis.host,
-					port: config.redis.port,
-					password: config.redis.password
-				},
-				defaultJobOptions: { removeOnComplete: 0, removeOnFail: 0 }
-			}
-		})
-	},
-	modules: {
-		enabled: true,
-		loadModuleErrorListeners: true
-	}
-});
+ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
 
 async function main() {
-	if (!config!.isDev && config!.sentry.dsn) {
-		Sentry.init({
-			dsn: config!.sentry.dsn,
-			integrations: [
-				new Sentry.Integrations.Modules(),
-				new Sentry.Integrations.FunctionToString(),
-				new Sentry.Integrations.LinkedErrors(),
-				new Sentry.Integrations.Console(),
-				new Sentry.Integrations.Http({ breadcrumbs: true, tracing: true }),
-				new RewriteFrames({ root: rootFolder })
-			]
-		});
-	}
-
+	let client: KBotClient | undefined = undefined;
 	try {
-		startMetricsServer();
-		await client.login(config!.discord.token);
+		const config = await KBotClient.preLogin();
+
+		client = new KBotClient(config);
+
+		await client.login(container.config.discord.token);
 	} catch (error) {
-		container.logger.error(error);
-		await client.destroy();
-		process.exit(1);
+		container.logger.fatal(error);
+		await client?.destroy();
+		process.exitCode = 1;
 	}
 }
 

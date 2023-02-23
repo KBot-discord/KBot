@@ -1,43 +1,30 @@
-import { config } from '../../config';
-import { container } from '@sapphire/framework';
-import type { Config } from '../types/Config';
+import { flattenObject } from '#utils/index';
+import { isNullOrUndefinedOrEmpty } from '@sapphire/utilities';
+import type { ClientConfig } from '#types/Config';
 
-function flattenConfig(obj: any) {
-	const flattenedObj: any = {};
-	for (const i in obj) {
-		if (!obj.hasOwnProperty(i)) continue;
-		if (typeof obj[i] === 'object' && obj[i] !== null) {
-			const flatObject = flattenConfig(obj[i]);
-			for (const j in flatObject) {
-				if (!flatObject.hasOwnProperty(j)) continue;
-				flattenedObj[`${i}.${j}`] = flatObject[j];
-			}
-		} else {
-			flattenedObj[i] = obj[i];
-		}
-	}
-	return flattenedObj;
-}
-
-export function validateConfig(cfg: Config): boolean {
+export function validateConfig(config: ClientConfig) {
 	let error = false;
-	const obj = flattenConfig(cfg);
-	for (const [key, value] of Object.entries(obj)) {
-		if (value === undefined) {
-			console.log(`Invalid value for: ${key}`);
+	const flattenedConfig = flattenObject(config);
+
+	for (const [key, value] of Object.entries(flattenedConfig)) {
+		if (isNullOrUndefinedOrEmpty(value)) {
+			console.error(`${key} was undefined or empty`);
 			if (!error) error = true;
 		}
 	}
+
 	return !error;
 }
 
-export function getConfig(): Config | null {
-	const isConfigValid = validateConfig(config);
-	if (!isConfigValid) return null;
-	container.config = config;
-	return config;
+export function envGetString(key: string): string {
+	return process.env[key]!;
 }
 
-export function getGuildIds(): string[] | undefined {
-	return container.config.isDev ? container.config.discord.devServers : undefined;
+export function envGetNumber(key: string): number {
+	const number = Number(process.env[key]);
+	if (isNaN(number)) {
+		const errorString = `"${key}" must be set to a number`;
+		throw new TypeError(errorString);
+	}
+	return number;
 }

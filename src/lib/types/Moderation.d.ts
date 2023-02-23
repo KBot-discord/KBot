@@ -1,27 +1,33 @@
-import { ModerationActionType } from '#lib/structures/ModerationAction';
+import type { ModerationActionType } from '#lib/structures/ModerationAction';
 
 interface BaseModerationContext {
-	reason?: string;
-	dm?: boolean;
-	silent?: boolean;
+	reason?: string | null;
+	sendDm?: boolean | null;
+	silent?: boolean | null;
 }
 
 export interface BanContext extends BaseModerationContext {
-	daysToPurge?: number;
+	daysToPurge?: number | null;
 }
+
+export interface UnbanContext extends BaseModerationContext {}
 
 export interface KickContext extends BaseModerationContext {}
 
 export interface MuteContext extends BaseModerationContext {
-	time?: number;
+	duration?: number | null;
 }
+
+export interface UnmuteContext extends BaseModerationContext {}
 
 export interface TimeoutContext extends BaseModerationContext {
-	time?: number;
+	duration: number;
 }
 
-export interface ModerationLogContext {
-	action: ModerationActionType;
-	reason?: string;
-	duration?: string;
+export interface UntimeoutContext extends BaseModerationContext {}
+
+export interface ModerationActionContext {
+	type: ModerationActionType;
+	reason?: string | null;
+	duration?: number | null;
 }

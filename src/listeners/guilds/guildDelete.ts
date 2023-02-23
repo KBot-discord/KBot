@@ -1,4 +1,5 @@
-import { container, Events, Listener } from '@sapphire/framework';
+import { baseCacheKey } from '#utils/cache';
+import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { Guild } from 'discord.js';
 
@@ -6,8 +7,12 @@ import type { Guild } from 'discord.js';
 	name: Events.GuildDelete
 })
 export class GuildListener extends Listener {
-	public async run(guild: Guild) {
-		await container.db.guild.delete({ where: { id: guild.id } });
-		return container.redis.deleteScanKeys(`kbot:core:guilds:${guild.id}:*`);
+	public async run(guild: Guild): Promise<void> {
+		await Promise.all([
+			this.container.core.deleteSettings(guild.id), //
+			this.container.notifications.deleteSettings(guild.id)
+		]);
+
+		this.container.redis.deleteScanKeys(`${baseCacheKey(guild.id)}:*`);
 	}
 }

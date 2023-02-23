@@ -1,27 +1,25 @@
-/* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { NotificationService } from '#services/NotificationService';
+import type { GuildMember, User, CommandInteraction, Message, InteractionResponse } from 'discord.js';
+import type { KBotError } from '#lib/structures/KBotError';
+import type { KBotEvents } from '#types/Events';
+import type { KBotMetrics } from '#lib/observability/metrics';
 import type { APIMessage } from 'discord-api-types/v10';
-import type { Message, InteractionResponse } from 'discord.js';
-import type { Config } from './Config';
-import type { Metrics } from './Client';
-import type { RedisClient } from '../database/RedisClient';
-import type { PrismaClient } from '@prisma/client';
-import type { PollService } from '#services/PollService';
-import type { KaraokeService } from '#services/KaraokeService';
-import type { YoutubeService } from '#services/YoutubeService';
+import type { ClientConfig } from './Config';
+import type { RedisClient } from '#lib/extensions/RedisClient';
+import type { ModerationSettings, PrismaClient } from '#prisma';
 import type { Validator } from '#utils/validators';
 import type { KBotErrors } from '#utils/constants';
-import type { Payload } from './Errors';
-import type { ModerationService } from '#services/ModerationService';
-import type { UtilityService } from '#services/UtilityService';
+import type { CoreModule } from '#modules/CoreModule';
+import type { EventModule } from '#modules/EventModule';
+import type { ModerationModule } from '#modules/ModerationModule';
+import type { NotificationModule } from '#modules/NotificationModule';
+import type { UtilityModule } from '#modules/UtilityModule';
+import type { WelcomeModule } from '#modules/WelcomeModule';
+import type { ModerationActionContext } from '#types/Moderation';
 
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export type InteractionResponseUnion = void | APIMessage | Message<boolean> | InteractionResponse<boolean>;
 
 declare module 'discord.js' {
-	interface Client {
-		emitError(event: KBotErrors, payload: Payload<typeof event>): boolean;
-	}
-
 	interface CommandInteraction {
 		defaultReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
 		successReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
@@ -61,18 +59,33 @@ declare module 'discord.js' {
 
 declare module '@sapphire/pieces' {
 	interface Container {
-		config: Config;
+		config: ClientConfig;
 		validator: Validator;
-		metrics: Metrics;
+		metrics: KBotMetrics;
 
-		db: PrismaClient;
+		prisma: PrismaClient;
 		redis: RedisClient;
 
-		moderation: ModerationService;
-		notifications: NotificationService;
-		polls: PollService;
-		utility: UtilityService;
-		karaoke: KaraokeService;
-		youtube: YoutubeService;
+		core: CoreModule;
+		events: EventModule;
+		moderation: ModerationModule;
+		notifications: NotificationModule;
+		utility: UtilityModule;
+		welcome: WelcomeModule;
+	}
+}
+
+declare module '@sapphire/framework' {
+	interface SapphireClient {
+		emit(event: KBotErrors, context: { error: KBotError; interaction: CommandInteraction }): boolean;
+		emit(
+			event: KBotEvents.ModerationLog,
+			context: {
+				target: GuildMember | User;
+				moderator: GuildMember;
+				settings: ModerationSettings;
+				data: ModerationActionContext;
+			}
+		): boolean;
 	}
 }

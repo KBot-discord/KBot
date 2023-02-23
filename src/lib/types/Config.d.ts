@@ -1,4 +1,4 @@
-export interface Config {
+export interface ClientConfig {
 	isDev: boolean;
 	discord: {
 		token: string;
@@ -14,25 +14,38 @@ export interface Config {
 			port: number;
 		};
 		youtube: {
-			url: string;
+			host: string;
+			port: number;
+		};
+		twitter: {
+			host: string;
 			port: number;
 		};
 	};
 	db: {
 		url: string;
+		cacheExpiry: number;
 	};
 	redis: {
 		host: string;
 		port: number;
 		password: string;
 	};
-	metrics: {
-		port: number;
+	observability: {
+		metrics: {
+			port: number;
+		};
 	};
 	sentry: {
 		dsn: string;
 	};
 	deepl: {
 		key: string;
+	};
+	twitch: {
+		id: string;
+		secret: string;
+		bearer: string;
+		callback: string;
 	};
 }

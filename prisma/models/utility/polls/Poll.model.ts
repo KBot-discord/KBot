@@ -1,17 +1,18 @@
 import PollUserModel from './PollUser.model';
-import UtilityModuleModel from '../UtilityModule.model';
+import UtilitySettingsModel from '../UtilitySettings.model';
 import { createModel } from 'schemix';
 
 export default createModel('Poll', (model) => {
-	// prettier-ignore
 	model
 		.string('id', { id: true, unique: true }) // Message id
 		.string('title')
-		.string('channel')
-		.bigInt('time')
+		.string('channelId')
+		.bigInt('time', { optional: true })
 		.string('options', { list: true })
+		.dateTime('createdAt', { default: { now: true } })
 
 		.relation('users', PollUserModel, { list: true })
+
 		.string('guildId', { unique: true })
-		.relation('utility', UtilityModuleModel, { fields: ['guildId'], references: ['id'], onDelete: "Cascade" })
+		.relation('utilitySettings', UtilitySettingsModel, { fields: ['guildId'], references: ['guildId'], onDelete: 'Cascade' });
 });

@@ -1,4 +1,3 @@
-import { initMetrics } from '#utils/metrics';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { KBotClient } from '#lib/extensions/KBotClient';
@@ -9,7 +8,6 @@ import type { KBotClient } from '#lib/extensions/KBotClient';
 })
 export class ReadyListener extends Listener {
 	public run(client: KBotClient) {
-		initMetrics();
 		this.container.logger.info(`${client.user!.tag} is online.`);
 	}
 }

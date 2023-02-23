@@ -1,15 +1,17 @@
-import ModerationModuleMode from './ModerationModule.model';
+import ModerationSettingsModel from './ModerationSettings.model';
 import UUIDMixin from '../../mixins/UUID.mixin';
 import { createModel } from 'schemix';
 
 export default createModel('Mute', (model) => {
-	// prettier-ignore
 	model
 		.mixin(UUIDMixin)
-		.string('userId', { id: true, unique: true })
-		.bigInt('time')
-		.bigInt('evadeTime')
+		.string('userId')
+		.bigInt('duration', { optional: true })
+		.bigInt('evadeTime', { optional: true })
 
-		.string('guildId', { unique: true })
-		.relation('moderation', ModerationModuleMode, { fields: ['guildId'], references: ['id'], onDelete: "Cascade" })
+		.string('guildId')
+		.relation('moderationSettings', ModerationSettingsModel, { fields: ['guildId'], references: ['guildId'], onDelete: 'Cascade' })
+
+		.id({ fields: ['id'] })
+		.unique({ fields: ['userId', 'guildId'] });
 });

@@ -1,6 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import type { AutocompleteInteraction } from 'discord.js';
+import { isNullish } from '@sapphire/utilities';
+import type { ApplicationCommandOptionChoiceData, AutocompleteInteraction } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Autocomplete
@@ -15,16 +16,18 @@ export class AutocompleteHandler extends InteractionHandler {
 	public override async parse(interaction: AutocompleteInteraction) {
 		if (interaction.commandName !== this.commandName) return this.none();
 
+		const { notifications } = this.container;
 		const focusedOption = interaction.options.getFocused(true);
 
-		switch (focusedOption.name) {
-			case 'account': {
-				const channels = await this.container.youtube.getAutocompleteChannel(focusedOption.value);
-				if (!channels) return this.some([]);
-				return this.some(channels.map(({ id, name }) => ({ name, value: id })));
-			}
-			default:
-				return this.none();
+		if (focusedOption.name === 'account') {
+			const channels = await notifications.youtube.getAutocompleteChannel(focusedOption.value);
+			if (isNullish(channels)) return this.some([]);
+
+			const channelOptions: ApplicationCommandOptionChoiceData[] = channels.map(({ id, name }) => ({ name, value: id }));
+
+			return this.some(channelOptions);
 		}
+
+		return this.none();
 	}
 }

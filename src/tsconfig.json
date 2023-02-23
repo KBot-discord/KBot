@@ -4,14 +4,28 @@
 		"outDir": "../dist",
 		"rootDir": ".",
 		"baseUrl": ".",
-		"typeRoots": ["./lib/types/**/*", "../node_modules/@types"],
+		"typeRoots": ["./lib/types/**/*", "../prisma/generated", "../node_modules/@types"],
 		"paths": {
-			"#utils/*": ["lib/util/*"],
+			"#prisma": ["../prisma/generated"],
 			"#lib/*": ["lib/*"],
-			"#services/*": ["lib/services/*"]
+			"#rpc/bot": ["lib/rpc/bot.ts"],
+			"#rpc/twitter": ["lib/rpc/twitter.ts"],
+			"#rpc/types": ["lib/rpc/types.ts"],
+			"#rpc/youtube": ["lib/rpc/youtube.ts"],
+			"#repositories/*": ["lib/repositories/*"],
+			"#repositories": ["lib/repositories/index.ts"],
+			"#submodules/*": ["lib/submodules/*"],
+			"#submodules": ["lib/submodules/index.ts"],
+			"#types/*": ["lib/types/*"],
+			"#types/repositories": ["lib/types/repositories/index.ts"],
+			"#utils/*": ["lib/util/*"],
+			"#utils": ["lib/util/index.ts"],
+			"#modules/*": ["modules/*"]
 		},
 		"allowJs": true,
-		"noImplicitAny": true
+		"noImplicitAny": true,
+		"skipLibCheck": true,
+		"tsBuildInfoFile": "../dist/.tsbuildinfo"
 	},
 	"include": ["."],
 	"exclude": ["./tsconfig.json"]

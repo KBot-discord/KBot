@@ -1,6 +1,5 @@
-import { EmbedColors, KBotErrors } from './constants';
-import { Client, CommandInteraction, EmbedBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
-import type { Payload } from '../types/Errors';
+import { EmbedColors } from './constants';
+import { CommandInteraction, EmbedBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 
 type InteractionUnion = CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction;
 
@@ -12,17 +11,15 @@ function formatResponse(interaction: InteractionUnion, color: EmbedColors, text:
 
 function _safeReply(interaction: InteractionUnion, color: EmbedColors, text: string, tryEphemeral?: boolean) {
 	const data = formatResponse(interaction, color, text, tryEphemeral);
-	return interaction.deferred || interaction.replied ? interaction.editReply(data) : interaction.reply(data);
+	return interaction.deferred || interaction.replied //
+		? interaction.editReply(data)
+		: interaction.reply(data);
 }
 
 function _safeFollowup(interaction: InteractionUnion, color: EmbedColors, text: string, tryEphemeral?: boolean) {
 	const data = formatResponse(interaction, color, text, tryEphemeral);
 	return interaction.followUp(data);
 }
-
-Client.prototype.emitError = function emitError(event: KBotErrors, payload: Payload<typeof event>) {
-	return this.emit(event, payload);
-};
 
 CommandInteraction.prototype.defaultReply =
 	MessageComponentInteraction.prototype.defaultReply =

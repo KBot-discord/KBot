@@ -1,24 +1,27 @@
 import { EmbedColors, AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
+import { parseCustomId } from '#utils/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
-import { parseCustomId } from '@kbotdev/custom-id';
-import type { EmoteEditModal } from '#lib/types/CustomIds';
+import { EmbedBuilder } from 'discord.js';
+import { isNullish } from '@sapphire/utilities';
+import type { ModalSubmitInteraction } from 'discord.js';
+import type { EmoteEditModal } from '#types/CustomIds';
+import type { APIEmbedField } from 'discord-api-types/v10';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
 })
 export class ModalHandler extends InteractionHandler {
 	public override async run(
-		modal: ModalSubmitInteraction,
+		modal: ModalSubmitInteraction<'cached'>,
 		{ id, emoteName, emoteLink, description, artistName, artistLink }: InteractionHandler.ParseResult<this>
 	) {
 		try {
 			const message = await modal.channel!.messages.fetch(id);
 
-			const oldSource = message.embeds[0].fields!.find((e) => e.name === 'Image source');
+			const oldSource = message.embeds[0].fields.find((e) => e.name === 'Image source');
 
-			const fields = [];
+			const fields: APIEmbedField[] = [];
 			if (description) fields.push({ name: 'Description', value: description });
 			if (artistName) fields.push({ name: 'Artist', value: artistName, inline: true });
 			if (artistLink) fields.push({ name: "Artist's profile", value: artistLink, inline: true });
@@ -33,15 +36,26 @@ export class ModalHandler extends InteractionHandler {
 						.addFields(fields)
 				]
 			});
-			if (emoteName) await modal.guild!.emojis.edit(message.embeds[0].thumbnail!.url.match(/(\d+)$/)![0], { name: emoteName });
+
+			if (emoteName) {
+				await modal.guild.emojis.edit(message.embeds[0].thumbnail!.url.match(/(\d+)$/)![0], { name: emoteName });
+			}
+
 			return modal.defaultReply('Edit successful.');
 		} catch (err) {
 			return this.container.logger.error(err);
 		}
 	}
 
-	public override async parse(modal: ModalSubmitInteraction) {
+	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
 		if (!modal.customId.startsWith(AddEmoteCustomIds.ModalEdit)) return this.none();
+
+		const settings = await this.container.utility.getSettings(modal.guildId);
+		if (isNullish(settings) || !settings.enabled) {
+			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
+			return this.none();
+		}
+
 		await modal.deferReply({ ephemeral: true });
 
 		const {

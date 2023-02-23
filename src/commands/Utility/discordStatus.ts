@@ -1,18 +1,25 @@
-import { EmbedColors, KBotErrors } from '#utils/constants';
-import { getGuildIds } from '#utils/config';
+import { EmbedColors } from '#utils/constants';
+import { KBotErrors } from '#types/Enums';
+import { getGuildIcon } from '#utils/Discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { GuildChannel, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import type { UtilityModule } from '../../modules/UtilityModule';
-import type { UtilityModule as UtilityConfig } from '@prisma/client';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { GuildTextBasedChannel } from 'discord.js';
+import type { UtilityModule } from '#modules/UtilityModule';
+import type { UtilitySettings } from '#prisma';
 
 @ApplyOptions<ModuleCommand.Options>({
 	module: 'UtilityModule',
-	description: 'Discord status',
-	preconditions: ['ModuleEnabled', 'GuildOnly'],
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
+	description: 'Get updates about Discord outages sent to a channel',
+	preconditions: ['ModuleEnabled'],
+	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
+	runIn: [CommandOptionsRunTypeEnum.GuildAny],
+	deferOptions: {
+		defer: true
+	}
 })
 export class UtilityCommand extends ModuleCommand<UtilityModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
@@ -20,12 +27,18 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
+	public disabledMessage = (moduleFullName: string): string => {
+		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
+	};
+
 	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
 					.setName('discordstatus')
-					.setDescription('Have notifications about Discord outages sent to a channel')
+					.setDescription(this.description)
+					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('set')
@@ -33,8 +46,8 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 							.addChannelOption((option) =>
 								option //
 									.setName('channel')
-									.setDescription('Select a channel to send the message in')
-									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildNews)
+									.setDescription('The channel to send status updates to')
+									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
 									.setRequired(true)
 							)
 					)
@@ -45,14 +58,17 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
-							.setName('config')
-							.setDescription('Show the current config')
+							.setName('settings')
+							.setDescription('Show the current settings')
 					),
-			{ idHints: ['1040042392482496616'], guildIds: getGuildIds() }
+			{
+				idHints: [],
+				guildIds: this.container.config.discord.devServers
+			}
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'set': {
 				return this.chatInputSet(interaction);
@@ -61,92 +77,48 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 				return this.chatInputUnset(interaction);
 			}
 			default: {
-				return this.chatInputConfig(interaction);
+				return this.chatInputSettings(interaction);
 			}
 		}
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction) {
-		await interaction.deferReply();
-		const { client, db, validator } = this.container;
-		const channel = interaction.options.getChannel('channel', true) as GuildChannel;
+	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const { client, validator } = this.container;
+		const channel = interaction.options.getChannel('channel', true) as GuildTextBasedChannel;
 
-		const { result, error } = validator.channels.canSendEmbeds(channel);
+		const { result, error } = await validator.channels.canSendEmbeds(channel);
 		if (!result) {
-			return client.emitError(KBotErrors.ChannelPermissions, { interaction, error });
+			return client.emit(KBotErrors.ChannelPermissions, { interaction, error });
 		}
 
-		const config = await db.utilityModule
-			.upsert({
-				where: {
-					id: interaction.guildId!
-				},
-				update: {
-					incidentChannel: channel.id
-				},
-				create: {
-					incidentChannel: channel.id,
-					guild: { connect: { id: interaction.guildId! } }
-				}
-			})
-			.catch((err) => {
-				this.container.logger.error(err);
-				return null;
-			});
+		const settings = await this.module.upsertSettings(interaction.guildId, {
+			incidentChannelId: channel.id
+		});
 
-		if (!config) return interaction.errorReply('Something went wrong.');
-		return this.showConfig(interaction, config);
+		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction) {
-		await interaction.deferReply();
-		const { db } = this.container;
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const settings = await this.module.upsertSettings(interaction.guildId, {
+			incidentChannelId: null
+		});
 
-		const config = await db.utilityModule
-			.upsert({
-				where: {
-					id: interaction.guildId!
-				},
-				update: {
-					incidentChannel: null
-				},
-				create: {
-					incidentChannel: null,
-					guild: { connect: { id: interaction.guildId! } }
-				}
-			})
-			.catch((err) => {
-				this.container.logger.error(err);
-				return null;
-			});
-
-		if (!config) return interaction.errorReply('Something went wrong.');
-		return this.showConfig(interaction, config);
+		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputConfig(interaction: ModuleCommand.ChatInputCommandInteraction) {
-		await interaction.deferReply();
-		const { db } = this.container;
+	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const settings = await this.module.getSettings(interaction.guildId);
 
-		const config = await db.utilityModule
-			.findUnique({
-				where: { id: interaction.guildId! }
-			})
-			.catch((err) => {
-				this.container.logger.error(err);
-				return null;
-			});
-
-		return this.showConfig(interaction, config);
+		return this.showSettings(interaction, settings);
 	}
 
-	private showConfig(interaction: ModuleCommand.ChatInputCommandInteraction, config: UtilityConfig | null) {
+	private showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: UtilitySettings | null) {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: 'Discord status config', iconURL: interaction.guild!.iconURL()! })
-					.setDescription(`Channel: ${config?.incidentChannel ? channelMention(config.incidentChannel) : 'No channel set'}`)
+					.setAuthor({ name: 'Discord status settings', iconURL: getGuildIcon(interaction.guild) })
+					.setDescription(`Channel: ${settings?.incidentChannelId ? channelMention(settings.incidentChannelId) : 'No channel set'}`)
 			]
 		});
 	}

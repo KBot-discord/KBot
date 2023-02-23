@@ -1,10 +1,11 @@
 import { EmbedColors, PollCustomIds } from '#utils/constants';
+import { parseCustomId } from '#utils/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { type ButtonInteraction, ChannelType, EmbedBuilder } from 'discord.js';
+import { ChannelType, EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import { parseCustomId } from '@kbotdev/custom-id';
-import type { PollMenuButton } from '#lib/types/CustomIds';
+import type { ButtonInteraction } from 'discord.js';
+import type { PollMenuButton } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
@@ -12,28 +13,26 @@ import type { PollMenuButton } from '#lib/types/CustomIds';
 export class ButtonHandler extends InteractionHandler {
 	private readonly customIds = [PollCustomIds.ResultsPublic, PollCustomIds.ResultsHidden];
 
-	public override async run(interaction: ButtonInteraction, { hidden, pollId }: InteractionHandler.ParseResult<this>) {
-		const { polls } = this.container;
+	public override async run(interaction: ButtonInteraction<'cached'>, { hidden, pollId }: InteractionHandler.ParseResult<this>) {
+		const { polls } = this.container.utility;
+
 		try {
-			const poll = await polls.repo.getPollWithUsers(pollId);
+			const poll = await polls.fetch(pollId);
 			if (isNullish(poll)) {
 				return interaction.defaultReply('Poll already ended.');
 			}
 
 			const message = await this.container.client.channels
-				.fetch(poll.channel)
-				.then((channel) => (channel!.type === ChannelType.GuildText ? channel.messages.fetch(poll.id) : null));
+				.fetch(poll.channelId)
+				.then((channel) => (channel?.type === ChannelType.GuildText ? channel.messages.fetch(poll.id) : null));
 			if (isNullish(message)) {
-				return interaction.errorReply('no message');
+				return interaction.errorReply('There was an error when checking the poll results.');
 			}
 
 			const results = polls.calculateResults(poll);
-			if (isNullish(results)) {
-				return interaction.errorReply('no results');
-			}
 
 			if (hidden) {
-				return interaction.followUp({
+				return interaction.editReply({
 					embeds: [
 						new EmbedBuilder()
 							.setColor(EmbedColors.Default)
@@ -44,7 +43,7 @@ export class ButtonHandler extends InteractionHandler {
 					]
 				});
 			}
-			await interaction.defaultReply('Results sent.');
+
 			return interaction.channel!.send({
 				embeds: [
 					new EmbedBuilder()
@@ -57,18 +56,30 @@ export class ButtonHandler extends InteractionHandler {
 			});
 		} catch (err) {
 			this.container.logger.error(err);
-			return interaction.errorReply('Something went wrong.');
+			return interaction.errorReply('There was an error when trying to show the poll results.');
 		}
 	}
 
-	public override async parse(interaction: ButtonInteraction) {
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
+
+		const settings = await this.container.utility.getSettings(interaction.guildId);
+		if (isNullish(settings) || !settings.enabled) {
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
+			return this.none();
+		}
 
 		const {
 			prefix,
 			data: { pollId }
 		} = parseCustomId<PollMenuButton>(interaction.customId);
 		const hidden = prefix === PollCustomIds.ResultsHidden;
+
+		if (hidden) {
+			await interaction.deferReply({ ephemeral: true });
+		} else {
+			await interaction.deferUpdate();
+		}
 
 		return this.some({ hidden, pollId });
 	}

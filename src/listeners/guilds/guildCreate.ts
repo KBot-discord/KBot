@@ -1,4 +1,4 @@
-import { container, Events, Listener } from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { Guild } from 'discord.js';
 
@@ -6,9 +6,7 @@ import type { Guild } from 'discord.js';
 	name: Events.GuildCreate
 })
 export class GuildListener extends Listener {
-	public async run(guild: Guild) {
-		return container.db.guild.create({
-			data: { id: guild.id }
-		});
+	public async run(guild: Guild): Promise<void> {
+		await this.container.core.upsertSettings(guild.id);
 	}
 }

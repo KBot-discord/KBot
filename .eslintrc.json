@@ -22,8 +22,13 @@
 	"rules": {
 		"@typescript-eslint/require-await": 0,
 		"@typescript-eslint/no-base-to-string": 0,
-		"@typescript-eslint/member-ordering": 0,
-		"@typescript-eslint/no-empty-function": 0,
+		"@typescript-eslint/consistent-type-imports": "error",
+		"@typescript-eslint/no-duplicate-imports": [
+			"error",
+			{
+				"includeExports": false
+			}
+		],
 		"import/no-unresolved": "error",
 		"import/no-named-as-default": 0,
 		"import/order": [

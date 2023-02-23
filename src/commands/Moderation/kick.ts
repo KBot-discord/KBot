@@ -1,16 +1,21 @@
-import { getGuildIds } from '#utils/config';
 import { ModerationAction } from '#lib/structures/ModerationAction';
+import { KBotErrors } from '#types/Enums';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import type { GuildMember } from 'discord.js';
-import type { ModerationModule } from '../../modules/ModerationModule';
+import { isNullish } from '@sapphire/utilities';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<ModuleCommand.Options>({
 	module: 'ModerationModule',
-	description: 'Kick the target member.',
-	preconditions: ['GuildOnly', 'ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.KickMembers, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
+	description: 'Kick a user.',
+	preconditions: ['ModuleEnabled'],
+	requiredClientPermissions: [PermissionFlagsBits.KickMembers, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
+	runIn: [CommandOptionsRunTypeEnum.GuildAny],
+	deferOptions: {
+		defer: true
+	}
 })
 export class ModerationCommand extends ModuleCommand<ModerationModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
@@ -18,30 +23,34 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		if (Boolean(this.description) && !this.detailedDescription) this.detailedDescription = this.description;
 	}
 
+	public disabledMessage = (moduleFullName: string): string => {
+		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
+	};
+
 	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
-					.setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
 					.setName('kick')
-					.setDescription('Kick the target member')
-
+					.setDescription(this.description)
+					.setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
+					.setDMPermission(false)
 					.addUserOption((option) =>
 						option //
 							.setName('user')
-							.setDescription('Select a user or provide an ID to kick. User must be in the server')
+							.setDescription('Select a user or provide an ID to kick')
 							.setRequired(true)
 					)
 					.addStringOption((option) =>
 						option //
 							.setName('reason')
-							.setDescription('Reason for the kick')
+							.setDescription('The reason for the kick. (default: "No reason provided.")')
 							.setRequired(false)
 					)
 					.addBooleanOption((option) =>
 						option //
 							.setName('dm')
-							.setDescription('DM the user the kick reason')
+							.setDescription('If the user should be messaged with the reason. (default: false)')
 							.setRequired(false)
 					)
 					.addBooleanOption((option) =>
@@ -50,20 +59,36 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 							.setDescription('True: kick will not show in logs, False: kick will show in logs. (default: false)')
 							.setRequired(false)
 					),
-			{ idHints: ['1059975983286988892'], guildIds: getGuildIds() }
+			{
+				idHints: [],
+				guildIds: this.container.config.discord.devServers
+			}
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction) {
-		await interaction.deferReply();
-		const settings = await this.module.service.repo.getSettings(interaction.guildId!);
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const { moderation } = this.container.validator;
 
-		const member = await interaction.guild!.members.fetch(interaction.options.getUser('user', true).id);
+		const member = interaction.options.getMember('user');
+		if (isNullish(member)) {
+			return interaction.defaultReply('That user is not in this server.');
+		}
 
-		const reason = interaction.options.getString('reason') ?? undefined;
-		const dm = interaction.options.getBoolean('dm') ?? undefined;
-		const silent = interaction.options.getBoolean('silent') ?? undefined;
+		const { result, error } = moderation.canKickTarget(interaction.member, member);
+		if (!result) {
+			return interaction.client.emit(KBotErrors.ModerationPermissions, { interaction, error });
+		}
 
-		return new ModerationAction(settings!, interaction.member as GuildMember, member).kick({ reason, dm, silent });
+		const settings = await this.module.getSettings(interaction.guildId);
+		if (isNullish(settings)) {
+			return interaction.errorReply("Something went wrong when fetching this server's settings.");
+		}
+
+		const reason = interaction.options.getString('reason');
+		const sendDm = interaction.options.getBoolean('dm');
+		const silent = interaction.options.getBoolean('silent');
+
+		return new ModerationAction(settings, interaction.member) //
+			.kick(member, { reason, sendDm, silent });
 	}
 }

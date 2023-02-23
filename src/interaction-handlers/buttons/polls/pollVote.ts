@@ -1,8 +1,9 @@
 import { EmbedColors, PollCustomIds } from '#utils/constants';
+import { parseCustomId } from '#utils/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, type ButtonInteraction } from 'discord.js';
-import { parseCustomId } from '@kbotdev/custom-id';
+import { isNullish } from '@sapphire/utilities';
 import type { PollOption } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -11,26 +12,40 @@ import type { PollOption } from '#lib/types/CustomIds';
 export class ButtonHandler extends InteractionHandler {
 	private readonly customIds = [PollCustomIds.Vote];
 
-	public override async run(interaction: ButtonInteraction, { option }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { option }: InteractionHandler.ParseResult<this>) {
+		const { polls } = this.container.utility;
+
 		try {
-			await this.container.polls.repo.updatePollUser(interaction.user.id, interaction.message.id, option);
+			await polls.updateUser({
+				userId: interaction.user.id,
+				pollId: interaction.message.id,
+				option
+			});
+
 			return interaction.editReply({
 				embeds: [
 					new EmbedBuilder()
 						.setColor(EmbedColors.Success)
-						.setDescription(`Vote added to option ${option + 1}\n(only the latest vote counts)`)
+						.setDescription(`You have voted for option ${option + 1}`)
+						.setFooter({ text: 'Only the latest vote counts' })
 				]
 			});
 		} catch (err) {
 			this.container.logger.error(err);
-			return interaction.editReply({
-				embeds: [new EmbedBuilder().setColor(EmbedColors.Error).setDescription('Something went wrong')]
-			});
+			return interaction.errorReply('There was an error when trying to save your vote.');
 		}
 	}
 
-	public override async parse(interaction: ButtonInteraction) {
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
+
+		const settings = await this.container.utility.getSettings(interaction.guildId);
+		if (isNullish(settings) || !settings.enabled) {
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
+			return this.none();
+		}
+
+		await interaction.deferReply({ ephemeral: true });
 
 		const {
 			data: { option }

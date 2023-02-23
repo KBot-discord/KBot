@@ -1,8 +1,11 @@
 ## Builds ##
 dist
-src/rpc/gen
+prisma/generated
+prisma/seed
+src/lib/rpc/gen
 
 ## Development ##
+infra
 coverage
 
 ## Dependencies ##

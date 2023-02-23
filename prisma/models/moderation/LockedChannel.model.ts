@@ -1,12 +1,12 @@
-import ModerationModuleMode from './ModerationModule.model';
+import ModerationSettingsModel from './ModerationSettings.model';
 import { createModel } from 'schemix';
 
 export default createModel('LockedChannel', (model) => {
-	// prettier-ignore
 	model
 		.string('id', { id: true, unique: true }) // Channel ID
-		.bigInt('time')
+		.string('roleId')
+		.bigInt('duration', { optional: true })
 
 		.string('guildId', { unique: true })
-		.relation('moderation', ModerationModuleMode, { fields: ['guildId'], references: ['id'], onDelete: "Cascade" })
+		.relation('moderationSettings', ModerationSettingsModel, { fields: ['guildId'], references: ['guildId'], onDelete: 'Cascade' });
 });

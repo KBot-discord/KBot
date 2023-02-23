@@ -1,13 +1,11 @@
-## Base ##
+## Builder ##
 FROM node:18-alpine as builder
 
-ENV CI=true NODE_ENV=production
-
-# canvas build deps
+## Canvas dependencies
 RUN apk add -q --update && \
 	apk add -q --no-cache --virtual .build-deps cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make curl && \
     curl -sSL \
-      "https://github.com/bufbuild/buf/releases/download/v1.11.0/buf-$(uname -s)-$(uname -m)" \
+      "https://github.com/bufbuild/buf/releases/download/v1.14.0/buf-$(uname -s)-$(uname -m)" \
       -o "/usr/local/bin/buf" && \
     chmod +x "/usr/local/bin/buf"
 
@@ -26,18 +24,19 @@ RUN yarn install --immutable && \
 	yarn build && \
     apk del -q .build-deps
 
-## Publish ##
+## App ##
 FROM node:18-alpine as app
 
-# canvas deps
+## Canvas dependencies
 RUN apk add -q --update && \
 	apk add -q --update cairo jpeg pango giflib
 
+COPY --from=builder temp/prisma/generated prisma/generated/
+COPY --from=builder temp/prisma/migrations prisma/migrations/
+COPY --from=builder temp/prisma/schema.prisma prisma/schema.prisma
 COPY --from=builder temp/package.json ./
 COPY --from=builder temp/node_modules node_modules/
 COPY --from=builder temp/dist dist/
 COPY --from=builder assets/ assets/
 
-EXPOSE 8600 8601
-
-CMD ["yarn", "run", "start"]
+CMD ["yarn", "run", "start:migrate"]
