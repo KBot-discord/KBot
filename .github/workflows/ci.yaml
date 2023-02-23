@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: rpc-artifact
-          path: src/rpc/gen
+          path: src/lib/rpc/gen
 
   lint:
     name: Lint
@@ -62,7 +62,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: rpc-artifact
-          path: src/rpc/gen
+          path: src/lib/rpc/gen
 
       - name: Install dependencies
         run: yarn --immutable
@@ -92,7 +92,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: rpc-artifact
-          path: src/rpc/gen
+          path: src/lib/rpc/gen
 
       - name: Install dependencies
         run: yarn --immutable
@@ -148,7 +148,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: rpc-artifact
-          path: src/rpc/gen
+          path: src/lib/rpc/gen
 
       - name: Install dependencies
         run: yarn --immutable
