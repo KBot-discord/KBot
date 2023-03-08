@@ -20,22 +20,22 @@ export function loadConfig(): void {
 			token: envGetString('DISCORD_TOKEN'),
 			id: envGetString('DISCORD_ID'),
 			secret: envGetString('DISCORD_SECRET'),
-			devServers: isDev ? ['953375922990506005', '965896749317226496'] : []
+			devServers: [] // isDev ? ['953375922990506005', '965896749317226496'] : []
+		},
+		web: {
+			url: envGetString('WEB_URL')
 		},
 		api: {
-			port: envGetNumber('API_PORT')
+			host: envGetString('API_HOST'),
+			port: envGetNumber('API_PORT'),
+			auth: {
+				cookie: envGetString('API_AUTH_COOKIE'),
+				domain: envGetString('API_AUTH_DOMAIN')
+			}
 		},
 		rpc: {
 			server: {
-				port: envGetNumber('SERVER_RPC_PORT')
-			},
-			youtube: {
-				host: envGetString('YOUTUBE_RPC_HOST'),
-				port: envGetNumber('YOUTUBE_RPC_PORT')
-			},
-			twitter: {
-				host: envGetString('TWITTER_RPC_HOST'),
-				port: envGetNumber('TWITTER_RPC_PORT')
+				port: envGetNumber('RPC_SERVER_PORT')
 			}
 		},
 		db: {
@@ -46,6 +46,11 @@ export function loadConfig(): void {
 			host: envGetString('REDIS_HOST'),
 			port: envGetNumber('REDIS_PORT'),
 			password: envGetString('REDIS_PASS')
+		},
+		meili: {
+			host: envGetString('MEILI_HOST'),
+			port: envGetNumber('MEILI_PORT'),
+			apiKey: envGetString('MEILI_APIKEY')
 		},
 		observability: {
 			metrics: {
@@ -63,6 +68,20 @@ export function loadConfig(): void {
 			secret: envGetString('TWITCH_SECRET'),
 			bearer: envGetString('TWITCH_BEARER'),
 			callback: envGetString('TWITCH_CALLBACK')
+		},
+		youtube: {
+			apiKey: envGetString('YOUTUBE_APIKEY'),
+			pubsub: {
+				secret: envGetString('YOUTUBE_PUBSUB_SECRET')
+			}
+		},
+		premium: {
+			patreon: {
+				clientId: envGetString('PREMIUM_PATREON_ID'),
+				clientSecret: envGetString('PREMIUM_PATREON_SECRET'),
+				accessToken: envGetString('PREMIUM_PATREON_ACCESS'),
+				refreshToken: envGetString('PREMIUM_PATREON_REFRESH')
+			}
 		}
 	};
 
@@ -76,7 +95,7 @@ export function loadConfig(): void {
 
 export const moduleConfig: ModuleConfig = {
 	commands: {
-		strategy: CommandConfigOptionsStrategy.Global,
+		strategy: CommandConfigOptionsStrategy.Overwrite,
 		options: {
 			runIn: [CommandOptionsRunTypeEnum.GuildAny]
 		}

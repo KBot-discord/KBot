@@ -34,7 +34,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 				builder //
 					.setName('antihoist')
 					.setDescription(this.description)
-					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -64,8 +64,12 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 			case 'toggle': {
 				return this.chatInputToggle(interaction);
 			}
-			default: {
+			case 'settings': {
 				return this.chatInputSettings(interaction);
+			}
+			default: {
+				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
+				return interaction.errorReply('Something went wrong.');
 			}
 		}
 	}

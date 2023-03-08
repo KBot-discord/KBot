@@ -1,9 +1,10 @@
-import { ModerationAction } from '#lib/structures/ModerationAction';
+import { ModerationAction } from '#structures/ModerationAction';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<ModuleCommand.Options>({
@@ -64,6 +65,19 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 				guildIds: this.container.config.discord.devServers
 			}
 		);
+	}
+
+	public override async autocompleteRun(interaction: ModuleCommand.AutocompleteInteraction<'cached'>): Promise<void> {
+		const muteEntries = await this.module.mutes.getByGuild({ guildId: interaction.guildId });
+		if (muteEntries.length === 0) return interaction.respond([]);
+
+		const userData = await Promise.all(muteEntries.map(({ id }) => interaction.guild.members.fetch(id)));
+
+		const userOptions: ApplicationCommandOptionChoiceData[] = userData //
+			.filter((e) => !isNullish(e))
+			.map((user) => ({ name: user!.displayName, value: user!.id }));
+
+		return interaction.respond(userOptions);
 	}
 
 	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {

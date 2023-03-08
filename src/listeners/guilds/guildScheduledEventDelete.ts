@@ -1,6 +1,6 @@
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Events, GuildScheduledEventEntityType } from 'discord.js';
+import { Events } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import type { GuildScheduledEvent } from 'discord.js';
 
@@ -11,14 +11,20 @@ export class GuildListener extends Listener {
 	public async run(guildScheduledEvent: GuildScheduledEvent): Promise<void> {
 		const { events } = this.container;
 
-		if (guildScheduledEvent.channelId && guildScheduledEvent.entityType === GuildScheduledEventEntityType.StageInstance) {
+		if (guildScheduledEvent.channelId) {
 			const settings = await events.getSettings(guildScheduledEvent.guildId);
 			if (isNullish(settings) || !settings.enabled) return;
 
-			const active = await events.karaoke.isEventActive(guildScheduledEvent.guildId, guildScheduledEvent.channelId);
-			if (active) return;
+			const exists = await events.karaoke.eventExists({
+				guildId: guildScheduledEvent.guildId,
+				eventId: guildScheduledEvent.channelId
+			});
+			if (!exists) return;
 
-			await events.karaoke.deleteEvent(guildScheduledEvent.channelId);
+			await events.karaoke.deleteScheduledEvent({
+				guildId: guildScheduledEvent.guildId,
+				eventId: guildScheduledEvent.channelId
+			});
 		}
 	}
 }

@@ -3,14 +3,14 @@ import { getGuildIcon } from '#utils/Discord';
 import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { container } from '@sapphire/framework';
 import type { EmbedBuilder, Guild, Message, User } from 'discord.js';
-import type { Subscription } from '#rpc/youtube';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
+import type { YoutubeSubscriptionWithChannel } from '#types/database';
 
 export class YoutubeMenu extends Menu {
 	private guild;
-	private subscriptions: Subscription[];
+	private subscriptions: YoutubeSubscriptionWithChannel[];
 
-	public constructor(guild: Guild, subscriptions: Subscription[]) {
+	public constructor(guild: Guild, subscriptions: YoutubeSubscriptionWithChannel[]) {
 		super();
 		this.guild = guild;
 		this.subscriptions = subscriptions;
@@ -48,10 +48,8 @@ export class YoutubeMenu extends Menu {
 	}
 
 	private buildEmbeds(): EmbedBuilder[] {
-		const { youtube } = container.notifications;
-
 		return this.subscriptions.map((subscription) => {
-			return youtube.buildSubscriptionEmbed(this.guild, subscription);
+			return container.youtube.buildSubscriptionEmbed(this.guild, subscription);
 		});
 	}
 }

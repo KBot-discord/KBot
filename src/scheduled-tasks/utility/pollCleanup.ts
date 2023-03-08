@@ -1,8 +1,9 @@
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
+import dayjs from 'dayjs';
 
 @ApplyOptions<ScheduledTask.Options>({
-	pattern: '0 0 12 * * ?' // Every day at 12pm
+	pattern: '0 0 12 * * *' // Every day at 12pm
 })
 export class PollTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
@@ -10,11 +11,11 @@ export class PollTask extends ScheduledTask {
 	}
 
 	public override async run(): Promise<void> {
-		const date = new Date();
-		date.setDate(date.getMonth() + 1);
+		const date = dayjs().add(1, 'month').toDate();
 
-		await this.container.prisma.poll.deleteMany({
-			where: { createdAt: { gte: date } }
+		const result = await this.container.prisma.poll.deleteMany({
+			where: { createdAt: { lte: date } }
 		});
+		this.container.logger.info(`[PollCleanup] Cleaned up ${result.count} polls`);
 	}
 }

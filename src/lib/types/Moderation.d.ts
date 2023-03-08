@@ -1,4 +1,4 @@
-import type { ModerationActionType } from '#lib/structures/ModerationAction';
+import type { ModerationActionType } from '#structures/ModerationAction';
 
 interface BaseModerationContext {
 	reason?: string | null;

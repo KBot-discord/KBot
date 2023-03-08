@@ -4,21 +4,21 @@ export interface ClientConfig {
 		token: string;
 		id: string;
 		secret: string;
-		devServers: string[];
+		devServers: Array<string>;
+	};
+	web: {
+		url: string;
 	};
 	api: {
+		host: string;
 		port: number;
+		auth: {
+			cookie: string;
+			domain: string;
+		};
 	};
 	rpc: {
 		server: {
-			port: number;
-		};
-		youtube: {
-			host: string;
-			port: number;
-		};
-		twitter: {
-			host: string;
 			port: number;
 		};
 	};
@@ -30,6 +30,11 @@ export interface ClientConfig {
 		host: string;
 		port: number;
 		password: string;
+	};
+	meili: {
+		host: string;
+		port: number;
+		apiKey: string;
 	};
 	observability: {
 		metrics: {
@@ -47,5 +52,19 @@ export interface ClientConfig {
 		secret: string;
 		bearer: string;
 		callback: string;
+	};
+	youtube: {
+		apiKey: string;
+		pubsub: {
+			secret: string;
+		};
+	};
+	premium: {
+		patreon: {
+			clientId: string;
+			clientSecret: string;
+			accessToken: string;
+			refreshToken: string;
+		};
 	};
 }

@@ -112,7 +112,7 @@ export class ModerationAction {
 
 		await target.roles.add(this.settings.muteRoleId!, `Reason: ${reason ?? 'No reason provided'}. (Muted by: ${this.moderator.id})`);
 
-		await container.moderation.cases.createCase(target, this.moderator, {
+		await container.moderation.cases.create(target, this.moderator, {
 			type: ModerationActionType.MUTE,
 			reason: defaultReason,
 			duration
@@ -147,7 +147,7 @@ export class ModerationAction {
 
 		await target.roles.remove(this.settings.muteRoleId!, `Reason: ${reason ?? 'No reason provided'}. (Unmuted by: ${this.moderator.user.tag})`);
 
-		await container.moderation.mutes.deleteTask(target.guild.id, target.id);
+		await container.moderation.mutes.deleteTask({ guildId: target.guild.id, userId: target.id });
 
 		if (!silent) {
 			container.client.emit(KBotEvents.ModerationLog, {
@@ -176,7 +176,7 @@ export class ModerationAction {
 
 		await target.timeout(duration, `${reason ?? 'No reason provided'} (Timed out by: ${this.moderator.user.tag})`);
 
-		await container.moderation.cases.createCase(target, this.moderator, {
+		await container.moderation.cases.create(target, this.moderator, {
 			type: ModerationActionType.TIMEOUT,
 			reason: defaultReason,
 			duration

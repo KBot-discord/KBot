@@ -1,5 +1,5 @@
-import { WelcomeHandler } from '#lib/structures/handlers/WelcomeHandler';
-import { MinageHandler } from '#lib/structures/handlers/MinageHandler';
+import { MinageHandler } from '#structures/handlers/MinageHandler';
+import { WelcomeHandler } from '#structures/handlers/WelcomeHandler';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';

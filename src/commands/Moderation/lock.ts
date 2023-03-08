@@ -1,4 +1,4 @@
-import { parseTimeString } from '#utils';
+import { parseTimeString } from '#utils/functions';
 import { EmbedColors, Emoji } from '#utils/constants';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -89,7 +89,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		}
 		 */
 
-		const existingLock = await lockedChannels.fetch(channel.id);
+		const existingLock = await lockedChannels.get({ discordChannelId: channel.id });
 		if (!isNullish(existingLock)) {
 			return interaction.errorReply(`${channel.name} is already locked.`);
 		}
@@ -118,7 +118,8 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 
 		await lockedChannels.setChannelMessagePermissions(channel, role.id, false);
 
-		await lockedChannels.create(channel.id, {
+		await lockedChannels.create({
+			id: channel.id,
 			guildId: interaction.guildId,
 			roleId: role.id,
 			duration: expiresAt ? BigInt(expiresAt) : undefined

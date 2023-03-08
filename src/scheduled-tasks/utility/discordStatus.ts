@@ -1,11 +1,11 @@
 import { DISCORD_STATUS_BASE, StatusEmbed } from '#utils/constants';
-import { IncidentNotification } from '#lib/structures/IncidentNotification';
+import { IncidentNotification } from '#structures/IncidentNotification';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
-import type { StatusPageIncident, StatusPageResult } from '#lib/types/DiscordStatus';
-import type { IncidentMessage } from '#prisma';
+import type { StatusPageIncident, StatusPageResult } from '#types/DiscordStatus';
+import type { IncidentMessage, Prisma } from '#prisma';
 
 interface DatabaseIncidentData {
 	updatedAt: Date | undefined;
@@ -13,7 +13,7 @@ interface DatabaseIncidentData {
 }
 
 @ApplyOptions<ScheduledTask.Options>({
-	pattern: '0 */5 * ? * *' // Every 5 minutes
+	pattern: '0 */5 * * * *' // Every 5 minutes
 })
 export class DiscordStatusTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
@@ -32,6 +32,7 @@ export class DiscordStatusTask extends ScheduledTask {
 				},
 				FetchResultTypes.JSON
 			);
+			this.container.logger.debug(`[DiscordStatus] Fetched ${incidents.length} incidents`);
 
 			const dbIncidents = await this.container.prisma.discordIncident.findMany({
 				where: { id: { in: incidents.map((incident) => incident.id) } },
@@ -94,14 +95,20 @@ export class DiscordStatusTask extends ScheduledTask {
 
 		await Promise.all(
 			invalidNotifications.map(({ guildId }) => {
-				return utility.upsertSettings(guildId, {
-					incidentChannelId: null
-				});
+				return utility.settings.upsert(
+					{ guildId },
+					{
+						incidentChannelId: null
+					}
+				);
 			})
 		);
 
 		if (newIncident) {
-			const messages: IncidentMessage[] = sendMessageResult.map((notification) => notification.getData());
+			const messages: Prisma.IncidentMessageCreateManyIncidentInput[] = sendMessageResult.map((notification) => {
+				const data = notification.getData();
+				return { id: data.id, guildId: data.guildId, channelId: data.channelId };
+			});
 
 			await prisma.$transaction([
 				...invalidNotifications.map(({ channelId }) => {

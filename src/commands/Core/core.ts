@@ -27,7 +27,7 @@ export class ModerationCommand extends ModuleCommand<CoreModule> {
 				builder //
 					.setName('core')
 					.setDescription(this.description)
-					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -44,8 +44,12 @@ export class ModerationCommand extends ModuleCommand<CoreModule> {
 	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
-			default: {
+			case 'settings': {
 				return this.chatInputSettings(interaction);
+			}
+			default: {
+				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
+				return interaction.errorReply('Something went wrong.');
 			}
 		}
 	}
@@ -57,16 +61,9 @@ export class ModerationCommand extends ModuleCommand<CoreModule> {
 	}
 
 	private showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: CoreSettings | null) {
-		const staffRoles =
-			settings && settings.staffRoles.length > 0 //
-				? settings.staffRoles //
-						.map((id) => ` ${roleMention(id)}`)
-						.toString()
-				: 'No roles set';
-
 		const botManagers =
-			settings && settings.botManagers.length > 0 //
-				? settings.botManagers //
+			settings && settings.botManagerRoles.length > 0 //
+				? settings.botManagerRoles //
 						.map((id) => ` ${roleMention(id)}`)
 						.toString()
 				: 'No roles set';
@@ -74,10 +71,7 @@ export class ModerationCommand extends ModuleCommand<CoreModule> {
 		const embed = new EmbedBuilder()
 			.setColor(EmbedColors.Default)
 			.setAuthor({ name: 'Core module settings', iconURL: getGuildIcon(interaction.guild) })
-			.addFields([
-				{ name: 'Staff roles', value: staffRoles, inline: true },
-				{ name: 'Bot managers', value: botManagers, inline: true }
-			]);
+			.addFields([{ name: 'Bot managers', value: botManagers, inline: true }]);
 
 		return interaction.editReply({ embeds: [embed] });
 	}

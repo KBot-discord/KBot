@@ -4,7 +4,7 @@ import { isNullish } from '@sapphire/utilities';
 import { ChannelType } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
-import type { EventUser } from '#prisma';
+import type { KaraokeUser } from '#prisma';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.VoiceStateUpdate
@@ -14,7 +14,7 @@ export class ReadyListener extends Listener {
 		const { events, validator } = this.container;
 		const client = await newState.guild.members.fetchMe();
 
-		const result = await validator.client.hasPermissions(newState.guild, [
+		const result = await validator.client.hasChannelPermissions(newState.channel, [
 			PermissionFlagsBits.ManageEvents,
 			PermissionFlagsBits.MuteMembers,
 			PermissionFlagsBits.MoveMembers,
@@ -35,27 +35,38 @@ export class ReadyListener extends Listener {
 		if (isNullish(settings) || !settings.enabled) return;
 
 		// Check if the event exists
-		const exists = await events.karaoke.doesEventExist(oldState.guild.id, eventId);
+		const exists = await events.karaoke.eventExists({
+			guildId: oldState.guild.id,
+			eventId
+		});
 		if (!exists) return;
 
 		// Check if the event is active
-		const eventActive = await events.karaoke.isEventActive(oldState.guild.id, eventId);
+		const eventActive = await events.karaoke.eventActive({
+			guildId: oldState.guild.id,
+			eventId
+		});
 		if (!eventActive) return;
 
 		// Get the event from the database
-		const event = await events.karaoke.fetchEventWithQueue(eventId);
+		const event = await events.karaoke.getEventWithQueue({ eventId });
 		if (isNullish(event)) return;
 
-		//
-		if (!newState.serverMute && newState.channelId === eventId && isNullish(oldState.channel)) {
+		// Mute new joins
+		if (
+			newState.channel?.type === ChannelType.GuildVoice &&
+			!newState.serverMute &&
+			newState.channelId === eventId &&
+			isNullish(oldState.channel)
+		) {
 			await newState.setMute(true);
 			return;
 		}
 
 		const { queue } = event;
 
-		// Filter if the user is not in the queue
-		if (!this.isUserInQueue(queue, oldState.id)) return;
+		// Filter if queue is empty or the user is not in the queue
+		if (queue.length === 0 || !this.isUserInQueue(queue, oldState.id)) return;
 
 		if (queue[0].partnerId) {
 			const firstUser = await newState.guild.members.fetch(queue[0].id);
@@ -91,7 +102,7 @@ export class ReadyListener extends Listener {
 			);
 			if (isNullish(user)) return;
 
-			await events.karaoke.removeUserFromQueue(oldState.id, { id: user.id, partnerId: user.partnerId ?? undefined });
+			await events.karaoke.removeUserFromQueue({ eventId }, { id: user.id, partnerId: user.partnerId ?? undefined });
 
 			await textChannel.send({
 				content: user.partnerId ? `<@${user.id}> & <@${user.partnerId}> have left the queue.` : `<@${user.id}> has left the queue.`,
@@ -107,7 +118,7 @@ export class ReadyListener extends Listener {
 		}
 	}
 
-	private isUserInQueue(queue: EventUser[], userId: string) {
+	private isUserInQueue(queue: KaraokeUser[], userId: string) {
 		return queue.some((user) => user.id === userId);
 	}
 }

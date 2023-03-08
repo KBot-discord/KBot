@@ -1,4 +1,4 @@
-import { ModerationAction } from '#lib/structures/ModerationAction';
+import { ModerationAction } from '#structures/ModerationAction';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';

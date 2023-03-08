@@ -34,7 +34,7 @@ export class ModerationCaseMenu extends Menu {
 		const { cases } = container.moderation;
 
 		return this.moderationCases.map((moderationCase) => {
-			return cases.buildCaseEmbed(moderationCase);
+			return cases.buildEmbed(moderationCase);
 		});
 	}
 }

@@ -1,0 +1,119 @@
+import {
+	CoreSettingsService,
+	FeatureFlags,
+	GetCoreSettingsRequest,
+	GetCoreSettingsResponse,
+	GetGuildFeatureFlagsRequest,
+	GetGuildFeatureFlagsResponse,
+	UpdateCoreSettingsRequest,
+	UpdateCoreSettingsResponse
+} from '#rpc/bot';
+import { authenticated } from '#rpc/middlewares';
+import { canManageGuild } from '#utils/Discord';
+import { container } from '@sapphire/framework';
+import { Code, ConnectError, HandlerContext } from '@bufbuild/connect';
+import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
+import type { PartialMessage } from '@bufbuild/protobuf';
+
+export function registerCoreSettingsService(router: ConnectRouter) {
+	router.service(CoreSettingsService, new CoreSettingsServiceImpl());
+}
+
+class CoreSettingsServiceImpl implements ServiceImpl<typeof CoreSettingsService> {
+	@authenticated()
+	public async getCoreSettings({ guildId }: GetCoreSettingsRequest, { auth, error }: HandlerContext): Promise<GetCoreSettingsResponse> {
+		const { logger, client, core } = container;
+		if (error) throw error;
+		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
+
+		const guild = await client.guilds.cache.get(guildId);
+		const member = await guild?.members.fetch(auth.id).catch(() => null);
+		if (!guild || !member) throw new ConnectError('Bad request', 400);
+
+		const canManage = await canManageGuild(guild, member);
+		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
+
+		try {
+			const settings = await core.getSettings(guildId);
+
+			const data: PartialMessage<GetCoreSettingsResponse> = { settings: settings ?? undefined };
+
+			return new GetCoreSettingsResponse(data);
+		} catch (err: unknown) {
+			logger.error(err);
+			throw new ConnectError('Internal server error', Code.Internal);
+		}
+	}
+
+	@authenticated()
+	public async getGuildFeatureFlags(
+		{ guildId }: GetGuildFeatureFlagsRequest,
+		{ auth, error }: HandlerContext
+	): Promise<GetGuildFeatureFlagsResponse> {
+		const { logger, client, core } = container;
+		if (error) throw error;
+		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
+
+		const guild = await client.guilds.cache.get(guildId);
+		const member = await guild?.members.fetch(auth.id).catch(() => null);
+		if (!guild || !member) throw new ConnectError('Bad request', 400);
+
+		const canManage = await canManageGuild(guild, member);
+		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
+
+		try {
+			const settings = await core.getSettings(guildId);
+			if (!settings) {
+				return new GetGuildFeatureFlagsResponse({ flags: [] });
+			}
+
+			const data: PartialMessage<GetGuildFeatureFlagsResponse> = {
+				flags: settings.flags.map((flag) => {
+					switch (flag) {
+						case 'DEV':
+							return FeatureFlags.DEV;
+						case 'BETA':
+							return FeatureFlags.BETA;
+						default:
+							return FeatureFlags.UNDEFINED;
+					}
+				})
+			};
+
+			return new GetGuildFeatureFlagsResponse(data);
+		} catch (err: unknown) {
+			logger.error(err);
+			throw new ConnectError('Internal server error', Code.Internal);
+		}
+	}
+
+	@authenticated()
+	public async updateCoreSettings(
+		{ guildId, botManagerRoles }: UpdateCoreSettingsRequest,
+		{ auth, error }: HandlerContext
+	): Promise<UpdateCoreSettingsResponse> {
+		const { logger, client, core } = container;
+		if (error) throw error;
+		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
+
+		const guild = await client.guilds.cache.get(guildId);
+		const member = await guild?.members.fetch(auth.id).catch(() => null);
+		if (!guild || !member) throw new ConnectError('Bad request', 400);
+
+		const canManage = await canManageGuild(guild, member);
+		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
+
+		try {
+			const settings = await core.upsertSettings(guildId, {
+				botManagerRoles
+			});
+
+			const data: PartialMessage<UpdateCoreSettingsResponse> = { settings };
+
+			return new UpdateCoreSettingsResponse(data);
+		} catch (err: unknown) {
+			logger.error(err);
+			throw new ConnectError('Internal server error', Code.Internal);
+		}
+	}
+}

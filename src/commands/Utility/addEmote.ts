@@ -9,7 +9,7 @@ import { isNullish } from '@sapphire/utilities';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { Message, ModalSubmitInteraction } from 'discord.js';
-import type { EmoteCredit } from '#lib/types/CustomIds';
+import type { EmoteCredit } from '#types/CustomIds';
 import type { UtilityModule } from '#modules/UtilityModule';
 
 interface EmojiData {

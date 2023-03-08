@@ -90,8 +90,12 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			case 'queue': {
 				return this.chatInputQueue(interaction);
 			}
-			default: {
+			case 'help': {
 				return this.chatInputHelp(interaction);
+			}
+			default: {
+				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
+				return interaction.errorReply('Something went wrong.');
 			}
 		}
 	}
@@ -105,12 +109,12 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.isEventActive(guildId, eventId);
+		const active = await karaoke.eventActive({ guildId, eventId });
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to join.');
 		}
 
-		const event = await karaoke.fetchEventWithQueue(eventId);
+		const event = await karaoke.getEventWithQueue({ eventId });
 		if (isNullish(event)) {
 			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
 		}
@@ -120,10 +124,13 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			return interaction.errorReply(reason);
 		}
 
-		const updatedEvent = await karaoke.addUserToQueue(eventId, {
-			id: member.id,
-			name: member.displayName
-		});
+		const updatedEvent = await karaoke.addUserToQueue(
+			{ eventId },
+			{
+				id: member.id,
+				name: member.displayName
+			}
+		);
 
 		if (updatedEvent.queue.length === 1) {
 			await karaoke.setUserToSinger(interaction.guild.members, updatedEvent.queue[0]);
@@ -147,7 +154,7 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.isEventActive(guildId, eventId);
+		const active = await karaoke.eventActive({ guildId, eventId });
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to join.');
 		}
@@ -157,7 +164,7 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			return interaction.defaultReply('That user is not in this server.');
 		}
 
-		const event = await karaoke.fetchEventWithQueue(eventId);
+		const event = await karaoke.getEventWithQueue({ eventId });
 		if (isNullish(event)) {
 			return interaction.defaultReply("Something went wrong. The bot's dev had been notified of the error.");
 		}
@@ -178,12 +185,15 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 
 		await interaction.successReply(`Successfully joined queue as a duet with ${userMention(partner.id)}.`);
 
-		const updatedEvent = await karaoke.addUserToQueue(eventId, {
-			id: member.id,
-			name: member.displayName,
-			partnerId: partner.id,
-			partnerName: partner.displayName
-		});
+		const updatedEvent = await karaoke.addUserToQueue(
+			{ eventId },
+			{
+				id: member.id,
+				name: member.displayName,
+				partnerId: partner.id,
+				partnerName: partner.displayName
+			}
+		);
 
 		if (updatedEvent.queue.length === 1) {
 			await karaoke.setUserToSinger(interaction.guild.members, updatedEvent.queue[0]);
@@ -207,12 +217,12 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.isEventActive(interaction.guildId, eventId);
+		const active = await karaoke.eventActive({ guildId: interaction.guildId, eventId });
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to leave from.');
 		}
 
-		const event = await karaoke.fetchEventWithQueue(eventId);
+		const event = await karaoke.getEventWithQueue({ eventId });
 		if (isNullish(event)) {
 			return interaction.defaultReply("Something went wrong. The bot's dev had been notified of the error.");
 		}
@@ -226,7 +236,7 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
 			await karaoke.rotateQueue(interaction.guild.members, event, textChannel);
 		} else {
-			await karaoke.removeUserFromQueue(eventId, { id: userEntry.id, partnerId: userEntry.partnerId ?? undefined });
+			await karaoke.removeUserFromQueue({ eventId }, { id: userEntry.id, partnerId: userEntry.partnerId ?? undefined });
 
 			if (userEntry.partnerId) {
 				const ping = member.id === userEntry.id ? userEntry.partnerId : userEntry.id;
@@ -251,12 +261,12 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.isEventActive(guildId, eventId);
+		const active = await karaoke.eventActive({ guildId, eventId });
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to show the queue for.');
 		}
 
-		const event = await karaoke.fetchEventWithQueue(eventId);
+		const event = await karaoke.getEventWithQueue({ eventId });
 		if (isNullish(event)) {
 			return interaction.defaultReply('There is no event to show.');
 		}
@@ -270,7 +280,7 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 	public async chatInputHelp(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const { karaoke } = this.module;
 
-		const events = await karaoke.fetchEventsByGuildId(interaction.guildId);
+		const events = await karaoke.getEventByGuild({ guildId: interaction.guildId });
 		const formattedEvents =
 			events.length === 0
 				? []

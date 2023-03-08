@@ -1,5 +1,5 @@
 import type { KBotErrors } from '#types/Enums';
-import type { KBotError } from '../structures/KBotError';
+import type { KBotError } from '#structures/KBotError';
 import type { CommandInteraction } from 'discord.js';
 
 export interface ErrorPayload {

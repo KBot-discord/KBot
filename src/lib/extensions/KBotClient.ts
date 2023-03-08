@@ -1,61 +1,13 @@
-import { Validator } from '#utils/validators';
-import { PrismaClient } from '#prisma';
-import { RedisClient } from '#lib/extensions/RedisClient';
-import { KBotMetrics } from '#lib/observability/metrics';
-import { rootFolder } from '#utils/constants';
+import { transformLoginData } from '#utils/Discord';
 import { container, LogLevel, SapphireClient } from '@sapphire/framework';
-import { IntentsBitField } from 'discord.js';
+import { ActivityType, IntentsBitField, OAuth2Scopes } from 'discord.js';
 import { ScheduledTaskRedisStrategy } from '@sapphire/plugin-scheduled-tasks/register-redis';
-import * as Sentry from '@sentry/node';
-import { RewriteFrames } from '@sentry/integrations';
-import type { ClientOptions } from 'discord.js';
 
 export class KBotClient extends SapphireClient {
-	public constructor(options: ClientOptions) {
-		super(options);
-	}
-
-	public override async login(token: string): Promise<string> {
-		return super.login(token);
-	}
-
-	public override async destroy(): Promise<void> {
-		await container.prisma.$disconnect();
-		container.redis.disconnect();
-		return super.destroy();
-	}
-
-	public static async preLogin(): Promise<ClientOptions> {
+	public constructor() {
 		const { config } = container;
-
-		if (!config.isDev) {
-			Sentry.init({
-				dsn: config.sentry.dsn,
-				tracesSampleRate: 0.2,
-				integrations: [
-					new Sentry.Integrations.Modules(),
-					new Sentry.Integrations.FunctionToString(),
-					new Sentry.Integrations.LinkedErrors(),
-					new Sentry.Integrations.Console(),
-					new Sentry.Integrations.Http({ breadcrumbs: true, tracing: true }),
-					new RewriteFrames({ root: rootFolder })
-				]
-			});
-		}
-
-		container.validator = new Validator();
-		container.metrics = new KBotMetrics();
-
-		container.prisma = new PrismaClient({
-			datasources: {
-				database: {
-					url: container.config.db.url
-				}
-			}
-		});
-		container.redis = new RedisClient();
-
-		return {
+		super({
+			disableMentionPrefix: true,
 			intents: [
 				IntentsBitField.Flags.Guilds,
 				IntentsBitField.Flags.GuildMembers,
@@ -65,14 +17,23 @@ export class KBotClient extends SapphireClient {
 			allowedMentions: {},
 			presence: {
 				status: 'online',
-				activities: [{ name: '/help', type: 0 }]
+				activities: [{ name: '/help', type: ActivityType.Playing }]
 			},
 			logger: {
 				level: config.isDev ? LogLevel.Debug : LogLevel.Info
 			},
 			api: {
+				origin: config.web.url,
 				listenOptions: {
 					port: config.api.port
+				},
+				auth: {
+					id: config.discord.id,
+					secret: config.discord.secret,
+					cookie: config.api.auth.cookie,
+					scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
+					domainOverwrite: config.api.auth.domain,
+					transformers: [transformLoginData]
 				}
 			},
 			tasks: {
@@ -91,6 +52,18 @@ export class KBotClient extends SapphireClient {
 				enabled: true,
 				loadModuleErrorListeners: true
 			}
-		};
+		});
+	}
+
+	public override async login(token: string): Promise<string> {
+		return super.login(token);
+	}
+
+	public override async destroy(): Promise<void> {
+		await Promise.allSettled([
+			container.prisma.$disconnect(), //
+			container.redis.quit()
+		]);
+		return super.destroy();
 	}
 }

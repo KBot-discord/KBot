@@ -4,7 +4,7 @@ import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { container } from '@sapphire/framework';
 import type { EmbedBuilder, Guild, Message, User } from 'discord.js';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
-import type { TwitchSubWithAcc } from '#types/repositories/TwitchRepository';
+import type { TwitchSubWithAcc } from '#types/database/Twitch';
 
 export class TwitchMenu extends Menu {
 	private guild;
@@ -48,10 +48,8 @@ export class TwitchMenu extends Menu {
 	}
 
 	private buildEmbeds(): EmbedBuilder[] {
-		const { twitch } = container.notifications;
-
 		return this.subscriptions.map((subscription) => {
-			return twitch.buildSubscriptionEmbed(this.guild, subscription);
+			return container.twitch.buildSubscriptionEmbed(this.guild, subscription);
 		});
 	}
 }

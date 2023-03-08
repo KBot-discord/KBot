@@ -21,6 +21,14 @@ services:
     networks:
       - KBot-network
 
+  meili:
+    image: getmeili/meilisearch:v1.0.2
+    container_name: meili_kbot
+    ports:
+      - "127.0.0.1:7700:7700"
+    networks:
+      - KBot-network
+
 networks:
   KBot-network:
     external: true

@@ -10,7 +10,7 @@
 	],
 	"settings": {
 		"import/parsers": {
-			"@typescript-eslint/parser": [".ts"]
+			"@typescript-eslint/parser": [".ts", ".d.ts"]
 		},
 		"import/resolver": {
 			"typescript": {
@@ -58,6 +58,12 @@
 			"files": ["Augments.ts"],
 			"rules": {
 				"no-multi-assign": 0
+			}
+		},
+		{
+			"files": ["Augments.d.ts"],
+			"rules": {
+				"@typescript-eslint/no-invalid-void-type": 0
 			}
 		}
 	]

@@ -1,4 +1,5 @@
 export interface PollResultPayload {
+	guildId: string;
 	pollId: string;
 }
 

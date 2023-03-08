@@ -4,7 +4,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, type ButtonInteraction } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import type { PollOption } from '#lib/types/CustomIds';
+import type { PollOption } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
@@ -16,9 +16,18 @@ export class ButtonHandler extends InteractionHandler {
 		const { polls } = this.container.utility;
 
 		try {
-			await polls.updateUser({
-				userId: interaction.user.id,
+			const active = await polls.isActive({
+				guildId: interaction.guildId,
+				pollId: interaction.message.id
+			});
+			if (!active) {
+				return interaction.defaultFollowup('That poll is not active.', true);
+			}
+
+			await polls.upsertVote({
+				guildId: interaction.guildId,
 				pollId: interaction.message.id,
+				userId: interaction.user.id,
 				option
 			});
 

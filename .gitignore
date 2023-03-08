@@ -2,7 +2,7 @@
 dist
 prisma/generated
 prisma/seed
-src/lib/rpc/gen
+src/rpc/gen
 
 ## Development ##
 infra

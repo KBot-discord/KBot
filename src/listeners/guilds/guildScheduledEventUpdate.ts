@@ -18,13 +18,22 @@ export class GuildListener extends Listener {
 			oldGuildScheduledEvent.entityType !== GuildScheduledEventEntityType.External &&
 			newGuildScheduledEvent.entityType === GuildScheduledEventEntityType.External
 		) {
+			const {
+				guildId,
+				channel: { id: eventId }
+			} = oldGuildScheduledEvent;
 			const settings = await events.getSettings(newGuildScheduledEvent.guildId);
 			if (isNullish(settings) || !settings.enabled) return;
 
-			const active = await events.karaoke.isEventActive(oldGuildScheduledEvent.guildId, oldGuildScheduledEvent.channel.id);
+			const exists = await events.karaoke.eventExists({ guildId, eventId });
+			if (!exists) return;
+
+			const active = await events.karaoke.eventActive({ guildId, eventId });
 			if (active) return;
 
-			await events.karaoke.deleteEvent(oldGuildScheduledEvent.channel.id);
+			await events.karaoke.deleteEvent({
+				eventId: oldGuildScheduledEvent.channel.id
+			});
 			return;
 		}
 
@@ -32,7 +41,11 @@ export class GuildListener extends Listener {
 			oldGuildScheduledEvent.status === GuildScheduledEventStatus.Scheduled &&
 			newGuildScheduledEvent.status === GuildScheduledEventStatus.Active
 		) {
-			const result = await validator.client.hasPermissions(oldGuildScheduledEvent.guild, [
+			const {
+				guildId,
+				channel: { id: eventId }
+			} = oldGuildScheduledEvent;
+			const result = await validator.client.hasChannelPermissions(oldGuildScheduledEvent.channel, [
 				PermissionFlagsBits.ManageEvents,
 				PermissionFlagsBits.MuteMembers,
 				PermissionFlagsBits.MoveMembers,
@@ -43,13 +56,15 @@ export class GuildListener extends Listener {
 			const settings = await events.getSettings(newGuildScheduledEvent.guildId);
 			if (isNullish(settings) || !settings.enabled) return;
 
-			const exists = await events.karaoke.doesEventExist(oldGuildScheduledEvent.guildId, oldGuildScheduledEvent.channel.id);
+			const exists = await events.karaoke.eventExists({ guildId, eventId });
 			if (!exists) return;
 
-			const active = await events.karaoke.isEventActive(oldGuildScheduledEvent.guildId, oldGuildScheduledEvent.channel.id);
+			const active = await events.karaoke.eventActive({ guildId, eventId });
 			if (active) return;
 
-			const event = await events.karaoke.fetchEvent(oldGuildScheduledEvent.channel.id);
+			const event = await events.karaoke.getEvent({
+				eventId: oldGuildScheduledEvent.channel.id
+			});
 			if (isNullish(event)) return;
 
 			await events.karaoke.startScheduledEvent(oldGuildScheduledEvent.guild, event, oldGuildScheduledEvent.name);

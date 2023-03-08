@@ -1,6 +1,6 @@
 import { KaraokeCustomIds } from '#utils/constants';
 import { parseCustomId } from '#utils/customIds';
-import { KaraokeEventMenu } from '#lib/structures/menus/KaraokeEventMenu';
+import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
@@ -17,17 +17,23 @@ export class ButtonHandler extends InteractionHandler {
 		const { karaoke } = this.container.events;
 
 		try {
-			const exists = await karaoke.doesEventExist(interaction.guildId, eventId);
+			const exists = await karaoke.eventExists({
+				guildId: interaction.guildId,
+				eventId
+			});
 			if (!exists) {
 				return interaction.defaultReply('There is no event to start. Run `/manage karaoke menu` to see the updated menu.');
 			}
 
-			const active = await karaoke.isEventActive(interaction.guildId, eventId);
+			const active = await karaoke.eventActive({
+				guildId: interaction.guildId,
+				eventId
+			});
 			if (active) {
 				return interaction.defaultReply('The event is already active. Run `/manage karaoke menu` to see the updated menu.');
 			}
 
-			const event = await karaoke.fetchEvent(eventId);
+			const event = await karaoke.getEvent({ eventId });
 			const scheduledEvent = await interaction.guild.scheduledEvents.fetch(event!.discordEventId!);
 
 			await karaoke.startScheduledEvent(interaction.guild, event!, scheduledEvent.name);

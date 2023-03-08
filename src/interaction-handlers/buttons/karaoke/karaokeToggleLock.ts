@@ -1,5 +1,5 @@
 import { KaraokeCustomIds } from '#utils/constants';
-import { KaraokeEventMenu } from '#lib/structures/menus/KaraokeEventMenu';
+import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { parseCustomId } from '#utils/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
@@ -17,7 +17,10 @@ export class ButtonHandler extends InteractionHandler {
 		const { karaoke } = this.container.events;
 
 		try {
-			const exists = await karaoke.doesEventExist(interaction.guildId, eventId);
+			const exists = await karaoke.eventExists({
+				guildId: interaction.guildId,
+				eventId
+			});
 			if (!exists) {
 				return interaction.defaultFollowup(
 					'There is no event to change the lock for. Run `/manage karaoke menu` to see the updated menu.',
@@ -25,12 +28,15 @@ export class ButtonHandler extends InteractionHandler {
 				);
 			}
 
-			const active = await karaoke.isEventActive(interaction.guildId, eventId);
+			const active = await karaoke.eventActive({
+				guildId: interaction.guildId,
+				eventId
+			});
 			if (active) {
 				return interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
 			}
 
-			const event = await karaoke.fetchEvent(eventId);
+			const event = await karaoke.getEvent({ eventId });
 
 			if (shouldLock && event!.locked) {
 				return interaction.defaultFollowup('Queue is already locked.', true);
@@ -39,7 +45,7 @@ export class ButtonHandler extends InteractionHandler {
 				return interaction.defaultFollowup('Queue is already unlocked.', true);
 			}
 
-			const updatedEvent = await karaoke.updateQueueLock(eventId, !event!.locked);
+			const updatedEvent = await karaoke.updateQueueLock({ eventId }, !event!.locked);
 
 			const updatedPage = KaraokeEventMenu.pageUpdateLock(menu, updatedEvent);
 			return menu.updatePage(updatedPage);

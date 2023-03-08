@@ -8,11 +8,6 @@ import type { Guild } from 'discord.js';
 })
 export class GuildListener extends Listener {
 	public async run(guild: Guild): Promise<void> {
-		await Promise.all([
-			this.container.core.deleteSettings(guild.id), //
-			this.container.notifications.deleteSettings(guild.id)
-		]);
-
 		this.container.redis.deleteScanKeys(`${baseCacheKey(guild.id)}:*`);
 	}
 }

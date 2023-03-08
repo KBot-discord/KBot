@@ -1,4 +1,3 @@
-import PollUserModel from './PollUser.model';
 import UtilitySettingsModel from '../UtilitySettings.model';
 import { createModel } from 'schemix';
 
@@ -10,8 +9,6 @@ export default createModel('Poll', (model) => {
 		.bigInt('time', { optional: true })
 		.string('options', { list: true })
 		.dateTime('createdAt', { default: { now: true } })
-
-		.relation('users', PollUserModel, { list: true })
 
 		.string('guildId', { unique: true })
 		.relation('utilitySettings', UtilitySettingsModel, { fields: ['guildId'], references: ['guildId'], onDelete: 'Cascade' });

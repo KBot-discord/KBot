@@ -1,6 +1,6 @@
 import { getMemberAvatarUrl } from '#utils/Discord';
 import { EmbedColors } from '#utils/constants';
-import { ReportHandler, ReportButtons } from '#lib/structures/handlers/ReportHandler';
+import { ReportHandler, ReportButtons } from '#structures/handlers/ReportHandler';
 import { KBotErrors } from '#types/Enums';
 import { ReportCustomIds } from '#utils/customIds/report';
 import { ApplicationCommandType, ButtonStyle, MessageType, PermissionFlagsBits } from 'discord-api-types/v10';

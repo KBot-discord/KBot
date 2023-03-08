@@ -1,6 +1,6 @@
 import { EmbedColors, Emoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
-import { MinageHandler } from '#lib/structures/handlers/MinageHandler';
+import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
@@ -35,7 +35,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 				builder //
 					.setName('minage')
 					.setDescription(this.description)
-					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -105,8 +105,12 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 			case 'unset': {
 				return this.chatInputUnset(interaction);
 			}
-			default: {
+			case 'settings': {
 				return this.chatInputSettings(interaction);
+			}
+			default: {
+				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
+				return interaction.errorReply('Something went wrong.');
 			}
 		}
 	}

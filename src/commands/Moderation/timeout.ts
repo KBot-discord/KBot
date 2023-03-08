@@ -1,5 +1,5 @@
-import { ModerationAction } from '#lib/structures/ModerationAction';
-import { parseTimeString } from '#utils';
+import { ModerationAction } from '#structures/ModerationAction';
+import { parseTimeString } from '#utils/functions';
 import { KBotErrors } from '#types/Enums';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';

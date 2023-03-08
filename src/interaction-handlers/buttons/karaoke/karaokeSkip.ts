@@ -16,17 +16,23 @@ export class ButtonHandler extends InteractionHandler {
 		const { karaoke } = this.container.events;
 
 		try {
-			const exists = await karaoke.doesEventExist(interaction.guildId, eventId);
+			const exists = await karaoke.eventExists({
+				guildId: interaction.guildId,
+				eventId
+			});
 			if (!exists) {
 				return interaction.defaultFollowup('There is no event to skip. Run `/manage karaoke menu` to see the updated menu.', true);
 			}
 
-			const active = await karaoke.isEventActive(interaction.guildId, eventId);
+			const active = await karaoke.eventActive({
+				guildId: interaction.guildId,
+				eventId
+			});
 			if (active) {
 				return interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
 			}
 
-			const event = await karaoke.fetchEventWithQueue(eventId);
+			const event = await karaoke.getEventWithQueue({ eventId });
 
 			if (event!.queue.length === 0) {
 				return interaction.defaultReply('There is no user to skip.');

@@ -15,10 +15,19 @@ export class GuildListener extends Listener {
 		const settings = await this.container.moderation.getSettings(member.guild.id);
 		if (isNullish(settings) || !settings.enabled) return;
 
-		const existingMute = await mutes.fetch(member.id, member.guild.id);
+		const existingMute = await mutes.get({
+			guildId: member.guild.id,
+			userId: member.id
+		});
 		if (isNullish(existingMute)) return;
 
-		await mutes.updateEvade(member.id, member.guild.id, BigInt(Date.now()));
-		await mutes.deleteTask(member.id, member.guild.id);
+		await mutes.update(
+			{
+				guildId: member.guild.id,
+				userId: member.id
+			},
+			{ evadeTime: BigInt(Date.now()) }
+		);
+		await mutes.deleteTask({ guildId: member.guild.id, userId: member.id });
 	}
 }

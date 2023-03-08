@@ -3,7 +3,7 @@ import { createModel } from 'schemix';
 
 export default createModel('IncidentMessage', (model) => {
 	model
-		.string('id', { unique: true }) // Message ID
+		.string('id', { unique: true })
 		.string('channelId')
 		.string('guildId')
 

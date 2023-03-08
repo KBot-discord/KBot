@@ -1,35 +1,32 @@
-import { ModerationSettingsRepository } from '#repositories';
-import { MuteSubmodule, LockedChannelSubmodule, AntiHoistSubmodule, ModerationCaseSubmodule } from '#submodules';
-import { ModerationAction } from '#lib/structures/ModerationAction';
+import { ModerationAction } from '#structures/ModerationAction';
+import { MuteService, LockedChannelService, AntiHoistService, ModerationCaseService, ModerationSettingsService } from '#services/moderation';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { GuildMember } from 'discord.js';
-import type { UpsertModerationSettingsData } from '#types/repositories';
+import type { UpsertModerationSettingsData } from '#types/database';
 import type { ModerationSettings } from '#prisma';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Moderation Module'
 })
 export class ModerationModule extends Module {
-	public readonly cases: ModerationCaseSubmodule;
-	public readonly lockedChannels: LockedChannelSubmodule;
-	public readonly mutes: MuteSubmodule;
-	public readonly antiHoist: AntiHoistSubmodule;
-
-	private readonly repository: ModerationSettingsRepository;
+	public readonly settings: ModerationSettingsService;
+	public readonly antiHoist: AntiHoistService;
+	public readonly cases: ModerationCaseService;
+	public readonly lockedChannels: LockedChannelService;
+	public readonly mutes: MuteService;
 
 	public constructor(context: Module.Context, options: Module.Options) {
 		super(context, { ...options });
 
-		this.cases = new ModerationCaseSubmodule();
-		this.lockedChannels = new LockedChannelSubmodule();
-		this.mutes = new MuteSubmodule();
-		this.antiHoist = new AntiHoistSubmodule();
-
-		this.repository = new ModerationSettingsRepository();
+		this.antiHoist = new AntiHoistService();
+		this.settings = new ModerationSettingsService();
+		this.cases = new ModerationCaseService();
+		this.lockedChannels = new LockedChannelService();
+		this.mutes = new MuteService();
 
 		this.container.moderation = this;
 	}
@@ -41,18 +38,11 @@ export class ModerationModule extends Module {
 	}
 
 	public async getSettings(guildId: string): Promise<ModerationSettings | null> {
-		return this.repository.findOne({ guildId });
-	}
-
-	public async getCounts(guildId: string): Promise<[number, number]> {
-		return Promise.all([
-			this.lockedChannels.count(guildId), //
-			this.mutes.count(guildId)
-		]);
+		return this.settings.get({ guildId });
 	}
 
 	public async upsertSettings(guildId: string, data: UpsertModerationSettingsData): Promise<ModerationSettings> {
-		return this.repository.upsert({ guildId }, data);
+		return this.settings.upsert({ guildId }, data);
 	}
 
 	public async checkExistingMute(member: GuildMember, config: ModerationSettings): Promise<boolean> {
@@ -61,7 +51,10 @@ export class ModerationModule extends Module {
 			return false;
 		}
 
-		const existingMute = await this.mutes.fetch(member.id, member.guild.id);
+		const existingMute = await this.mutes.get({
+			guildId: member.guild.id,
+			userId: member.id
+		});
 		if (isNullish(existingMute)) return false;
 
 		await new ModerationAction(config, await member.guild.members.fetchMe()) //

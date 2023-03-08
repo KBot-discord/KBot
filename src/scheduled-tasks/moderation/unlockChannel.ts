@@ -20,18 +20,18 @@ export class LockedChannelTask extends ScheduledTask {
 			moderation: { lockedChannels }
 		} = this.container;
 
-		const lockEntry = await lockedChannels.fetch(channelId);
+		const lockEntry = await lockedChannels.get({ discordChannelId: channelId });
 		if (isNullish(lockEntry)) return;
 
 		const channel = (await client.channels.fetch(channelId)) as GuildTextBasedChannel | null;
 		if (isNullish(channel) || (channel.isThread() && isNullish(channel.parentId))) {
-			await lockedChannels.delete(channelId);
+			await lockedChannels.delete({ discordChannelId: channelId });
 			return;
 		}
 
 		await lockedChannels.setChannelMessagePermissions(channel, lockEntry.roleId, null);
 
-		await lockedChannels.delete(channel.id);
+		await lockedChannels.delete({ discordChannelId: channel.id });
 
 		await channel.send({
 			embeds: [

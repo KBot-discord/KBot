@@ -1,22 +1,24 @@
+import type { MeilisearchClient } from '#extensions/MeiliClient';
 import type { GuildMember, User, CommandInteraction, Message, InteractionResponse } from 'discord.js';
-import type { KBotError } from '#lib/structures/KBotError';
+import type { KBotError } from '#structures/KBotError';
 import type { KBotEvents } from '#types/Events';
-import type { KBotMetrics } from '#lib/observability/metrics';
+import type { KBotMetrics } from '#observability/KBotMetrics';
 import type { APIMessage } from 'discord-api-types/v10';
 import type { ClientConfig } from './Config';
-import type { RedisClient } from '#lib/extensions/RedisClient';
+import type { RedisClient } from '#extensions/RedisClient';
 import type { ModerationSettings, PrismaClient } from '#prisma';
 import type { Validator } from '#utils/validators';
 import type { KBotErrors } from '#utils/constants';
 import type { CoreModule } from '#modules/CoreModule';
 import type { EventModule } from '#modules/EventModule';
 import type { ModerationModule } from '#modules/ModerationModule';
-import type { NotificationModule } from '#modules/NotificationModule';
+import type { PremiumModule } from '#modules/PremiumModule';
+import type { TwitchModule } from '#modules/TwitchModule';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { WelcomeModule } from '#modules/WelcomeModule';
+import type { YoutubeModule } from '#modules/YoutubeModule';
 import type { ModerationActionContext } from '#types/Moderation';
 
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export type InteractionResponseUnion = void | APIMessage | Message<boolean> | InteractionResponse<boolean>;
 
 declare module 'discord.js' {
@@ -65,13 +67,16 @@ declare module '@sapphire/pieces' {
 
 		prisma: PrismaClient;
 		redis: RedisClient;
+		meili: MeilisearchClient;
 
 		core: CoreModule;
 		events: EventModule;
 		moderation: ModerationModule;
-		notifications: NotificationModule;
+		premium: PremiumModule;
+		twitch: TwitchModule;
 		utility: UtilityModule;
 		welcome: WelcomeModule;
+		youtube: YoutubeModule;
 	}
 }
 

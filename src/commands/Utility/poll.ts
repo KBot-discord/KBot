@@ -1,7 +1,7 @@
-import { parseTimeString } from '#utils';
-import { EmbedColors, Emoji, POLL_NUMBERS, POLL_TIME_LIMIT, PollCustomIds } from '#utils/constants';
+import { PollMenu } from '#structures/menus/PollMenu';
 import { buildCustomId } from '#utils/customIds';
-import { PollMenu } from '#lib/structures/menus/PollMenu';
+import { EmbedColors, Emoji, POLL_NUMBERS, POLL_TIME_LIMIT, PollCustomIds } from '#utils/constants';
+import { parseTimeString } from '#utils/functions';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
@@ -52,20 +52,20 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 							)
 							.addStringOption((option) =>
 								option //
-									.setName('time')
-									.setDescription('Time the poll will run for. Set nothing for no time limit.')
-									.setRequired(false)
-							)
-							.addStringOption((option) =>
-								option //
 									.setName('option1')
 									.setDescription('Option 1')
-									.setRequired(false)
+									.setRequired(true)
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option2')
 									.setDescription('Option 2')
+									.setRequired(true)
+							)
+							.addStringOption((option) =>
+								option //
+									.setName('time')
+									.setDescription('Time the poll will run for. Set nothing for no time limit.')
 									.setRequired(false)
 							)
 							.addStringOption((option) =>
@@ -134,8 +134,12 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 			case 'create': {
 				return this.chatInputCreate(interaction);
 			}
-			default: {
+			case 'menu': {
 				return this.chatInputMenu(interaction);
+			}
+			default: {
+				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
+				return interaction.errorReply('Something went wrong.');
 			}
 		}
 	}
@@ -166,19 +170,25 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 		});
 
 		if (isNullish(expiresAt)) {
-			await polls.create(pollMessage.guildId, pollMessage.id, {
-				title: text,
-				options,
-				channelId: pollMessage.channelId
-			});
+			await polls.create(
+				{ guildId: pollMessage.guildId, pollId: pollMessage.id },
+				{
+					title: text,
+					options,
+					channelId: pollMessage.channelId
+				}
+			);
 		} else {
-			await polls.create(pollMessage.guildId, pollMessage.id, {
-				title: text,
-				options,
-				time: BigInt(expiresAt),
-				channelId: pollMessage.channelId
-			});
-			polls.createTask(expiresIn!, { pollId: pollMessage.id });
+			await polls.create(
+				{ guildId: pollMessage.guildId, pollId: pollMessage.id },
+				{
+					title: text,
+					options,
+					time: BigInt(expiresAt),
+					channelId: pollMessage.channelId
+				}
+			);
+			polls.createTask(expiresIn!, { guildId: pollMessage.guildId, pollId: pollMessage.id });
 		}
 
 		await pollMessage.edit({

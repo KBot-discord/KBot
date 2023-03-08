@@ -36,11 +36,11 @@ export class WelcomeHandler {
 		const embed = this.createTemplateEmbed(settings.color, settings.image);
 
 		if (settings.title) {
-			const title = WelcomeModule.formatWelcomeText(settings.title, this.member);
+			const title = WelcomeModule.formatText(settings.title, this.member);
 			embed.setTitle(title);
 		}
 		if (settings.description) {
-			const desc = WelcomeModule.formatWelcomeText(settings.description, this.member);
+			const desc = WelcomeModule.formatText(settings.description, this.member);
 			embed.setDescription(desc);
 		}
 
@@ -50,7 +50,7 @@ export class WelcomeHandler {
 	}
 
 	private async withMessage(channel: GuildTextBasedChannel, settings: WelcomeSettings) {
-		const message = WelcomeModule.formatWelcomeText(settings.message!, this.member);
+		const message = WelcomeModule.formatText(settings.message!, this.member);
 
 		return channel.send({
 			content: message,
@@ -62,15 +62,15 @@ export class WelcomeHandler {
 		const embed = this.createTemplateEmbed(settings.color, settings.image);
 
 		if (settings.title) {
-			const title = WelcomeModule.formatWelcomeText(settings.title, this.member);
+			const title = WelcomeModule.formatText(settings.title, this.member);
 			embed.setTitle(title);
 		}
 		if (settings.description) {
-			const desc = WelcomeModule.formatWelcomeText(settings.description, this.member);
+			const desc = WelcomeModule.formatText(settings.description, this.member);
 			embed.setDescription(desc);
 		}
 
-		const message = WelcomeModule.formatWelcomeText(settings.message!, this.member);
+		const message = WelcomeModule.formatText(settings.message!, this.member);
 
 		return channel.send({
 			content: message,

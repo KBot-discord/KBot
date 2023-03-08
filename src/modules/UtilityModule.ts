@@ -1,26 +1,23 @@
-import { UtilitySettingsRepository } from '#repositories';
-import { PollSubmodule } from '#submodules';
+import { PollService, UtilitySettingsService } from '#services/utility';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { UtilitySettings } from '#prisma';
-import type { UpsertUtilitySettingsData } from '#types/repositories';
+import type { UpsertUtilitySettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Utility Module'
 })
 export class UtilityModule extends Module {
-	public readonly polls: PollSubmodule;
-
-	private readonly repository: UtilitySettingsRepository;
+	public readonly settings: UtilitySettingsService;
+	public readonly polls: PollService;
 
 	public constructor(context: Module.Context, options: Module.Options) {
 		super(context, { ...options });
 
-		this.polls = new PollSubmodule();
-
-		this.repository = new UtilitySettingsRepository();
+		this.settings = new UtilitySettingsService();
+		this.polls = new PollService();
 
 		this.container.utility = this;
 	}
@@ -32,15 +29,15 @@ export class UtilityModule extends Module {
 	}
 
 	public async getSettings(guildId: string): Promise<UtilitySettings | null> {
-		return this.repository.findOne({ guildId });
+		return this.settings.get({ guildId });
 	}
 
 	public async upsertSettings(guildId: string, data: UpsertUtilitySettingsData): Promise<UtilitySettings> {
-		return this.repository.upsert({ guildId }, data);
+		return this.settings.upsert({ guildId }, data);
 	}
 
 	public async fetchIncidentChannels() {
-		return this.repository.findManyWithIncidentChannel();
+		return this.settings.getIncidentChannels();
 	}
 }
 

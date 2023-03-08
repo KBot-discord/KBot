@@ -7,4 +7,4 @@ dist
 infra
 node_modules
 prisma/generated
-src/lib/rpc/gen
+src/rpc/gen

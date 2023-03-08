@@ -5,7 +5,7 @@ import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
 import type { StatusPageResult } from '#types/DiscordStatus';
 
 @ApplyOptions<ScheduledTask.Options>({
-	pattern: '0 0 0 1 * ?' // The first of every month
+	pattern: '0 0 0 1 * *' // The first of every month
 })
 export class DiscordStatusTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
@@ -22,9 +22,10 @@ export class DiscordStatusTask extends ScheduledTask {
 				FetchResultTypes.JSON
 			);
 
-			await this.container.prisma.discordIncident.deleteMany({
+			const result = await this.container.prisma.discordIncident.deleteMany({
 				where: { NOT: { id: { in: incidents.map((incident) => incident.id) } } }
 			});
+			this.container.logger.info(`[DiscordStatusCleanup] Cleaned up ${result.count} incidents`);
 		} catch (error) {
 			this.container.logger.error(`Error during discord incident cleanup task:\n`, error);
 		}

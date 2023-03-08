@@ -9,7 +9,7 @@ infra
 node_modules
 prisma/generated
 prisma/seed
-src/lib/rpc/gen
+src/rpc/gen
 tests
 Dockerfile
 .env*

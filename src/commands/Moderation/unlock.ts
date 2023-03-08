@@ -5,7 +5,7 @@ import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { EmbedBuilder } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { GuildTextBasedChannel } from 'discord.js';
+import type { GuildTextBasedChannel, ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<ModuleCommand.Options>({
@@ -50,13 +50,26 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		);
 	}
 
+	public override async autocompleteRun(interaction: ModuleCommand.AutocompleteInteraction<'cached'>): Promise<void> {
+		const lockedChannelEntries = await this.module.lockedChannels.getByGuild({ guildId: interaction.guildId });
+		if (lockedChannelEntries.length === 0) return interaction.respond([]);
+
+		const channelData = await Promise.all(lockedChannelEntries.map(({ id }) => interaction.guild.channels.fetch(id)));
+
+		const channelOptions: ApplicationCommandOptionChoiceData[] = channelData //
+			.filter((e) => !isNullish(e))
+			.map((channel) => ({ name: channel!.name, value: channel!.id }));
+
+		return interaction.respond(channelOptions);
+	}
+
 	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const { lockedChannels } = this.module;
 
 		const channelId = interaction.options.getString('channel') ?? interaction.channelId!;
 		const channel = (await interaction.guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
 		if (isNullish(channel)) {
-			await lockedChannels.delete(channelId);
+			await lockedChannels.delete({ discordChannelId: channelId });
 			return interaction.errorReply('That channel does not exist.');
 		}
 
@@ -66,7 +79,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		}
 		 */
 
-		const existingLock = await lockedChannels.fetch(channel.id);
+		const existingLock = await lockedChannels.get({ discordChannelId: channel.id });
 		if (isNullish(existingLock)) {
 			return interaction.errorReply(`${channel.name} is already unlocked.`);
 		}
@@ -91,7 +104,7 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 
 		await lockedChannels.setChannelMessagePermissions(channel, existingLock.roleId, null);
 
-		await lockedChannels.delete(channel.id);
+		await lockedChannels.delete({ discordChannelId: channel.id });
 
 		if (!isNullish(existingLock.duration)) {
 			await lockedChannels.deleteTask(channel.id);

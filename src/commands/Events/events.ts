@@ -25,7 +25,7 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 				builder //
 					.setName('events')
 					.setDescription(this.description)
-					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -56,8 +56,12 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 			case 'toggle': {
 				return this.chatInputToggle(interaction);
 			}
-			default: {
+			case 'settings': {
 				return this.chatInputSettings(interaction);
+			}
+			default: {
+				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
+				return interaction.errorReply('Something went wrong.');
 			}
 		}
 	}
@@ -81,7 +85,7 @@ export class EventsCommand extends ModuleCommand<EventModule> {
 
 	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const settings = await this.module.getSettings(interaction.guildId);
-		const karaokeEventCount = await this.module.karaoke.countEvents(interaction.guildId);
+		const karaokeEventCount = await this.module.karaoke.countEvents({ guildId: interaction.guildId });
 
 		return interaction.editReply({
 			embeds: [

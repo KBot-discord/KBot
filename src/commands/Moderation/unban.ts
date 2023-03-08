@@ -1,4 +1,4 @@
-import { ModerationAction } from '#lib/structures/ModerationAction';
+import { ModerationAction } from '#structures/ModerationAction';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';

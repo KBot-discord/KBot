@@ -1,22 +1,22 @@
-import { WelcomeSettingsRepository } from '#repositories';
+import { WelcomeSettingsService } from '#services/welcome';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { WelcomeSettings } from '#prisma';
-import type { UpsertWelcomeSettingsData } from '#types/repositories';
+import type { UpsertWelcomeSettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Welcome Module'
 })
 export class WelcomeModule extends Module {
-	private readonly repository: WelcomeSettingsRepository;
+	private readonly settings: WelcomeSettingsService;
 
 	public constructor(context: Module.Context, options: Module.Options) {
 		super(context, { ...options });
 
-		this.repository = new WelcomeSettingsRepository();
+		this.settings = new WelcomeSettingsService();
 
 		this.container.welcome = this;
 	}
@@ -28,14 +28,14 @@ export class WelcomeModule extends Module {
 	}
 
 	public async getSettings(guildId: string): Promise<WelcomeSettings | null> {
-		return this.repository.findOne({ guildId });
+		return this.settings.get({ guildId });
 	}
 
 	public async upsertSettings(guildId: string, data: UpsertWelcomeSettingsData): Promise<WelcomeSettings> {
-		return this.repository.upsert({ guildId }, data);
+		return this.settings.upsert({ guildId }, data);
 	}
 
-	public static formatWelcomeText(text: string, member: GuildMember) {
+	public static formatText(text: string, member: GuildMember) {
 		return text
 			.replaceAll(/({nl})/g, '\n')
 			.replaceAll(/({@member})/g, `<@${member.id}>`)

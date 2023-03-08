@@ -79,7 +79,7 @@ export class PollMenu extends Menu {
 		} = container;
 		const { guild } = this;
 
-		const fetchedPolls = await polls.fetchByGuildId(guild.id!);
+		const fetchedPolls = await polls.getByGuild({ guildId: guild.id });
 		this.polls = fetchedPolls ?? [];
 
 		if (fetchedPolls.length === 0) {

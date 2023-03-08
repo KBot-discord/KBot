@@ -10,8 +10,8 @@ export class PollTask extends ScheduledTask {
 		super(context, { ...options });
 	}
 
-	public override async run({ pollId }: PollResultPayload): Promise<void> {
-		await this.container.utility.polls.end(pollId);
+	public override async run({ guildId, pollId }: PollResultPayload): Promise<void> {
+		await this.container.utility.polls.end({ guildId, pollId });
 	}
 }
 

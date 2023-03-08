@@ -3,7 +3,7 @@ import { createModel } from 'schemix';
 
 export default createModel('LockedChannel', (model) => {
 	model
-		.string('id', { id: true, unique: true }) // Channel ID
+		.string('id', { id: true, unique: true })
 		.string('roleId')
 		.bigInt('duration', { optional: true })
 

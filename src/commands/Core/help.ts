@@ -1,12 +1,11 @@
 import { EmbedColors } from '#utils/constants';
-import { Collection, EmbedBuilder } from 'discord.js';
-import { container } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
-import type { Command } from '@sapphire/framework';
 
 @ApplyOptions<ModuleCommand.Options>({
 	module: 'CoreModule',
@@ -29,7 +28,14 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 					.setName('help')
 					.setDescription(this.description)
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-					.setDMPermission(true),
+					.setDMPermission(true)
+					.addStringOption((option) =>
+						option //
+							.setName('command')
+							.setDescription('Get info about a specific command.')
+							.setAutocomplete(true)
+							.setRequired(false)
+					),
 			{
 				idHints: [],
 				guildIds: this.container.config.discord.devServers
@@ -37,19 +43,28 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		const avatar = interaction.client.user!.displayAvatarURL();
-		const display = await this.createDisplay(avatar);
-		await display.run(interaction, interaction.user);
-		return interaction;
+	public override async autocompleteRun(interaction: ModuleCommand.AutocompleteInteraction<'cached'>): Promise<void> {
+		const search = interaction.options.getString('command', true);
+		const result = await this.container.meili.get('commands', search);
+
+		const options: ApplicationCommandOptionChoiceData[] = result.hits.map(({ name }) => ({ name, value: name }));
+
+		return interaction.respond(options);
 	}
 
-	private async createDisplay(avatar: string) {
-		const commandsByCategory = await CoreCommand.getCommands();
+	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		await interaction.deferReply();
+		const option = interaction.options.getString('command');
+		if (option) {
+			return this.displayCommandInfo(interaction, option);
+		}
+
+		const avatar = interaction.client.user!.displayAvatarURL();
+		const modules = this.container.stores.get('modules');
 
 		const display = new PaginatedMessage({
 			template: new EmbedBuilder().setColor(EmbedColors.Default)
-		}).setSelectMenuOptions((pageIndex) => ({ label: commandsByCategory.keyAt(pageIndex - 1)! }));
+		}).setSelectMenuOptions((pageIndex) => ({ label: modules.keyAt(pageIndex - 1)! }));
 
 		display.addPageEmbed((embed) =>
 			embed
@@ -63,11 +78,11 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 				)
 		);
 
-		for (const [category, commands] of commandsByCategory) {
-			if (commands.length) {
+		for (const { commands } of modules.values()) {
+			if (commands.size) {
 				display.addPageEmbed((embed) =>
 					embed
-						.setAuthor({ name: `${category} commands`, iconURL: avatar })
+						.setAuthor({ name: `${module} commands`, iconURL: avatar })
 						.setDescription(
 							commands
 								.map((cmd) => `**${cmd.supportsChatInputCommands() ? '[S]' : '[C]'} ${cmd.name}**\n${cmd.detailedDescription}`)
@@ -76,25 +91,25 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 				);
 			}
 		}
-		return display;
+
+		await display.run(interaction, interaction.user);
 	}
 
-	private static getCommands() {
-		const commands = container.stores.get('commands');
-		const filteredCommands = new Collection<string, Command[]>();
+	public async displayCommandInfo(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, option: string) {
+		const command = this.container.stores.get('commands').get(option);
+		if (!command) {
+			return interaction.errorReply('That command does not exist.');
+		}
 
-		filteredCommands.set('Bot info', []);
+		const description = (command.detailedDescription ?? command.description) as string;
 
-		commands.map((command) => {
-			const category = filteredCommands.get(command.category!);
-			if (category) return category.push(command);
-			return filteredCommands.set(command.category!, [command]);
-		});
-
-		return filteredCommands.sort((_: Command[], __: Command[], firstCategory: string, secondCategory: string) => {
-			if (firstCategory > secondCategory) return 1;
-			if (secondCategory > firstCategory) return -1;
-			return 0;
+		return interaction.editReply({
+			embeds: [
+				new EmbedBuilder() //
+					.setColor(EmbedColors.Default)
+					.setTitle(command.name)
+					.setDescription(description)
+			]
 		});
 	}
 }

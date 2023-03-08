@@ -7,7 +7,7 @@ import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
 import type { Guild, GuildChannel, Message, User } from 'discord.js';
-import type { Event } from '#prisma';
+import type { KaraokeEvent } from '#prisma';
 import type { KaraokeMenuButton } from '#types/CustomIds';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 
@@ -19,7 +19,7 @@ const KaraokeEventActions: { id: string; text: string; emoji: string | null }[] 
 
 export class KaraokeEventMenu extends Menu {
 	private guild;
-	private events: { event: Event; channel: GuildChannel }[] = [];
+	private events: { event: KaraokeEvent; channel: GuildChannel }[] = [];
 
 	public constructor(guild: Guild) {
 		super();
@@ -110,7 +110,7 @@ export class KaraokeEventMenu extends Menu {
 		const { guild } = this;
 
 		this.events = await Promise.all(
-			((await karaoke.fetchEventsByGuildId(guild.id!)) ?? []).map(async (event) => ({
+			((await karaoke.getEventByGuild({ guildId: guild.id })) ?? []).map(async (event) => ({
 				event,
 				channel: (await client.channels.fetch(event.id)) as GuildChannel
 			}))
@@ -141,7 +141,7 @@ export class KaraokeEventMenu extends Menu {
 		);
 	}
 
-	public static pageUpdateLock(menu: Menu, event: Event): MenuPageBuilder {
+	public static pageUpdateLock(menu: Menu, event: KaraokeEvent): MenuPageBuilder {
 		const page = menu.getCurrentPage();
 
 		// use !event.locked since we are looking for the old value

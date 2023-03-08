@@ -11,6 +11,6 @@
 		"vitest.config.ts"
 	],
 	"exclude": [
-      "src/lib/rpc/gen"
+      "src/rpc/gen"
 	]
 }

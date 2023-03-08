@@ -1,6 +1,6 @@
 import { getUserInfo, isWebhookMessage } from '#utils/Discord';
 import { EmbedColors } from '#utils/constants';
-import { ModerationAction } from '#lib/structures/ModerationAction';
+import { ModerationAction } from '#structures/ModerationAction';
 import { ActionRowBuilder, EmbedBuilder, InteractionCollector, ButtonBuilder, ComponentType } from 'discord.js';
 import { ButtonStyle, InteractionType, PermissionFlagsBits } from 'discord-api-types/v10';
 import type { ButtonInteraction, GuildMember, Message, GuildTextBasedChannel } from 'discord.js';

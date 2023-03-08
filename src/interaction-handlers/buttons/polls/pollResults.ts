@@ -2,9 +2,9 @@ import { EmbedColors, PollCustomIds } from '#utils/constants';
 import { parseCustomId } from '#utils/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ChannelType, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import type { ButtonInteraction } from 'discord.js';
+import type { ButtonInteraction, GuildTextBasedChannel } from 'discord.js';
 import type { PollMenuButton } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -14,22 +14,40 @@ export class ButtonHandler extends InteractionHandler {
 	private readonly customIds = [PollCustomIds.ResultsPublic, PollCustomIds.ResultsHidden];
 
 	public override async run(interaction: ButtonInteraction<'cached'>, { hidden, pollId }: InteractionHandler.ParseResult<this>) {
-		const { polls } = this.container.utility;
+		const {
+			client,
+			utility: { polls }
+		} = this.container;
 
 		try {
-			const poll = await polls.fetch(pollId);
+			const active = await polls.isActive({
+				guildId: interaction.guildId,
+				pollId
+			});
+			if (!active) {
+				return interaction.defaultFollowup('That poll is not active. Run `/poll menu` to see the updated menu.', true);
+			}
+
+			const poll = await polls.get({ pollId });
 			if (isNullish(poll)) {
-				return interaction.defaultReply('Poll already ended.');
+				return interaction.errorReply('There was an error when trying to show the poll results.');
 			}
 
-			const message = await this.container.client.channels
-				.fetch(poll.channelId)
-				.then((channel) => (channel?.type === ChannelType.GuildText ? channel.messages.fetch(poll.id) : null));
-			if (isNullish(message)) {
-				return interaction.errorReply('There was an error when checking the poll results.');
+			const channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
+			if (!channel) {
+				return interaction.errorReply("The channel that the poll was sent in doesn't exist anymore.");
 			}
 
-			const results = polls.calculateResults(poll);
+			const message = await channel.messages.fetch(pollId);
+			if (!message) {
+				return interaction.errorReply("The poll doesn't exist anymore.");
+			}
+
+			const votes = await polls.getVotes({
+				guildId: interaction.guildId,
+				pollId
+			});
+			const results = polls.calculateResults(poll, votes);
 
 			if (hidden) {
 				return interaction.editReply({

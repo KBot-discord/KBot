@@ -9,6 +9,12 @@ generator client {
   previewFeatures = ["tracing"]
 }
 
+enum FeatureFlags {
+  UNDEFINED
+  DEV
+  BETA
+}
+
 enum ModerationActionType {
   UNDEFINED
   BAN
@@ -20,19 +26,28 @@ enum ModerationActionType {
   UNTIMEOUT
 }
 
-model EventUser {
-  id          String   @id @unique
-  name        String
-  partnerId   String?  @unique
-  partnerName String?
-  createdAt   DateTime @default(now())
-  eventId     String   @unique
-  event       Event    @relation(fields: [eventId], references: [guildId], onDelete: Cascade)
+enum VideoStatus {
+  NONE
+  NEW
+  LIVE
+  UPCOMING
+  PAST
+  MISSING
+}
+
+model KaraokeUser {
+  id           String       @id @unique
+  name         String
+  partnerId    String?      @unique
+  partnerName  String?
+  createdAt    DateTime     @default(now())
+  eventId      String       @unique
+  karaokeEvent KaraokeEvent @relation(fields: [eventId], references: [guildId], onDelete: Cascade)
 
   @@unique([id, eventId])
 }
 
-model Event {
+model KaraokeEvent {
   id             String        @id @unique
   textChannelId  String
   locked         Boolean
@@ -40,16 +55,16 @@ model Event {
   pinMessageId   String?
   discordEventId String?
   roleId         String?
-  queue          EventUser[]
+  queue          KaraokeUser[]
   guildId        String        @unique
   eventSettings  EventSettings @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 }
 
 model EventSettings {
-  guildId      String       @id @unique
-  enabled      Boolean      @default(false)
-  events       Event[]
-  coreSettings CoreSettings @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+  guildId       String         @id @unique
+  enabled       Boolean        @default(false)
+  karaokeEvents KaraokeEvent[]
+  coreSettings  CoreSettings   @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 }
 
 model Mute {
@@ -72,19 +87,37 @@ model LockedChannel {
   moderationSettings ModerationSettings @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 }
 
+model ModerationCase {
+  id                 String               @default(uuid()) @database.Uuid
+  caseId             Int
+  userId             String
+  userTag            String
+  moderatorId        String
+  moderatorTag       String
+  type               ModerationActionType
+  reason             String               @default("No reason provided.")
+  duration           BigInt?
+  guildId            String
+  moderationSettings ModerationSettings   @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+
+  @@id([id])
+  @@unique([caseId, guildId])
+}
+
 model ModerationSettings {
-  guildId              String          @id @unique
-  enabled              Boolean         @default(false)
+  guildId              String           @id @unique
+  enabled              Boolean          @default(false)
   logChannelId         String?
   reportChannelId      String?
   muteRoleId           String?
-  minAccountAgeEnabled Boolean         @default(false)
+  minAccountAgeEnabled Boolean          @default(false)
   minAccountAgeReq     Int?
   minAccountAgeMsg     String?
-  antiHoistEnabled     Boolean         @default(false)
-  mutes                Mute[]
+  antiHoistEnabled     Boolean          @default(false)
   lockedChannels       LockedChannel[]
-  coreSettings         CoreSettings    @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+  moderationCases      ModerationCase[]
+  mutes                Mute[]
+  coreSettings         CoreSettings     @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 }
 
 model TwitchAccount {
@@ -96,33 +129,24 @@ model TwitchAccount {
 }
 
 model TwitchSubscription {
-  id                   String               @default(uuid()) @database.Uuid
-  message              String?
-  roleId               String?
-  discordChannelId     String?
-  accountId            String
-  account              TwitchAccount        @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  guildId              String               @unique
-  notificationSettings NotificationSettings @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+  id               String         @default(uuid()) @database.Uuid
+  message          String?
+  roleId           String?
+  discordChannelId String?
+  accountId        String
+  account          TwitchAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  guildId          String         @unique
+  twitchSettings   TwitchSettings @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 
   @@id([id])
   @@unique([guildId, accountId])
 }
 
-model NotificationSettings {
+model TwitchSettings {
   guildId      String               @id @unique
   enabled      Boolean              @default(false)
   twitch       TwitchSubscription[]
   coreSettings CoreSettings         @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
-}
-
-model PollUser {
-  id     String @unique
-  option Int
-  pollId String @unique
-  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
-
-  @@id([id, pollId])
 }
 
 model Poll {
@@ -132,7 +156,6 @@ model Poll {
   time            BigInt?
   options         String[]
   createdAt       DateTime        @default(now())
-  users           PollUser[]
   guildId         String          @unique
   utilitySettings UtilitySettings @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 }
@@ -158,31 +181,88 @@ model WelcomeSettings {
   coreSettings CoreSettings @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 }
 
-model CoreSettings {
-  guildId               String                @id @unique
-  staffRoles            String[]
-  botManagers           String[]
-  eventSettings         EventSettings?
-  moderationSettings    ModerationSettings?
-  notificationsSettings NotificationSettings?
-  utilitySettings       UtilitySettings?
-  welcomeSettings       WelcomeSettings?
+model YoutubeMessage {
+  id               String              @id @unique
+  discordChannelId String
+  videoId          String              @unique
+  video            YoutubeVideo        @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  subscriptionId   String              @unique @default(uuid()) @database.Uuid
+  subscription     YoutubeSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 }
 
-model ModerationCase {
-  id           String               @default(uuid()) @database.Uuid
-  caseId       Int
-  guildId      String
-  userId       String
-  userTag      String
-  moderatorId  String
-  moderatorTag String
-  type         ModerationActionType
-  reason       String               @default("No reason provided.")
-  duration     BigInt?
+model YoutubeVideo {
+  id                 String           @id @unique
+  title              String
+  thumbnail          String
+  status             VideoStatus
+  scheduledStartTime DateTime?
+  actualStartTime    DateTime?
+  actualEndTime      DateTime?
+  messages           YoutubeMessage[]
+  channelId          String
+  channel            YoutubeChannel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  updatedAt          DateTime         @updatedAt
+}
+
+model YoutubeChannel {
+  id            String                @id @unique
+  name          String
+  image         String
+  subscriptions YoutubeSubscription[]
+  streams       YoutubeVideo[]
+}
+
+model YoutubeSubscription {
+  id               String           @default(uuid()) @database.Uuid
+  message          String?
+  roleId           String?
+  discordChannelId String?
+  messages         YoutubeMessage[]
+  channelId        String
+  channel          YoutubeChannel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  guildId          String           @unique
+  youtubeSettings  YoutubeSettings  @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 
   @@id([id])
-  @@unique([caseId, guildId])
+  @@unique([channelId, guildId])
+}
+
+model YoutubeSettings {
+  guildId      String                @id @unique
+  enabled      Boolean               @default(false)
+  youtube      YoutubeSubscription[]
+  coreSettings CoreSettings          @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+}
+
+model CoreSettings {
+  guildId            String              @id @unique
+  botManagerRoles    String[]
+  flags              FeatureFlags[]
+  eventSettings      EventSettings?
+  moderationSettings ModerationSettings?
+  twitchSettings     TwitchSettings?
+  utilitySettings    UtilitySettings?
+  welcomeSettings    WelcomeSettings?
+  youtubeSettings    YoutubeSettings?
+}
+
+model PremiumUser {
+  id            String         @id @unique
+  totalClaims   Int
+  premiumClaims PremiumClaim[]
+}
+
+model PremiumClaim {
+  id        String      @default(uuid()) @database.Uuid
+  createdAt DateTime    @default(now())
+  startDate DateTime?
+  endDate   DateTime?
+  userId    String      @unique
+  user      PremiumUser @relation(fields: [userId], references: [id], onDelete: NoAction)
+  guildId   String      @unique
+
+  @@id([id])
+  @@unique([userId, guildId])
 }
 
 model IncidentMessage {

@@ -37,7 +37,7 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 				builder //
 					.setName('discordstatus')
 					.setDescription(this.description)
-					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -76,8 +76,12 @@ export class UtilityCommand extends ModuleCommand<UtilityModule> {
 			case 'unset': {
 				return this.chatInputUnset(interaction);
 			}
-			default: {
+			case 'settings': {
 				return this.chatInputSettings(interaction);
+			}
+			default: {
+				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
+				return interaction.errorReply('Something went wrong.');
 			}
 		}
 	}

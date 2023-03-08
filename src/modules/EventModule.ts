@@ -1,24 +1,22 @@
-import { EventSettingsRepository } from '#repositories';
-import { KaraokeSubmodule } from '#submodules';
+import { EventSettingsService, KaraokeService } from '#services/events';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { UpsertEventSettingsData } from '#types/repositories';
+import type { UpsertEventSettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Event Module'
 })
 export class EventModule extends Module {
-	public readonly karaoke: KaraokeSubmodule;
-
-	private readonly repository: EventSettingsRepository;
+	public readonly settings: EventSettingsService;
+	public readonly karaoke: KaraokeService;
 
 	public constructor(context: Module.Context, options: Module.Options) {
 		super(context, { ...options });
 
-		this.karaoke = new KaraokeSubmodule();
-		this.repository = new EventSettingsRepository();
+		this.settings = new EventSettingsService();
+		this.karaoke = new KaraokeService();
 
 		this.container.events = this;
 	}
@@ -30,11 +28,11 @@ export class EventModule extends Module {
 	}
 
 	public async getSettings(guildId: string) {
-		return this.repository.findOne({ guildId });
+		return this.settings.get({ guildId });
 	}
 
 	public async upsertSettings(guildId: string, data: UpsertEventSettingsData) {
-		return this.repository.upsert({ guildId }, data);
+		return this.settings.upsert({ guildId }, data);
 	}
 }
 

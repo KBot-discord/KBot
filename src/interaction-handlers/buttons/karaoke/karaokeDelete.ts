@@ -1,6 +1,6 @@
 import { KaraokeCustomIds } from '#utils/constants';
 import { parseCustomId } from '#utils/customIds';
-import { KaraokeEventMenu } from '#lib/structures/menus/KaraokeEventMenu';
+import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
@@ -22,17 +22,26 @@ export class ButtonHandler extends InteractionHandler {
 				return interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`);
 			}
 
-			const exists = await events.karaoke.doesEventExist(interaction.guildId, eventId);
+			const exists = await events.karaoke.eventExists({
+				guildId: interaction.guildId,
+				eventId
+			});
 			if (!exists) {
 				return interaction.defaultFollowup('There is no event to delete. Run `/manage karaoke menu` to see the updated menu.', true);
 			}
 
-			const active = await events.karaoke.isEventActive(interaction.guildId, eventId);
+			const active = await events.karaoke.eventActive({
+				guildId: interaction.guildId,
+				eventId
+			});
 			if (active) {
 				return interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
 			}
 
-			await events.karaoke.deleteScheduledEvent(eventId, interaction.guildId);
+			await events.karaoke.deleteScheduledEvent({
+				guildId: interaction.guildId,
+				eventId
+			});
 
 			const updatedPage = KaraokeEventMenu.pageDeleteScheduledEvent(menu);
 			return menu.updatePage(updatedPage);

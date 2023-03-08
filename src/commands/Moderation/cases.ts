@@ -1,4 +1,4 @@
-import { ModerationCaseMenu } from '#lib/structures/menus/ModerationCaseMenu';
+import { ModerationCaseMenu } from '#structures/menus/ModerationCaseMenu';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
@@ -90,8 +90,12 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 			case 'edit': {
 				return this.chatInputEdit(interaction);
 			}
-			default: {
+			case 'target': {
 				return this.chatInputTarget(interaction);
+			}
+			default: {
+				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
+				return interaction.errorReply('Something went wrong.');
 			}
 		}
 	}
@@ -101,7 +105,10 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 
 		const caseId = interaction.options.getNumber('case_id', true);
 
-		const moderationCase = await moderation.cases.getCase(interaction.guildId, caseId);
+		const moderationCase = await moderation.cases.get({
+			guildId: interaction.guildId,
+			caseId
+		});
 		if (isNullish(moderationCase)) {
 			return interaction.errorReply('There is no case with that ID.');
 		}
@@ -115,9 +122,12 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 		const caseId = interaction.options.getNumber('case_id', true);
 		const reason = interaction.options.getString('reason', true);
 
-		const moderationCase = await moderation.cases.updateCase(interaction.guildId, caseId, {
-			reason
-		});
+		const moderationCase = await moderation.cases.update(
+			{ guildId: interaction.guildId, caseId },
+			{
+				reason
+			}
+		);
 
 		return this.showCase(interaction, moderationCase);
 	}
@@ -127,14 +137,17 @@ export class ModerationCommand extends ModuleCommand<ModerationModule> {
 
 		const user = interaction.options.getUser('user', true);
 
-		const moderationCases = await moderation.cases.getUserCases(interaction.guildId, user.id);
+		const moderationCases = await moderation.cases.getByUser({
+			guildId: interaction.guildId,
+			userId: user.id
+		});
 
 		return new ModerationCaseMenu(moderationCases).run(interaction);
 	}
 
 	private showCase(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, moderationCase: ModerationCase) {
 		return interaction.editReply({
-			embeds: [this.container.moderation.cases.buildCaseEmbed(moderationCase)]
+			embeds: [this.container.moderation.cases.buildEmbed(moderationCase)]
 		});
 	}
 }
