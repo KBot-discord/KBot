@@ -1,10 +1,10 @@
 import type { Guild } from '$lib/types/app';
 import type { Handle } from '@sveltejs/kit';
-import { PUBLIC_COOKIE } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 import { useDiscordServer } from '$rpc';
 
 export const handleGuildsRoute: Handle = async ({ event, resolve }) => {
-	const cookie = event.cookies.get(PUBLIC_COOKIE);
+	const cookie = event.cookies.get(env.PUBLIC_COOKIE);
 	if (!cookie || !event.locals.user) {
 		return new Response(undefined, {
 			status: 302,

@@ -12,10 +12,13 @@
 
 </div>
 
-## Features
--  Moderation commands to help server staff keep your Discord server safe.
--  Social media notifications can be relayed to whichever channel you want.
--  Welcome messages whenever a new user joins your servers.
+## Project
+- `/apps`
+  - `/apps/bot` - Discord bot
+  - `/apps/docs` - Documentation for the bot
+  - `/apps/web` - A dashboard to edit bot settings
+- `/packages` - Shared packages
+- `/protos` - API protobuf files
 
 ## Links
 -  [Bot invite (v1)](https://kbot.ca/invite)

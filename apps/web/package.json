@@ -2,7 +2,7 @@
 	"name": "@kbotdev/web",
 	"version": "0.0.1",
 	"author": "@kbotdev",
-	"license": "MIT",
+	"license": "AGPL-3.0-or-later",
 	"private": true,
 	"repository": {
 		"type": "git",
@@ -31,7 +31,7 @@
 		"@floating-ui/dom": "^1.2.4",
 		"@fortawesome/free-brands-svg-icons": "^6.3.0",
 		"@fortawesome/free-solid-svg-icons": "^6.3.0",
-		"@kbotdev/proto": "workspace:^",
+		"@kbotdev/proto": "*",
 		"svelte-fa": "^3.0.3"
 	},
 	"devDependencies": {

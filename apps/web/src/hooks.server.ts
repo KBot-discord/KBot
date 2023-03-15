@@ -2,13 +2,13 @@ import { handleGuildsRoute } from './hooks/guilds';
 // import { handleBlock } from './hooks/block';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from '@sveltejs/kit';
-import { PUBLIC_COOKIE } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 import { useDiscordServer } from '$rpc';
 
 const protectedRoutes = ['/guilds', '/premium/manage'];
 
 export const handleAll: Handle = async ({ event, resolve }) => {
-	const cookie = event.cookies.get(PUBLIC_COOKIE);
+	const cookie = event.cookies.get(env.PUBLIC_COOKIE);
 	if (!cookie) {
 		if (protectedRoutes.some((route) => event.url.pathname.startsWith(route))) {
 			return new Response(undefined, {
