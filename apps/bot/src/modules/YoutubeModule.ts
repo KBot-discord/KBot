@@ -1,4 +1,3 @@
-import { VideoStatus } from '#prisma';
 import {
 	YoutubeVideoService,
 	YoutubeChannelService,
@@ -9,6 +8,7 @@ import {
 } from '#services/youtube';
 import { getGuildIcon } from '#utils/Discord';
 import { EmbedColors } from '#utils/constants';
+import { VideoStatus } from '#prisma';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';

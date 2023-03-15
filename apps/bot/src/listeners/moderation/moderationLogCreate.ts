@@ -1,7 +1,7 @@
-import { ModerationActionType } from '#prisma';
 import { EmbedColors } from '#utils/constants';
 import { getMemberAvatarUrl, getUserAvatarUrl } from '#utils/Discord';
 import { KBotEvents } from '#types/Enums';
+import { ModerationActionType } from '#prisma';
 import { EmbedBuilder, GuildMember } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { ApplyOptions } from '@sapphire/decorators';

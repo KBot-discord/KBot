@@ -1,9 +1,9 @@
 import { rootFolder } from '#utils/constants';
 import { Validator } from '#utils/validators';
 import { KBotMetrics } from '#observability/KBotMetrics';
-import { PrismaClient } from '#prisma';
 import { RedisClient } from '#extensions/RedisClient';
 import { MeilisearchClient } from '#extensions/MeiliClient';
+import { PrismaClient } from '#prisma';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import { container, Plugin, preInitialization } from '@sapphire/framework';

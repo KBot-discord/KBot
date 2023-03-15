@@ -1,7 +1,7 @@
 import { EmbedColors } from '#utils/constants';
-import { ModerationActionType } from '#prisma';
 import { KBotEvents } from '#types/Enums';
 import { getGuildIcon } from '#utils/Discord';
+import { ModerationActionType } from '#prisma';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder, User } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';

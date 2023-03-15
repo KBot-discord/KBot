@@ -1,5 +1,5 @@
-import { VideoStatus } from '#prisma';
 import { YoutubeModule } from '#modules/YoutubeModule';
+import { VideoStatus } from '#prisma';
 import { isNullish } from '@sapphire/utilities';
 import { youtube_v3 } from '@googleapis/youtube';
 import { container } from '@sapphire/framework';
