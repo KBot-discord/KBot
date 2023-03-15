@@ -2,6 +2,7 @@
 	"name": "@kbotdev/proto",
 	"version": "0.0.1",
 	"author": "@kbotdev",
+	"license": "AGPL-3.0-or-later",
 	"private": true,
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
