@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package bot.youtube.subscriptions.v1;
+
+import "google/protobuf/wrappers.proto";
+import "types/crud/v1/crud.proto";
+
+message YoutubeSubscription {
+  string channel_id = 1;
+  string channel_name = 2;
+  string channel_image = 3;
+  google.protobuf.StringValue message = 5;
+  google.protobuf.StringValue role = 6;
+  google.protobuf.StringValue discord_channel = 7;
+}
+
+// CreateYoutubeSubscription
+message CreateYoutubeSubscriptionRequest {
+  string channel_id = 4;
+  string guild_id = 5;
+}
+
+message CreateYoutubeSubscriptionResponse {
+  YoutubeSubscription subscription = 1;
+}
+
+// UpdateYoutubeSubscription
+message UpdateYoutubeSubscriptionRequest {
+  string channel_id = 1;
+  string guild_id = 2;
+  types.crud.v1.OptionalString message = 4;
+  types.crud.v1.OptionalString role = 5;
+  types.crud.v1.OptionalString discord_channel = 6;
+}
+  
+message UpdateYoutubeSubscriptionResponse {
+  YoutubeSubscription subscription = 1;
+}
+
+// DeleteYoutubeSubscription
+message DeleteYoutubeSubscriptionRequest {
+  string channel_id = 1;
+  string guild_id = 2;
+}
+
+message DeleteYoutubeSubscriptionResponse {
+  YoutubeSubscription subscription = 1;
+}
+
+// GetGuildYoutubeSubscriptions
+message GetGuildYoutubeSubscriptionsRequest {
+  string guild_id = 1;
+}
+
+message GetGuildYoutubeSubscriptionsResponse {
+  repeated YoutubeSubscription subscriptions = 1;
+}
+
+// YoutubeSubscriptionService
+service YoutubeSubscriptionService {
+  rpc CreateYoutubeSubscription (CreateYoutubeSubscriptionRequest) returns (CreateYoutubeSubscriptionResponse);
+  rpc UpdateYoutubeSubscription (UpdateYoutubeSubscriptionRequest) returns (UpdateYoutubeSubscriptionResponse);
+  rpc DeleteYoutubeSubscription (DeleteYoutubeSubscriptionRequest) returns (DeleteYoutubeSubscriptionResponse);
+  rpc GetGuildYoutubeSubscriptions (GetGuildYoutubeSubscriptionsRequest) returns (GetGuildYoutubeSubscriptionsResponse);
+}

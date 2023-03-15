@@ -1,8 +1,0 @@
-version: v1
-plugins:
-  - name: protoc-gen-twirpscript
-    path: ./node_modules/twirpscript/compiler.js
-    out: src/rpc/gen
-    opt:
-      - language=typescript
-    strategy: all

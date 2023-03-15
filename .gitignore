@@ -1,13 +1,24 @@
 ## Builds ##
 dist
-src/rpc/gen
+build
 
 ## Development ##
+infra
 coverage
 
 ## Dependencies ##
 node_modules
 package-lock.json
+
+## IDEs ##
+.idea
+.vscode
+
+## Env ##
+.env
+
+## Turbo ##
+.turbo
 
 ## Package manager ##
 .pnp.*
@@ -17,13 +28,3 @@ package-lock.json
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-## Env ##
-.env
-
-### intellij ###
-.idea/
-
-## Logs ##
-logs
-*.log

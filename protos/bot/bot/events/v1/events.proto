@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package bot.events.v1;
+
+import "types/crud/v1/crud.proto";
+
+message EventSettings {
+  bool enabled = 1;
+}
+
+// GetEventSettings
+message GetEventSettingsRequest {
+  string guild_id = 1;
+}
+
+message GetEventSettingsResponse {
+  EventSettings settings = 1;
+}
+
+// UpdateEventSettings
+message UpdateEventSettingsRequest {
+  string guild_id = 1;
+  types.crud.v1.RequiredBool enabled = 2;
+}
+  
+message UpdateEventSettingsResponse {
+  EventSettings settings = 1;
+}
+
+// EventSettingsService
+service EventSettingsService {
+  rpc GetEventSettings (GetEventSettingsRequest) returns (GetEventSettingsResponse);
+  rpc UpdateEventSettings (UpdateEventSettingsRequest) returns (UpdateEventSettingsResponse);
+}

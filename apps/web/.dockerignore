@@ -1,0 +1,13 @@
+.git*
+.husky
+.svelte-kit
+build
+node_modules
+.editorconfig
+.env*
+.eslint*
+.prettier*
+docker-compose.yml
+Dockerfile
+LICENSE
+README.md

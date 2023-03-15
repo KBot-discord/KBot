@@ -1,0 +1,14 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true
+	},
+	"include": [
+      "src",
+      "prisma",
+      "tests",
+	  "tsup.config.ts",
+      "vitest.config.ts"
+	]
+}

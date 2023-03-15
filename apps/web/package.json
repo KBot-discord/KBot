@@ -1,0 +1,75 @@
+{
+	"name": "@kbotdev/web",
+	"version": "0.0.1",
+	"author": "@kbotdev",
+	"license": "MIT",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/KBot-discord/kbot.git",
+		"directory": "apps/web"
+	},
+	"homepage": "https://github.com/KBot-discord/kbot/tree/main/apps/web",
+	"engines": {
+		"node": "^18.x"
+	},
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build && yarn postbuild",
+		"preview": "vite preview --port 5173",
+		"sync": "svelte-kit sync",
+		"check": "svelte-kit sync && svelte-check --tsconfig tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig tsconfig.json --watch",
+		"lint": "prettier --plugin-search-dir . --check . && eslint . --fix",
+		"format": "prettier --plugin-search-dir . --write .",
+		"postbuild": "node ./scripts/sitemap.js"
+	},
+	"dependencies": {
+		"@bufbuild/connect": "^0.8.3",
+		"@bufbuild/connect-node": "^0.8.3",
+		"@bufbuild/protobuf": "^1.1.1",
+		"@floating-ui/dom": "^1.2.4",
+		"@fortawesome/free-brands-svg-icons": "^6.3.0",
+		"@fortawesome/free-solid-svg-icons": "^6.3.0",
+		"@kbotdev/proto": "workspace:^",
+		"svelte-fa": "^3.0.3"
+	},
+	"devDependencies": {
+		"@sapphire/plugin-api": "^5.0.1",
+		"@skeletonlabs/skeleton": "^1.0.0",
+		"@sveltejs/adapter-node": "^1.2.2",
+		"@sveltejs/kit": "^1.11.0",
+		"@sveltejs/vite-plugin-svelte": "^2.0.3",
+		"@tailwindcss/forms": "^0.5.3",
+		"@types/node": "^18.15.3",
+		"@typescript-eslint/eslint-plugin": "^5.55.0",
+		"@typescript-eslint/parser": "^5.55.0",
+		"autoprefixer": "^10.4.14",
+		"discord-api-types": "^0.37.36",
+		"discord.js": "^14.8.0",
+		"eslint": "^8.36.0",
+		"eslint-config-prettier": "^8.7.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"eslint-plugin-svelte3": "^4.0.0",
+		"husky": "^8.0.3",
+		"postcss": "^8.4.21",
+		"prettier": "^2.8.4",
+		"prettier-plugin-svelte": "^2.9.0",
+		"svelte": "^3.57.0",
+		"svelte-check": "^3.1.4",
+		"svelte-meta-tags": "^2.7.0",
+		"svelte-sitemap": "^2.6.0",
+		"tailwindcss": "^3.2.7",
+		"typescript": "^4.9.5",
+		"vite": "^4.1.4",
+		"vitest": "^0.29.2"
+	},
+	"lint-staged": {
+		"*.{js,ts,jsx,tsx}": [
+			"eslint --fix --ext js,ts,jsx,tsx",
+			"prettier --write --loglevel=warn \"{src}/**/*.{js,ts,jsx,tsx}\""
+		]
+	},
+	"packageManager": "yarn@3.4.1",
+	"type": "module"
+}

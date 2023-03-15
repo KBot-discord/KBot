@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package bot.discord.v1;
+
+import "google/protobuf/wrappers.proto";
+
+message DiscordGuild {
+  string id = 1;
+  string name = 2;
+  google.protobuf.StringValue icon = 3;
+  bool can_manage = 4;
+}
+
+message DiscordChannel {
+  string id = 1;
+  string name = 2;
+  int32 position = 3;
+}
+
+message DiscordRole {
+  string id = 1;
+  string name = 2;
+  int32 position = 3;
+  string color = 4;
+}
+
+message DiscordUser {
+  string id = 1;
+  string username = 2;
+  string discriminator = 3;
+  string avatar = 4;
+}
+
+// GetDiscordGuilds
+message GetDiscordGuildsRequest {}
+
+message GetDiscordGuildsResponse {
+  repeated DiscordGuild guilds = 1;
+}
+
+// GetDiscordTextChannels
+message GetDiscordTextChannelsRequest {
+  string guild_id = 1;
+}
+
+message GetDiscordTextChannelsResponse {
+  repeated DiscordChannel channels = 1;
+}
+
+// GetDiscordVoiceChannels
+message GetDiscordVoiceChannelsRequest {
+  string guild_id = 1;
+}
+
+message GetDiscordVoiceChannelsResponse {
+  repeated DiscordChannel channels = 1;
+}
+
+// GetDiscordRoles
+message GetDiscordRolesRequest {
+  string guild_id = 1;
+}
+
+message GetDiscordRolesResponse {
+  repeated DiscordRole roles = 1;
+}
+
+// GetDiscordUser
+message GetDiscordUserRequest {}
+
+message GetDiscordUserResponse {
+  DiscordUser user = 1;
+}
+
+// DiscordService
+service DiscordService {
+  rpc GetDiscordGuilds (GetDiscordGuildsRequest) returns (GetDiscordGuildsResponse);
+  rpc GetDiscordTextChannels (GetDiscordTextChannelsRequest) returns (GetDiscordTextChannelsResponse);
+  rpc GetDiscordVoiceChannels (GetDiscordVoiceChannelsRequest) returns (GetDiscordVoiceChannelsResponse);
+  rpc GetDiscordRoles (GetDiscordRolesRequest) returns (GetDiscordRolesResponse);
+  rpc GetDiscordUser (GetDiscordUserRequest) returns (GetDiscordUserResponse);
+}

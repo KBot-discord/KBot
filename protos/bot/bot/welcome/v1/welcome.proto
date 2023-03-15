@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package bot.welcome.v1;
+
+import "google/protobuf/wrappers.proto";
+import "types/crud/v1/crud.proto";
+
+message WelcomeSettings {
+  bool enabled = 1;
+  google.protobuf.StringValue channel_id = 2;
+  google.protobuf.StringValue message = 3;
+  google.protobuf.StringValue title = 4;
+  google.protobuf.StringValue description = 5;
+  google.protobuf.StringValue image = 6;
+  google.protobuf.StringValue color = 7;
+}
+
+// GetWelcomeSettings
+message GetWelcomeSettingsRequest {
+  string guild_id = 1;
+}
+
+message GetWelcomeSettingsResponse {
+  WelcomeSettings settings = 1;
+}
+
+// UpdateWelcomeSettings
+message UpdateWelcomeSettingsRequest {
+  string guild_id = 1;
+  types.crud.v1.RequiredBool enabled = 2;
+  types.crud.v1.OptionalString channel_id = 3;
+  types.crud.v1.OptionalString message = 4;
+  types.crud.v1.OptionalString title = 5;
+  types.crud.v1.OptionalString description = 6;
+  types.crud.v1.OptionalString image = 7;
+  types.crud.v1.OptionalString color = 8;
+}
+
+message UpdateWelcomeSettingsResponse {
+  WelcomeSettings settings = 1;
+}
+
+// WelcomeSettingsService
+service WelcomeSettingsService {
+  rpc GetWelcomeSettings (GetWelcomeSettingsRequest) returns (GetWelcomeSettingsResponse);
+  rpc UpdateWelcomeSettings (UpdateWelcomeSettingsRequest) returns (UpdateWelcomeSettingsResponse);
+}

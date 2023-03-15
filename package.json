@@ -1,103 +1,34 @@
 {
-	"name": "@kbotdev/bot",
-	"version": "2.0.0",
-	"description": "A multi-feature Discord bot",
+	"name": "@kbotdev/apps",
+	"version": "0.0.1",
 	"author": "@kbotdev",
-	"license": "AGPL-3.0-or-later",
-	"main": "./dist/index.js",
+	"private": true,
+	"workspaces": {
+		"packages": [
+			"apps/bot",
+			"apps/docs",
+			"apps/web",
+			"packages/**"
+		]
+	},
+	"scripts": {
+		"build": "turbo run build",
+		"build:bot": "yarn turbo build --filter=@kbotdev/bot",
+		"build:docs": "yarn turbo build --filter=@kbotdev/docs",
+		"build:web": "yarn turbo build --filter=@kbotdev/web",
+		"test": "turbo run test",
+		"lint": "turbo run lint",
+		"format": "turbo run format",
+		"db:generate": "turbo run db:generate",
+		"db:push": "turbo run db:push"
+	},
+	"devDependencies": {
+		"@sapphire/ts-config": "^3.3.4",
+		"turbo": "^1.8.3",
+		"vitest": "^0.29.2"
+	},
 	"engines": {
 		"node": "^18.x"
 	},
-	"scripts": {
-		"build": "tsc -b src",
-		"dev": "tsc-watch --noClear -p src/tsconfig.json --onSuccess \"yarn run start\"",
-		"start": "node ./dist/index.js",
-		"prepare": "yarn buf:generate && yarn build",
-		"lint": "eslint --fix --ext ts src tests prisma",
-		"format": "prettier --write --loglevel=warn \"{src,tests,prisma}/**/*.{js,ts,json}\"",
-		"test": "vitest",
-		"ci:build": "yarn db:generate && yarn build",
-		"ci:test": "vitest run --coverage",
-		"db:generate": "ts-node ./prisma && prisma generate",
-		"db:dev": "prisma migrate dev",
-		"db:push": "prisma db push",
-		"db:deploy": "prisma migrate deploy",
-		"buf:generate": "rm -r -f src/rpc/gen && yarn buf:bot && yarn buf:youtube",
-		"buf:bot": "buf generate buf.build/kbotdev/bot",
-		"buf:youtube": "buf generate buf.build/kbotdev/youtube"
-	},
-	"dependencies": {
-		"@discordjs/builders": "^1.4.0",
-		"@kbotdev/custom-id": "^0.0.5",
-		"@kbotdev/menus": "^1.0.0",
-		"@kbotdev/plugin-modules": "^1.0.0",
-		"@prisma/client": "^4.8.1",
-		"@sapphire/decorators": "^6.0.0",
-		"@sapphire/discord.js-utilities": "^6.0.0",
-		"@sapphire/duration": "^1.0.0",
-		"@sapphire/framework": "^4.0.0",
-		"@sapphire/plugin-api": "^5.0.0",
-		"@sapphire/plugin-logger": "^3.0.1",
-		"@sapphire/plugin-scheduled-tasks": "^6.0.0",
-		"@sapphire/utilities": "^3.11.0",
-		"@sentry/integrations": "^7.29.0",
-		"@sentry/node": "^7.29.0",
-		"@skyra/gifenc": "^1.0.1",
-		"axios": "^1.2.2",
-		"binarytf": "^2.1.2",
-		"bullmq": "^3.5.3",
-		"canvas": "2.10.2",
-		"canvas-constructor": "^7.0.0",
-		"deepl": "^1.0.13",
-		"discord-api-types": "^0.37.26",
-		"discord.js": "^14.7.1",
-		"express": "^4.18.2",
-		"google-protobuf": "^3.21.2",
-		"ioredis": "^5.2.4",
-		"prom-client": "^14.1.1",
-		"twirpscript": "^0.0.66"
-	},
-	"devDependencies": {
-		"@microsoft/tsdoc": "^0.14.2",
-		"@sapphire/eslint-config": "^4.3.8",
-		"@sapphire/prettier-config": "^1.4.4",
-		"@sapphire/ts-config": "^3.3.4",
-		"@sentry/types": "^7.29.0",
-		"@types/express": "^4.17.15",
-		"@types/node": "^18.11.18",
-		"@typescript-eslint/eslint-plugin": "^5.48.0",
-		"@typescript-eslint/parser": "^5.48.0",
-		"@vitest/coverage-c8": "^0.26.3",
-		"eslint": "^8.31.0",
-		"eslint-config-prettier": "^8.6.0",
-		"eslint-import-resolver-typescript": "^3.5.2",
-		"eslint-plugin-import": "^2.26.0",
-		"eslint-plugin-prettier": "^4.2.1",
-		"eslint-plugin-tsdoc": "^0.2.17",
-		"husky": "^8.0.3",
-		"lint-staged": "^13.1.0",
-		"prettier": "^2.8.2",
-		"prisma": "^4.8.1",
-		"schemix": "^1.8.5",
-		"ts-node": "^10.9.1",
-		"tsc-watch": "^6.0.0",
-		"tslib": "^2.4.1",
-		"typescript": "^4.9.4",
-		"vitest": "^0.26.3"
-	},
-	"prettier": "@sapphire/prettier-config",
-	"lint-staged": {
-		"*.{mjs,ts,js}": [
-			"eslint --fix",
-			"prettier --write --loglevel=warn \"{src,tests,prisma}/**/*.{js,ts,json}\""
-		]
-	},
-	"packageManager": "yarn@3.3.1",
-	"imports": {
-		"#lib/*": "./dist/lib/*.js",
-		"#utils/*": "./dist/lib/util/*.js",
-		"#utils/validators": "./dist/lib/util/validators/index.js",
-		"#utils/constants": "./dist/lib/util/constants/index.js",
-		"#services/*": "./dist/lib/services/*.js"
-	}
+	"packageManager": "yarn@3.4.1"
 }

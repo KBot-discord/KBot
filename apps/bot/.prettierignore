@@ -1,0 +1,10 @@
+.github
+.husky
+.yarn
+assets
+coverage
+dist
+infra
+node_modules
+prisma/generated
+src/rpc/gen
