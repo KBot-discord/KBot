@@ -26,8 +26,8 @@ WORKDIR /temp
 
 COPY .yarn .yarn/
 COPY protos protos/
-COPY .yarnrc.yml tsconfig.base.json .
-COPY --from=builder /temp/out/json/ /temp/out/yarn.lock .
+COPY .yarnrc.yml tsconfig.base.json ./
+COPY --from=builder /temp/out/json/ /temp/out/yarn.lock ./
 COPY turbo.json turbo.json
 
 RUN yarn install --immutable
