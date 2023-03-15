@@ -47,8 +47,8 @@ RUN addgroup --system --gid 1001 kbot
 RUN adduser --system --uid 1001 kbot
 USER kbot
 
+COPY --from=deps /temp/node_modules ./
 COPY --from=deps --chown=kbot /temp/apps/web/build ./
-COPY --from=deps /temp/apps/web/node_modules ./
 COPY --from=deps /temp/apps/web/package.json ./
 
 CMD ["node", "./build/index.js"]
