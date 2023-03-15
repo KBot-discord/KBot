@@ -1,4 +1,4 @@
-import { PUBLIC_COOKIE } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 export function validateNewCookie(cookie: string | null): cookie is string {
 	if (!cookie) return false;
@@ -7,7 +7,7 @@ export function validateNewCookie(cookie: string | null): cookie is string {
 	if (options.length !== 5) return false;
 
 	const pair = options[0].split('=');
-	if (pair.length !== 2 || pair[0] !== PUBLIC_COOKIE) return false;
+	if (pair.length !== 2 || pair[0] !== env.PUBLIC_COOKIE) return false;
 
 	return true;
 }

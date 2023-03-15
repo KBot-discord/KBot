@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
 import { useTwitchSettingsServer, useTwitchSubscriptionsServer } from '$rpc';
-import { PUBLIC_COOKIE } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 const fetchTwitchSettings = async (cookie: string, guild: Guild) => {
 	const response = await useTwitchSettingsServer() //
@@ -25,7 +25,7 @@ const fetchTwitchSubscriptions = async (cookie: string, guild: Guild) => {
 };
 
 export const load: PageServerLoad = ({ cookies, locals }) => {
-	const cookie = cookies.get(PUBLIC_COOKIE);
+	const cookie = cookies.get(env.PUBLIC_COOKIE);
 	if (!cookie || !locals.guild) {
 		throw redirect(302, '/guilds');
 	}

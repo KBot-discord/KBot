@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
-import { PUBLIC_COOKIE } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 import { useDiscordServer } from '$rpc';
 
 const fetchTextChannels = async (cookie: string, guild: Guild) => {
@@ -35,7 +35,7 @@ const fetchRoles = async (cookie: string, guild: Guild) => {
 };
 
 export const load: LayoutServerLoad = ({ locals, cookies }) => {
-	const cookie = cookies.get(PUBLIC_COOKIE);
+	const cookie = cookies.get(env.PUBLIC_COOKIE);
 	if (!cookie || !locals.guild) {
 		throw redirect(302, '/guilds');
 	}
