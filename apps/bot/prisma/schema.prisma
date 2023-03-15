@@ -249,25 +249,6 @@ model CoreSettings {
   youtubeSettings    YoutubeSettings?
 }
 
-model PremiumUser {
-  id            String         @id @unique
-  totalClaims   Int
-  premiumClaims PremiumClaim[]
-}
-
-model PremiumClaim {
-  id        String      @default(uuid()) @database.Uuid
-  createdAt DateTime    @default(now())
-  startDate DateTime?
-  endDate   DateTime?
-  userId    String      @unique
-  user      PremiumUser @relation(fields: [userId], references: [id], onDelete: NoAction)
-  guildId   String      @unique
-
-  @@id([id])
-  @@unique([userId, guildId])
-}
-
 model IncidentMessage {
   id         String          @unique
   channelId  String

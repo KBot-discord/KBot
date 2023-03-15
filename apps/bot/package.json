@@ -15,7 +15,7 @@
 		"node": "^18.x"
 	},
 	"scripts": {
-		"build": "tsc -b src",
+		"build": "yarn db:generate && tsc -b src",
 		"dev": "tsc-watch --noClear -p src/tsconfig.json --onSuccess \"yarn run start\"",
 		"start": "node ./dist/index.js",
 		"start:migrate": "prisma migrate deploy && node ./dist/index.js",
