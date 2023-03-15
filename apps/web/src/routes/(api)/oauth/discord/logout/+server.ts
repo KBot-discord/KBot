@@ -1,10 +1,10 @@
 import type { RequestHandler } from './$types';
-import { PUBLIC_BASE_API_URL } from '$env/static/public';
+import { env } from '$env/dynamic/private';
 import { sendToOAuthError } from '$lib/utils/api';
 import { validateNewCookie } from '$lib/utils/auth';
 
 export const GET: RequestHandler = async ({ fetch, locals }) => {
-	const response = await fetch(`${PUBLIC_BASE_API_URL}/oauth/logout`, {
+	const response = await fetch(`${env.BASE_API_URL}/oauth/logout`, {
 		method: 'POST',
 		credentials: 'include',
 		headers: { 'Content-Type': 'application/json' }

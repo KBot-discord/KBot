@@ -31,7 +31,7 @@
 		"@floating-ui/dom": "^1.2.4",
 		"@fortawesome/free-brands-svg-icons": "^6.3.0",
 		"@fortawesome/free-solid-svg-icons": "^6.3.0",
-		"@kbotdev/proto": "workspace:^",
+		"@kbotdev/proto": "*",
 		"svelte-fa": "^3.0.3"
 	},
 	"devDependencies": {

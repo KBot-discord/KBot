@@ -1,6 +1,5 @@
 import type { RequestHandler } from './$types';
-import type { TransformedLoginData } from '$lib/types/discord';
-import { PUBLIC_BASE_API_URL, PUBLIC_BASE_WEB_URL } from '$env/static/public';
+import { env } from '$env/dynamic/private';
 import { sendToHome, sendToOAuthError } from '$lib/utils/api';
 import { validateNewCookie } from '$lib/utils/auth';
 
@@ -9,17 +8,17 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	if (!code) return sendToHome();
 
 	try {
-		const response = await fetch(`${PUBLIC_BASE_API_URL}/oauth/callback`, {
+		const response = await fetch(`${env.BASE_API_URL}/oauth/callback`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				code,
-				redirectUri: `${PUBLIC_BASE_WEB_URL}/oauth/discord/callback`
+				redirectUri: `${env.BASE_WEB_URL}/oauth/discord/callback`
 			})
 		});
 
-		const logindata = (await response.json()) as TransformedLoginData;
+		const logindata = await response.json();
 		const newCookie = response.headers.get('set-cookie');
 
 		const result = validateNewCookie(newCookie);
