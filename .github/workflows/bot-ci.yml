@@ -34,6 +34,11 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
+      - name: Set up Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
+
       - name: Set up NodeJS
         uses: actions/setup-node@v3
         with:
@@ -54,6 +59,11 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
+
+      - name: Set up Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
 
       - name: Set up NodeJS
         uses: actions/setup-node@v3
