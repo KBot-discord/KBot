@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package bot.youtube.channels.v1;
+
+message YoutubeChannel {
+  string id = 1;
+  string name = 2;
+  string image = 3;
+}
+
+// GetYoutubeChannel
+message GetYoutubeChannelRequest {
+  string channel_id = 1;
+}
+
+message GetYoutubeChannelResponse {
+  YoutubeChannel channel = 1;
+}
+
+// YoutubeChannelService
+service YoutubeChannelService {
+  rpc GetYoutubeChannel (GetYoutubeChannelRequest) returns (GetYoutubeChannelResponse);
+}

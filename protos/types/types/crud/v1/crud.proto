@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package types.crud.v1;
+
+// Optional
+enum OptionalAction {
+  OPTIONAL_ACTION_UNDEFINED = 0;
+  OPTIONAL_ACTION_NOTHING = 1;
+  OPTIONAL_ACTION_DELETE = 2;
+}
+
+message OptionalString {
+  oneof data {
+	OptionalAction action = 1;
+	string value = 2;
+  }
+}
+
+message OptionalBool {
+  oneof data {
+	OptionalAction action = 1;
+	bool value = 2;
+  }
+}
+
+message OptionalInt32 {
+  oneof data {
+	OptionalAction action = 1;
+	int32 value = 2;
+  }
+}
+
+// Required
+enum RequiredAction {
+  REQUIRED_ACTION_UNDEFINED = 0;
+  REQUIRED_ACTION_NOTHING = 1;
+}
+
+message RequiredString {
+  oneof data {
+	RequiredAction action = 1;
+	string value = 2;
+  }
+}
+
+message RequiredBool {
+  oneof data {
+	RequiredAction action = 1;
+	bool value = 2;
+  }
+}

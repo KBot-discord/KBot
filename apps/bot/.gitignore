@@ -1,0 +1,28 @@
+## Builds ##
+dist
+prisma/generated
+prisma/seed
+src/rpc/gen
+
+## Dependencies ##
+node_modules
+package-lock.json
+
+## Package manager ##
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+## Env ##
+.env
+
+### intellij ###
+.idea/
+
+## Logs ##
+logs
+*.log

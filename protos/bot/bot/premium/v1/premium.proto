@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package bot.premium.v1;
+
+import "google/protobuf/wrappers.proto";
+
+message PremiumUser {
+  int32 total_claims = 2;
+}
+
+message PremiumClaim {
+  string guild_id = 1;
+  string guild_name = 2;
+  google.protobuf.StringValue guild_icon = 3;
+  google.protobuf.DoubleValue start_date = 4;
+  google.protobuf.DoubleValue end_date = 5;
+}
+
+// GetPremiumUser
+message GetPremiumUserRequest {}
+
+message GetPremiumUserResponse {
+  PremiumUser user = 1;
+  repeated PremiumClaim claims = 2;
+}
+
+// GetGuildPremiumStatus
+message GetGuildPremiumStatusRequest {
+  string guild_id = 1;
+}
+
+message GetGuildPremiumStatusResponse {
+  bool is_premium = 1;
+  google.protobuf.DoubleValue time_left = 2;
+}
+
+// PremiumService
+service PremiumService {
+  rpc GetPremiumUser (GetPremiumUserRequest) returns (GetPremiumUserResponse);
+  rpc GetGuildPremiumStatus (GetGuildPremiumStatusRequest) returns (GetGuildPremiumStatusResponse);
+}

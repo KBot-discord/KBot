@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package bot.moderation.cases.v1;
+
+import "types/crud/v1/crud.proto";
+
+message ModerationCase {
+  int32 case_id = 1;
+  string action = 3;
+  string user_id = 4;
+  string user_tag = 5;
+  string moderator_id = 6;
+  string moderator_tag = 7;
+  string reason = 8;
+}
+
+// GetGuildModerationCases
+message GetGuildModerationCasesRequest {
+  string guild_id = 1;
+}
+
+message GetGuildModerationCasesResponse {
+  repeated ModerationCase cases = 1;
+}
+
+// UpdateModerationCase
+message UpdateModerationCaseRequest {
+  int32 case_id = 1;
+  string guild_id = 2;
+  types.crud.v1.RequiredString reason = 3;
+}
+
+message UpdateModerationCaseResponse {
+  ModerationCase case = 1;
+}
+
+// ModerationCasesService
+service ModerationCasesService {
+  rpc GetGuildModerationCases (GetGuildModerationCasesRequest) returns (GetGuildModerationCasesResponse);
+  rpc UpdateModerationCase (UpdateModerationCaseRequest) returns (UpdateModerationCaseResponse);
+}

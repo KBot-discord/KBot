@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package bot.utility.v1;
+
+import "google/protobuf/wrappers.proto";
+import "types/crud/v1/crud.proto";
+
+message UtilitySettings {
+  bool enabled = 1;
+  google.protobuf.StringValue incident_channel_id = 2;
+  google.protobuf.StringValue credits_channel_id = 3;
+}
+
+// GetUtilitySettings
+message GetUtilitySettingsRequest {
+  string guild_id = 1;
+}
+
+message GetUtilitySettingsResponse {
+  UtilitySettings settings = 1;
+}
+
+// UpdateUtilitySettings
+message UpdateUtilitySettingsRequest {
+  string guild_id = 1;
+  types.crud.v1.RequiredBool enabled = 2;
+  types.crud.v1.OptionalString incident_channel_id = 3;
+  types.crud.v1.OptionalString credits_channel_id = 4;
+}
+  
+message UpdateUtilitySettingsResponse {
+	UtilitySettings settings = 1;
+}
+
+// UtilitySettingsService
+service UtilitySettingsService {
+  rpc GetUtilitySettings (GetUtilitySettingsRequest) returns (GetUtilitySettingsResponse);
+  rpc UpdateUtilitySettings (UpdateUtilitySettingsRequest) returns (UpdateUtilitySettingsResponse);
+}

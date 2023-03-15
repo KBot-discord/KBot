@@ -1,0 +1,95 @@
+name: CI (Bot)
+
+on:
+  pull_request:
+    paths:
+      - "apps/bot/**"
+      - "packages/**"
+      - "protos/**"
+
+jobs:
+  dependencies:
+    name: Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+  build:
+    name: Build
+    needs: dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Run build
+        run: yarn turbo build --filter=@kbotdev/bot
+
+  lint:
+    name: Lint
+    needs: dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Lint
+        run: yarn turbo lint --filter=@kbotdev/bot
+
+  test:
+    name: Test
+    needs: dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Run tests
+        run: yarn turbo test --filter=@kbotdev/bot
+
+      - name: Save coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: nodejs-coverage
+          path: coverage/

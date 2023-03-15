@@ -1,0 +1,27 @@
+name: CI (Docs)
+
+on:
+  pull_request:
+    paths:
+      - "apps/docs/**"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Run build
+        run: turbo build --filter=@kbotdev/docs

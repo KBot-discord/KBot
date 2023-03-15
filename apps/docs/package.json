@@ -1,0 +1,23 @@
+{
+  "name": "@kbotdev/docs",
+  "version": "0.0.1",
+  "description": "Documentation for KBot",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KBot-discord/kbot.git",
+    "directory": "apps/docs"
+  },
+  "homepage": "https://github.com/KBot-discord/kbot/tree/main/apps/docs",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "sitemap": "^7.1.1",
+    "vitepress": "1.0.0-alpha.60"
+  },
+  "packageManager": "yarn@3.3.1"
+}

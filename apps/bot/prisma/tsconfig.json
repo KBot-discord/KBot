@@ -1,0 +1,16 @@
+{
+	"extends": "../../../tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"incremental": false,
+		"skipLibCheck": true
+	},
+	"include": [
+      "."
+    ],
+	"exclude": [
+      "schema.prisma",
+	  "generated",
+	  "migrations"
+	]
+}
