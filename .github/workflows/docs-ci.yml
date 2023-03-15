@@ -24,4 +24,4 @@ jobs:
         run: yarn --immutable
 
       - name: Run build
-        run: turbo build --filter=@kbotdev/docs
+        run: yarn turbo build --filter=@kbotdev/docs
