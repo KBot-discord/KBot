@@ -2,12 +2,14 @@ import { EmbedColors, Emoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { ModerationModule } from '#modules/ModerationModule';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { ModerationModule } from '#modules/ModerationModule';
+import { isNullish } from '@sapphire/utilities';
+import type { InteractionEditReplyOptions } from 'discord.js';
 import type { ModerationSettings } from '#prisma';
 
 @ApplyOptions<KBotCommandOptions>({
@@ -93,6 +95,11 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
+							.setName('test')
+							.setDescription('Test the minage message')
+					)
+					.addSubcommand((subcommand) =>
+						subcommand //
 							.setName('settings')
 							.setDescription('Show the current settings')
 					),
@@ -113,6 +120,9 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			}
 			case 'unset': {
 				return this.chatInputUnset(interaction);
+			}
+			case 'test': {
+				return this.chatInputTest(interaction);
 			}
 			case 'settings': {
 				return this.chatInputSettings(interaction);
@@ -163,6 +173,26 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		});
 
 		return this.showSettings(interaction, settings);
+	}
+
+	public async chatInputTest(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		const { member } = interaction;
+		const settings = await this.module.getSettings(interaction.guildId);
+
+		if (!settings || isNullish(settings.minAccountAgeReq) || settings.minAccountAgeReq === 0) {
+			return interaction.defaultReply('Users will not be kicked if the requirement is 0 or not set.');
+		}
+
+		const options: InteractionEditReplyOptions = {};
+
+		const req = settings.minAccountAgeReq;
+		const creation = member.user.createdTimestamp;
+		const reqDay = Math.floor(86400000 * req);
+		const reqDate = Math.floor(creation + reqDay);
+
+		options.embeds = [ModerationModule.formatMinageEmbed(member, settings?.minAccountAgeMsg, req, reqDate)];
+
+		return interaction.editReply(options);
 	}
 
 	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {

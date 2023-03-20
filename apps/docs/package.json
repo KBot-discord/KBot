@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "sitemap": "^7.1.1",
-    "vitepress": "1.0.0-alpha.60"
+    "vitepress": "1.0.0-alpha.61"
   },
   "packageManager": "yarn@3.3.1"
 }

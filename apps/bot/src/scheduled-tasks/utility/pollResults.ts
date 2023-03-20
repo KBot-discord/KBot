@@ -5,7 +5,7 @@ import type { PollResultPayload } from '#types/Tasks';
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'pollResults'
 })
-export class PollTask extends ScheduledTask {
+export class UtilityTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
 		super(context, { ...options });
 	}

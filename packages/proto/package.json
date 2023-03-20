@@ -3,9 +3,9 @@
 	"version": "0.0.1",
 	"author": "@kbotdev",
 	"license": "AGPL-3.0-or-later",
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
 	"engines": {
 		"node": "^18.x"
 	},
@@ -16,10 +16,10 @@
 		"buf:types": "buf generate ../../protos/types"
 	},
 	"devDependencies": {
-		"@bufbuild/protoc-gen-connect-es": "^0.8.3",
+		"@bufbuild/protoc-gen-connect-es": "^0.8.4",
 		"@bufbuild/protoc-gen-es": "^1.1.1",
 		"@sapphire/ts-config": "^3.3.4",
-		"tsup": "^6.6.3"
+		"tsup": "^6.7.0"
 	},
 	"packageManager": "yarn@3.4.1"
 }

@@ -56,14 +56,14 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	public async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 
-		const user = await interaction.options.getUser('user', true);
+		const user = interaction.options.getUser('user', true);
 		const member = await interaction.guild.members.fetch(user.id);
 		const avatar = getMemberAvatarUrl(member);
 
 		const gif = await this.createPatGif(avatar, { resolution: 64 });
 
 		return interaction.editReply({
-			files: [new AttachmentBuilder(gif, { name: `${member.user.username}Pat.gif` })]
+			files: [new AttachmentBuilder(gif, { name: 'Pat.gif' })]
 		});
 	}
 

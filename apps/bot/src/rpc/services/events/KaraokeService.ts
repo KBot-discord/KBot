@@ -32,7 +32,7 @@ class KaraokeServiceImpl implements ServiceImpl<typeof KaraokeEventService> {
 
 		const guild = client.guilds.cache.get(guildId);
 		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', 400);
+		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
 
 		const canManage = await canManageGuild(guild, member);
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
@@ -66,7 +66,7 @@ class KaraokeServiceImpl implements ServiceImpl<typeof KaraokeEventService> {
 
 		const guild = client.guilds.cache.get(guildId);
 		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', 400);
+		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
 
 		const canManage = await canManageGuild(guild, member);
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
@@ -104,7 +104,7 @@ class KaraokeServiceImpl implements ServiceImpl<typeof KaraokeEventService> {
 
 		const guild = client.guilds.cache.get(guildId);
 		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', 400);
+		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
 
 		const canManage = await canManageGuild(guild, member);
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);

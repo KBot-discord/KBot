@@ -5,9 +5,10 @@ import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
 import type { StatusPageResult } from '#types/DiscordStatus';
 
 @ApplyOptions<ScheduledTask.Options>({
+	name: 'discordStatusCleanup',
 	pattern: '0 0 0 1 * *' // The first of every month
 })
-export class DiscordStatusTask extends ScheduledTask {
+export class UtilityTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
 		super(context, { ...options });
 	}

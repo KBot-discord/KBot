@@ -17,11 +17,6 @@ export class ButtonHandler extends InteractionHandler {
 		const { events } = this.container;
 
 		try {
-			const settings = await events.getSettings(interaction.guildId);
-			if (isNullish(settings) || !settings.enabled) {
-				return interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`);
-			}
-
 			const exists = await events.karaoke.eventExists({
 				guildId: interaction.guildId,
 				eventId

@@ -1,4 +1,4 @@
-import { Duration } from '@sapphire/duration';
+import { Duration, Time } from '@sapphire/duration';
 
 export function flattenObject(object: any) {
 	const result: any = {};
@@ -20,8 +20,7 @@ export function flattenObject(object: any) {
 }
 
 export function minutesFromNow(minutes: number, time?: number) {
-	if (time) return Math.floor((time + minutes * 60000) / 1000);
-	return Math.floor((Date.now() + minutes * 60000) / 1000);
+	return Math.floor(((time ?? Date.now()) + minutes * Time.Minute) / 1000);
 }
 
 export function parseTimeString(input: string | null): number | null {

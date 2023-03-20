@@ -15,7 +15,7 @@ export class ButtonHandler extends InteractionHandler {
 
 	public override async run(interaction: ButtonInteraction<'cached'>, { channelId, emoteId }: InteractionHandler.ParseResult<this>) {
 		if (isNullish(channelId)) {
-			return interaction.defaultReply('There is no channel set up for credits.');
+			return interaction.defaultReply('There is no channel set up for credits. You can set one with `/emotecredits set`.');
 		}
 
 		const modal = this.container.utility.buildEmoteCreditModal(channelId, emoteId);

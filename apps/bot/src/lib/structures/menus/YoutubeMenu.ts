@@ -20,6 +20,13 @@ export class YoutubeMenu extends Menu {
 		const embeds = this.buildEmbeds();
 		const pages = this.buildPages(embeds);
 
+		this.setSelectMenuPlaceholder('Select a subscription');
+		this.setSelectMenuOptions((pageIndex) => {
+			if (pageIndex === 1) return { label: `Home page` };
+			const { channel } = this.subscriptions[pageIndex - 2];
+			return { label: channel.englishName ?? channel.name };
+		});
+
 		this.setPages(pages);
 		this.setHomePage((builder) =>
 			builder.setEmbeds((embed) => {
@@ -28,8 +35,10 @@ export class YoutubeMenu extends Menu {
 						.setColor(EmbedColors.Default)
 						.setAuthor({ name: 'Youtube management', iconURL: getGuildIcon(this.guild) })
 						.addFields([
-							{ name: 'Instructions:', value: 'text' },
-							{ name: 'More text:', value: 'even more text' }
+							{ name: 'Add a subscription', value: '`/youtube subscribe`' },
+							{ name: 'Removing a subscription', value: '`/youtube unsubscribe`' },
+							{ name: 'Editing a subscription', value: '`/youtube set` or `/youtube unset`' },
+							{ name: 'Enabling/disabling a subscription', value: '`/youtube toggle`' }
 						])
 				];
 			})
@@ -49,7 +58,7 @@ export class YoutubeMenu extends Menu {
 
 	private buildEmbeds(): EmbedBuilder[] {
 		return this.subscriptions.map((subscription) => {
-			return container.youtube.buildSubscriptionEmbed(this.guild, subscription);
+			return container.youtube.buildSubscriptionEmbed(subscription);
 		});
 	}
 }

@@ -22,6 +22,7 @@ module.exports = {
 		'@typescript-eslint/require-await': 0,
 		'@typescript-eslint/no-base-to-string': 0,
 		'@typescript-eslint/consistent-type-imports': 'error',
+		'@typescript-eslint/switch-exhaustiveness-check': 0,
 		'@typescript-eslint/no-duplicate-imports': [
 			'error',
 			{

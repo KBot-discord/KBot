@@ -1,12 +1,7 @@
 import { container } from '@sapphire/framework';
-import type {
-	YoutubeChannelId,
-	GuildAndYoutubeChannelId,
-	UpdateYoutubeSubscriptionData,
-	YoutubeSubscriptionWithChannel,
-	GuildId
-} from '#types/database';
+import type { UpdateYoutubeSubscriptionData, YoutubeSubscriptionWithChannel, GuildId, GuildAndHolodexChannelId } from '#types/database';
 import type { PrismaClient, YoutubeSubscription } from '#prisma';
+import type { HolodexChannelId } from '#types/database/Holodex';
 
 export class YoutubeSubscriptionService {
 	private readonly database: PrismaClient;
@@ -15,7 +10,7 @@ export class YoutubeSubscriptionService {
 		this.database = container.prisma;
 	}
 
-	public async get({ guildId, channelId }: GuildAndYoutubeChannelId): Promise<YoutubeSubscriptionWithChannel | null> {
+	public async get({ guildId, channelId }: GuildAndHolodexChannelId): Promise<YoutubeSubscriptionWithChannel | null> {
 		return this.database.youtubeSubscription.findUnique({
 			where: { channelId_guildId: { channelId, guildId } },
 			include: { channel: true }
@@ -29,19 +24,25 @@ export class YoutubeSubscriptionService {
 		});
 	}
 
-	public async getByChannel({ channelId }: YoutubeChannelId): Promise<YoutubeSubscription[]> {
+	public async getByChannel({ channelId }: HolodexChannelId): Promise<YoutubeSubscription[]> {
 		return this.database.youtubeSubscription.findMany({
 			where: { id: channelId }
 		});
 	}
 
-	public async getValid({ channelId }: YoutubeChannelId): Promise<YoutubeSubscription[]> {
+	public async getValid({ channelId }: HolodexChannelId): Promise<YoutubeSubscription[]> {
 		return this.database.youtubeSubscription.findMany({
-			where: { AND: { id: channelId, NOT: { discordChannelId: null } } }
+			where: {
+				AND: {
+					channelId,
+					NOT: { discordChannelId: null },
+					youtubeSettings: { enabled: true }
+				}
+			}
 		});
 	}
 
-	public async delete({ guildId, channelId }: GuildAndYoutubeChannelId): Promise<YoutubeSubscriptionWithChannel | null> {
+	public async delete({ guildId, channelId }: GuildAndHolodexChannelId): Promise<YoutubeSubscriptionWithChannel | null> {
 		return this.database.youtubeSubscription
 			.delete({
 				where: { channelId_guildId: { guildId, channelId } },
@@ -50,18 +51,41 @@ export class YoutubeSubscriptionService {
 			.catch(() => null);
 	}
 
-	public async create({ guildId, channelId }: GuildAndYoutubeChannelId) {
-		return this.database.youtubeSubscription.create({
-			data: { guildId, channelId },
+	public async upsert({ guildId, channelId }: GuildAndHolodexChannelId, data?: UpdateYoutubeSubscriptionData) {
+		return this.database.youtubeSubscription.upsert({
+			where: { channelId_guildId: { guildId, channelId } },
+			update: { ...data },
+			create: {
+				channel: { connect: { youtubeId: channelId } },
+				youtubeSettings: {
+					connectOrCreate: {
+						where: { guildId },
+						create: {
+							enabled: true,
+							coreSettings: {
+								connectOrCreate: {
+									where: { guildId },
+									create: { guildId }
+								}
+							}
+						}
+					}
+				}
+			},
 			include: { channel: true }
 		});
 	}
 
-	public async update({ guildId, channelId }: GuildAndYoutubeChannelId, data: UpdateYoutubeSubscriptionData) {
-		return this.database.youtubeSubscription.update({
-			where: { channelId_guildId: { guildId, channelId } },
-			data,
-			include: { channel: true }
+	public async countByGuild({ guildId }: GuildId) {
+		return this.database.youtubeSubscription.count({
+			where: { guildId }
 		});
+	}
+
+	public async exists({ channelId, guildId }: GuildAndHolodexChannelId) {
+		const result = await this.database.youtubeSubscription.count({
+			where: { channelId, guildId }
+		});
+		return result > 0;
 	}
 }

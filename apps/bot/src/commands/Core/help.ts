@@ -4,10 +4,10 @@ import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import humanizeDuration from 'humanize-duration';
 import type { ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
 import type { KBotCommand } from '#extensions/KBotCommand';
+import type { DocumentCommand } from '#types/Meili';
 
 @ApplyOptions<ModuleCommand.Options>({
 	module: 'CoreModule',
@@ -44,7 +44,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 
 	public override async autocompleteRun(interaction: ModuleCommand.AutocompleteInteraction<'cached'>): Promise<void> {
 		const search = interaction.options.getString('command', true);
-		const result = await this.container.meili.get('commands', search);
+		const result = await this.container.meili.get<DocumentCommand>('commands', search);
 
 		const options: ApplicationCommandOptionChoiceData[] = result.hits.map(({ name }) => ({ name, value: name }));
 
@@ -75,7 +75,6 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 						{ name: 'Donations', value: 'https://ko-fi.com/killbasa' },
 						{ name: 'Support server', value: 'https://discord.gg/4bXGu4Gf4c' }
 					)
-					.setFooter({ text: `Uptime: ${humanizeDuration(interaction.client.uptime)}` })
 			]
 		});
 	}

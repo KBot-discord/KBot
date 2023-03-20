@@ -116,19 +116,17 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			reportMessage = await reportChannel.send(messageData);
 		}
 
-		await new ReportHandler(settings, reportChannel, interaction.member, message, reportMessage);
+		new ReportHandler(reportChannel, message, reportMessage);
 
 		return interaction.defaultReply(`[Report sent](${reportMessage.url})`);
 	}
 
 	private buildRow(message: Message, member: GuildMember, ownerId: string): ActionRowBuilder<ButtonBuilder> {
 		const row = new ActionRowBuilder<ButtonBuilder>()
-			.addComponents(new ButtonBuilder().setCustomId(ReportCustomIds.Timeout).setLabel('Timeout').setStyle(ButtonStyle.Danger))
 			.addComponents(new ButtonBuilder().setCustomId(ReportCustomIds.Delete).setLabel('Delete').setStyle(ButtonStyle.Primary))
 			.addComponents(new ButtonBuilder().setCustomId(ReportCustomIds.Info).setLabel('User Info').setStyle(ButtonStyle.Primary));
 
 		if (message.webhookId) {
-			row.components[ReportButtons.Timeout].setDisabled(true);
 			row.components[ReportButtons.Delete].setDisabled(true);
 			row.components[ReportButtons.Info].setDisabled(true);
 		} else if (
@@ -137,7 +135,6 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			member.id === ownerId ||
 			message.type !== MessageType.Default
 		) {
-			row.components[ReportButtons.Timeout].setDisabled(true);
 			row.components[ReportButtons.Delete].setDisabled(true);
 		}
 

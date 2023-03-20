@@ -12,17 +12,17 @@ export function registerYoutubeChannelService(router: ConnectRouter) {
 class YoutubeChannelServiceImpl implements ServiceImpl<typeof YoutubeChannelService> {
 	@authenticated()
 	public async getYoutubeChannel({ channelId }: GetYoutubeChannelRequest, { auth, error }: HandlerContext): Promise<GetYoutubeChannelResponse> {
-		const { logger, youtube } = container;
+		const { logger, prisma } = container;
 		if (error) throw error;
 		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
 
 		try {
-			const channel = await youtube.channels.get({
-				channelId
+			const channel = await prisma.holodexChannel.findUnique({
+				where: { youtubeId: channelId }
 			});
 
 			const data: PartialMessage<GetYoutubeChannelResponse> = {
-				channel: channel ? { id: channel.id, name: channel.name, image: channel.image } : undefined
+				channel: channel ? { id: channel.youtubeId, name: channel.name, image: channel.image ?? undefined } : undefined
 			};
 
 			return new GetYoutubeChannelResponse(data);

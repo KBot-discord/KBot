@@ -44,6 +44,10 @@ export class ModalHandler extends InteractionHandler {
 						new ButtonBuilder()
 							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Edit, { ei: emoteId }))
 							.setLabel('Edit info')
+							.setStyle(ButtonStyle.Secondary),
+						new ButtonBuilder()
+							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Refresh, { ei: emoteId }))
+							.setLabel('Refresh emoji')
 							.setStyle(ButtonStyle.Secondary)
 					])
 				]

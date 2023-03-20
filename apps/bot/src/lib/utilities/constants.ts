@@ -32,7 +32,8 @@ export const enum StatusEmbed {
 export const enum EmbedColors {
 	Default = '#006BFC',
 	Success = '#33B54E',
-	Error = 'Red'
+	Error = 'Red',
+	Grey = '#818C94'
 }
 
 export const enum BrandColors {

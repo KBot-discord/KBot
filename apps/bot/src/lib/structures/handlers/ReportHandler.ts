@@ -1,21 +1,16 @@
 import { getUserInfo, isWebhookMessage } from '#utils/Discord';
 import { EmbedColors } from '#utils/constants';
-import { ModerationAction } from '#structures/ModerationAction';
 import { ActionRowBuilder, EmbedBuilder, InteractionCollector, ButtonBuilder, ComponentType } from 'discord.js';
 import { ButtonStyle, InteractionType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { Time } from '@sapphire/duration';
 import type { APIActionRowComponent, APIButtonComponent } from 'discord-api-types/v10';
 import type { ButtonInteraction, GuildMember, Message, GuildTextBasedChannel } from 'discord.js';
-import type { ModerationSettings } from '#prisma';
 
 export enum ReportButtons {
-	Timeout,
 	Delete,
 	Info
 }
 
 const ButtonCustomId = {
-	Timeout: '@kbotdev/report.timeout',
 	Delete: '@kbotdev/report.delete',
 	Info: '@kbotdev/report.info',
 	Confirm: '@kbotdev/report.confirm',
@@ -23,9 +18,6 @@ const ButtonCustomId = {
 } as const;
 
 export class ReportHandler {
-	private readonly settings: ModerationSettings;
-	private readonly moderator: GuildMember;
-
 	private readonly targetMember: GuildMember;
 	private readonly targetMessage: Message<true>;
 
@@ -34,15 +26,7 @@ export class ReportHandler {
 
 	private collector: InteractionCollector<ButtonInteraction<'cached'>> | null = null;
 
-	public constructor(
-		settings: ModerationSettings,
-		reportChannel: GuildTextBasedChannel,
-		moderator: GuildMember,
-		targetMessage: Message<true>,
-		reportMessage: Message<true>
-	) {
-		this.settings = settings;
-		this.moderator = moderator;
+	public constructor(reportChannel: GuildTextBasedChannel, targetMessage: Message<true>, reportMessage: Message<true>) {
 		this.targetMessage = targetMessage;
 		this.targetMember = targetMessage.member!;
 		this.reportMessage = reportMessage;
@@ -57,29 +41,6 @@ export class ReportHandler {
 		await interaction.deferUpdate();
 
 		const { channel } = this.targetMessage;
-		const client = await interaction.guild.members.fetchMe();
-
-		if (interaction.customId === ButtonCustomId.Timeout) {
-			if (!this.targetMember.moderatable) {
-				await interaction.errorFollowup(
-					`I don't have the required permission, or I am not high enough in the role hierarchy to ban that user.${
-						client.permissions.has(PermissionFlagsBits.ModerateMembers) ? '' : '\n\nRequired permission: Timeout Members'
-					}`,
-					true
-				);
-				return;
-			}
-			if (
-				!(interaction.guild.ownerId === interaction.member.id) &&
-				this.targetMember.roles.highest.position >= interaction.member.roles.highest.position
-			) {
-				await interaction.errorFollowup("You cannot timeout this user. (target's highest role is above or equal to yours)", true);
-				return;
-			}
-			await this.toggleButton(true, ReportButtons.Timeout);
-			const text = `Would you like to timeout <@${this.targetMember.id}> for 15 minutes?`;
-			await this.confirmationPrompt(interaction.member, text, ReportButtons.Timeout);
-		}
 
 		if (interaction.customId === ButtonCustomId.Delete) {
 			if (!channel.permissionsFor(await interaction.guild.members.fetchMe()).has(PermissionFlagsBits.ManageMessages)) {
@@ -104,7 +65,7 @@ export class ReportHandler {
 	}
 
 	private async handleEnd() {
-		await this.toggleButton(true, ReportButtons.Delete, ReportButtons.Timeout, ReportButtons.Info);
+		await this.toggleButton(true, ReportButtons.Delete, ReportButtons.Info);
 
 		this.collector?.removeAllListeners();
 	}
@@ -149,23 +110,6 @@ export class ReportHandler {
 					await this.toggleButton(false, type);
 					return;
 				}
-				if (type === ReportButtons.Timeout) {
-					if (this.targetMember.moderatable) {
-						await new ModerationAction(this.settings, this.moderator) //
-							.timeout(this.targetMember, {
-								reason: 'Sending a rule-breaking message.',
-								sendDm: true,
-								silent: false,
-								expiresIn: Time.Minute * 15
-							});
-						return;
-					}
-
-					await this.reportChannel.send({
-						content: "I don't have the required permissions to timeout that user."
-					});
-					return;
-				}
 				if (type === ReportButtons.Delete) {
 					await this.targetMessage.delete();
 				}
@@ -179,9 +123,6 @@ export class ReportHandler {
 	private setupCollector(): void {
 		this.collector = new InteractionCollector<ButtonInteraction<'cached'>>(this.targetMember.client, {
 			filter: (i) => {
-				if (i.customId === ButtonCustomId.Timeout) {
-					return i.memberPermissions.has(PermissionFlagsBits.ModerateMembers) && i.member.id !== this.targetMember.id;
-				}
 				if (i.customId === ButtonCustomId.Delete) {
 					return i.memberPermissions.has(PermissionFlagsBits.ManageMessages) && i.member.id !== this.targetMember.id;
 				}

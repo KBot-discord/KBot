@@ -44,6 +44,6 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		const diff = message.createdTimestamp - interaction.createdTimestamp;
 		const ping = Math.round(this.container.client.ws.ping);
 
-		return interaction.editReply(`Pong 🏓! (Round trip took: ${diff}ms. Heartbeat: ${ping}ms.)`);
+		return interaction.editReply(`Pong! (Round trip took: ${diff}ms. Heartbeat: ${ping}ms.)`);
 	}
 }

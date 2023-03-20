@@ -4,8 +4,7 @@
 		"outDir": "../dist",
 		"rootDir": ".",
 		"baseUrl": "./",
-		"typeRoots": ["./lib/types/**/*",
-          "../prisma/generated", "../node_modules/@types"],
+		"typeRoots": ["./lib/types/**/*", "../prisma/generated", "../node_modules/@types"],
 		"paths": {
 			"#prisma": ["../prisma/generated"],
 			"#extensions/*": ["lib/extensions/*"],
@@ -23,10 +22,6 @@
 		"skipLibCheck": true,
 		"tsBuildInfoFile": "../dist/.tsbuildinfo"
 	},
-	"include": [
-      "./"
-    ],
-	"exclude": [
-      "./tsconfig.json"
-    ]
+	"include": ["./"],
+	"exclude": ["./tsconfig.json"]
 }

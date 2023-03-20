@@ -1,11 +1,13 @@
-import { ModerationAction } from '#structures/ModerationAction';
-import { MuteService, LockedChannelService, AntiHoistService, ModerationCaseService, ModerationSettingsService } from '#services/moderation';
+import { AntiHoistService, ModerationSettingsService } from '#services/moderation';
+import { MinageHandler } from '#structures/handlers/MinageHandler';
+import { getGuildIcon } from '#utils/Discord';
+import { EmbedColors } from '#utils/constants';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import { EmbedBuilder } from 'discord.js';
 import type { GuildMember } from 'discord.js';
+import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { UpsertModerationSettingsData } from '#types/database';
 import type { ModerationSettings } from '#prisma';
 
@@ -15,18 +17,12 @@ import type { ModerationSettings } from '#prisma';
 export class ModerationModule extends Module {
 	public readonly settings: ModerationSettingsService;
 	public readonly antiHoist: AntiHoistService;
-	public readonly cases: ModerationCaseService;
-	public readonly lockedChannels: LockedChannelService;
-	public readonly mutes: MuteService;
 
 	public constructor(context: Module.Context, options: Module.Options) {
 		super(context, { ...options });
 
 		this.antiHoist = new AntiHoistService();
 		this.settings = new ModerationSettingsService();
-		this.cases = new ModerationCaseService();
-		this.lockedChannels = new LockedChannelService();
-		this.mutes = new MuteService();
 
 		this.container.moderation = this;
 	}
@@ -45,33 +41,7 @@ export class ModerationModule extends Module {
 		return this.settings.upsert({ guildId }, data);
 	}
 
-	public async checkExistingMute(member: GuildMember, config: ModerationSettings): Promise<boolean> {
-		const client = await member.guild.members.fetchMe();
-		if (!config.enabled || !client.permissions.has(PermissionFlagsBits.ManageRoles)) {
-			return false;
-		}
-
-		const existingMute = await this.mutes.get({
-			guildId: member.guild.id,
-			userId: member.id
-		});
-		if (isNullish(existingMute)) return false;
-
-		await new ModerationAction(config, await member.guild.members.fetchMe()) //
-			.mute(member, {
-				reason: 'Mute evasion prevention.',
-				sendDm: true,
-				silent: false,
-				expiresIn:
-					existingMute.duration && existingMute.evadeTime //
-						? Number(existingMute.duration - existingMute.evadeTime)
-						: undefined
-			});
-
-		return true;
-	}
-
-	public static formatMinageMessage(message: string, member: GuildMember, req: number, reqDate: number): string {
+	public static formatMinageMessage(member: GuildMember, message: string, req: number, reqDate: number): string {
 		const stampDays = `<t:${Math.floor(reqDate / 1000)}:R>`;
 		const stampDate = `<t:${Math.floor(reqDate / 1000)}:D>`;
 
@@ -80,6 +50,19 @@ export class ModerationModule extends Module {
 			.replaceAll('{req}', `**${req}**`)
 			.replaceAll('{days}', `${stampDays}`)
 			.replaceAll('{date}', `${stampDate}`);
+	}
+
+	public static formatMinageEmbed(member: GuildMember, msg: string | undefined | null, req: number, reqDate: number) {
+		const message = msg ?? MinageHandler.defaultMessage;
+
+		const formattedMessage = ModerationModule.formatMinageMessage(member, message, req, reqDate);
+		const icon = getGuildIcon(member.guild);
+
+		return new EmbedBuilder()
+			.setColor(EmbedColors.Default)
+			.setAuthor({ name: 'You have been kicked due to your account being too new' })
+			.setThumbnail(icon!)
+			.setDescription(formattedMessage);
 	}
 }
 

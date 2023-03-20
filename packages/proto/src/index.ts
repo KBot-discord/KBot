@@ -17,25 +17,8 @@ export * from './gen/bot/events/karaoke/v1/karaoke_connect';
 export * from './gen/bot/events/karaoke/v1/karaoke_pb';
 
 // Moderation
-export * from './gen/bot/moderation/cases/v1/cases_connect';
-export * from './gen/bot/moderation/cases/v1/cases_pb';
-
 export * from './gen/bot/moderation/v1/moderation_connect';
 export * from './gen/bot/moderation/v1/moderation_pb';
-
-// Premium
-export * from './gen/bot/premium/v1/premium_connect';
-export * from './gen/bot/premium/v1/premium_pb';
-
-// Twitch
-export * from './gen/bot/twitch/accounts/v1/accounts_connect';
-export * from './gen/bot/twitch/accounts/v1/accounts_pb';
-
-export * from './gen/bot/twitch/settings/v1/settings_connect';
-export * from './gen/bot/twitch/settings/v1/settings_pb';
-
-export * from './gen/bot/twitch/subscriptions/v1/subscriptions_connect';
-export * from './gen/bot/twitch/subscriptions/v1/subscriptions_pb';
 
 // Utility
 export * from './gen/bot/utility/v1/utility_connect';

@@ -34,22 +34,22 @@ class YoutubeSubscriptionServiceImpl implements ServiceImpl<typeof YoutubeSubscr
 
 		const guild = client.guilds.cache.get(guildId);
 		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', 400);
+		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
 
 		const canManage = await canManageGuild(guild, member);
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const subscription = await youtube.subscriptions.create({
+			const subscription = await youtube.subscriptions.upsert({
 				guildId,
 				channelId
 			});
 
 			const data: PartialMessage<CreateYoutubeSubscriptionResponse> = {
 				subscription: {
-					channelId: subscription.channel.id,
+					channelId: subscription.channel.youtubeId,
 					channelName: subscription.channel.name,
-					channelImage: subscription.channel.image,
+					channelImage: subscription.channel.image ?? undefined,
 					message: subscription.message ?? undefined,
 					role: subscription.roleId ?? undefined,
 					discordChannel: subscription.discordChannelId ?? undefined
@@ -74,26 +74,26 @@ class YoutubeSubscriptionServiceImpl implements ServiceImpl<typeof YoutubeSubscr
 
 		const guild = client.guilds.cache.get(guildId);
 		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', 400);
+		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
 
 		const canManage = await canManageGuild(guild, member);
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const subscription = await youtube.subscriptions.update(
+			const subscription = await youtube.subscriptions.upsert(
 				{ guildId, channelId },
 				{
 					message: fromOptional(message),
-					role: fromOptional(role),
-					discordChannel: fromOptional(discordChannel)
+					roleId: fromOptional(role),
+					discordChannelId: fromOptional(discordChannel)
 				}
 			);
 
 			const data: PartialMessage<UpdateYoutubeSubscriptionResponse> = {
 				subscription: {
-					channelId: subscription.channel.id,
+					channelId: subscription.channel.youtubeId,
 					channelName: subscription.channel.name,
-					channelImage: subscription.channel.image,
+					channelImage: subscription.channel.image ?? undefined,
 					message: subscription.message ?? undefined,
 					role: subscription.roleId ?? undefined,
 					discordChannel: subscription.discordChannelId ?? undefined
@@ -118,7 +118,7 @@ class YoutubeSubscriptionServiceImpl implements ServiceImpl<typeof YoutubeSubscr
 
 		const guild = client.guilds.cache.get(guildId);
 		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', 400);
+		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
 
 		const canManage = await canManageGuild(guild, member);
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
@@ -129,9 +129,9 @@ class YoutubeSubscriptionServiceImpl implements ServiceImpl<typeof YoutubeSubscr
 			const data: PartialMessage<DeleteYoutubeSubscriptionResponse> = {
 				subscription: subscription
 					? {
-							channelId: subscription.channel.id,
+							channelId: subscription.channel.youtubeId,
 							channelName: subscription.channel.name,
-							channelImage: subscription.channel.image,
+							channelImage: subscription.channel.image ?? undefined,
 							message: subscription.message ?? undefined,
 							role: subscription.roleId ?? undefined,
 							discordChannel: subscription.discordChannelId ?? undefined
@@ -157,7 +157,7 @@ class YoutubeSubscriptionServiceImpl implements ServiceImpl<typeof YoutubeSubscr
 
 		const guild = client.guilds.cache.get(guildId);
 		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', 400);
+		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
 
 		const canManage = await canManageGuild(guild, member);
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
@@ -167,9 +167,9 @@ class YoutubeSubscriptionServiceImpl implements ServiceImpl<typeof YoutubeSubscr
 
 			const data: Partial<YoutubeSubscription>[] = subscriptions.map((subscription) => {
 				return {
-					channelId: subscription.channel.id,
+					channelId: subscription.channel.youtubeId,
 					channelName: subscription.channel.name,
-					channelImage: subscription.channel.image,
+					channelImage: subscription.channel.image ?? undefined,
 					message: subscription.message ?? undefined,
 					role: subscription.roleId ?? undefined,
 					discordChannel: subscription.discordChannelId ?? undefined

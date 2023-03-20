@@ -1,6 +1,7 @@
 import { MeiliCategories } from '#types/Meili';
 import { MeiliSearch } from 'meilisearch';
 import { container } from '@sapphire/framework';
+import type { SearchResponse } from 'meilisearch';
 import type { MeiliDocument, MeiliIndex } from '#types/Meili';
 
 export class MeilisearchClient extends MeiliSearch {
@@ -19,12 +20,18 @@ export class MeilisearchClient extends MeiliSearch {
 		}
 	}
 
-	public async get(index: MeiliIndex, searchString: string) {
+	public async get<T = unknown>(index: MeiliIndex, searchString: string) {
 		return super
 			.index(index) //
 			.search<MeiliDocument<typeof index>>(searchString, {
 				limit: 25
-			});
+			}) as Promise<SearchResponse<T>>;
+	}
+
+	public async upsertMany(index: MeiliIndex, documents: MeiliDocument<typeof index>[]) {
+		return super
+			.index(index) //
+			.addDocuments(documents);
 	}
 
 	public async update(index: MeiliIndex, document: MeiliDocument<typeof index>) {
