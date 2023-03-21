@@ -5,6 +5,7 @@ export interface ClientConfig {
 		id: string;
 		secret: string;
 		devServers: Array<string>;
+		ownerIds: Array<string>;
 	};
 	web: {
 		url: string;
@@ -38,7 +39,7 @@ export interface ClientConfig {
 	};
 	holodex: {
 		apiKey: string;
-		twitchConflicts: string[];
+		twitchConflicts: Array<string>;
 	};
 	sentry: {
 		dsn: string;

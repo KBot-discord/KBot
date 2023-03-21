@@ -183,7 +183,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 					),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

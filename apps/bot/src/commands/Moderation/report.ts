@@ -48,7 +48,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.setDMPermission(false),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

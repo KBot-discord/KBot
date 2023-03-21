@@ -155,7 +155,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 					),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

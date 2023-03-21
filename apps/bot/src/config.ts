@@ -20,7 +20,8 @@ export function loadConfig(): void {
 			token: envGetString('DISCORD_TOKEN'),
 			id: envGetString('DISCORD_ID'),
 			secret: envGetString('DISCORD_SECRET'),
-			devServers: [] // isDev ? ['953375922990506005', '965896749317226496'] : []
+			devServers: ['953375922990506005'],
+			ownerIds: ['137657554200166401']
 		},
 		web: {
 			url: envGetString('WEB_URL')

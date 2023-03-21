@@ -58,7 +58,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

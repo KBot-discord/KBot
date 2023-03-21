@@ -61,7 +61,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

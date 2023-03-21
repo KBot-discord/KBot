@@ -52,7 +52,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.setDMPermission(false),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

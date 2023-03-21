@@ -37,7 +37,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 					),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

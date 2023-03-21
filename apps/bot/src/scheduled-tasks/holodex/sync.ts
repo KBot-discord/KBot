@@ -86,3 +86,9 @@ export class HolodexTask extends ScheduledTask {
 		}
 	}
 }
+
+declare module '@sapphire/plugin-scheduled-tasks' {
+	interface ScheduledTasks {
+		holodexSync: never;
+	}
+}
