@@ -1,11 +1,11 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
-import { useWelcomeSettingsServer } from '$rpc/WelcomeSettings';
 import { env } from '$env/dynamic/public';
+import { useClient, Clients } from '$rpc';
 
 const fetchWelcomeSettings = async (cookie: string, guild: Guild) => {
-	const response = await useWelcomeSettingsServer() //
+	const response = await useClient(Clients.WelcomeSettings) //
 		.getWelcomeSettings(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }

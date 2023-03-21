@@ -2,10 +2,10 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
 import { env } from '$env/dynamic/public';
-import { useUtilitySettingsServer } from '$rpc/UtilitySettings';
+import { useClient, Clients } from '$rpc';
 
 const fetchUtilitySettings = async (cookie: string, guild: Guild) => {
-	const response = await useUtilitySettingsServer() //
+	const response = await useClient(Clients.UtilitySettings) //
 		.getUtilitySettings(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }

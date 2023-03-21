@@ -2,10 +2,10 @@ import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
 import { env } from '$env/dynamic/public';
-import { useModerationSettingsServer } from '$rpc';
+import { Clients, useClient } from '$rpc';
 
 const fetchModerationSettings = async (cookie: string, guild: Guild) => {
-	const response = await useModerationSettingsServer() //
+	const response = await useClient(Clients.ModerationSettings) //
 		.getModerationSettings(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }

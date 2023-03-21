@@ -2,10 +2,10 @@ import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
 import { env } from '$env/dynamic/public';
-import { useDiscordServer } from '$rpc';
+import { useClient, Clients } from '$rpc';
 
 const fetchTextChannels = async (cookie: string, guild: Guild) => {
-	const response = await useDiscordServer() //
+	const response = await useClient(Clients.Discord) //
 		.getDiscordTextChannels(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }
@@ -15,7 +15,7 @@ const fetchTextChannels = async (cookie: string, guild: Guild) => {
 };
 
 const fetchVoiceChannels = async (cookie: string, guild: Guild) => {
-	const response = await useDiscordServer() //
+	const response = await useClient(Clients.Discord) //
 		.getDiscordVoiceChannels(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }
@@ -25,7 +25,7 @@ const fetchVoiceChannels = async (cookie: string, guild: Guild) => {
 };
 
 const fetchRoles = async (cookie: string, guild: Guild) => {
-	const response = await useDiscordServer() //
+	const response = await useClient(Clients.Discord) //
 		.getDiscordRoles(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }

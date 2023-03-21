@@ -1,7 +1,7 @@
 import type { Guild } from '$lib/types/app';
 import type { Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/public';
-import { useDiscordServer } from '$rpc';
+import { useClient, Clients } from '$rpc';
 
 export const handleGuildsRoute: Handle = async ({ event, resolve }) => {
 	const cookie = event.cookies.get(env.PUBLIC_COOKIE);
@@ -12,7 +12,7 @@ export const handleGuildsRoute: Handle = async ({ event, resolve }) => {
 		});
 	}
 
-	const guildsRes = await useDiscordServer() //
+	const guildsRes = await useClient(Clients.Discord) //
 		.getDiscordGuilds(
 			{}, //
 			{ headers: { cookie } }

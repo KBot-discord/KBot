@@ -2,10 +2,10 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
 import { env } from '$env/dynamic/public';
-import { useEventSettingsServer, useKaraokeEventServer } from '$rpc';
+import { Clients, useClient } from '$rpc';
 
 const fetchEventSettings = async (cookie: string, guild: Guild) => {
-	const response = await useEventSettingsServer() //
+	const response = await useClient(Clients.EventSettings) //
 		.getEventSettings(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }
@@ -15,7 +15,7 @@ const fetchEventSettings = async (cookie: string, guild: Guild) => {
 };
 
 const fetchKaraokeScheduledEvents = async (cookie: string, guild: Guild) => {
-	const response = await useKaraokeEventServer() //
+	const response = await useClient(Clients.KaraokeEvent) //
 		.getKaraokeScheduledEvents(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }
