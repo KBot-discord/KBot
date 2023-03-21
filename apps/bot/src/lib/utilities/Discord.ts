@@ -140,7 +140,7 @@ export function getUserAvatarUrl(user: User | APIUser, { forceStatic = false, si
 
 export function getMemberAvatarUrl(member: GuildMember, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string {
 	return member.avatar //
-		? member.avatarURL({ forceStatic, size })!
+		? member.avatarURL({ forceStatic, size, extension: 'png' })!
 		: getUserAvatarUrl(member.user, { forceStatic, extension: 'png' });
 }
 
