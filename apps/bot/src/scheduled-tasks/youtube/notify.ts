@@ -47,7 +47,7 @@ export class YoutubeTask extends ScheduledTask {
 				continue;
 			}
 
-			if (stream.status === 'live' || (stream.status === 'upcoming' && availableAt < Date.now() + Time.Minute)) {
+			if (stream.status === 'live' || (stream.status === 'upcoming' && availableAt < Date.now())) {
 				const notificationSent = await redis.get<boolean>(this.notificationKey(stream.id));
 
 				if (!notificationSent) {

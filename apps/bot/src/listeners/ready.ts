@@ -9,6 +9,7 @@ import type { KBotClient } from '#extensions/KBotClient';
 })
 export class ReadyListener extends Listener {
 	private readonly commandsToFilter = ['help'];
+	private readonly categoriesToFilter = ['Dev'];
 
 	public async run(client: KBotClient) {
 		await this.syncMeili();
@@ -19,6 +20,7 @@ export class ReadyListener extends Listener {
 		const commands = this.container.stores.get('commands');
 		const documents: DocumentCommand[] = [...commands.values()]
 			.filter((cmd) => !this.commandsToFilter.includes(cmd.name))
+			.filter((cmd) => cmd.category && !this.categoriesToFilter.includes(cmd.category))
 			.map((command, index) => {
 				return {
 					id: `${index}`,

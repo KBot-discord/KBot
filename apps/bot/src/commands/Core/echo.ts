@@ -50,7 +50,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 					),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

@@ -30,7 +30,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 					.setDMPermission(true),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}

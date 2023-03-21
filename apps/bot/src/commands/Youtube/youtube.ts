@@ -179,7 +179,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 					),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
+				guildIds: []
 			}
 		);
 	}
