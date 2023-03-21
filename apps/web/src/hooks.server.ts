@@ -3,7 +3,7 @@ import { handleGuildsRoute } from './hooks/guilds';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/public';
-import { useDiscordServer } from '$rpc';
+import { useClient, Clients } from '$rpc';
 
 const protectedRoutes = ['/guilds', '/premium/manage'];
 
@@ -21,7 +21,7 @@ export const handleAll: Handle = async ({ event, resolve }) => {
 	}
 
 	try {
-		const userRes = await useDiscordServer() //
+		const userRes = await useClient(Clients.Discord) //
 			.getDiscordUser(
 				{}, //
 				{ headers: { cookie } }

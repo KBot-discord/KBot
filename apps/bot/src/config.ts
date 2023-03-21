@@ -52,32 +52,19 @@ export function loadConfig(): void {
 			port: envGetNumber('MEILI_PORT'),
 			apiKey: envGetString('MEILI_APIKEY')
 		},
-		observability: {
-			metrics: {
-				port: envGetNumber('METRICS_PORT')
-			}
+		holodex: {
+			apiKey: envGetString('HOLODEX_KEY'),
+			twitchConflicts: [
+				'UCKQi12nOGZsJ5nOuCTHErmA', //
+				'UCkDfBt3R64R2rRIrAQwldeQ',
+				'UCMDaLlGAjEZze-AsGywXJtg',
+				'UCo59TbTB8i1Xt41rE71ll4g',
+				'UC3-Rfh_Ek-s6EUWS4fT5VPw',
+				'UCSaZUKRGXwKLXTAl2_LMALQ'
+			]
 		},
 		sentry: {
 			dsn: envGetString('SENTRY_DSN')
-		},
-		twitch: {
-			id: envGetString('TWITCH_ID'),
-			secret: envGetString('TWITCH_SECRET'),
-			callback: envGetString('TWITCH_CALLBACK')
-		},
-		youtube: {
-			apiKey: envGetString('YOUTUBE_APIKEY'),
-			pubsub: {
-				secret: envGetString('YOUTUBE_PUBSUB_SECRET')
-			}
-		},
-		premium: {
-			patreon: {
-				clientId: envGetString('PREMIUM_PATREON_ID'),
-				clientSecret: envGetString('PREMIUM_PATREON_SECRET'),
-				accessToken: envGetString('PREMIUM_PATREON_ACCESS'),
-				refreshToken: envGetString('PREMIUM_PATREON_REFRESH')
-			}
 		}
 	};
 

@@ -76,7 +76,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 										chan
 											.setName('text_channel')
 											.setDescription('The channel to show queue rotations and instructions')
-											.addChannelTypes(ChannelType.GuildText, ChannelType.PublicThread, ChannelType.GuildForum)
+											.addChannelTypes(
+												ChannelType.GuildText,
+												ChannelType.PublicThread,
+												ChannelType.GuildStageVoice,
+												ChannelType.GuildVoice
+											)
 											.setRequired(true)
 									)
 									.addStringOption((topic) =>
@@ -107,7 +112,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 										chan
 											.setName('text_channel')
 											.setDescription('The channel to show queue rotations and instructions')
-											.addChannelTypes(ChannelType.GuildText, ChannelType.PublicThread, ChannelType.GuildForum)
+											.addChannelTypes(
+												ChannelType.GuildText,
+												ChannelType.PublicThread,
+												ChannelType.GuildStageVoice,
+												ChannelType.GuildVoice
+											)
 											.setRequired(true)
 									)
 									.addRoleOption((role) =>
@@ -254,6 +264,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('There is already an event in that channel.');
 		}
 
+		const { result } = await this.container.validator.channels.canSendEmbeds(textChannel);
+		if (!result) {
+			return interaction.errorReply(`I am not able to send embeds in ${channelMention(textChannel.id)}`);
+		}
+
 		await this.module.karaoke.startEvent(interaction.guild, voiceChannel, textChannel, topic, role?.id);
 
 		return interaction.successReply('The karaoke event has started.');
@@ -271,6 +286,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		if (isNullish(discordEvent.channelId) || isNullish(discordEvent.channel)) {
 			return interaction.defaultReply('There is no channel set for that Discord event.');
+		}
+
+		const { result } = await this.container.validator.channels.canSendEmbeds(textChannel);
+		if (!result) {
+			return interaction.errorReply(`I am not able to send embeds in ${channelMention(textChannel.id)}`);
 		}
 
 		const newEvent = await this.module.karaoke.createScheduledEvent({

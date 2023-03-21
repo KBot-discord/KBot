@@ -10,7 +10,7 @@ export default defineConfig({
 	skipNodeModulesBundle: true,
 	sourcemap: true,
 	target: 'es2021',
-	tsconfig: relative(__dirname, './src/tsconfig.json'),
+	tsconfig: relative(__dirname, './tsconfig.json'),
 	keepNames: true,
 	treeshake: true
 });

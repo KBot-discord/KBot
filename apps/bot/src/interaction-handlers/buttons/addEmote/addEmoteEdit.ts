@@ -24,6 +24,9 @@ export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { emoteId }: InteractionHandler.ParseResult<this>) {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
 		const emoji = await interaction.guild.emojis.fetch(emoteId);
+		if (!emoji) {
+			return interaction.defaultReply('This emoji has been deleted.');
+		}
 
 		const modal = this.buildModal(interaction.message.id, emoji.id, data);
 

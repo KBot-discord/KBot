@@ -13,9 +13,10 @@ interface DatabaseIncidentData {
 }
 
 @ApplyOptions<ScheduledTask.Options>({
+	name: 'discordStatus',
 	pattern: '0 */5 * * * *' // Every 5 minutes
 })
-export class DiscordStatusTask extends ScheduledTask {
+export class UtilityTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
 		super(context, { ...options });
 	}
@@ -71,10 +72,9 @@ export class DiscordStatusTask extends ScheduledTask {
 	}
 
 	private async handleNotifications(incident: StatusPageIncident, embed: EmbedBuilder, notifications: IncidentNotification[], newIncident = false) {
-		const { prisma, utility } = this.container;
+		const { prisma } = this.container;
 
 		const validNotifications: IncidentNotification[] = [];
-		const invalidNotifications: IncidentNotification[] = [];
 
 		const fetchedNotifications = await Promise.all(
 			notifications.map((notification) => notification.fetchChannel()) //
@@ -82,26 +82,13 @@ export class DiscordStatusTask extends ScheduledTask {
 
 		for (const notification of fetchedNotifications) {
 			const result = await notification.validateChannel();
-			if (result === undefined) {
-				invalidNotifications.push(notification);
-			} else if (result) {
+			if (result) {
 				validNotifications.push(notification);
 			}
 		}
 
 		const sendMessageResult = await Promise.all(
 			validNotifications.map((notification) => notification.sendMessage(embed)) //
-		);
-
-		await Promise.all(
-			invalidNotifications.map(({ guildId }) => {
-				return utility.settings.upsert(
-					{ guildId },
-					{
-						incidentChannelId: null
-					}
-				);
-			})
 		);
 
 		if (newIncident) {
@@ -111,11 +98,6 @@ export class DiscordStatusTask extends ScheduledTask {
 			});
 
 			await prisma.$transaction([
-				...invalidNotifications.map(({ channelId }) => {
-					return prisma.incidentMessage.deleteMany({
-						where: { channelId }
-					});
-				}),
 				prisma.discordIncident.create({
 					data: {
 						id: incident.id,
@@ -132,11 +114,6 @@ export class DiscordStatusTask extends ScheduledTask {
 				.map((notification) => notification.getData());
 
 			await prisma.$transaction([
-				...invalidNotifications.map(({ channelId }) => {
-					return prisma.incidentMessage.deleteMany({
-						where: { channelId }
-					});
-				}),
 				prisma.discordIncident.update({
 					where: { id: incident.id },
 					data: { resolved: incident.status === 'resolved' || incident.status === 'postmortem' }

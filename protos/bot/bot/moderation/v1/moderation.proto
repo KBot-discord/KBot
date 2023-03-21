@@ -7,9 +7,7 @@ import "types/crud/v1/crud.proto";
 
 message ModerationSettings {
   bool enabled = 1;
-  google.protobuf.StringValue log_channel_id = 2;
   google.protobuf.StringValue report_channel_id = 3;
-  google.protobuf.StringValue mute_role_id = 4;
   google.protobuf.Int32Value minage_req = 5;
   google.protobuf.StringValue minage_message = 6;
   bool antihoist_enabled = 7;
@@ -28,14 +26,12 @@ message GetModerationSettingsResponse {
 message UpdateModerationSettingsRequest {
   string guild_id = 1;
   types.crud.v1.RequiredBool enabled = 2;
-  types.crud.v1.OptionalString log_channel_id = 3;
   types.crud.v1.OptionalString report_channel_id = 4;
-  types.crud.v1.OptionalString mute_role_id = 5;
   types.crud.v1.OptionalInt32 minage_req = 6;
   types.crud.v1.OptionalString minage_message = 7;
   types.crud.v1.RequiredBool antihoist_enabled = 8;
 }
-  
+
 message UpdateModerationSettingsResponse {
   ModerationSettings settings = 1;
 }

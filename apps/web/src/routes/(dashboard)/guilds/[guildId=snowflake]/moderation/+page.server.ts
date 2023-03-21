@@ -2,26 +2,16 @@ import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
 import { env } from '$env/dynamic/public';
-import { useModerationCasesServer, useModerationSettingsServer } from '$rpc';
+import { Clients, useClient } from '$rpc';
 
 const fetchModerationSettings = async (cookie: string, guild: Guild) => {
-	const response = await useModerationSettingsServer() //
+	const response = await useClient(Clients.ModerationSettings) //
 		.getModerationSettings(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }
 		);
 
 	return { ...response.settings };
-};
-
-const fetchModerationCases = async (cookie: string, guild: Guild) => {
-	const response = await useModerationCasesServer() //
-		.getGuildModerationCases(
-			{ guildId: guild.id }, //
-			{ headers: { cookie } }
-		);
-
-	return response.cases.map((moderationCase) => ({ ...moderationCase }));
 };
 
 export const load: PageServerLoad = ({ cookies, locals }) => {
@@ -31,8 +21,7 @@ export const load: PageServerLoad = ({ cookies, locals }) => {
 	}
 
 	return {
-		settings: fetchModerationSettings(cookie, locals.guild),
-		cases: fetchModerationCases(cookie, locals.guild)
+		settings: fetchModerationSettings(cookie, locals.guild)
 	};
 };
 

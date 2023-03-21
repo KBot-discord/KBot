@@ -1,6 +1,7 @@
 export const AddEmoteCustomIds = {
 	Name: 'addemote-name',
 	Credits: 'addemote-credits',
+	Refresh: 'addemote-refresh',
 	ModalCredits: 'addemote-credits-modal',
 	Edit: 'addemote-edit',
 	ModalEdit: 'addemote-edit-modal'

@@ -5,12 +5,6 @@
 		"incremental": false,
 		"skipLibCheck": true
 	},
-	"include": [
-      "."
-    ],
-	"exclude": [
-      "schema.prisma",
-	  "generated",
-	  "migrations"
-	]
+	"include": ["."],
+	"exclude": ["schema.prisma", "generated", "migrations"]
 }

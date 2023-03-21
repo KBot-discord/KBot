@@ -23,7 +23,5 @@ export class GuildListener extends Listener {
 		await moderation.antiHoist.parseMember(member, settings);
 
 		await new WelcomeHandler(member).run();
-
-		await moderation.checkExistingMute(member, settings);
 	}
 }

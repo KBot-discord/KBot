@@ -1,7 +1,4 @@
-import { EmbedColors } from '#utils/constants';
 import { ModerationModule } from '#modules/ModerationModule';
-import { getGuildIcon } from '#utils/Discord';
-import { EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import type { GuildMember } from 'discord.js';
@@ -27,7 +24,7 @@ export class MinageHandler {
 		if (createdAt <= reqAge) return false;
 
 		try {
-			await this.member.send({ embeds: [this.formatEmbed(req, reqDate, msg)] });
+			await this.member.send({ embeds: [ModerationModule.formatMinageEmbed(this.member, msg, req, reqDate)] });
 			await this.member.kick(`Account too new. Required age: ${req}, Account age: ${Math.floor((Date.now() - createdAt) / 86400000)}`);
 			return true;
 		} catch (err: unknown) {
@@ -43,19 +40,6 @@ export class MinageHandler {
 		const reqDate = Math.floor(creation + reqDay);
 
 		return { reqAge, reqDate };
-	}
-
-	private formatEmbed(req: number, reqDate: number, msg: string | null) {
-		const message = msg ?? MinageHandler.defaultMessage;
-
-		const properMessage = ModerationModule.formatMinageMessage(message, this.member, req, reqDate);
-		const icon = getGuildIcon(this.member.guild);
-
-		return new EmbedBuilder()
-			.setColor(EmbedColors.Default)
-			.setAuthor({ name: 'You have been kicked due to your account being too new' })
-			.setThumbnail(icon!)
-			.setDescription(properMessage);
 	}
 
 	public static defaultMessage =

@@ -13,8 +13,7 @@ RUN turbo prune --scope=@kbotdev/bot --docker
 ## Dependencies ##
 FROM node:18-alpine AS deps
 
-RUN apk add --no-cache libc6-compat && \
-	apk add -q --update openssl && \
+RUN apk add -q --update openssl && \
 	apk add -q --no-cache libc6-compat cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make curl && \
 	curl -sSL \
       "https://github.com/bufbuild/buf/releases/download/v1.15.1/buf-$(uname -s)-$(uname -m)" \
@@ -41,19 +40,20 @@ RUN yarn db:generate && \
 FROM node:18-alpine as app
 
 ## Canvas dependencies
-RUN apk add -q --update && \
-	apk add -q --update cairo jpeg pango giflib
+RUN apk add -q --update cairo jpeg pango giflib && \
+    yarn global add prisma
 
 RUN addgroup --system --gid 1001 kbot
 RUN adduser --system --uid 1001 kbot
 USER kbot
 
-COPY --from=deps /temp/node_modules ./
-COPY --from=deps /temp/apps/bot/assets ./
+COPY --from=deps /temp/node_modules node_modules/
+COPY --from=deps /temp/packages packages/
+COPY --from=deps /temp/apps/bot/assets assets/
 COPY --from=deps /temp/apps/bot/prisma/generated prisma/generated/
 COPY --from=deps /temp/apps/bot/prisma/migrations prisma/migrations/
 COPY --from=deps /temp/apps/bot/prisma/schema.prisma prisma/schema.prisma
-COPY --from=deps /temp/apps/bot/dist ./
+COPY --from=deps /temp/apps/bot/dist dist/
 COPY --from=deps /temp/apps/bot/package.json ./
 
 CMD ["yarn", "run", "start:migrate"]

@@ -67,27 +67,5 @@ export class KBotMetrics {
 				}
 			}
 		});
-
-		new Gauge({
-			name: 'kbot_bot_twitch_accounts_total',
-			help: 'Gauge for total amount of twitch accounts.',
-			registers: [register],
-			async collect() {
-				if (container.client.isReady()) {
-					this.set(await container.twitch.accounts.count());
-				}
-			}
-		});
-
-		new Gauge({
-			name: 'kbot_bot_youtube_channels_total',
-			help: 'Gauge for total amount of youtube accounts.',
-			registers: [register],
-			async collect() {
-				if (container.client.isReady()) {
-					this.set(await container.youtube.channels.count());
-				}
-			}
-		});
 	}
 }

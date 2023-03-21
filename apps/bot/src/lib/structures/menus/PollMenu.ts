@@ -36,10 +36,7 @@ export class PollMenu extends Menu {
 					embed
 						.setColor(EmbedColors.Default)
 						.setAuthor({ name: 'Poll management', iconURL: getGuildIcon(this.guild) })
-						.addFields([
-							{ name: 'Instructions:', value: 'text' },
-							{ name: 'More text:', value: 'even more text' }
-						])
+						.addFields([{ name: 'Creating a poll', value: 'Run `/poll create`' }])
 				];
 			})
 		);

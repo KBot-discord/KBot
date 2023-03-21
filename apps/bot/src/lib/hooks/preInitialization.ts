@@ -7,6 +7,7 @@ import { PrismaClient } from '#prisma';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import { container, Plugin, preInitialization } from '@sapphire/framework';
+import { Holodex } from '@kbotdev/holodex';
 import type { SapphireClient } from '@sapphire/framework';
 
 export class PreInitializationHook extends Plugin {
@@ -41,6 +42,7 @@ export class PreInitializationHook extends Plugin {
 			});
 			container.redis = new RedisClient();
 			container.meili = new MeilisearchClient();
+			container.holodex = new Holodex({ apiKey: config.holodex.apiKey });
 
 			void container.meili.sync();
 		} catch (err: unknown) {

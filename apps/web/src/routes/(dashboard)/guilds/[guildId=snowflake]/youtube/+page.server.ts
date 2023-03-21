@@ -1,11 +1,11 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Guild } from '$lib/types/app';
-import { useYoutubeSettingsServer, useYoutubeSubscriptionsServer } from '$rpc';
+import { Clients, useClient } from '$rpc';
 import { env } from '$env/dynamic/public';
 
 const fetchYoutubeSettings = async (cookie: string, guild: Guild) => {
-	const response = await useYoutubeSettingsServer() //
+	const response = await useClient(Clients.YoutubeSettings) //
 		.getYoutubeSettings(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }
@@ -15,7 +15,7 @@ const fetchYoutubeSettings = async (cookie: string, guild: Guild) => {
 };
 
 const fetchYoutubeSubscriptions = async (cookie: string, guild: Guild) => {
-	const response = await useYoutubeSubscriptionsServer() //
+	const response = await useClient(Clients.YoutubeSubscriptions) //
 		.getGuildYoutubeSubscriptions(
 			{ guildId: guild.id }, //
 			{ headers: { cookie } }

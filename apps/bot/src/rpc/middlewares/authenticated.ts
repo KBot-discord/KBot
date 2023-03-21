@@ -27,7 +27,7 @@ export const authenticated = () => {
 			} catch (err: unknown) {
 				container.logger.error(err);
 				ctx.auth = null;
-				ctx.error = new ConnectError('Bad request', 400);
+				ctx.error = new ConnectError('Bad request', Code.Aborted);
 			}
 
 			return method.call(this, _, ctx);
