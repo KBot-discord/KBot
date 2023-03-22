@@ -67,9 +67,6 @@ export class ButtonHandler extends InteractionHandler {
 			);
 		}
 
-		console.log(rolesToAdd);
-		console.log(rolesToRemove);
-
 		await interaction.member.roles.add([...rolesToAdd.values()]);
 		await interaction.member.roles.remove([...rolesToRemove.values()]);
 	}
