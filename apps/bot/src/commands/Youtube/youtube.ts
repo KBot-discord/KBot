@@ -402,6 +402,13 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 	public async chatInputRoleReaction(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 
+		const bot = await interaction.guild.members.fetchMe();
+		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			return interaction.defaultReply(
+				"I don't have the required permissions for role reactions to work.\n\nMissing permission: `Manage Roles`."
+			);
+		}
+
 		const channel = interaction.options.getChannel('channel', true) as GuildTextBasedChannel;
 		const { result } = await this.container.validator.channels.canSendEmbeds(channel);
 		if (!result) {

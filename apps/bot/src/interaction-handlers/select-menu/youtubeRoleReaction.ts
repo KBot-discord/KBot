@@ -2,6 +2,7 @@ import { YoutubeCustomIds } from '#utils/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
+import { PermissionFlagsBits } from 'discord.js';
 import type { StringSelectMenuInteraction } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -45,6 +46,13 @@ export class ButtonHandler extends InteractionHandler {
 
 	public override async parse(interaction: StringSelectMenuInteraction<'cached'>) {
 		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
+
+		const bot = await interaction.guild.members.fetchMe();
+		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			await interaction.defaultReply("I don't have the required permissions to edit your roles.", true);
+			return this.none();
+		}
+
 		await interaction.deferUpdate();
 
 		return this.some({
