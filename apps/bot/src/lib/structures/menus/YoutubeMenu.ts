@@ -1,18 +1,15 @@
 import { EmbedColors } from '#utils/constants';
-import { getGuildIcon } from '#utils/Discord';
 import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { container } from '@sapphire/framework';
-import type { EmbedBuilder, Guild, Message, User } from 'discord.js';
+import type { EmbedBuilder, Message, User } from 'discord.js';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 import type { YoutubeSubscriptionWithChannel } from '#types/database';
 
 export class YoutubeMenu extends Menu {
-	private guild;
 	private subscriptions: YoutubeSubscriptionWithChannel[];
 
-	public constructor(guild: Guild, subscriptions: YoutubeSubscriptionWithChannel[]) {
+	public constructor(subscriptions: YoutubeSubscriptionWithChannel[]) {
 		super();
-		this.guild = guild;
 		this.subscriptions = subscriptions;
 	}
 
@@ -21,28 +18,25 @@ export class YoutubeMenu extends Menu {
 		const pages = this.buildPages(embeds);
 
 		this.setSelectMenuPlaceholder('Select a subscription');
+
 		this.setSelectMenuOptions((pageIndex) => {
-			if (pageIndex === 1) return { label: `Home page` };
-			const { channel } = this.subscriptions[pageIndex - 2];
+			const { channel } = this.subscriptions[pageIndex - 1];
 			return { label: channel.englishName ?? channel.name };
 		});
 
-		this.setPages(pages);
-		this.setHomePage((builder) =>
-			builder.setEmbeds((embed) => {
-				return [
-					embed
-						.setColor(EmbedColors.Default)
-						.setAuthor({ name: 'Youtube management', iconURL: getGuildIcon(this.guild) })
-						.addFields([
-							{ name: 'Add a subscription', value: '`/youtube subscribe`' },
-							{ name: 'Removing a subscription', value: '`/youtube unsubscribe`' },
-							{ name: 'Editing a subscription', value: '`/youtube set` or `/youtube unset`' },
-							{ name: 'Enabling/disabling a subscription', value: '`/youtube toggle`' }
-						])
-				];
-			})
-		);
+		if (embeds.length > 0) {
+			this.setPages(pages);
+		} else {
+			this.setHomePage((builder) =>
+				builder.setEmbeds((embed) => {
+					return [
+						embed //
+							.setColor(EmbedColors.Default)
+							.setDescription('There are no subscriptions to show.')
+					];
+				})
+			);
+		}
 
 		return super.run(messageOrInteraction, target);
 	}

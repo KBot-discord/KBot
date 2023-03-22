@@ -3,15 +3,17 @@ import { EmbedColors, Emoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { MeiliCategories } from '#types/Meili';
+import { YoutubeCustomIds } from '#utils/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, channelMention, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js';
+import type { APISelectMenuOption } from 'discord-api-types/v10';
 import type { YoutubeModule } from '#modules/YoutubeModule';
 import type { DocumentYoutubeChannel } from '#types/Meili';
-import type { ApplicationCommandOptionChoiceData } from 'discord.js';
+import type { ApplicationCommandOptionChoiceData, GuildTextBasedChannel, BaseMessageOptions, Guild } from 'discord.js';
 import type { YoutubeSubscriptionWithChannel } from '#types/database';
 
 @ApplyOptions<KBotCommandOptions>({
@@ -26,11 +28,17 @@ import type { YoutubeSubscriptionWithChannel } from '#types/database';
 			.setDescription('Add, remove, or edit Youtube subscriptions.')
 			.setSubcommands([
 				{ label: '/youtube subscribe <account>', description: 'Subscribe to a new channel' }, //
-				{ label: '/youtube unsubscribe <account>', description: 'Unsubscribe from a channel' },
-				{ label: '/youtube set <account> [enabled] [message] [channel] [role]', description: 'Set YouTube notification settings' },
-				{ label: '/youtube unset <account> [message] [channel] [role]', description: 'Unset YouTube notification settings' },
+				{ label: '/youtube unsubscribe <subscription>', description: 'Unsubscribe from a channel' },
+				{
+					label: '/youtube set <subscription> [message] [channel] [role] [member_channel] [member_role]',
+					description: 'Set YouTube notification settings'
+				},
+				{
+					label: '/youtube unset <subscription> [message] [channel] [role] [member_channel] [member_role]',
+					description: 'Unset YouTube notification settings'
+				},
 				{ label: '/youtube toggle <value>', description: 'Enable or disable the youtube module' },
-				{ label: '/youtube settings', description: 'Show the current settings' }
+				{ label: '/youtube subscriptions', description: 'Show the current youtube subscriptions' }
 			]);
 	}
 })
@@ -156,9 +164,21 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 							)
 							.addBooleanOption((option) =>
 								option //
-									.setName('memberrole')
+									.setName('member_role')
 									.setDescription('Remove the member ping role')
 									.setRequired(false)
+							)
+					)
+					.addSubcommand((subcommand) =>
+						subcommand //
+							.setName('role_reaction')
+							.setDescription('Automatically handle role reactions for youtube subscriptions')
+							.addChannelOption((option) =>
+								option //
+									.setName('channel')
+									.setDescription('The channel to send the role reaction embed to')
+									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+									.setRequired(true)
 							)
 					)
 					.addSubcommand((subcommand) =>
@@ -174,8 +194,8 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
-							.setName('settings')
-							.setDescription('Show the current settings')
+							.setName('subscriptions')
+							.setDescription('Show the current youtube subscriptions')
 					),
 			{
 				idHints: [],
@@ -223,11 +243,14 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			case 'unset': {
 				return this.chatInputUnset(interaction);
 			}
+			case 'role_reaction': {
+				return this.chatInputRoleReaction(interaction);
+			}
 			case 'toggle': {
 				return this.chatInputToggle(interaction);
 			}
-			case 'settings': {
-				return this.chatInputSettings(interaction);
+			case 'subscriptions': {
+				return this.chatInputSubscriptions(interaction);
 			}
 			default: {
 				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
@@ -291,6 +314,8 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			return interaction.errorReply('You are not subscribed to that channel.');
 		}
 
+		await this.updateReactionRoleMessage(interaction.guild);
+
 		return interaction.defaultReply(`Successfully unsubscribed from ${subscription.channel.name}`);
 	}
 
@@ -323,6 +348,10 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 				memberRoleId
 			}
 		);
+
+		if (roleId || memberRoleId) {
+			await this.updateReactionRoleMessage(interaction.guild);
+		}
 
 		return this.showSettings(interaction, subscription);
 	}
@@ -363,7 +392,25 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			}
 		);
 
+		if (role || memberRole) {
+			await this.updateReactionRoleMessage(interaction.guild);
+		}
+
 		return this.showSettings(interaction, subscription);
+	}
+
+	public async chatInputRoleReaction(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		await interaction.deferReply();
+
+		const channel = interaction.options.getChannel('channel', true) as GuildTextBasedChannel;
+		const { result } = await this.container.validator.channels.canSendEmbeds(channel);
+		if (!result) {
+			return interaction.defaultReply('I am not able to send embeds in that channel.');
+		}
+
+		await this.createReactionRoleMessage(interaction.guild, channel);
+
+		return interaction.defaultReply(`Role reaction embed sent in ${channelMention(channel.id)}`);
 	}
 
 	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
@@ -385,17 +432,145 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputSubscriptions(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const subscriptions = await this.module.subscriptions.getByGuild({
 			guildId: interaction.guildId
 		});
 
-		return new YoutubeMenu(interaction.guild, subscriptions).run(interaction, interaction.user);
+		return new YoutubeMenu(subscriptions).run(interaction, interaction.user);
 	}
 
 	private showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, subscription: YoutubeSubscriptionWithChannel) {
 		return interaction.editReply({
 			embeds: [this.container.youtube.buildSubscriptionEmbed(subscription)]
+		});
+	}
+
+	private async createReactionRoleMessage(guild: Guild, channel: GuildTextBasedChannel) {
+		const subscriptions = await this.module.subscriptions.getByGuild({
+			guildId: guild.id
+		});
+
+		const messageOptions = await this.buildRoleReactionMessage(subscriptions);
+
+		const message = await channel.send(messageOptions);
+
+		await this.module.upsertSettings(guild.id, {
+			reactionRoleMessageId: message.id,
+			reactionRoleChannelId: message.channelId
+		});
+
+		return message;
+	}
+
+	private async updateReactionRoleMessage(guild: Guild) {
+		const settings = await this.module.getSettings(guild.id);
+		if (!settings || !settings.reactionRoleChannelId || !settings.reactionRoleMessageId) return;
+
+		const channel = (await guild.channels.fetch(settings.reactionRoleChannelId)) as GuildTextBasedChannel | null;
+		if (!channel) {
+			return this.module.upsertSettings(guild.id, {
+				reactionRoleMessageId: null,
+				reactionRoleChannelId: null
+			});
+		}
+
+		const subscriptions = await this.module.subscriptions.getByGuild({
+			guildId: guild.id
+		});
+
+		const messageOptions = await this.buildRoleReactionMessage(subscriptions);
+		const oldMessage = await channel.messages.fetch(settings.reactionRoleMessageId).catch(() => null);
+
+		// Need to catch the edit since we dont have message intents
+		const editMessage = await oldMessage?.edit(messageOptions).catch(() => null);
+
+		if (!editMessage) {
+			return this.module.upsertSettings(guild.id, {
+				reactionRoleMessageId: null,
+				reactionRoleChannelId: null
+			});
+		}
+
+		return editMessage;
+	}
+
+	private async buildRoleReactionMessage(subscriptions: YoutubeSubscriptionWithChannel[]): Promise<BaseMessageOptions> {
+		const relevantSubscriptions = subscriptions.filter(({ roleId, memberRoleId }) => !isNullish(roleId) || !isNullish(memberRoleId));
+
+		const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [];
+		const subscriptionsWithRoleIds = subscriptions.filter(({ roleId }) => !isNullish(roleId));
+		const subscriptionsWithMemberRoleIds = subscriptions.filter(({ memberRoleId }) => !isNullish(memberRoleId));
+
+		let roleString = '';
+		if (subscriptionsWithRoleIds.length > 0 && subscriptionsWithMemberRoleIds.length > 0) {
+			roleString = '\n\n**Top select menu:** Get notified for non-member streams.\n**Bottom select menu** Get notified for member streams.';
+		} else if (subscriptionsWithRoleIds.length > 0) {
+			roleString = '\n\nUse the select menu below to be notified for streams.';
+		} else if (subscriptionsWithMemberRoleIds.length > 0) {
+			roleString = '\n\nUse the select menu below to be notified for member streams.';
+		}
+
+		const description = this.createRoleReactionDescription(relevantSubscriptions);
+
+		if (subscriptionsWithRoleIds.length > 0) {
+			const options = this.createRoleReactionOptions(subscriptionsWithRoleIds);
+
+			components.push(
+				new ActionRowBuilder<StringSelectMenuBuilder>() //
+					.setComponents([
+						new StringSelectMenuBuilder() //
+							.setCustomId(YoutubeCustomIds.RoleReaction)
+							.setPlaceholder('Click here to select a role')
+							.setOptions(options)
+							.setMinValues(0)
+							.setMaxValues(subscriptionsWithRoleIds.length)
+					])
+			);
+		}
+
+		if (subscriptionsWithMemberRoleIds.length > 0) {
+			const memberOptions = this.createRoleReactionOptions(subscriptionsWithMemberRoleIds);
+
+			components.push(
+				new ActionRowBuilder<StringSelectMenuBuilder>() //
+					.setComponents([
+						new StringSelectMenuBuilder() //
+							.setCustomId(YoutubeCustomIds.RoleReactionMember)
+							.setPlaceholder('Click here to select a member role')
+							.setOptions(memberOptions)
+							.setMinValues(0)
+							.setMaxValues(subscriptionsWithMemberRoleIds.length)
+					])
+			);
+		}
+
+		return {
+			embeds: [
+				new EmbedBuilder() //
+					.setColor(EmbedColors.Default)
+					.setTitle('YouTube Notification Pings')
+					.setDescription(`Get notified whenever one of these channels goes live!${roleString}`),
+				new EmbedBuilder() //
+					.setColor(EmbedColors.Default)
+					.setTitle('Channels')
+					.setDescription(description)
+			],
+			components
+		};
+	}
+
+	private createRoleReactionDescription(subscriptions: YoutubeSubscriptionWithChannel[]): string {
+		return subscriptions
+			.map(({ channel }) => {
+				return `[${channel.name}](https://www.youtube.com/channel/${channel.youtubeId})`;
+			})
+			.join('\n');
+	}
+
+	private createRoleReactionOptions(subscriptions: YoutubeSubscriptionWithChannel[]): APISelectMenuOption[] {
+		return subscriptions.map(({ channel }) => {
+			return { label: channel.name, value: channel.youtubeId };
 		});
 	}
 }

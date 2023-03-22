@@ -1,5 +1,4 @@
-import { KaraokeCustomIds } from '#utils/constants';
-import { parseCustomId } from '#utils/customIds';
+import { KaraokeCustomIds, parseCustomId } from '#utils/customIds';
 import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';

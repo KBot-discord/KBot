@@ -2,10 +2,6 @@ import { Time } from '@sapphire/duration';
 import { getRootData } from '@sapphire/pieces';
 import { join } from 'node:path';
 
-export * from './customIds/addEmote';
-export * from './customIds/karaoke';
-export * from './customIds/poll';
-
 export const NodeEnvironments = {
 	Dev: 'development',
 	Staging: 'staging',

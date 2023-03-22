@@ -131,10 +131,12 @@ model YoutubeSubscription {
 }
 
 model YoutubeSettings {
-  guildId      String                @id @unique
-  enabled      Boolean               @default(false)
-  youtube      YoutubeSubscription[]
-  coreSettings CoreSettings          @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+  guildId               String                @id @unique
+  enabled               Boolean               @default(false)
+  reactionRoleMessageId String?
+  reactionRoleChannelId String?
+  youtube               YoutubeSubscription[]
+  coreSettings          CoreSettings          @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
 }
 
 model CoreSettings {

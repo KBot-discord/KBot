@@ -22,10 +22,11 @@ import type { ModerationModule } from '#modules/ModerationModule';
 			.setName('Moderation')
 			.setDescription('Edit the settings of the moderation module.')
 			.setSubcommands([
-				{ label: '/minage toggle <value>', description: 'Enable or disable minage' }, //
-				{ label: '/minage set [days] [message]', description: 'Set the account age requirements and kick message' },
-				{ label: '/minage unset [days] [message]', description: 'Unset the current settings' },
-				{ label: '/minage settings', description: 'Show the current settings' }
+				{ label: '/moderation toggle <value>', description: 'Enable or disable the moderation module' }, //
+				{ label: '/moderation set <report_channel>', description: 'Set new moderation module settings' },
+				{ label: '/moderation unset <report_channel>', description: 'Reset moderation module settings' },
+				{ label: '/moderation permissions', description: "Audit the bot's permissions for moderation features" },
+				{ label: '/moderation settings', description: 'Show the current settings' }
 			]);
 	}
 })

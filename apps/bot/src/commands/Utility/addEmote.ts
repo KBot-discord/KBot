@@ -1,5 +1,5 @@
-import { AddEmoteCustomIds, AddEmoteFields, EmbedColors } from '#utils/constants';
-import { buildCustomId } from '#utils/customIds';
+import { EmbedColors } from '#utils/constants';
+import { AddEmoteCustomIds, AddEmoteFields, buildCustomId } from '#utils/customIds';
 import { getGuildEmoteSlots } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';

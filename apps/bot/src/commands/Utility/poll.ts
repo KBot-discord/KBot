@@ -1,6 +1,6 @@
 import { PollMenu } from '#structures/menus/PollMenu';
-import { buildCustomId } from '#utils/customIds';
-import { EmbedColors, Emoji, POLL_NUMBERS, POLL_TIME_LIMIT, PollCustomIds } from '#utils/constants';
+import { buildCustomId, PollCustomIds } from '#utils/customIds';
+import { EmbedColors, Emoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
 import { parseTimeString } from '#utils/functions';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';

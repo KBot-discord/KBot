@@ -1,4 +1,4 @@
-import { EmbedColors } from '#utils/constants';
+import { BlankSpace, EmbedColors } from '#utils/constants';
 import { YoutubeSettingsService, YoutubeSubscriptionService } from '#services/youtube';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -54,10 +54,11 @@ export class YoutubeModule extends Module {
 			.setURL(`https://www.youtube.com/channel/${channel.youtubeId}`)
 			.setFields([
 				{ name: 'Message', value: message ?? 'No message set.' },
-				{ name: 'Channel', value: discordChannelId ? channelMention(discordChannelId) : 'No channel set.' },
-				{ name: 'Role', value: roleId ? roleMention(roleId) : 'No role set.' },
-				{ name: 'Member Channel', value: memberDiscordChannelId ? channelMention(memberDiscordChannelId) : 'No channel set.' },
-				{ name: 'Member Role', value: memberRoleId ? roleMention(memberRoleId) : 'No role set.' }
+				{ name: 'Channel', value: discordChannelId ? channelMention(discordChannelId) : 'No channel set.', inline: true },
+				{ name: 'Role', value: roleId ? roleMention(roleId) : 'No role set.', inline: true },
+				{ name: BlankSpace, value: BlankSpace },
+				{ name: 'Member Channel', value: memberDiscordChannelId ? channelMention(memberDiscordChannelId) : 'No channel set.', inline: true },
+				{ name: 'Member Role', value: memberRoleId ? roleMention(memberRoleId) : 'No role set.', inline: true }
 			])
 			.setThumbnail(channel.image);
 	}

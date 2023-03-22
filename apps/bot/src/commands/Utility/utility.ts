@@ -21,8 +21,6 @@ import type { UtilityModule } from '#modules/UtilityModule';
 			.setDescription('Edit the settings of the utility module.')
 			.setSubcommands([
 				{ label: '/welcome toggle <value>', description: 'Enable or disable the utility module' }, //
-				{ label: '/welcome set [emote_credits]', description: 'Set new utility module settings' },
-				{ label: '/welcome unset [emote_credits]', description: 'Reset utility module settings' },
 				{ label: '/welcome settings', description: 'Show the current settings' }
 			]);
 	}

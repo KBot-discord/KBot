@@ -8,6 +8,8 @@ export type YoutubeSubscriptionWithChannel = YoutubeSubscription & { channel: Ho
 
 export interface UpsertYoutubeSettingsData {
 	enabled?: YoutubeSettings['enabled'];
+	reactionRoleMessageId?: YoutubeSettings['reactionRoleMessageId'];
+	reactionRoleChannelId?: YoutubeSettings['reactionRoleChannelId'];
 }
 
 export interface UpdateYoutubeSubscriptionData {
