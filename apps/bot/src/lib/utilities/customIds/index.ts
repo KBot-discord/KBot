@@ -4,6 +4,7 @@ import { brotliCompressSync, brotliDecompressSync } from 'node:zlib';
 export * from './addEmote';
 export * from './karaoke';
 export * from './poll';
+export * from './youtube';
 
 export function buildCustomId<T = unknown>(prefix: string, data: T): string {
 	return `${prefix};${brotliCompressSync(serialize(data)).toString('binary')}`;

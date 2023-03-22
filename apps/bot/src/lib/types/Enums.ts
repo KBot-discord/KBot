@@ -1,5 +1,5 @@
 export const enum KBotEvents {
-	ModerationLog = 'moderationLog'
+	YoutubeReactionRole = 'youtubeReactionRole'
 }
 
 export const enum KBotErrors {

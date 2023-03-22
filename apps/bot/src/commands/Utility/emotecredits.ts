@@ -20,7 +20,12 @@ import type { UtilitySettings } from '#prisma';
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
-			.setName('Emote Credits');
+			.setName('Emote Credits')
+			.setDescription('Send emote credits to a channel.')
+			.setSubcommands([
+				{ label: '/welcome toggle <value>', description: 'Enable or disable the utility module' }, //
+				{ label: '/welcome settings', description: 'Show the current settings' }
+			]);
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {

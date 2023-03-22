@@ -24,7 +24,7 @@
 	},
 	"devDependencies": {
 		"@sapphire/ts-config": "^3.3.4",
-		"turbo": "^1.8.4",
+		"turbo": "^1.8.5",
 		"vitest": "^0.29.7"
 	},
 	"engines": {

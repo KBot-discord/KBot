@@ -889,7 +889,7 @@ __metadata:
   resolution: "@kbotdev/apps@workspace:."
   dependencies:
     "@sapphire/ts-config": ^3.3.4
-    turbo: ^1.8.4
+    turbo: ^1.8.5
     vitest: ^0.29.7
   languageName: unknown
   linkType: soft
@@ -920,9 +920,9 @@ __metadata:
     "@sapphire/plugin-scheduled-tasks": ^6.0.0
     "@sapphire/prettier-config": ^1.4.5
     "@sapphire/utilities": ^3.11.0
-    "@sentry/integrations": ^7.44.1
-    "@sentry/node": ^7.44.1
-    "@sentry/types": ^7.44.1
+    "@sentry/integrations": ^7.44.2
+    "@sentry/node": ^7.44.2
+    "@sentry/types": ^7.44.2
     "@skyra/gifenc": ^1.0.1
     "@types/humanize-duration": ^3.27.1
     "@types/node": ^18.15.5
@@ -947,7 +947,7 @@ __metadata:
     ioredis: ^5.3.1
     lint-staged: ^13.2.0
     meilisearch: ^0.31.1
-    prettier: ^2.8.5
+    prettier: ^2.8.6
     prisma: ^4.11.0
     prom-client: ^14.2.0
     schemix: ^1.9.1
@@ -1035,8 +1035,8 @@ __metadata:
     eslint-plugin-svelte3: ^4.0.0
     husky: ^8.0.3
     postcss: ^8.4.21
-    prettier: ^2.8.5
-    prettier-plugin-svelte: ^2.9.0
+    prettier: ^2.8.6
+    prettier-plugin-svelte: ^2.10.0
     svelte: ^3.57.0
     svelte-check: ^3.1.4
     svelte-fa: ^3.0.3
@@ -1556,58 +1556,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.44.1":
-  version: 7.44.1
-  resolution: "@sentry/core@npm:7.44.1"
+"@sentry/core@npm:7.44.2":
+  version: 7.44.2
+  resolution: "@sentry/core@npm:7.44.2"
   dependencies:
-    "@sentry/types": 7.44.1
-    "@sentry/utils": 7.44.1
+    "@sentry/types": 7.44.2
+    "@sentry/utils": 7.44.2
     tslib: ^1.9.3
-  checksum: 9342fda9dcd49661ddd186f744d4b082d4ec0a0e587fd5bac61f7fac55a1bf8e27a408230b8ac4343a687f4cd7d7dcd9f326b0d2d79619540fc6d41e8887ebac
+  checksum: 2efcb9a09d0419ce7960c154d31dd017640dee203a7cf5681c0cd31b9ce116e34e05e20096d24bf5d2ff827afa016c02c287bf3808c900cec9e4906d6a8a57a5
   languageName: node
   linkType: hard
 
-"@sentry/integrations@npm:^7.44.1":
-  version: 7.44.1
-  resolution: "@sentry/integrations@npm:7.44.1"
+"@sentry/integrations@npm:^7.44.2":
+  version: 7.44.2
+  resolution: "@sentry/integrations@npm:7.44.2"
   dependencies:
-    "@sentry/types": 7.44.1
-    "@sentry/utils": 7.44.1
+    "@sentry/types": 7.44.2
+    "@sentry/utils": 7.44.2
     localforage: ^1.8.1
     tslib: ^1.9.3
-  checksum: 003f00c6ccc29eb1a38df9b5751457426349c316db6e772cbdfd314198efee5d4f7eaf5403480c9d63a952708b075df06391d683c84a7baae6fc239fe2963482
+  checksum: 2b1b1e66b790cb8343b3f43e0d3a3356d86769266ae885ce5d77b01e5c540e6e91eb10d04dadbed599f271d8480f416187028859ec43ac80f2da615f7f508801
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:^7.44.1":
-  version: 7.44.1
-  resolution: "@sentry/node@npm:7.44.1"
+"@sentry/node@npm:^7.44.2":
+  version: 7.44.2
+  resolution: "@sentry/node@npm:7.44.2"
   dependencies:
-    "@sentry/core": 7.44.1
-    "@sentry/types": 7.44.1
-    "@sentry/utils": 7.44.1
+    "@sentry/core": 7.44.2
+    "@sentry/types": 7.44.2
+    "@sentry/utils": 7.44.2
     cookie: ^0.4.1
     https-proxy-agent: ^5.0.0
     lru_map: ^0.3.3
     tslib: ^1.9.3
-  checksum: 2308110f1bbcfb7a6ee5f34a4875e238333ea57b50d13c73679387887cb89f78c795785014e8a53bc073e2676790f203c27bd7479e2957ddf974f366161b38bb
+  checksum: 6d331c5b6d308eb30a140b7ab7b5fddf6c7613d31291d304c74bf6b1737fa5940861de6af6a3477abb66d830d0bcf4092f5ca470c91cb9adc507b8de3f8c4516
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.44.1, @sentry/types@npm:^7.44.1":
-  version: 7.44.1
-  resolution: "@sentry/types@npm:7.44.1"
-  checksum: 49ba1a2522bada9ac9cf18ef55e71559f2e3a5b2e74544d49c3d0706ef17caca490f194bdb373217ee083fb80e18849d005d89d3a4319fbd7913de8b726e2245
+"@sentry/types@npm:7.44.2, @sentry/types@npm:^7.44.2":
+  version: 7.44.2
+  resolution: "@sentry/types@npm:7.44.2"
+  checksum: 33c14f4089b1554f42d8f31dd9b9ae0d1960d470ce1f2d5b49899125b3dd20814eb4ec96418e93dc0471856bbe2a7cfac29bcc4a5ecd63a6e0f3ac53a929949a
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.44.1":
-  version: 7.44.1
-  resolution: "@sentry/utils@npm:7.44.1"
+"@sentry/utils@npm:7.44.2":
+  version: 7.44.2
+  resolution: "@sentry/utils@npm:7.44.2"
   dependencies:
-    "@sentry/types": 7.44.1
+    "@sentry/types": 7.44.2
     tslib: ^1.9.3
-  checksum: 0c64c965e4260aa9cfb288f89fbaae7e330dea429c7cf022f042ab792b36896d8f6299eb0027bc39fc97698f3887c3cfe0d2086453e592eadf05af71b0c507f2
+  checksum: 726b0900e9e8d0aaf01adc5b6684e1ab4d07e63329ccac932b8fffd27209c56c3cd16b03f1290b4c57ed4fbb52aa4ca3d91f1c8c9822c78f30818fcedbabfb21
   languageName: node
   linkType: hard
 
@@ -6399,13 +6399,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-svelte@npm:^2.9.0":
-  version: 2.9.0
-  resolution: "prettier-plugin-svelte@npm:2.9.0"
+"prettier-plugin-svelte@npm:^2.10.0":
+  version: 2.10.0
+  resolution: "prettier-plugin-svelte@npm:2.10.0"
   peerDependencies:
     prettier: ^1.16.4 || ^2.0.0
     svelte: ^3.2.0
-  checksum: 2d74a960783a1974a4818ebac25145ee26095c5652a777584b7eb8f08907702160263538396c03dce7f9bcd5b313f914b234eb809ccc1550a5933fc5e919ca88
+  checksum: 0e7f3e05e864c99696d23a6dd482d40f9abc903bfe778af7a947041b13c662820afde8f62d9967b1b1b56792b69732fd454af17f8ffcdd0b018ca55c674cabb4
   languageName: node
   linkType: hard
 
@@ -6418,12 +6418,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.8.5":
-  version: 2.8.5
-  resolution: "prettier@npm:2.8.5"
+"prettier@npm:^2.8.6":
+  version: 2.8.6
+  resolution: "prettier@npm:2.8.6"
   bin:
     prettier: bin-prettier.js
-  checksum: b7f8d30e14061e0478bc5a59d4d889688d804c173a0daa91b1b85dc08eef5eb6956d1b59f4037770776fda5b967f6c9ca3b7a8a43c50bedb4c7b182029f865aa
+  checksum: 8ac94fa67aec0e65743ea15ebf954ef2f1e52638abd129dc04e8b49e8bb3224c0233c98df6b5c98efd31bd2a43866590486559438ee4ead09dc81be389068572
   languageName: node
   linkType: hard
 
@@ -7774,58 +7774,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-64@npm:1.8.4":
-  version: 1.8.4
-  resolution: "turbo-darwin-64@npm:1.8.4"
+"turbo-darwin-64@npm:1.8.5":
+  version: 1.8.5
+  resolution: "turbo-darwin-64@npm:1.8.5"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-darwin-arm64@npm:1.8.4":
-  version: 1.8.4
-  resolution: "turbo-darwin-arm64@npm:1.8.4"
+"turbo-darwin-arm64@npm:1.8.5":
+  version: 1.8.5
+  resolution: "turbo-darwin-arm64@npm:1.8.5"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-linux-64@npm:1.8.4":
-  version: 1.8.4
-  resolution: "turbo-linux-64@npm:1.8.4"
+"turbo-linux-64@npm:1.8.5":
+  version: 1.8.5
+  resolution: "turbo-linux-64@npm:1.8.5"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-linux-arm64@npm:1.8.4":
-  version: 1.8.4
-  resolution: "turbo-linux-arm64@npm:1.8.4"
+"turbo-linux-arm64@npm:1.8.5":
+  version: 1.8.5
+  resolution: "turbo-linux-arm64@npm:1.8.5"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-windows-64@npm:1.8.4":
-  version: 1.8.4
-  resolution: "turbo-windows-64@npm:1.8.4"
+"turbo-windows-64@npm:1.8.5":
+  version: 1.8.5
+  resolution: "turbo-windows-64@npm:1.8.5"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-windows-arm64@npm:1.8.4":
-  version: 1.8.4
-  resolution: "turbo-windows-arm64@npm:1.8.4"
+"turbo-windows-arm64@npm:1.8.5":
+  version: 1.8.5
+  resolution: "turbo-windows-arm64@npm:1.8.5"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo@npm:^1.8.4":
-  version: 1.8.4
-  resolution: "turbo@npm:1.8.4"
+"turbo@npm:^1.8.5":
+  version: 1.8.5
+  resolution: "turbo@npm:1.8.5"
   dependencies:
-    turbo-darwin-64: 1.8.4
-    turbo-darwin-arm64: 1.8.4
-    turbo-linux-64: 1.8.4
-    turbo-linux-arm64: 1.8.4
-    turbo-windows-64: 1.8.4
-    turbo-windows-arm64: 1.8.4
+    turbo-darwin-64: 1.8.5
+    turbo-darwin-arm64: 1.8.5
+    turbo-linux-64: 1.8.5
+    turbo-linux-arm64: 1.8.5
+    turbo-windows-64: 1.8.5
+    turbo-windows-arm64: 1.8.5
   dependenciesMeta:
     turbo-darwin-64:
       optional: true
@@ -7841,7 +7841,7 @@ __metadata:
       optional: true
   bin:
     turbo: bin/turbo
-  checksum: 7924a3cdeda4cbfdfd0c0544bd6860d040727eaeb600c21765b801e51a7d9b23daf0862eb6cf52dc44ea5d3dc01990486711237ed0d65e845976c9767b29f14c
+  checksum: a2f81683d7f07aad4519951e780a7554c443da3c1876d3c46d4f68590950804131612370211b5d8969c39302c1640bc34c276af3c661b659eca6de75d9072cb0
   languageName: node
   linkType: hard
 

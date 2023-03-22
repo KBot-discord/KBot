@@ -6,6 +6,8 @@ export default createModel('YoutubeSettings', (model) => {
 	model
 		.string('guildId', { id: true, unique: true })
 		.boolean('enabled', { default: false })
+		.string('reactionRoleMessageId', { optional: true })
+		.string('reactionRoleChannelId', { optional: true })
 
 		.relation('youtube', YoutubeSubscriptionModel, { list: true })
 

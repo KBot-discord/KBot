@@ -1,5 +1,4 @@
-import { AddEmoteCustomIds } from '#utils/constants';
-import { parseCustomId } from '#utils/customIds';
+import { AddEmoteCustomIds, parseCustomId } from '#utils/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';

@@ -1,6 +1,5 @@
 import { PollService, UtilitySettingsService } from '#services/utility';
-import { AddEmoteCustomIds, AddEmoteFields } from '#utils/constants';
-import { buildCustomId } from '#utils/customIds';
+import { AddEmoteCustomIds, AddEmoteFields, buildCustomId } from '#utils/customIds';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
