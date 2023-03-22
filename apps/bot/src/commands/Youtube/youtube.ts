@@ -554,7 +554,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 				new EmbedBuilder() //
 					.setColor(EmbedColors.Default)
 					.setTitle('Channels')
-					.setDescription(description)
+					.setDescription(description.length > 0 ? description : 'There are no channels with roles set at the moment.')
 			],
 			components
 		};
