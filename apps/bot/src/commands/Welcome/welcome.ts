@@ -245,13 +245,13 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 	public async chatInputTest(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const { member } = interaction;
 		const settings = await this.module.getSettings(interaction.guildId);
-		if (!settings) {
+		if (!settings || (!settings.message && !settings.title && !settings.description && !settings.image)) {
 			return interaction.defaultReply('There are no settings to test');
 		}
 
 		const options: InteractionEditReplyOptions = { allowedMentions: { users: [member.id] } };
 
-		if (!isNullish(settings.message)) {
+		if (!isNullish(settings.message) && settings.message.length > 0) {
 			options.content = WelcomeModule.formatText(settings.message, member);
 		}
 
@@ -262,11 +262,11 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 				.setFooter({ text: `Total members: ${interaction.guild.memberCount}` })
 				.setTimestamp();
 
-			if (settings.title) {
+			if (settings.title && settings.title.length > 0) {
 				embed.setTitle(WelcomeModule.formatText(settings.title, member));
 			}
 
-			if (settings.description) {
+			if (settings.description && settings.description.length > 0) {
 				embed.setDescription(WelcomeModule.formatText(settings.description, member));
 			}
 
