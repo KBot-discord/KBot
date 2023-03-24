@@ -43,8 +43,7 @@ export class YoutubeTask extends ScheduledTask {
 			})
 			.then((streams) =>
 				streams.filter(({ available_at }) => {
-					const availableAt = new Date(available_at).getTime();
-					return availableAt < Date.now() + Time.Hour;
+					return new Date(available_at).getTime() < Date.now() + Time.Hour;
 				})
 			);
 		metrics.incrementHolodex({ value: 1 });
@@ -63,6 +62,9 @@ export class YoutubeTask extends ScheduledTask {
 
 		for (const stream of liveStreams) {
 			const availableAt = new Date(stream.available_at).getTime();
+			if (availableAt < Date.now() - Time.Minute * 15) {
+				continue;
+			}
 
 			if (stream.status === 'live' || (stream.status === 'upcoming' && availableAt < Date.now())) {
 				const notificationSent = await redis.get<boolean>(this.notificationKey(stream.id));
