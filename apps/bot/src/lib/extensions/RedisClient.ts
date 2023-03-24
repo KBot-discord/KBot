@@ -42,6 +42,14 @@ export class RedisClient extends Redis {
 		return super.hset(hashKey, key, JSON.stringify(data));
 	}
 
+	public async hmSet<T = unknown>(hashKey: Key, data: Map<Key, T>) {
+		const formattedData = new Map<Key, string>();
+		for (const [key, value] of data.entries()) {
+			formattedData.set(key, JSON.stringify(value));
+		}
+		return super.hset(hashKey, formattedData);
+	}
+
 	public async hGetAll<T = unknown>(key: Key): Promise<Map<string, T>> {
 		const result = await super.hgetall(key);
 
@@ -51,6 +59,12 @@ export class RedisClient extends Redis {
 		}
 
 		return data;
+	}
+
+	public async hGetValues<T = unknown>(key: Key): Promise<T[]> {
+		const result = await super.hgetall(key);
+
+		return Object.values(result).map((val) => JSON.parse(val));
 	}
 
 	public async sAdd(key: Key, member: Key) {
@@ -63,6 +77,10 @@ export class RedisClient extends Redis {
 
 	public async sIsMember(key: Key, member: Key): Promise<boolean> {
 		return (await super.sismember(key, member)) === 1;
+	}
+
+	public async sMembers(key: Key) {
+		return super.smembers(key);
 	}
 
 	public deleteScanKeys(pattern: string): void {

@@ -15,17 +15,16 @@ export class KBotMetrics {
 				registers: [register],
 				labelNames: ['command'] as const
 			}),
-			twitch: new Counter({
+			youtube: new Counter({
 				name: 'kbot_bot_youtube_notifications_total',
 				help: 'Counter for total amount of youtube notifications.',
 				registers: [register],
 				labelNames: ['success'] as const
 			}),
-			youtube: new Counter({
-				name: 'kbot_bot_twitch_notifications_total',
-				help: 'Counter for total amount of youtube notifications.',
-				registers: [register],
-				labelNames: ['success'] as const
+			holodex: new Counter({
+				name: 'kbot_bot_holodex_api_requests_total',
+				help: 'Counter for total amount of holodex requests.',
+				registers: [register]
 			})
 		};
 	}
@@ -34,12 +33,12 @@ export class KBotMetrics {
 		this.counters.commands.inc({ command }, value);
 	}
 
-	public incrementTwitch({ success, value = 1 }: { success: boolean; value?: number }) {
-		this.counters.twitch.inc({ success: `${success}` }, value);
-	}
-
 	public incrementYoutube({ success, value = 1 }: { success: boolean; value?: number }) {
 		this.counters.youtube.inc({ success: `${success}` }, value);
+	}
+
+	public incrementHolodex({ value = 1 }: { value?: number }) {
+		this.counters.holodex.inc(value);
 	}
 
 	private setupGauges(): void {
@@ -60,10 +59,29 @@ export class KBotMetrics {
 			registers: [register],
 			collect() {
 				if (container.client.isReady()) {
-					this.set(
-						container.client.guilds.cache //
-							.reduce((acc, guild) => acc + guild.memberCount, 0)
-					);
+					this.set(container.client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0));
+				}
+			}
+		});
+
+		new Gauge({
+			name: 'kbot_bot_karaone_events_total',
+			help: 'Gauge for total amount of karaoke events.',
+			registers: [register],
+			async collect() {
+				if (container.client.isReady()) {
+					this.set(await container.prisma.karaokeEvent.count());
+				}
+			}
+		});
+
+		new Gauge({
+			name: 'kbot_bot_holodex_channels_total',
+			help: 'Gauge for total amount of holodex channels.',
+			registers: [register],
+			async collect() {
+				if (container.client.isReady()) {
+					this.set(await container.prisma.holodexChannel.count());
 				}
 			}
 		});
