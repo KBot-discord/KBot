@@ -13,7 +13,7 @@ export class HolodexTask extends ScheduledTask {
 	}
 
 	public override async run(): Promise<void> {
-		const { prisma, holodex, meili, logger, config } = this.container;
+		const { prisma, holodex, meili, logger, config, metrics } = this.container;
 
 		let page = 0;
 		let pagesLeft = true;
@@ -24,8 +24,6 @@ export class HolodexTask extends ScheduledTask {
 				const fetchedChannels = await holodex.channels.getList({
 					offset: page * 100
 				});
-
-				logger.debug(`[HolodexTask] Fetched ${fetchedChannels.length} channels (page: ${page + 1})`);
 
 				channels.push(...fetchedChannels);
 
@@ -39,7 +37,9 @@ export class HolodexTask extends ScheduledTask {
 				await fetchChannels();
 			}
 
-			logger.debug(`[HolodexTask] Synced ${channels.length} channels`);
+			metrics.incrementHolodex({ value: page });
+
+			logger.debug(`[HolodexTask] Synced ${channels.length} channels (pages: ${page})`);
 
 			await meili.upsertMany(
 				MeiliCategories.YoutubeChannels,

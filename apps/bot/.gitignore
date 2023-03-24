@@ -26,6 +26,3 @@ package-lock.json
 ## Logs ##
 logs
 *.log
-
-## Misc ##
-src/fetchOwners

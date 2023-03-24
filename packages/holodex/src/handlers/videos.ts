@@ -42,6 +42,7 @@ export class VideoHandler {
 		url.searchParams.append('status', 'past');
 		url.searchParams.append('type', 'stream');
 		url.searchParams.append('limit', '100');
+		url.searchParams.append('sort', 'end_actual');
 		url.searchParams.append('from', new Date(from).toISOString());
 		url.searchParams.append('to', new Date(to).toISOString());
 		url.searchParams.append('offset', `${offset}`);

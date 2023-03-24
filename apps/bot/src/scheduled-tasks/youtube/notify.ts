@@ -2,8 +2,8 @@ import { BrandColors, EmbedColors } from '#utils/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, roleMention } from 'discord.js';
-import { Time } from '@sapphire/duration';
 import humanizeDuration from 'humanize-duration';
+import { Time } from '@sapphire/duration';
 import type { Channel } from 'discord.js';
 import type { HolodexVideoWithChannel } from '@kbotdev/holodex';
 import type { Key } from '#types/Generic';
@@ -13,12 +13,14 @@ import type { Key } from '#types/Generic';
 	pattern: '0 */1 * * * *' // Every minute
 })
 export class YoutubeTask extends ScheduledTask {
+	private readonly streamsKey = 'youtube:streams:list' as Key;
+
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
 		super(context, { ...options });
 	}
 
 	public override async run(): Promise<void> {
-		const { prisma, holodex, logger, redis } = this.container;
+		const { prisma, holodex, logger, redis, metrics } = this.container;
 
 		logger.debug('[YoutubeTask] Checking subscriptions');
 
@@ -35,72 +37,76 @@ export class YoutubeTask extends ScheduledTask {
 			.then((res) => res.map(({ channelId }) => channelId));
 		if (channelIds.length < 1) return;
 
-		const liveStreams = await holodex.videos.getLive({
-			channels: channelIds
+		const liveStreams = await holodex.videos
+			.getLive({
+				channels: channelIds
+			})
+			.then((streams) =>
+				streams.filter(({ available_at }) => {
+					const availableAt = new Date(available_at).getTime();
+					return availableAt < Date.now() + Time.Hour;
+				})
+			);
+		metrics.incrementHolodex({ value: 1 });
+
+		const cachedStreams = await redis.hGetValues<HolodexVideoWithChannel>(this.streamsKey);
+		const danglingStreams = cachedStreams.filter(({ channel }) => {
+			return !channelIds.includes(channel.id);
+		});
+		const pastStreams = cachedStreams.filter(({ id }) => {
+			return !danglingStreams.some((stream) => stream.id === id) && !liveStreams.some((stream) => stream.id === id);
 		});
 
-		logger.debug(`[YoutubeTask] Sending notifications for ${liveStreams.length} streams`);
+		logger.debug(
+			`[YoutubeTask] ${liveStreams.length} live/upcoming streams, ${danglingStreams.length} dangling streams, ${pastStreams.length} past streams`
+		);
 
 		for (const stream of liveStreams) {
 			const availableAt = new Date(stream.available_at).getTime();
-			if (availableAt < Date.now() - Time.Minute * 15) {
-				continue;
-			}
 
 			if (stream.status === 'live' || (stream.status === 'upcoming' && availableAt < Date.now())) {
 				const notificationSent = await redis.get<boolean>(this.notificationKey(stream.id));
 
 				if (!notificationSent) {
 					await this.handleLive(stream);
-
 					await redis.set(this.notificationKey(stream.id), true);
 				}
 			}
 		}
 
-		let page = 0;
-		let totalItems = 9999;
-		const pastStreams: HolodexVideoWithChannel[] = [];
+		const keysToDelete: Key[] = [this.streamsKey];
 
-		logger.debug(`[YoutubeTask] Fetching past streams`);
+		if (pastStreams.length > 0) {
+			await Promise.allSettled(
+				pastStreams //
+					.filter((stream) => channelIds.includes(stream.channel.id))
+					.map(async (stream) => {
+						const messages = await redis.hGetAll<{ channelId: string }>(this.messagesKey(stream.id));
+						if (messages.size < 1) return;
+						return this.handleEnded(stream, messages);
+					})
+			);
 
-		const fetchPastStreams = async () => {
-			const now = Date.now();
-			const response = await holodex.videos.getPastPaginated({
-				from: now - Time.Hour,
-				to: now,
-				offset: page * 100
-			});
-
-			pastStreams.push(...response.items);
-
-			page++;
-			totalItems = response.total;
-		};
-
-		for (let i = 1; i * 100 < totalItems; i++) {
-			await fetchPastStreams();
+			for (const stream of pastStreams) {
+				keysToDelete.push(this.messagesKey(stream.id));
+				keysToDelete.push(this.notificationKey(stream.id));
+			}
 		}
 
-		logger.debug(`[YoutubeTask] Fetched ${pastStreams.length} past streams (pages: ${page})`);
-		if (pastStreams.length < 1) return;
-
-		await Promise.allSettled(
-			pastStreams //
-				.filter((stream) => channelIds.includes(stream.channel.id))
-				.map(async (stream) => {
-					const messages = await redis.hGetAll<{ channelId: string }>(this.messagesKey(stream.id));
-					return this.handleEnded(stream, messages);
-				})
-		);
-
-		const keysToDelete: Key[] = [];
-		for (const stream of pastStreams) {
-			keysToDelete.push(`youtube:streams:${stream.id}:notified` as Key);
-			keysToDelete.push(this.messagesKey(stream.id));
+		if (danglingStreams.length > 0) {
+			for (const stream of danglingStreams) {
+				keysToDelete.push(this.messagesKey(stream.id));
+				keysToDelete.push(this.notificationKey(stream.id));
+			}
 		}
 
 		await redis.deleteMany(keysToDelete);
+		await redis.hmSet(
+			this.streamsKey,
+			new Map<Key, HolodexVideoWithChannel>(
+				liveStreams.map((stream) => [stream.id as Key, stream]) //
+			)
+		);
 	}
 
 	private async handleLive(stream: HolodexVideoWithChannel) {
@@ -124,7 +130,9 @@ export class YoutubeTask extends ScheduledTask {
 			.setThumbnail(stream.channel.photo)
 			.setImage(`https://i.ytimg.com/vi/${stream.id}/maxresdefault.jpg`);
 
-		await Promise.allSettled(
+		const keysToSet = new Map<Key, { channelId: string }>();
+
+		const result = await Promise.allSettled(
 			subscriptions.map(async (subscription) => {
 				let discordChannel: Channel | null;
 				if (membersOnly && subscription.memberDiscordChannelId) {
@@ -149,19 +157,21 @@ export class YoutubeTask extends ScheduledTask {
 					if (subscription.roleId) roleMentions.push(subscription.roleId);
 				}
 
-				const message = await discordChannel.send({
-					content: `${rolePing}${stream.channel.name} is live!`,
+				return discordChannel.send({
+					content: subscription.message ?? `${rolePing}${stream.channel.name} is live!`,
 					embeds: [embed],
 					allowedMentions: { roles: roleMentions }
 				});
-
-				return redis.hSet<{ channelId: string }>(
-					this.messagesKey(stream.id), //
-					this.messageKey(message.id),
-					{ channelId: message.channelId }
-				);
 			})
 		);
+
+		for (const entry of result) {
+			if (entry.status === 'fulfilled' && entry.value) {
+				keysToSet.set(this.messageKey(entry.value.id), { channelId: entry.value.channelId });
+			}
+		}
+
+		await redis.hmSet(this.messagesKey(stream.id), keysToSet);
 
 		metrics.incrementYoutube({ success: true });
 	}
@@ -169,7 +179,7 @@ export class YoutubeTask extends ScheduledTask {
 	private async handleEnded(stream: HolodexVideoWithChannel, messages: Map<string, { channelId: string }>) {
 		const { client, validator } = this.container;
 
-		if (messages.size < 1) return;
+		const duration = Math.floor(Date.now() - new Date(stream.available_at).getTime());
 
 		const embed = new EmbedBuilder() //
 			.setColor(EmbedColors.Grey)
@@ -180,23 +190,23 @@ export class YoutubeTask extends ScheduledTask {
 			.setTitle(stream.title)
 			.setURL(`https://youtu.be/${stream.id}`)
 			.setFields([
-				{ name: 'Duration', value: humanizeDuration(stream.duration) } //
+				{ name: 'Duration', value: humanizeDuration(duration) } //
 			])
 			.setThumbnail(stream.channel.photo)
 			.setImage(`https://i.ytimg.com/vi/${stream.id}/maxresdefault.jpg`);
 
 		await Promise.allSettled(
-			Array.from(messages).map(async ([messageId, channel]) => {
-				const discordChannel = await client.channels.fetch(channel.channelId);
+			Array.from(messages).map(async ([messageId, { channelId }]) => {
+				const discordChannel = await client.channels.fetch(channelId);
 
 				const { result } = await validator.channels.canSendEmbeds(discordChannel);
 				if (!result || !discordChannel || !discordChannel.isTextBased()) {
 					return;
 				}
 
-				const message = await discordChannel.messages.fetch(messageId);
+				const message = await discordChannel.messages.fetch(messageId).catch(() => null);
 
-				return message.edit({
+				return message?.edit({
 					content: 'Stream is offline.',
 					embeds: [embed]
 				});
