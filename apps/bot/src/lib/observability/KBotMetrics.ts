@@ -65,7 +65,7 @@ export class KBotMetrics {
 		});
 
 		new Gauge({
-			name: 'kbot_bot_karaone_events_total',
+			name: 'kbot_bot_karaoke_events_total',
 			help: 'Gauge for total amount of karaoke events.',
 			registers: [register],
 			async collect() {
