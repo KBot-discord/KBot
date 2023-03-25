@@ -20,12 +20,8 @@ interface EmoteCreditEmbed {
 export class ButtonHandler extends InteractionHandler {
 	private readonly customIds = [AddEmoteCustomIds.Edit];
 
-	public override async run(interaction: ButtonInteraction<'cached'>, { emoteId }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { emoji }: InteractionHandler.ParseResult<this>) {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
-		const emoji = await interaction.guild.emojis.fetch(emoteId);
-		if (!emoji) {
-			return interaction.defaultReply('This emoji has been deleted.');
-		}
 
 		const modal = this.buildModal(interaction.message.id, emoji.id, data);
 
@@ -50,7 +46,13 @@ export class ButtonHandler extends InteractionHandler {
 			data: { ei }
 		} = parseCustomId<EmoteCredit>(interaction.customId);
 
-		return this.some({ emoteId: ei });
+		const emoji = interaction.guild.emojis.cache.get(ei);
+		if (!emoji) {
+			await interaction.defaultReply('This emote has been deleted.', true);
+			return this.none();
+		}
+
+		return this.some({ emoji });
 	}
 
 	private parseEmbedFields(embed: Embed): EmoteCreditEmbed {
@@ -76,9 +78,20 @@ export class ButtonHandler extends InteractionHandler {
 			.addComponents(
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
+						.setCustomId(AddEmoteFields.CreditLink)
+						.setLabel('Image source')
+						.setStyle(TextInputStyle.Paragraph)
+						.setMinLength(0)
+						.setMaxLength(100)
+						.setRequired(false)
+						.setValue(source)
+				),
+				new ActionRowBuilder<TextInputBuilder>().addComponents(
+					new TextInputBuilder()
 						.setCustomId(AddEmoteFields.CreditDescription)
 						.setLabel('Description')
-						.setStyle(TextInputStyle.Short)
+						.setStyle(TextInputStyle.Paragraph)
+						.setMinLength(0)
 						.setMaxLength(100)
 						.setRequired(false)
 						.setValue(description)
@@ -86,8 +99,9 @@ export class ButtonHandler extends InteractionHandler {
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
 						.setCustomId(AddEmoteFields.CreditArtistName)
-						.setLabel('Artist name')
+						.setLabel("Artist's name")
 						.setStyle(TextInputStyle.Short)
+						.setMinLength(0)
 						.setMaxLength(100)
 						.setRequired(false)
 						.setValue(artistName)
@@ -95,20 +109,12 @@ export class ButtonHandler extends InteractionHandler {
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
 						.setCustomId(AddEmoteFields.CreditArtistLink)
-						.setLabel('Artist link')
-						.setStyle(TextInputStyle.Paragraph)
-						.setMaxLength(250)
+						.setLabel("Artist's profile")
+						.setStyle(TextInputStyle.Short)
+						.setMinLength(0)
+						.setMaxLength(100)
 						.setRequired(false)
 						.setValue(artistLink)
-				),
-				new ActionRowBuilder<TextInputBuilder>().addComponents(
-					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditLink)
-						.setLabel('Image source')
-						.setStyle(TextInputStyle.Paragraph)
-						.setMaxLength(250)
-						.setRequired(false)
-						.setValue(source)
 				)
 			);
 	}

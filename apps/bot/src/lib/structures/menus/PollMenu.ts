@@ -54,8 +54,8 @@ export class PollMenu extends Menu {
 						return [
 							row.addComponents(
 								[
-									{ id: PollCustomIds.ResultsHidden, text: 'Show results (hidden)' },
-									{ id: PollCustomIds.ResultsPublic, text: 'Show results (public)' },
+									{ id: PollCustomIds.ResultsHidden, text: 'Show current votes (hidden)' },
+									{ id: PollCustomIds.ResultsPublic, text: 'Show current votes (public)' },
 									{ id: PollCustomIds.End, text: 'End poll' }
 								].map(({ id, text }) =>
 									new ButtonBuilder()

@@ -14,10 +14,9 @@ import type { APIEmbedField } from 'discord-api-types/v10';
 export class ModalHandler extends InteractionHandler {
 	public override async run(
 		modal: ModalSubmitInteraction<'cached'>,
-		{ id, emoteId, emoteLink, description, artistName, artistLink }: InteractionHandler.ParseResult<this>
+		{ id, emoji, emoteLink, description, artistName, artistLink }: InteractionHandler.ParseResult<this>
 	) {
 		try {
-			const emoji = await modal.guild.emojis.fetch(emoteId);
 			const message = await modal.channel!.messages.fetch(id);
 
 			const fields: APIEmbedField[] = [];
@@ -33,6 +32,7 @@ export class ModalHandler extends InteractionHandler {
 						.setTitle(emoji.name!)
 						.setThumbnail(message.embeds[0].thumbnail!.url)
 						.addFields(fields)
+						.setFooter({ text: `Emote ID: ${emoji.id}` })
 				]
 			});
 		} catch (err) {
@@ -49,17 +49,23 @@ export class ModalHandler extends InteractionHandler {
 			return this.none();
 		}
 
-		await modal.deferUpdate();
-
 		const {
 			data: { mi, ei }
 		} = parseCustomId<EmoteEditModal>(modal.customId);
+
+		const emoji = modal.guild.emojis.cache.get(ei);
+		if (!emoji) {
+			await modal.defaultReply('That emote has been deleted.', true);
+			return this.none();
+		}
+
+		await modal.deferUpdate();
 
 		const emoteLink = modal.fields.getTextInputValue(AddEmoteFields.CreditLink);
 		const description = modal.fields.getTextInputValue(AddEmoteFields.CreditDescription);
 		const artistName = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistName);
 		const artistLink = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistLink);
 
-		return this.some({ id: mi, emoteId: ei, emoteLink, description, artistName, artistLink });
+		return this.some({ id: mi, emoji, emoteLink, description, artistName, artistLink });
 	}
 }

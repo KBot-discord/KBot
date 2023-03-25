@@ -56,19 +56,20 @@ export class UtilityModule extends Module {
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
 						.setCustomId(AddEmoteFields.CreditLink)
-						.setLabel('Source link')
-						.setStyle(TextInputStyle.Short)
-						.setMinLength(1)
+						.setLabel('Image source')
+						.setStyle(TextInputStyle.Paragraph)
+						.setMinLength(0)
 						.setMaxLength(100)
-						.setRequired(true)
+						.setRequired(false)
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
 						.setCustomId(AddEmoteFields.CreditDescription)
 						.setLabel('Description')
-						.setStyle(TextInputStyle.Short)
+						.setStyle(TextInputStyle.Paragraph)
 						.setMinLength(0)
 						.setMaxLength(100)
+						.setRequired(false)
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -77,6 +78,7 @@ export class UtilityModule extends Module {
 						.setStyle(TextInputStyle.Short)
 						.setMinLength(0)
 						.setMaxLength(100)
+						.setRequired(false)
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -85,6 +87,7 @@ export class UtilityModule extends Module {
 						.setStyle(TextInputStyle.Short)
 						.setMinLength(0)
 						.setMaxLength(100)
+						.setRequired(false)
 				)
 			);
 	}

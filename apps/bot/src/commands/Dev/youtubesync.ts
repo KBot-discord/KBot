@@ -11,7 +11,7 @@ import { Time } from '@sapphire/duration';
 	cooldownDelay: Time.Minute * 5,
 	cooldownLimit: 1
 })
-export class YoutubeCommand extends Command {
+export class DevCommand extends Command {
 	public constructor(context: ModuleCommand.Context, options: Command.Options) {
 		super(context, { ...options });
 	}

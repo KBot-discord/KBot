@@ -387,7 +387,7 @@ export class KaraokeService {
 				id: voiceChannel.id,
 				guildId: voiceChannel.guildId,
 				textChannelId: textChannel.id,
-				pinMessageId: announcement.id
+				pinMessageId: announcement?.id
 			});
 		} catch (err: unknown) {
 			container.logger.error(err);
@@ -452,7 +452,7 @@ export class KaraokeService {
 				locked: false,
 				discordEventId: null,
 				roleId: null,
-				pinMessageId: announcement.id
+				pinMessageId: announcement?.id
 			});
 		} catch (err: unknown) {
 			container.logger.error(err);
@@ -547,7 +547,7 @@ export class KaraokeService {
 		textChannel: GuildTextBasedChannel,
 		embed: EmbedBuilder,
 		roleId?: string | null
-	): Promise<Message> {
+	): Promise<Message | undefined> {
 		const announcement = await textChannel.send({
 			content: `${roleId ? roleMention(roleId) : ''} A karaoke event has started!`,
 			embeds: [
@@ -564,7 +564,8 @@ export class KaraokeService {
 			],
 			allowedMentions: { roles: roleId ? [roleId] : [] }
 		});
-		return announcement.pin();
+
+		return textChannel.isVoiceBased() ? undefined : announcement.pin();
 	}
 
 	private async sendEmbed(textChannel: GuildTextBasedChannel, event: KaraokeEventWithUsers, content: string, mentions: string[]): Promise<void> {

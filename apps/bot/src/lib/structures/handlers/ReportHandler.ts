@@ -53,9 +53,7 @@ export class ReportHandler {
 			await this.toggleButton(true, ReportButtons.Delete);
 			const text = 'Would you like to delete the offending message?';
 			await this.confirmationPrompt(interaction.member, text, ReportButtons.Delete);
-		}
-
-		if (interaction.customId === ButtonCustomId.Info) {
+		} else if (interaction.customId === ButtonCustomId.Info) {
 			await this.toggleButton(true, ReportButtons.Info);
 			const embed = await getUserInfo(interaction, this.targetMember.id);
 			await this.reportMessage.reply({

@@ -15,9 +15,10 @@ import type { APIEmbedField } from 'discord-api-types/v10';
 export class ModalHandler extends InteractionHandler {
 	public override async run(
 		modal: ModalSubmitInteraction<'cached'>,
-		{ channelId, emoteId, imageSource, description, artistName, artistLink }: InteractionHandler.ParseResult<this>
+		{ channelId, emoji, imageSource, description, artistName, artistLink }: InteractionHandler.ParseResult<this>
 	) {
 		const fields: APIEmbedField[] = [];
+		if (imageSource) fields.push({ name: 'Image source', value: imageSource });
 		if (description) fields.push({ name: 'Description', value: description });
 		if (artistName) fields.push({ name: 'Artist', value: artistName, inline: true });
 		if (artistLink) fields.push({ name: "Artist's profile", value: artistLink, inline: true });
@@ -28,25 +29,23 @@ export class ModalHandler extends InteractionHandler {
 				return modal.errorReply("The current credits channel doesn't exist. Please set a new one with `/addemote set`");
 			}
 
-			const emoji = await modal.guild.emojis.fetch(emoteId);
-
 			const message = await creditsChannel.send({
 				embeds: [
 					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
 						.setTitle(emoji.name!)
 						.setThumbnail(emoji.url)
-						.addFields([...fields, { name: 'Image source', value: imageSource }])
-						.setFooter({ text: `Emote ID: ${emoteId}` })
+						.addFields(fields)
+						.setFooter({ text: `Emote ID: ${emoji.id}` })
 				],
 				components: [
 					new ActionRowBuilder<ButtonBuilder>().addComponents([
 						new ButtonBuilder()
-							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Edit, { ei: emoteId }))
+							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Edit, { ei: emoji.id }))
 							.setLabel('Edit info')
 							.setStyle(ButtonStyle.Secondary),
 						new ButtonBuilder()
-							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Refresh, { ei: emoteId }))
+							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Refresh, { ei: emoji.id }))
 							.setLabel('Refresh emoji')
 							.setStyle(ButtonStyle.Secondary)
 					])
@@ -74,11 +73,17 @@ export class ModalHandler extends InteractionHandler {
 			data: { c, ei }
 		} = parseCustomId<EmoteCreditModal>(modal.customId);
 
+		const emoji = modal.guild.emojis.cache.get(ei);
+		if (!emoji) {
+			await modal.defaultFollowup('That emote has been deleted.', true);
+			return this.none();
+		}
+
 		const imageSource = modal.fields.getTextInputValue(AddEmoteFields.CreditLink);
 		const description = modal.fields.getTextInputValue(AddEmoteFields.CreditDescription);
 		const artistName = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistName);
 		const artistLink = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistLink);
 
-		return this.some({ channelId: c, emoteId: ei, imageSource, description, artistName, artistLink });
+		return this.some({ channelId: c, emoji, imageSource, description, artistName, artistLink });
 	}
 }
