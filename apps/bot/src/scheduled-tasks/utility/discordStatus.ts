@@ -2,7 +2,7 @@ import { DISCORD_STATUS_BASE, StatusEmbed } from '#utils/constants';
 import { IncidentNotification } from '#structures/IncidentNotification';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, time, TimestampStyles } from 'discord.js';
 import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
 import type { StatusPageIncident, StatusPageResult } from '#types/DiscordStatus';
 import type { IncidentMessage, Prisma } from '#prisma';
@@ -140,14 +140,18 @@ export class UtilityTask extends ScheduledTask {
 		const embed = new EmbedBuilder()
 			.setColor(color)
 			.setTimestamp(new Date(incident.started_at))
-			.setURL(incident.shortlink)
-			.setTitle(incident.name)
-			.setFooter({ text: incident.id });
+			.setURL(`https://discordstatus.com/incidents/${incident.id}`)
+			.setTitle(incident.name);
 
 		for (const update of incident.incident_updates.reverse()) {
-			const updateDT = new Date(update.created_at);
-			const timeString = `<t:${Math.floor(updateDT.getTime() / 1000)}:R>`;
-			embed.addFields([{ name: `${update.status.charAt(0).toUpperCase()}${update.status.slice(1)} (${timeString})`, value: update.body }]);
+			const name = `${update.status.charAt(0).toUpperCase()}${update.status.slice(1)}`;
+			const timeString = time(new Date(update.created_at), TimestampStyles.RelativeTime);
+			embed.addFields([
+				{
+					name: `${name} (${timeString})`,
+					value: update.body
+				}
+			]);
 		}
 
 		const descriptionParts = [`• Impact: ${incident.impact}`];
