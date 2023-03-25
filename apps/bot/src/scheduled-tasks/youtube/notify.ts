@@ -181,8 +181,6 @@ export class YoutubeTask extends ScheduledTask {
 	private async handleEnded(stream: HolodexVideoWithChannel, messages: Map<string, { channelId: string }>) {
 		const { client, validator } = this.container;
 
-		const duration = Math.floor(Date.now() - new Date(stream.available_at).getTime());
-
 		const embed = new EmbedBuilder() //
 			.setColor(EmbedColors.Grey)
 			.setAuthor({
@@ -192,7 +190,13 @@ export class YoutubeTask extends ScheduledTask {
 			.setTitle(stream.title)
 			.setURL(`https://youtu.be/${stream.id}`)
 			.setFields([
-				{ name: 'Duration', value: humanizeDuration(duration) } //
+				{
+					name: 'Duration',
+					value: humanizeDuration(Date.now() - new Date(stream.available_at).getTime(), {
+						units: ['h', 'm'],
+						maxDecimalPoints: 0
+					})
+				} //
 			])
 			.setThumbnail(stream.channel.photo)
 			.setImage(`https://i.ytimg.com/vi/${stream.id}/maxresdefault.jpg`);
