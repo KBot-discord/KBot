@@ -65,7 +65,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			return interaction.errorReply('There is no emoji or file to add.');
 		}
 
-		const { staticSlots, animatedSlots, totalSlots } = await this.calculateSlots(interaction);
+		const { staticSlots, animatedSlots, totalSlots } = this.calculateSlots(interaction);
 
 		if (emoji.animated && animatedSlots === 0) {
 			return interaction.errorReply('No animated emoji slots are left.');
@@ -137,8 +137,8 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		});
 	}
 
-	private async calculateSlots(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
-		const allEmojis = await interaction.guild.emojis.fetch();
+	private calculateSlots(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+		const allEmojis = interaction.guild.emojis.cache;
 		const totalSlots = getGuildEmoteSlots(interaction.guild.premiumTier);
 		const animatedEmojiCount = allEmojis.filter((e) => Boolean(e.animated)).size;
 

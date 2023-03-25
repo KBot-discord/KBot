@@ -261,7 +261,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 				if (options[iteration]) {
 					const key = buildCustomId<PollOption>(PollCustomIds.Vote, {
-						option: iteration
+						option: `${iteration}`
 					});
 					components.push(new ButtonBuilder().setCustomId(key).setEmoji(POLL_NUMBERS[iteration]).setStyle(ButtonStyle.Primary));
 				} else {

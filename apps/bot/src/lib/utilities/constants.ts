@@ -63,9 +63,8 @@ export const Emoji = {
 };
 
 export const CustomEmotes = {
-	Blank: '<:blank:1084215621824299148>',
-	WhiteSquare: '<:white:1083988980544045076>',
-	BlueSquare: '<:blue:1083988979134775336>'
+	Blank: '<:blank:1089252121871917149>',
+	BlueSquare: '<:blue:1089252072874053702>'
 };
 
 export const guildEmoteSlots = [

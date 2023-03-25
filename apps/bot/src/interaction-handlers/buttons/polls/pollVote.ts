@@ -28,14 +28,14 @@ export class ButtonHandler extends InteractionHandler {
 				guildId: interaction.guildId,
 				pollId: interaction.message.id,
 				userId: interaction.user.id,
-				option
+				option: Number(option)
 			});
 
 			return interaction.editReply({
 				embeds: [
 					new EmbedBuilder()
 						.setColor(EmbedColors.Success)
-						.setDescription(`You have voted for option ${option + 1}`)
+						.setDescription(`You have voted for option ${Number(option) + 1}`)
 						.setFooter({ text: 'Only the latest vote counts' })
 				]
 			});

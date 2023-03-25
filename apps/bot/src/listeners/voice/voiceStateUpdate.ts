@@ -80,10 +80,6 @@ export class ReadyListener extends Listener {
 
 		// User leaves channels
 		if ((oldState.channelId && !newState.channelId) || newState.channelId !== event.id) {
-			if (oldState.channel?.type === ChannelType.GuildStageVoice && isNullish(oldState.channel.stageInstance)) {
-				this.container.logger.info('[VoiceStateUpdate] Stage instance check.');
-			}
-
 			// Do nothing if nobody is in queue
 			if (queue.length === 0) return;
 

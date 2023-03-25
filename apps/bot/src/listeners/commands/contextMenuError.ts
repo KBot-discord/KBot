@@ -20,6 +20,6 @@ export class CommandListener extends Listener {
 
 		Sentry.captureException(error);
 
-		return interaction.errorReply('Something went wrong, please try that command again.');
+		return interaction.errorReply('Something went wrong, please try that command again.', true);
 	}
 }

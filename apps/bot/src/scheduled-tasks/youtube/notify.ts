@@ -4,7 +4,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, roleMention } from 'discord.js';
 import humanizeDuration from 'humanize-duration';
 import { Time } from '@sapphire/duration';
-import type { Channel } from 'discord.js';
+import type { Channel, APIEmbedField } from 'discord.js';
 import type { HolodexVideoWithChannel } from '@kbotdev/holodex';
 import type { Key } from '#types/Generic';
 
@@ -90,15 +90,13 @@ export class YoutubeTask extends ScheduledTask {
 			);
 
 			for (const stream of pastStreams) {
-				keysToDelete.push(this.messagesKey(stream.id));
-				keysToDelete.push(this.notificationKey(stream.id));
+				keysToDelete.push(this.messagesKey(stream.id), this.notificationKey(stream.id));
 			}
 		}
 
 		if (danglingStreams.length > 0) {
 			for (const stream of danglingStreams) {
-				keysToDelete.push(this.messagesKey(stream.id));
-				keysToDelete.push(this.notificationKey(stream.id));
+				keysToDelete.push(this.messagesKey(stream.id), this.notificationKey(stream.id));
 			}
 		}
 
@@ -181,6 +179,17 @@ export class YoutubeTask extends ScheduledTask {
 	private async handleEnded(stream: HolodexVideoWithChannel, messages: Map<string, { channelId: string }>) {
 		const { client, validator } = this.container;
 
+		const fields: APIEmbedField[] = [];
+		if (stream.start_actual) {
+			fields.push({
+				name: 'Duration',
+				value: humanizeDuration(Date.now() - new Date(stream.available_at).getTime(), {
+					units: ['h', 'm'],
+					maxDecimalPoints: 0
+				})
+			});
+		}
+
 		const embed = new EmbedBuilder() //
 			.setColor(EmbedColors.Grey)
 			.setAuthor({
@@ -189,15 +198,7 @@ export class YoutubeTask extends ScheduledTask {
 			})
 			.setTitle(stream.title)
 			.setURL(`https://youtu.be/${stream.id}`)
-			.setFields([
-				{
-					name: 'Duration',
-					value: humanizeDuration(Date.now() - new Date(stream.available_at).getTime(), {
-						units: ['h', 'm'],
-						maxDecimalPoints: 0
-					})
-				} //
-			])
+			.setFields(fields)
 			.setThumbnail(stream.channel.photo)
 			.setImage(`https://i.ytimg.com/vi/${stream.id}/maxresdefault.jpg`);
 

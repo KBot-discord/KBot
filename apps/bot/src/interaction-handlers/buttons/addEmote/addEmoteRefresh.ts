@@ -13,10 +13,8 @@ import type { EmoteCredit } from '#types/CustomIds';
 export class ButtonHandler extends InteractionHandler {
 	private readonly customIds = [AddEmoteCustomIds.Refresh];
 
-	public override async run(interaction: ButtonInteraction<'cached'>, { emoteId }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { emoji }: InteractionHandler.ParseResult<this>) {
 		try {
-			const emoji = await interaction.guild.emojis.fetch(emoteId);
-
 			const embed = interaction.message.embeds[0];
 			const updatedEmbed: EmbedBuilder = EmbedBuilder.from(embed);
 
@@ -50,6 +48,16 @@ export class ButtonHandler extends InteractionHandler {
 			data: { ei }
 		} = parseCustomId<EmoteCredit>(interaction.customId);
 
-		return this.some({ emoteId: ei });
+		const emoji = interaction.guild.emojis.cache.get(ei);
+		if (!emoji) {
+			await interaction.defaultFollowup('That emote has been deleted.', true);
+			return this.none();
+		}
+
+		if (interaction.message.embeds[0].title === emoji.name) {
+			return this.none();
+		}
+
+		return this.some({ emoji });
 	}
 }

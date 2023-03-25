@@ -1,5 +1,5 @@
 export interface PollOption {
-	option: number;
+	option: string;
 }
 
 export interface PollMenuButton {

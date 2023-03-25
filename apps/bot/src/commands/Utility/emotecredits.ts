@@ -126,7 +126,12 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			return interaction.errorReply('There is no emote credits channel set.');
 		}
 
-		const modal = this.module.buildEmoteCreditModal(settings?.creditsChannelId, emoteId);
+		const emoji = interaction.guild.emojis.cache.get(emoteId);
+		if (!emoji) {
+			return interaction.defaultReply('An emote with that ID does not exist.', true);
+		}
+
+		const modal = this.module.buildEmoteCreditModal(settings.creditsChannelId, emoji.id);
 		return interaction.showModal(modal);
 	}
 

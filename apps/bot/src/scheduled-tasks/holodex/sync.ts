@@ -1,11 +1,13 @@
 import { MeiliCategories } from '#types/Meili';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
+import { container } from '@sapphire/framework';
 import type { HolodexChannel } from '@kbotdev/holodex';
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'holodexSync',
-	pattern: '0 0 0 * * 6' // Every saturday
+	pattern: '0 0 0 * * 6', // Every saturday
+	enabled: !container.config.isDev
 })
 export class HolodexTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {

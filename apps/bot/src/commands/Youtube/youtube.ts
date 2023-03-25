@@ -66,7 +66,9 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 							.addStringOption((option) =>
 								option //
 									.setName('account')
-									.setDescription('The ID of the YouTube account you want to subscribe to. (example: UCZlDXzGoo7d44bwdNObFacg)')
+									.setDescription(
+										'Search the name of the channel and get an autocompleted list. Only channels on Holodex are supported'
+									)
 									.setRequired(true)
 									.setAutocomplete(true)
 							)
