@@ -34,7 +34,7 @@ jobs:
         run: yarn turbo build --filter=@kbotdev/docs
 
       - name: Deploy
-        run: peaceiris/actions-gh-pages@v3.9.2
+        run: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./app/docs/docs/.vitepress/dist

@@ -12,7 +12,6 @@ export default defineConfig({
 	lang: "en-US",
 	title: "KBot Documentation",
 	description: "Documentation for KBot",
-
 	lastUpdated: true,
 	cleanUrls: true,
 
