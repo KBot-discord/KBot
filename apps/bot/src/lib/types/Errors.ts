@@ -10,12 +10,4 @@ export interface ChannelPermissionsPayload extends ErrorPayload {
 	interaction: CommandInteraction;
 }
 
-export interface ModerationPermissionsPayload extends ErrorPayload {
-	interaction: CommandInteraction;
-}
-
-export type Payload<T extends KBotErrors> = T extends KBotErrors.ChannelPermissions
-	? ChannelPermissionsPayload
-	: T extends KBotErrors.ModerationPermissions
-	? ModerationPermissionsPayload
-	: never;
+export type Payload<T extends KBotErrors> = T extends KBotErrors.ChannelPermissions ? ChannelPermissionsPayload : never;

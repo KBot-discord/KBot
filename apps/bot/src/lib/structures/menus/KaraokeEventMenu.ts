@@ -70,13 +70,9 @@ export class KaraokeEventMenu extends Menu {
 						return [
 							row1.addComponents([
 								new ButtonBuilder()
-									.setCustomId(buildCustomId<KaraokeMenuButton>(KaraokeCustomIds.Start, { eventId: event.id }))
-									.setStyle(ButtonStyle.Success)
-									.setLabel('Start event'),
-								new ButtonBuilder()
-									.setCustomId(buildCustomId<KaraokeMenuButton>(KaraokeCustomIds.Delete, { eventId: event.id }))
+									.setCustomId(buildCustomId<KaraokeMenuButton>(KaraokeCustomIds.Unschedule, { eventId: event.id }))
 									.setStyle(ButtonStyle.Danger)
-									.setLabel('Delete event')
+									.setLabel('Unschedule event')
 							])
 						];
 					}
@@ -171,10 +167,10 @@ export class KaraokeEventMenu extends Menu {
 		return new MenuPageBuilder(page).setEmbeds([embed]).setComponentRows(rows);
 	}
 
-	public static pageDeleteScheduledEvent(menu: Menu): MenuPageBuilder {
+	public static pageUnscheduleEvent(menu: Menu): MenuPageBuilder {
 		const page = menu.getCurrentPage();
 
-		const embed = new EmbedBuilder(page.embeds[0].data).setFields([]).setDescription('Event has been deleted.');
+		const embed = new EmbedBuilder(page.embeds[0].data).setFields([]).setDescription('Event has been unscheduled.');
 		const defaultRows = [page.components[0], page.components[1]];
 
 		return new MenuPageBuilder(page).setEmbeds([embed]).setComponentRows(defaultRows);

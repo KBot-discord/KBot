@@ -25,7 +25,7 @@ export class MeilisearchClient extends MeiliSearch {
 			.index(index) //
 			.search<MeiliDocument<typeof index>>(searchString, {
 				limit: 25
-			}) as Promise<SearchResponse<T>>;
+			}) as unknown as Promise<SearchResponse<T>>;
 	}
 
 	public async upsertMany(index: MeiliIndex, documents: MeiliDocument<typeof index>[]) {
