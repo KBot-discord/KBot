@@ -4,13 +4,15 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, roleMention } from 'discord.js';
 import humanizeDuration from 'humanize-duration';
 import { Time } from '@sapphire/duration';
+import { container } from '@sapphire/framework';
 import type { Channel, APIEmbedField } from 'discord.js';
 import type { HolodexVideoWithChannel } from '@kbotdev/holodex';
 import type { Key } from '#types/Generic';
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'youtubeNotify',
-	pattern: '0 */1 * * * *' // Every minute
+	pattern: '0 */1 * * * *', // Every minute
+	enabled: !container.config.isDev
 })
 export class YoutubeTask extends ScheduledTask {
 	private readonly streamsKey = 'youtube:streams:list' as Key;

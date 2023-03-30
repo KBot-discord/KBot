@@ -4,6 +4,7 @@ import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, time, TimestampStyles } from 'discord.js';
 import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
+import { container } from '@sapphire/framework';
 import type { StatusPageIncident, StatusPageResult } from '#types/DiscordStatus';
 import type { IncidentMessage, Prisma } from '#prisma';
 
@@ -14,7 +15,8 @@ interface DatabaseIncidentData {
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'discordStatus',
-	pattern: '0 */5 * * * *' // Every 5 minutes
+	pattern: '0 */5 * * * *', // Every 5 minutes
+	enabled: !container.config.isDev
 })
 export class UtilityTask extends ScheduledTask {
 	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
