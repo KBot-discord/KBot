@@ -1,16 +1,17 @@
 import { KaraokeCustomIds, parseCustomId } from '#utils/customIds';
+import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import type { ButtonInteraction, GuildTextBasedChannel } from 'discord.js';
+import { Time } from '@sapphire/duration';
+import { ButtonInteraction } from 'discord.js';
+import type { GuildTextBasedChannel } from 'discord.js';
 import type { KaraokeMenuButton } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	private readonly customIds = [KaraokeCustomIds.Skip];
-
 	public override async run(interaction: ButtonInteraction<'cached'>, { eventId }: InteractionHandler.ParseResult<this>) {
 		const { karaoke } = this.container.events;
 
@@ -20,7 +21,7 @@ export class ButtonHandler extends InteractionHandler {
 				eventId
 			});
 			if (!exists) {
-				return interaction.defaultFollowup('There is no event to skip. Run `/manage karaoke menu` to see the updated menu.', true);
+				return interaction.defaultReply('There is no event to skip. Run `/manage karaoke menu` to see the updated menu.');
 			}
 
 			const active = await karaoke.eventActive({
@@ -28,7 +29,7 @@ export class ButtonHandler extends InteractionHandler {
 				eventId
 			});
 			if (!active) {
-				return interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
+				return interaction.defaultReply('That event is not active. Run `/manage karaoke menu` to see the updated menu.');
 			}
 
 			const event = await karaoke.getEventWithQueue({ eventId });
@@ -44,16 +45,16 @@ export class ButtonHandler extends InteractionHandler {
 			return interaction.defaultReply('User skipped.');
 		} catch (err) {
 			this.container.logger.error(err);
-			return interaction.errorReply('There was an error when trying to skip the user.');
+			return interaction.errorReply('There was an error when trying to skip the user.', true);
 		}
 	}
 
+	@validCustomId(KaraokeCustomIds.Skip)
+	@interactionRatelimit(Time.Second * 5, 1)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
-
 		const settings = await this.container.events.getSettings(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, true);
 			return this.none();
 		}
 

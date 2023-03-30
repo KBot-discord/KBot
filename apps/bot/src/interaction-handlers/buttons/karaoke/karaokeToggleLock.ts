@@ -1,17 +1,17 @@
 import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { KaraokeCustomIds, parseCustomId } from '#utils/customIds';
+import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
+import { Time } from '@sapphire/duration';
+import { ButtonInteraction } from 'discord.js';
 import type { KaraokeMenuButton } from '#types/CustomIds';
-import type { ButtonInteraction } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	private readonly customIds = [KaraokeCustomIds.Lock, KaraokeCustomIds.Unlock];
-
 	public override async run(interaction: ButtonInteraction<'cached'>, { menu, eventId, shouldLock }: InteractionHandler.ParseResult<this>) {
 		const { karaoke } = this.container.events;
 
@@ -54,10 +54,10 @@ export class ButtonHandler extends InteractionHandler {
 		}
 	}
 
+	@validCustomId(KaraokeCustomIds.Lock, KaraokeCustomIds.Unlock)
+	@interactionRatelimit(Time.Second * 5, 1)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
-
-		const menu = await KaraokeEventMenu.handlers.get(interaction.user.id);
+		const menu = KaraokeEventMenu.handlers.get(interaction.user.id);
 		if (isNullish(menu)) {
 			await interaction.defaultReply('Please run `/manage karaoke menu` again.', true);
 			return this.none();
@@ -65,7 +65,7 @@ export class ButtonHandler extends InteractionHandler {
 
 		const settings = await this.container.events.getSettings(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, true);
 			return this.none();
 		}
 

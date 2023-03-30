@@ -1,25 +1,36 @@
 import { parseCustomId, PollCustomIds } from '#utils/customIds';
+import { validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
+import { ButtonInteraction } from 'discord.js';
 import type { PollMenuButton } from '#types/CustomIds';
-import type { ButtonInteraction } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	private readonly customIds = [PollCustomIds.End];
-
 	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>) {
+		const {
+			utility: { polls }
+		} = this.container;
+
 		try {
-			const success = await this.container.utility.polls.end({
+			const active = await polls.isActive({
+				guildId: interaction.guildId,
+				pollId
+			});
+			if (!active) {
+				return interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
+			}
+
+			const success = await polls.end({
 				guildId: interaction.guildId,
 				pollId
 			});
 
 			if (success) {
-				this.container.utility.polls.deleteTask(pollId);
+				polls.deleteTask(pollId);
 				return interaction.successReply('Poll ended.');
 			}
 
@@ -29,12 +40,11 @@ export class ButtonHandler extends InteractionHandler {
 		}
 	}
 
+	@validCustomId(PollCustomIds.End)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
-
 		const settings = await this.container.utility.getSettings(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();
 		}
 

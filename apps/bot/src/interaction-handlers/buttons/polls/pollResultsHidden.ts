@@ -1,19 +1,18 @@
 import { EmbedColors } from '#utils/constants';
 import { parseCustomId, PollCustomIds } from '#utils/customIds';
+import { validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, ButtonInteraction } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import type { ButtonInteraction, GuildTextBasedChannel } from 'discord.js';
+import type { GuildTextBasedChannel } from 'discord.js';
 import type { PollMenuButton } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	private readonly customIds = [PollCustomIds.ResultsPublic, PollCustomIds.ResultsHidden];
-
-	public override async run(interaction: ButtonInteraction<'cached'>, { hidden, pollId }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>) {
 		const {
 			client,
 			utility: { polls }
@@ -25,7 +24,7 @@ export class ButtonHandler extends InteractionHandler {
 				pollId
 			});
 			if (!active) {
-				return interaction.defaultFollowup('That poll is not active. Run `/poll menu` to see the updated menu.', true);
+				return interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
 			}
 
 			const poll = await polls.get({ pollId });
@@ -49,20 +48,7 @@ export class ButtonHandler extends InteractionHandler {
 			});
 			const results = polls.calculateResults(poll, votes);
 
-			if (hidden) {
-				return interaction.editReply({
-					embeds: [
-						new EmbedBuilder()
-							.setColor(EmbedColors.Default)
-							.setTitle(`Results: ${message.embeds[0].title}`)
-							.setDescription(results.join('\n'))
-							.setFooter({ text: message.embeds[0].footer!.text })
-							.setTimestamp()
-					]
-				});
-			}
-
-			return interaction.channel!.send({
+			return interaction.editReply({
 				embeds: [
 					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
@@ -78,27 +64,20 @@ export class ButtonHandler extends InteractionHandler {
 		}
 	}
 
+	@validCustomId(PollCustomIds.ResultsHidden)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
-
 		const settings = await this.container.utility.getSettings(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();
 		}
 
 		const {
-			prefix,
 			data: { pollId }
 		} = parseCustomId<PollMenuButton>(interaction.customId);
-		const hidden = prefix === PollCustomIds.ResultsHidden;
 
-		if (hidden) {
-			await interaction.deferReply({ ephemeral: true });
-		} else {
-			await interaction.deferUpdate();
-		}
+		await interaction.deferReply({ ephemeral: true });
 
-		return this.some({ hidden, pollId });
+		return this.some({ pollId });
 	}
 }
