@@ -1,10 +1,9 @@
-import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { KaraokeCustomIds, parseCustomId } from '#utils/customIds';
-import { interactionRatelimit, validCustomId } from '#utils/decorators';
+import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
+import { validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import { Time } from '@sapphire/duration';
 import { ButtonInteraction } from 'discord.js';
 import type { KaraokeMenuButton } from '#types/CustomIds';
 
@@ -12,50 +11,40 @@ import type { KaraokeMenuButton } from '#types/CustomIds';
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { menu, eventId, shouldLock }: InteractionHandler.ParseResult<this>) {
-		const { karaoke } = this.container.events;
+	public override async run(interaction: ButtonInteraction<'cached'>, { menu, eventId }: InteractionHandler.ParseResult<this>) {
+		const { events } = this.container;
 
 		try {
-			const exists = await karaoke.eventExists({
+			const exists = await events.karaoke.eventExists({
 				guildId: interaction.guildId,
 				eventId
 			});
 			if (!exists) {
-				return interaction.defaultFollowup(
-					'There is no event to change the lock for. Run `/manage karaoke menu` to see the updated menu.',
-					true
-				);
+				return interaction.defaultFollowup('There is no event to unschedule. Run `/manage karaoke menu` to see the updated menu.', true);
 			}
 
-			const active = await karaoke.eventActive({
+			const active = await events.karaoke.eventActive({
 				guildId: interaction.guildId,
 				eventId
 			});
-			if (!active) {
+			if (active) {
 				return interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
 			}
 
-			const event = await karaoke.getEvent({ eventId });
+			await events.karaoke.deleteScheduledEvent({
+				guildId: interaction.guildId,
+				eventId
+			});
 
-			if (shouldLock && event!.locked) {
-				return interaction.defaultFollowup('Queue is already locked.', true);
-			}
-			if (!shouldLock && !event!.locked) {
-				return interaction.defaultFollowup('Queue is already unlocked.', true);
-			}
-
-			const updatedEvent = await karaoke.updateQueueLock({ eventId }, !event!.locked);
-
-			const updatedPage = KaraokeEventMenu.pageUpdateLock(menu, updatedEvent);
+			const updatedPage = KaraokeEventMenu.pageUnscheduleEvent(menu);
 			return menu.updatePage(updatedPage);
 		} catch (err) {
 			this.container.logger.error(err);
-			return interaction.errorFollowup('There was an error when trying to toggle the queue lock.', true);
+			return interaction.errorReply('There was an error when trying to start the event.', true);
 		}
 	}
 
-	@validCustomId(KaraokeCustomIds.Lock, KaraokeCustomIds.Unlock)
-	@interactionRatelimit(Time.Second * 5, 1)
+	@validCustomId(KaraokeCustomIds.Unschedule)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		const menu = KaraokeEventMenu.handlers.get(interaction.user.id);
 		if (isNullish(menu)) {
@@ -72,12 +61,9 @@ export class ButtonHandler extends InteractionHandler {
 		await interaction.deferUpdate();
 
 		const {
-			prefix,
 			data: { eventId }
 		} = parseCustomId<KaraokeMenuButton>(interaction.customId);
 
-		const shouldLock = prefix === KaraokeCustomIds.Lock;
-
-		return this.some({ menu, eventId, shouldLock });
+		return this.some({ menu, eventId });
 	}
 }

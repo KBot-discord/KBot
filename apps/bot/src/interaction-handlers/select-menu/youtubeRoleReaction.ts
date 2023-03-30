@@ -1,16 +1,14 @@
 import { YoutubeCustomIds } from '#utils/customIds';
+import { validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import { PermissionFlagsBits, roleMention } from 'discord.js';
-import type { StringSelectMenuInteraction } from 'discord.js';
+import { PermissionFlagsBits, roleMention, StringSelectMenuInteraction } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.SelectMenu
 })
 export class ButtonHandler extends InteractionHandler {
-	private readonly customIds = [YoutubeCustomIds.RoleReaction, YoutubeCustomIds.RoleReactionMember];
-
 	public override async run(
 		interaction: StringSelectMenuInteraction<'cached'>,
 		{ selectedChannels, member }: InteractionHandler.ParseResult<this>
@@ -71,9 +69,8 @@ export class ButtonHandler extends InteractionHandler {
 		await interaction.member.roles.remove([...rolesToRemove.values()]);
 	}
 
+	@validCustomId(YoutubeCustomIds.RoleReaction, YoutubeCustomIds.RoleReactionMember)
 	public override async parse(interaction: StringSelectMenuInteraction<'cached'>) {
-		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
-
 		const bot = await interaction.guild.members.fetchMe();
 		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
 			await interaction.defaultReply("I don't have the required permissions to edit your roles.", true);

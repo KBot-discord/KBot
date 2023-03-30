@@ -3,6 +3,5 @@ export const enum KBotEvents {
 }
 
 export const enum KBotErrors {
-	ChannelPermissions = 'channelPermissions',
-	ModerationPermissions = 'moderationPermissions'
+	ChannelPermissions = 'channelPermissions'
 }

@@ -1,11 +1,12 @@
 import { EmbedColors } from '#utils/constants';
 import { AddEmoteCustomIds, AddEmoteFields, buildCustomId, parseCustomId } from '#utils/customIds';
+import { validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import { messageLink } from '@discordjs/builders';
 import { isNullish } from '@sapphire/utilities';
-import type { ModalSubmitInteraction, GuildTextBasedChannel } from 'discord.js';
+import type { GuildTextBasedChannel } from 'discord.js';
 import type { EmoteCredit, EmoteCreditModal } from '#types/CustomIds';
 import type { APIEmbedField } from 'discord-api-types/v10';
 
@@ -58,9 +59,8 @@ export class ModalHandler extends InteractionHandler {
 		}
 	}
 
+	@validCustomId(AddEmoteCustomIds.ModalCredits)
 	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
-		if (!modal.customId.startsWith(AddEmoteCustomIds.ModalCredits)) return this.none();
-
 		const settings = await this.container.utility.getSettings(modal.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);

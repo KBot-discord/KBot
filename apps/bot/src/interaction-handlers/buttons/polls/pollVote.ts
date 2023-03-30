@@ -1,5 +1,6 @@
 import { EmbedColors } from '#utils/constants';
 import { parseCustomId, PollCustomIds } from '#utils/customIds';
+import { validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, type ButtonInteraction } from 'discord.js';
@@ -10,8 +11,6 @@ import type { PollOption } from '#types/CustomIds';
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	private readonly customIds = [PollCustomIds.Vote];
-
 	public override async run(interaction: ButtonInteraction<'cached'>, { option }: InteractionHandler.ParseResult<this>) {
 		const { polls } = this.container.utility;
 
@@ -21,7 +20,7 @@ export class ButtonHandler extends InteractionHandler {
 				pollId: interaction.message.id
 			});
 			if (!active) {
-				return interaction.defaultFollowup('That poll is not active.', true);
+				return interaction.defaultReply('That poll is not active.');
 			}
 
 			await polls.upsertVote({
@@ -45,12 +44,11 @@ export class ButtonHandler extends InteractionHandler {
 		}
 	}
 
+	@validCustomId(PollCustomIds.Vote)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
-
 		const settings = await this.container.utility.getSettings(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();
 		}
 

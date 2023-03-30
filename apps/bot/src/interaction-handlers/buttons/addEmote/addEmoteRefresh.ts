@@ -1,18 +1,17 @@
 import { AddEmoteCustomIds, parseCustomId } from '#utils/customIds';
+import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { EmbedBuilder } from 'discord.js';
-import type { ButtonInteraction } from 'discord.js';
+import { EmbedBuilder, ButtonInteraction } from 'discord.js';
+import { Time } from '@sapphire/duration';
 import type { EmoteCredit } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	private readonly customIds = [AddEmoteCustomIds.Refresh];
-
 	public override async run(interaction: ButtonInteraction<'cached'>, { emoji }: InteractionHandler.ParseResult<this>) {
 		try {
 			const embed = interaction.message.embeds[0];
@@ -28,9 +27,9 @@ export class ButtonHandler extends InteractionHandler {
 		}
 	}
 
+	@validCustomId(AddEmoteCustomIds.Refresh)
+	@interactionRatelimit(Time.Second * 10, 1)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		if (!this.customIds.some((id) => interaction.customId.startsWith(id))) return this.none();
-
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageEmojisAndStickers)) {
 			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', true);
 			return this.none();
