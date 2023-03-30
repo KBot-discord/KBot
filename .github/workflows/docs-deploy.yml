@@ -1,14 +1,12 @@
 name: Deploy (Docs)
 
 on:
+  workflow_dispatch: {}
   push:
     branches:
       - main
     paths:
       - "apps/docs/**"
-
-permissions:
-  contents: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
@@ -17,9 +15,17 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up NodeJS
         uses: actions/setup-node@v3
@@ -33,9 +39,14 @@ jobs:
       - name: Run build
         run: yarn turbo build --filter=@kbotdev/docs
 
-      - name: Deploy
-        run: peaceiris/actions-gh-pages@v3
+      - name: Configure pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload build
+        uses: actions/upload-pages-artifact@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./app/docs/docs/.vitepress/dist
-          # cname: docs.kbot.ca
+          path: docs/.vitepress/dist
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v2
