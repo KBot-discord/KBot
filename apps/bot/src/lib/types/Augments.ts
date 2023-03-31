@@ -79,6 +79,6 @@ declare module '@sapphire/pieces' {
 
 declare module '@sapphire/framework' {
 	interface SapphireClient {
-		emit(event: KBotErrors, context: { error: KBotError; interaction: CommandInteraction }): boolean;
+		emit(event: KBotErrors, context: { error?: KBotError; interaction: CommandInteraction }): boolean;
 	}
 }

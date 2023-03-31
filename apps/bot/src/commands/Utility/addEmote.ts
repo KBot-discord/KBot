@@ -107,18 +107,21 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 	}
 
 	private async handleSubmit(modal: ModalSubmitInteraction<'cached'>, emojiData: EmojiData, slotsLeft: string) {
-		await modal.deferReply();
 		const embed = new EmbedBuilder();
 		const { url } = emojiData;
 
 		const emoteName = modal.fields.getTextInputValue(AddEmoteFields.Name);
+		if (!/^\w+$/.test(emoteName)) {
+			return modal.errorReply('That is not a valid emote name.', true);
+		}
+
 		const newEmoji = await modal.guild.emojis.create({ attachment: url, name: emoteName });
 
 		if (url.startsWith('https')) {
 			embed.setThumbnail(url);
 		}
 
-		return modal.editReply({
+		return modal.reply({
 			embeds: [embed.setColor(EmbedColors.Success).setDescription(`**${emoteName}** has been added\n\n${slotsLeft}`)],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>().addComponents([
