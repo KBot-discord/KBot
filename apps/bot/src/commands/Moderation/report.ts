@@ -17,9 +17,7 @@ import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'ModerationModule',
-	detailedDescription: 'Send the reported message to the set moderator channel.',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	deferOptions: { defer: true, ephemeral: true },
 	helpEmbed: (builder) => {
@@ -116,7 +114,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			reportMessage = await reportChannel.send(messageData);
 		}
 
-		new ReportHandler(reportChannel, message, reportMessage);
+		new ReportHandler(message, reportMessage);
 
 		return interaction.defaultReply(`[Report sent](${reportMessage.url})`);
 	}

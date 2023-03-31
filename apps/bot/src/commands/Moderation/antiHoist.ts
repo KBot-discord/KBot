@@ -13,7 +13,7 @@ import type { ModerationModule } from '#modules/ModerationModule';
 	module: 'ModerationModule',
 	description: 'Prevent usernames that place the user to the top of the member list.',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.ManageNicknames, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
+	requiredClientPermissions: [PermissionFlagsBits.ManageNicknames],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	deferOptions: { defer: true },
 	helpEmbed: (builder) => {

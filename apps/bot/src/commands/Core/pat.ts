@@ -21,9 +21,8 @@ interface PatOptions {
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'CoreModule',
-	detailedDescription: '(Used on members) Creates a pat gif of the member.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.AttachFiles],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
+	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Pat')

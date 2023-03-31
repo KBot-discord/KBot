@@ -16,7 +16,7 @@ import type { ModerationSettings } from '#prisma';
 	module: 'ModerationModule',
 	description: 'Set a minimum required account age for users to join the server.',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.KickMembers, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
+	requiredClientPermissions: [PermissionFlagsBits.KickMembers],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
@@ -50,23 +50,12 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
-							.setName('toggle')
-							.setDescription('Enable or disable minage')
-							.addBooleanOption((option) =>
-								option //
-									.setName('value')
-									.setDescription('True: minage is enabled. False: minage is disabled.')
-									.setRequired(true)
-							)
-					)
-					.addSubcommand((subcommand) =>
-						subcommand //
 							.setName('set')
 							.setDescription('Set the account age requirements and kick message')
 							.addIntegerOption((option) =>
 								option //
 									.setName('days')
-									.setDescription('New users below the set age will be kicked and sent a message')
+									.setDescription('New users below the set amount of days will be kicked and sent a message')
 									.setRequired(false)
 							)
 							.addStringOption((msg) =>
@@ -97,6 +86,17 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 						subcommand //
 							.setName('test')
 							.setDescription('Test the minage message')
+					)
+					.addSubcommand((subcommand) =>
+						subcommand //
+							.setName('toggle')
+							.setDescription('Enable or disable minage')
+							.addBooleanOption((option) =>
+								option //
+									.setName('value')
+									.setDescription('True: minage is enabled. False: minage is disabled.')
+									.setRequired(true)
+							)
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //

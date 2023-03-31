@@ -12,7 +12,6 @@ import type { CoreModule } from '#modules/CoreModule';
 @ApplyOptions<KBotCommandOptions>({
 	module: 'CoreModule',
 	description: 'Sends the provided text to the selected channel.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
@@ -56,7 +55,6 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	}
 
 	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		await interaction.deferReply();
 		const { client, validator } = this.container;
 
 		const message = interaction.options.getString('text', true);

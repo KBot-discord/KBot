@@ -1,7 +1,7 @@
 import { CacheValues, EmbedColors, Emoji } from '#utils/constants';
 import { karaokeEventActiveCacheKey, karaokeEventExistsCacheKey } from '#utils/cache';
 import { isNullish } from '@sapphire/utilities';
-import { ChannelType, EmbedBuilder, GuildScheduledEventStatus } from 'discord.js';
+import { ChannelType, EmbedBuilder, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { roleMention, userMention } from '@discordjs/builders';
 import type {
@@ -156,7 +156,7 @@ export class KaraokeService {
 
 	public async setUserToSinger(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<boolean | null> {
 		const member = await memberManager.fetch(eventUser.id);
-		if (member.voice.channelId) {
+		if (member.voice.channelId && member.manageable) {
 			if (member.voice.channel!.type === ChannelType.GuildStageVoice) {
 				await member.voice.setSuppressed(false).catch();
 			} else {
@@ -164,7 +164,7 @@ export class KaraokeService {
 			}
 		}
 
-		if (eventUser.partnerId) {
+		if (eventUser.partnerId && member.manageable) {
 			const partner = await memberManager.fetch(eventUser.partnerId);
 
 			if (partner.voice.channelId) {
@@ -181,7 +181,7 @@ export class KaraokeService {
 
 	public async setUserToAudience(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<boolean | null> {
 		const member = await memberManager.fetch(eventUser.id);
-		if (member.voice.channel) {
+		if (member.voice.channel && member.manageable) {
 			if (member.voice.channel.type === ChannelType.GuildStageVoice) {
 				await member.voice.setSuppressed(true).catch((err) => {
 					container.logger.error(err);
@@ -193,7 +193,7 @@ export class KaraokeService {
 			}
 		}
 
-		if (eventUser.partnerId) {
+		if (eventUser.partnerId && member.manageable) {
 			const partner = await memberManager.fetch(eventUser.partnerId);
 
 			if (partner.voice.channel) {
@@ -288,7 +288,7 @@ export class KaraokeService {
 	public async forceRemoveUserFromQueue(
 		memberManager: GuildMemberManager,
 		event: KaraokeEventWithUsers,
-		textChannel: GuildTextBasedChannel | null,
+		textChannel: GuildTextBasedChannel,
 		moderatorId: string
 	): Promise<void> {
 		const { queue } = event;
@@ -297,9 +297,6 @@ export class KaraokeService {
 		const nextSinger = queue[1];
 
 		const updatedEvent = await this.rotate(memberManager, event);
-
-		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
-		if (isNullish(textChannel) || !result) return;
 
 		let done = `${userMention(previousSinger.id)} has been removed from the queue by ${userMention(moderatorId)}`;
 		let next = queue.length > 1 ? `${userMention(nextSinger.id)} is` : '';
@@ -396,6 +393,7 @@ export class KaraokeService {
 	}
 
 	public async endEvent(guild: Guild, event: KaraokeEvent) {
+		const bot = await guild.members.fetchMe();
 		const voiceChannel = (await guild.channels.fetch(event.id)) as StageChannel | VoiceChannel;
 
 		await Promise.allSettled([
@@ -407,17 +405,24 @@ export class KaraokeService {
 		if (voiceChannel.type === ChannelType.GuildStageVoice && voiceChannel.stageInstance) {
 			await voiceChannel.stageInstance.delete();
 		} else {
-			await Promise.all(
-				voiceChannel.members //
-					.filter((member) => member.voice.serverMute)
-					.map((member) => member.voice.setMute(false))
-			);
+			const result = voiceChannel.permissionsFor(bot).has(PermissionFlagsBits.MuteMembers);
+			if (result) {
+				await Promise.all(
+					voiceChannel.members //
+						.filter((member) => member.voice.serverMute)
+						.map((member) => member.voice.setMute(false))
+				);
+			}
 		}
 
 		if (event.pinMessageId) {
 			const channel = (await voiceChannel.client.channels.fetch(event.textChannelId)) as TextChannel;
-			const message = await channel.messages.fetch(event.pinMessageId);
-			await message.unpin();
+			const canUnpin: boolean = !channel.isVoiceBased() && channel.permissionsFor(bot).has(PermissionFlagsBits.ManageMessages);
+
+			if (canUnpin) {
+				const message = await channel.messages.fetch(event.pinMessageId);
+				await message.unpin();
+			}
 		}
 	}
 
@@ -548,6 +553,9 @@ export class KaraokeService {
 		embed: EmbedBuilder,
 		roleId?: string | null
 	): Promise<Message | undefined> {
+		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
+		if (!result) return undefined;
+
 		const announcement = await textChannel.send({
 			content: `${roleId ? roleMention(roleId) : ''} A karaoke event has started!`,
 			embeds: [
@@ -565,7 +573,10 @@ export class KaraokeService {
 			allowedMentions: { roles: roleId ? [roleId] : [] }
 		});
 
-		return textChannel.isVoiceBased() ? undefined : announcement.pin();
+		const bot = await textChannel.guild.members.fetchMe();
+		const canPin: boolean = !textChannel.isVoiceBased() && textChannel.permissionsFor(bot).has(PermissionFlagsBits.ManageMessages);
+
+		return canPin ? announcement.pin() : undefined;
 	}
 
 	private async sendEmbed(textChannel: GuildTextBasedChannel, event: KaraokeEventWithUsers, content: string, mentions: string[]): Promise<void> {

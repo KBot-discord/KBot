@@ -100,10 +100,13 @@ export class ReadyListener extends Listener {
 
 			await events.karaoke.removeUserFromQueue({ eventId }, { id: user.id, partnerId: user.partnerId ?? undefined });
 
-			await textChannel.send({
-				content: user.partnerId ? `<@${user.id}> & <@${user.partnerId}> have left the queue.` : `<@${user.id}> has left the queue.`,
-				allowedMentions: { parse: ['users'] }
-			});
+			const { result } = await validator.channels.canSendEmbeds(textChannel);
+			if (!result) {
+				await textChannel.send({
+					content: user.partnerId ? `<@${user.id}> & <@${user.partnerId}> have left the queue.` : `<@${user.id}> has left the queue.`,
+					allowedMentions: { parse: ['users'] }
+				});
+			}
 
 			return;
 		}

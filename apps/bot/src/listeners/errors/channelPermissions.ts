@@ -8,6 +8,6 @@ import type { Payload } from '#types/Errors';
 })
 export class PermissionsListener extends Listener {
 	public run({ interaction, error }: Payload<KBotErrors.ChannelPermissions>) {
-		return interaction.errorReply(error.message);
+		return interaction.errorReply(error.message, true);
 	}
 }

@@ -3,18 +3,18 @@ import { EmbedBuilder, InteractionCollector, InteractionType } from 'discord.js'
 import { isGuildBasedChannel } from '@sapphire/discord.js-utilities';
 import { container } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
-import type { ButtonInteraction, StringSelectMenuInteraction, User, GuildTextBasedChannel, Message, Guild } from 'discord.js';
+import type { ButtonInteraction, StringSelectMenuInteraction, User, GuildTextBasedChannel, Guild, ChatInputCommandInteraction } from 'discord.js';
 import type { FeatureFlags } from '#prisma';
 
 export class FlagHandler {
-	private readonly response: Message<true>;
+	private readonly response: ChatInputCommandInteraction;
 
 	private collector: InteractionCollector<ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>> | null = null;
 	private flags: FeatureFlags[] = [];
 
-	public constructor({ response, targetGuild, target }: { response: Message<true>; targetGuild: Guild; target: User }) {
+	public constructor({ response, targetGuild, target }: { response: ChatInputCommandInteraction; targetGuild: Guild; target: User }) {
 		this.response = response;
-		this.setupCollector(response.channel, target, targetGuild);
+		this.setupCollector(response.channel as GuildTextBasedChannel, target, targetGuild);
 	}
 
 	private setupCollector(channel: GuildTextBasedChannel, target: User, targetGuild: Guild) {
@@ -42,7 +42,7 @@ export class FlagHandler {
 					flags: this.flags
 				});
 
-				await interaction.channel!.send({
+				await this.response.editReply({
 					embeds: [
 						new EmbedBuilder() //
 							.setColor(EmbedColors.Success)
@@ -52,7 +52,8 @@ export class FlagHandler {
 									? 'No flags set.'
 									: settings.flags.map((flag) => `\`${flag}\``).join(' ')
 							)
-					]
+					],
+					components: []
 				});
 			}
 		}
@@ -60,6 +61,5 @@ export class FlagHandler {
 
 	private async handleEnd() {
 		this.collector?.removeAllListeners();
-		await this.response.delete().catch(() => null);
 	}
 }

@@ -8,12 +8,11 @@ import type { CoreModule } from '#modules/CoreModule';
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'CoreModule',
-	description: 'Show information about command permissions.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
+	description: 'Info on how to change command permissions and the defaults that are set on the bot',
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Permissions')
-			.setDescription('Show information about command permissions.');
+			.setDescription('Info on how to change command permissions and the defaults that are set on the bot.');
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
@@ -41,7 +40,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setDescription(`To edit command permissions go to \`Server Settings -> Integrations -> KBot -> Manage\`.`)
+					.setDescription(`To edit command permissions go to \`Server Settings -> Integrations -> KBot -> Manage\``)
 			]
 		});
 	}

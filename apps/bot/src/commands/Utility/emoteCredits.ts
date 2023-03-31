@@ -16,15 +16,16 @@ import type { UtilitySettings } from '#prisma';
 	module: 'UtilityModule',
 	description: 'Send emote credits to a channel.',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Emote Credits')
 			.setDescription('Send emote credits to a channel.')
 			.setSubcommands([
-				{ label: '/welcome toggle <value>', description: 'Enable or disable the utility module' }, //
-				{ label: '/welcome settings', description: 'Show the current settings' }
+				{ label: '/emotecredits add <emote>', description: 'Add a new emote credit' }, //
+				{ label: '/emotecredits set <channel>', description: 'Set a new emote credits channel' },
+				{ label: '/emotecredits unset', description: 'Reset the emote credits channel' },
+				{ label: '/emotecredits settings', description: 'Show the current settings' }
 			]);
 	}
 })
@@ -72,12 +73,6 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 						subcommand //
 							.setName('unset')
 							.setDescription('Reset the emote credits channel')
-							.addBooleanOption((option) =>
-								option //
-									.setName('channel')
-									.setDescription('Unset the current emote credits channel')
-									.setRequired(true)
-							)
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //

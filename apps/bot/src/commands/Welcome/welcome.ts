@@ -15,7 +15,6 @@ import type { WelcomeSettings } from '#prisma';
 @ApplyOptions<KBotCommandOptions>({
 	module: 'WelcomeModule',
 	description: 'Edit the settings of the welcome module.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -51,30 +50,19 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
-							.setName('toggle')
-							.setDescription('Enable or disable the welcome module')
-							.addBooleanOption((option) =>
-								option //
-									.setName('value')
-									.setDescription('True: the module is enabled. False: The module is disabled.')
-									.setRequired(true)
-							)
-					)
-					.addSubcommand((subcommand) =>
-						subcommand //
 							.setName('set')
 							.setDescription('Set new welcome module settings')
 							.addChannelOption((option) =>
 								option //
 									.setName('channel')
-									.setDescription('Set a welcome channel')
+									.setDescription('The channel to send welcome messages to')
 									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
 									.setRequired(false)
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('message')
-									.setDescription('Set a welcome message')
+									.setDescription('The content of the message')
 									.setRequired(false)
 							)
 							.addStringOption((option) =>
@@ -147,6 +135,17 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 						subcommand //
 							.setName('test')
 							.setDescription('Test the welcome message')
+					)
+					.addSubcommand((subcommand) =>
+						subcommand //
+							.setName('toggle')
+							.setDescription('Enable or disable the welcome module')
+							.addBooleanOption((option) =>
+								option //
+									.setName('value')
+									.setDescription('True: the module is enabled. False: The module is disabled.')
+									.setRequired(true)
+							)
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //

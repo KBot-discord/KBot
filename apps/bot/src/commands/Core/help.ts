@@ -12,7 +12,6 @@ import type { DocumentCommand } from '#types/Meili';
 @ApplyOptions<ModuleCommand.Options>({
 	module: 'CoreModule',
 	description: "Get info about the bot and all of it's commands.",
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	deferOptions: { defer: true }
 })
 export class CoreCommand extends ModuleCommand<CoreModule> {

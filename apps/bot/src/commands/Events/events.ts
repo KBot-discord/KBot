@@ -11,12 +11,11 @@ import type { EventModule } from '#modules/EventModule';
 @ApplyOptions<KBotCommandOptions>({
 	module: 'EventModule',
 	description: 'Edit the settings of the events module.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Events')
-			.setDescription('Sends the provided text to the selected channel.')
+			.setDescription('Edit the settings of the events module.')
 			.setSubcommands([
 				{ label: '/events toggle <value>', description: 'Enable or disable the events module' }, //
 				{ label: '/events settings', description: 'Show the current settings' }
@@ -94,17 +93,13 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const settings = await this.module.getSettings(interaction.guildId);
-		const karaokeEventCount = await this.module.karaoke.countEvents({ guildId: interaction.guildId });
 
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Events module settings', iconURL: getGuildIcon(interaction.guild) })
-					.addFields([
-						{ name: 'Module enabled', value: `${settings?.enabled ? Emoji.GreenCheck : Emoji.RedX}` },
-						{ name: '# of karaoke events', value: `${karaokeEventCount}`, inline: true }
-					])
+					.addFields([{ name: 'Module enabled', value: `${settings?.enabled ? Emoji.GreenCheck : Emoji.RedX}` }])
 			]
 		});
 	}
