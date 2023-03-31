@@ -13,12 +13,10 @@ hero:
           link: https://github.com/kbot-discord/kbot
 
 features:
-    - title: "Vite: The DX that can't be beat"
-      details: Feel the speed of Vite. Instant server start and lightning fast HMR that stays fast regardless of the app size.
-    - title: Designed to be simplicity first
-      details: With Markdown-centered content, it's built to help you focus on writing and deployed with minimum configuration.
-    - title: Power of Vue meets Markdown
-      details: Enhance your content with all the features of Vue in Markdown, while being able to customize your site with Vue.
-    - title: Fully static yet still dynamic
-      details: Go wild with true SSG + SPA architecture. Static on page load, but engage users with 100% interactivity from there.
+    - title: Karaoke events
+      details: Run and manage Karaoke events where users can sing in Voice or Stage channels.
+    - title: VTuber YouTube notifications
+      details: Get notified whenever your favorite VTuber goes live on YouTube.
+    - title: Welcome messages
+      details: Welcome new users into your server with a
 ---

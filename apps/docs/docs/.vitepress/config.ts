@@ -8,7 +8,7 @@ const plusIcon =
 const links: { url: string; lastmod: number | undefined }[] = [];
 
 export default defineConfig({
-	base: "/kbot/",
+	base: "/KBot/",
 	lang: "en-US",
 	title: "KBot Documentation",
 	description: "Documentation for KBot",
@@ -50,11 +50,8 @@ export default defineConfig({
 				link: "/commands",
 			},
 			{
-				text: "Configuration",
-				items: [
-					{ text: "Permissions", link: "/configuration/permissions" },
-					{ text: "Modules", link: "/configuration/modules" },
-				],
+				text: "Permissions",
+				link: "/permissions",
 			},
 			{
 				text: "Modules",

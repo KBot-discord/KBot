@@ -4,7 +4,7 @@ title: Permissions
 
 # Permissions
 
-Permissions for each command can be handled by going to `Server Settings` -> `Integrations` -> `KBot`
+Permissions for each command can be edited by going to `Server Settings` -> `Integrations` -> `KBot`
 
 # Default Permissions
 

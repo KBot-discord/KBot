@@ -6,60 +6,49 @@ title: Commands
 
 ## Core
 
+### Echo <Badge type='tip' text='Slash' />
+
+Sends the provided text to the selected channel.
+
+| Option  | Required | Description                         |
+| ------- | :------: | :---------------------------------- |
+| Text    |    ✓     | The text of the message.            |
+| Channel |    ✓     | The channel to send the message to. |
+
 ### Help <Badge type='tip' text='Slash' />
 
-Get info about the bot and all of its commands.
+Get info about the bot and all of it's commands.
 
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
-:::
+| Option  | Required | Description                        |
+| ------- | :------: | :--------------------------------- |
+| Command |    ✕     | Get info about a specific command. |
 
 ### Pat <Badge type='tip' text='Context-Menu - User' />
 
 Creates a pat gif of the member.
 
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`, `Attach Files`.
-:::
-
 ### Permissions <Badge type='tip' text='Slash' />
 
 Info on how to change command permissions and the defaults that are set on the bot.
-Same info can be found [here](/configuration/permissions.md).
-
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
-:::
+Same info can be found [here](/permissions.md).
 
 ### Ping <Badge type='tip' text='Slash' />
 
-Check the bot to see if it is alive.
-
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`.
-:::
+Ping the bot to see if it is alive.
 
 ### uwu <Badge type='tip' text='Context-Menu - Message' />
 
 uwu-ify a message.
 
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`.
-:::
-
 ## Events
 
 ### Events <Badge type='tip' text='Slash' />
 
-Change settings for the event module.
-
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
-:::
+Edit the settings of the events module.
 
 #### /events toggle
 
-Enable or disable the events module
+Enable or disable the events module.
 
 | Option | Required | Description                                                 |
 | ------ | :------: | :---------------------------------------------------------- |
@@ -67,59 +56,54 @@ Enable or disable the events module
 
 #### /events settings
 
-Show the current settings
+Show the current settings.
 
 ### Karaoke <Badge type='tip' text='Slash' />
 
 Join or leave the karaoke queue.
 
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
-:::
-
 #### /karaoke join
 
-Join the queue
+Join the queue.
 
 #### /karaoke duet
 
-Join queue as a duet
+Join the queue as a duet
 
-| Option  | Required | Description            |
-| ------- | :------: | :--------------------- |
-| Partner |    ✓     | Partner for your duet. |
+| Option  | Required | Description                |
+| ------- | :------: | :------------------------- |
+| Partner |    ✓     | The partner for your duet. |
 
 #### /karaoke leave
 
-Partner for your duet
+Leave the queue.
 
 #### /karaoke queue
 
-Show the current queue
+Show the current queue.
 
 #### /karaoke help
 
-Show info about karaoke commands
+Show info about karaoke commands.
 
 ### Manage <Badge type='tip' text='Slash' />
 
-Create or manage ongoing events.
+Create, end, or manage events.
 
 ::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`,
-`Embed Links`, `Manage Events`, `Mute Members`, `Move Members`, `Manage Channels`.
+KBot needs these permissions for the command to run: `Mute Members`, `Move Members`, `Manage Channels`.
 :::
 
 #### /manage karaoke start
 
 Start a karaoke event.
 
-| Option        | Required | Description                                         |
-| ------------- | :------: | :-------------------------------------------------- |
-| Voice channel |    ✓     | Choose the channel for the karaoke event.           |
-| Text channel  |    ✓     | Channel to show queue rotations and instructions.   |
-| Topic         |    ✕     | Name for the stage event (default: "Karaoke Event") |
-| Role          |    ✕     | Role to ping for the event.                         |
+| Option        | Required | Description                                                                |
+| ------------- | :------: | :------------------------------------------------------------------------- |
+| Voice channel |    ✓     | The stage or voice channel for the karaoke event.                          |
+| Text channel  |    ✓     | The channel to show queue rotations and instructions.                      |
+| Topic         |    ✕     | If it's a stage channel, the topic of the stage (default: "Karaoke Event") |
+| Role          |    ✕     | The role to ping for the event.                                            |
 
 #### /manage karaoke schedule
 
@@ -128,8 +112,8 @@ Schedule a karaoke event.
 | Option        | Required | Description                                           |
 | ------------- | :------: | :---------------------------------------------------- |
 | Discord event |    ✓     | The Discord event that the karaoke event will be for. |
-| Text channel  |    ✓     | Channel to show queue rotations and instructions.     |
-| Role          |    ✕     | Role to ping for the event.                           |
+| Text channel  |    ✓     | The channel to show queue rotations and instructions. |
+| Role          |    ✕     | The role to ping for the event.                       |
 
 #### /manage karaoke stop
 
@@ -150,7 +134,7 @@ Add a user to a karaoke queue.
 
 #### /manage karaoke remove
 
-Remove a user to a karaoke queue
+Remove a user from a karaoke queue.
 
 | Option | Required | Description                        |
 | ------ | :------: | :--------------------------------- |
@@ -159,7 +143,7 @@ Remove a user to a karaoke queue
 
 #### /manage karaoke menu
 
-Open the karaoke menu
+Open the menu to manage karaoke events.
 
 ## Moderation
 
@@ -168,33 +152,37 @@ Open the karaoke menu
 Prevent usernames that place the user to the top of the member list.
 
 ::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`, `Manage Nicknames`.
+KBot needs these permissions for the command to run: `Manage Nicknames`.
 :::
 
 #### /antihoist toggle
 
-Enable or disable anti-hoist
+Enable or disable anti-hoist.
 
 | Option | Required | Description                                                 |
 | ------ | :------: | :---------------------------------------------------------- |
 | Value  |    ✓     | True: anti-hoist is enabled. False: anti-hoist is disabled. |
 
+#### /antihoist settings
+
+Show the current settings.
+
 ### Minage <Badge type='tip' text='Slash' />
 
-Have accounts under a certain age kicked.
+Set a minimum required account age for users to join the server..
 
 ::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`, `Kick Members`.
+KBot needs these permissions for the command to run: `Kick Members`.
 :::
 
 #### /minage set
 
 Set the account age requirements and kick message.
 
-| Option   | Required | Description                                                    |
-| -------- | :------: | :------------------------------------------------------------- |
-| Days     |    ✕     | New users below the set age will be kicked and sent a message. |
-| Response |    ✕     | Message to be sent on kick.                                    |
+| Option   | Required | Description                                                               |
+| -------- | :------: | :------------------------------------------------------------------------ |
+| Days     |    ✕     | New users below the set amount of days will be kicked and sent a message. |
+| Response |    ✕     | Message to be sent on kick.                                               |
 
 #### /minage unset
 
@@ -205,6 +193,18 @@ Unset the current settings.
 | Days     |    ✕     | Reset the required days to 0.      |
 | Response |    ✕     | Reset the kick message to default. |
 
+#### /minage test
+
+Test the minage message.
+
+#### /minage toggle
+
+Enable or disable minage.
+
+| Option | Required | Description                                                 |
+| ------ | :------: | :---------------------------------------------------------- |
+| Value  |    ✓     | True: the module is enabled. False: The module is disabled. |
+
 #### /minage settings
 
 Show the current settings.
@@ -213,41 +213,33 @@ Show the current settings.
 
 Edit the settings of the moderation module.
 
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
-:::
-
-#### /moderation toggle
+#### /moderation set
 
 Set new moderation module settings.
 
-| Option | Required | Description                                                 |
-| ------ | :------: | :---------------------------------------------------------- |
-| value  |    ✓     | True: the module is enabled. False: The module is disabled. |
-
-#### /moderation set
-
-Reset moderation module settings.
-
-| Option         | Required | Description                                  |
-| -------------- | :------: | :------------------------------------------- |
-| Mod log        |    ✕     | Select a channel to send moderation logs to. |
-| Report channel |    ✕     | Select a channel to send reports to.         |
-| Mute role      |    ✕     | Select a role to use for mutes.              |
+| Option         | Required | Description                     |
+| -------------- | :------: | :------------------------------ |
+| Report channel |    ✕     | The channel to send reports to. |
 
 #### /moderation unset
 
-Unset the current settings.
+Reset moderation module settings.
 
-| Option         | Required | Description                               |
-| -------------- | :------: | :---------------------------------------- |
-| Mod log        |    ✕     | Unset the current moderation log channel. |
-| Report channel |    ✕     | Unset the current report channel.         |
-| Mute role      |    ✕     | Unset the current mute role.              |
+| Option         | Required | Description                       |
+| -------------- | :------: | :-------------------------------- |
+| Report channel |    ✕     | Unset the current report channel. |
 
 #### /moderation permissions
 
 Audit the bot's permissions for moderation features.
+
+#### /moderation toggle
+
+Enable or disable the moderation module.
+
+| Option | Required | Description                                                 |
+| ------ | :------: | :---------------------------------------------------------- |
+| Value  |    ✓     | True: the module is enabled. False: The module is disabled. |
 
 #### /moderation settings
 
@@ -257,46 +249,226 @@ Show the current settings.
 
 Send the reported message to the set moderator channel.
 
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
-:::
-
 ### User <Badge type='tip' text='Slash' />
 
 Get info on a user.
 
-::: tip Required bot permissions
-KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
-:::
-
-| Option | Required | Description                                 |
-| ------ | :------: | :------------------------------------------ |
-| User   |    ✓     | Select a user or provide ID to get info on. |
+| Option | Required | Description                                     |
+| ------ | :------: | :---------------------------------------------- |
+| User   |    ✓     | The user or the ID of the user to get info for. |
 
 ## Notifications
 
 ### YouTube <Badge type='tip' text='Slash' />
 
-Get notified whenever a YouTube channel goes live.
+Add, remove, or edit Youtube subscriptions.
+
+Supported channels can be found [here](https://holodex.net/channel?org=All%20Vtubers).
+
+#### /youtube subscribe
+
+Subscribe to a new channel.
+
+| Option  | Required | Description                                                                                                                                            |
+| ------- | :------: | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Account |    ✓     | Search the name of the channel and get an autocompleted list. Only channels on [Holodex](https://holodex.net/channel?org=All%20Vtubers) are supported. |
+
+#### /youtube unsubscribe
+
+Unsubscribe from a channel.
+
+| Option       | Required | Description                                  |
+| ------------ | :------: | :------------------------------------------- |
+| Subscription |    ✓     | The YouTube subscription you want to remove. |
+
+#### /youtube set
+
+Set YouTube notification settings.
+
+| Option         | Required | Description                                               |
+| -------------- | :------: | :-------------------------------------------------------- |
+| Subscription   |    ✓     | The YouTube subscription you want to change settings for. |
+| Message        |    ✕     | The message for the notification.                         |
+| Channel        |    ✕     | The channel to send notifications to.                     |
+| Role           |    ✕     | The role to ping for notifications.                       |
+| Member channel |    ✕     | The channel to send member notifications to.              |
+| Member role    |    ✕     | The role to ping for member notifications.                |
+
+#### /youtube unset
+
+Unset YouTube notification settings.
+
+| Option         | Required | Description                                               |
+| -------------- | :------: | :-------------------------------------------------------- |
+| Subscription   |    ✓     | The YouTube subscription you want to change settings for. |
+| Message        |    ✕     | Reset the notification message to default.                |
+| Channel        |    ✕     | Remove the channel that notifications are sent to.        |
+| Role           |    ✕     | Remove the ping role.                                     |
+| Member channel |    ✕     | Remove the channel that member notifications are sent to. |
+| Member role    |    ✕     | Remove the member ping role.                              |
+
+#### /youtube role_reaction
+
+Automatically handle role reactions for youtube subscriptions.
+
+| Option  | Required | Description                                     |
+| ------- | :------: | :---------------------------------------------- |
+| Channel |    ✓     | The channel to send the role reaction embed to. |
+
+#### /youtube toggle
+
+Enable or disable the youtube module.
+
+| Option | Required | Description                                                 |
+| ------ | :------: | :---------------------------------------------------------- |
+| Value  |    ✓     | True: the module is enabled. False: The module is disabled. |
+
+#### /youtube subscriptions
+
+Show the current youtube subscriptions.
+
+## Utility
+
+### Add Emote <Badge type='tip' text='Context-Menu - Message' />
+
+Adds the image attachment, link, or emoji that is in the message.
+
+Priority is `emoji > attachment > link`.
+
+::: tip Required bot permissions
+KBot needs these permissions for the command to run: `Manage Emojis and Stickers`.
+:::
+
+### Discord Status <Badge type='tip' text='Slash' />
+
+Get updates about Discord outages sent to a channel.
+
+#### /discordstatus set
+
+Set the channel to send notifications to
+
+| Option  | Required | Description                            |
+| ------- | :------: | :------------------------------------- |
+| Channel |    ✓     | The channel to send status updates to. |
+
+#### /discordstatus unset
+
+Unset the current channel
+
+#### /discordstatus settings
+
+Show the current settings
+
+### Emote Credits <Badge type='tip' text='Slash' />
+
+Send emote credits to a channel.
+
+#### /emotecredits set
+
+Set a new emote credits channel
+
+| Option  | Required | Description                           |
+| ------- | :------: | :------------------------------------ |
+| Channel |    ✓     | The channel to send emote credits to. |
+
+#### /emotecredits unset
+
+Reset the emote credits channel
+
+#### /emotecredits settings
+
+Show the current settings
+
+### Poll <Badge type='tip' text='Slash' />
+
+Create, end, or manage polls.
 
 ::: tip Required bot permissions
 KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
 :::
 
-#### /youtube subscribe
+#### /poll create
 
-#### /youtube unsubscribe
+Create a poll. There must be at least 2 options.
 
-#### /youtube set
+| Option    | Required | Description                        |
+| --------- | :------: | :--------------------------------- |
+| Question  |    ✓     | The question or topic of the poll. |
+| Time      |    ✓     | Time the poll will run for.        |
+| Option 1  |    ✓     | The poll's first option.           |
+| Option 2  |    ✓     | The poll's second option.          |
+| Option 3  |    ✕     | The poll's third option.           |
+| ...       |   ...    | ...                                |
+| Option 10 |    ✕     | The poll's tenth option.           |
 
-#### /youtube unset
+#### /poll menu
 
-#### /youtube role_reaction
+Show the menu for managing polls
 
-#### /youtube toggle
+### Utility <Badge type='tip' text='Slash' />
 
-#### /youtube subscriptions
+Edit the settings of the utility module.
 
-## Utility
+::: tip Required bot permissions
+KBot needs these permissions for the command to run: `View Channel`, `Send Messages`, `Embed Links`.
+:::
+
+#### /utility toggle
+
+Enable or disable the utility module.
+
+| Option | Required | Description                                                 |
+| ------ | :------: | :---------------------------------------------------------- |
+| Value  |    ✓     | True: the module is enabled. False: The module is disabled. |
+
+#### /utility settings
+
+Show the current settings.
 
 ## Welcome
+
+### Welcome <Badge type='tip' text='Slash' />
+
+Edit the settings of the welcome module.
+
+#### /welcome set
+
+Set welcome module settings.
+
+| Option      | Required | Description                              |
+| ----------- | :------: | :--------------------------------------- |
+| Channel     |    ✕     | The channel to send welcome messages to. |
+| Message     |    ✕     | The content of the message.              |
+| Title       |    ✕     | The title of the embed.                  |
+| Description |    ✕     | The description of the embed.            |
+| Image       |    ✕     | The image to use for the embed.          |
+| Color       |    ✕     | The color of the embed.                  |
+
+#### /welcome unset
+
+Reset welcome module settings.
+
+| Option      | Required | Description                                     |
+| ----------- | :------: | :---------------------------------------------- |
+| Channel     |    ✕     | Unset the current welcome channel.              |
+| Message     |    ✕     | Unset the current welcome message.              |
+| Title       |    ✕     | Unset the current the title of the embed.       |
+| Description |    ✕     | Unset the current the description of the embed. |
+| Image       |    ✕     | Unset the current the image.                    |
+| Color       |    ✕     | Unset the current the color of the embed.       |
+
+#### /welcome test
+
+Test the welcome message
+
+#### /welcome toggle
+
+Enable or disable the welcome module.
+
+| Option | Required | Description                                                 |
+| ------ | :------: | :---------------------------------------------------------- |
+| Value  |    ✓     | True: the module is enabled. False: The module is disabled. |
+
+#### /welcome settings
+
+Show the current settings.
