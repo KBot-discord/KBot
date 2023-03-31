@@ -1,6 +1,7 @@
 import { EmbedColors } from '#utils/constants';
 import { AddEmoteCustomIds, AddEmoteFields, buildCustomId, parseCustomId } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
+import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
@@ -28,6 +29,11 @@ export class ModalHandler extends InteractionHandler {
 			const creditsChannel = (await modal.guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
 			if (isNullish(creditsChannel)) {
 				return modal.errorReply("The current credits channel doesn't exist. Please set a new one with `/addemote set`");
+			}
+
+			const { result, error } = await this.container.validator.channels.canSendEmbeds(creditsChannel);
+			if (!result) {
+				return modal.client.emit(KBotErrors.ChannelPermissions, { interaction: modal, error });
 			}
 
 			const message = await creditsChannel.send({

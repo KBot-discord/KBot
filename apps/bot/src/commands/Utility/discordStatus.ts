@@ -16,7 +16,6 @@ import type { UtilitySettings } from '#prisma';
 	module: 'UtilityModule',
 	description: 'Get updates about Discord outages sent to a channel',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	deferOptions: { defer: true },
 	helpEmbed: (builder) => {

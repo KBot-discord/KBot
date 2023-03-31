@@ -15,7 +15,6 @@ import type { ModerationModule } from '#modules/ModerationModule';
 @ApplyOptions<KBotCommandOptions>({
 	module: 'ModerationModule',
 	description: 'Edit the settings of the moderation module.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -45,17 +44,6 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
-							.setName('toggle')
-							.setDescription('Enable or disable the moderation module')
-							.addBooleanOption((option) =>
-								option //
-									.setName('value')
-									.setDescription('True: the module is enabled. False: The module is disabled.')
-									.setRequired(true)
-							)
-					)
-					.addSubcommand((subcommand) =>
-						subcommand //
 							.setName('set')
 							.setDescription('Set new moderation module settings')
 							.addChannelOption((option) =>
@@ -81,6 +69,17 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 						subcommand //
 							.setName('permissions')
 							.setDescription("Audit the bot's permissions for moderation features")
+					)
+					.addSubcommand((subcommand) =>
+						subcommand //
+							.setName('toggle')
+							.setDescription('Enable or disable the moderation module')
+							.addBooleanOption((option) =>
+								option //
+									.setName('value')
+									.setDescription('True: the module is enabled. False: The module is disabled.')
+									.setRequired(true)
+							)
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //

@@ -3,6 +3,7 @@ import { buildCustomId, PollCustomIds } from '#utils/customIds';
 import { EmbedColors, Emoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
 import { parseTimeString } from '#utils/functions';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotErrors } from '#types/Enums';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
@@ -25,8 +26,8 @@ import type { PollOption } from '#types/CustomIds';
 			.setDescription('Create, end, or manage polls.')
 			.setSubcommands([
 				{
-					label: '/poll create <channel> <option1> <option2> [option3 - option10]',
-					description: 'Create a poll. There must be at least 2 choices. Results are saved for a month.'
+					label: '/poll create <channel> <time> <option1> <option2> [option3 - option10]',
+					description: 'Create a poll. There must be at least 2 choices.'
 				}, //
 				{ label: '/poll menu', description: 'Show the menu for controlling timed polls' }
 			]);
@@ -52,7 +53,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('create')
-							.setDescription('Create a poll. There must be at least 2 choices.')
+							.setDescription('Create a poll. There must be at least 2 options.')
 							.addStringOption((option) =>
 								option //
 									.setName('question')
@@ -129,7 +130,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('menu')
-							.setDescription('Show the menu for controlling timed polls')
+							.setDescription('Show the menu for managing polls')
 					),
 			{
 				idHints: [],
@@ -155,6 +156,11 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 	public async chatInputCreate(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const { polls } = this.module;
+
+		const { result, error } = await this.container.validator.channels.canSendEmbeds(interaction.channel);
+		if (!result) {
+			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error });
+		}
 
 		const text = interaction.options.getString('question', true);
 		const time = interaction.options.getString('time', true);

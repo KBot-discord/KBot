@@ -12,8 +12,6 @@ function getRandomInt(max: number) {
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'CoreModule',
-	detailedDescription: '(Used on messages) uwu-ify a message.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //

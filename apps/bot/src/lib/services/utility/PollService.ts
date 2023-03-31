@@ -3,7 +3,7 @@ import { pollCacheKey } from '#utils/cache';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import type { GuildTextBasedChannel, StageChannel, Message } from 'discord.js';
+import type { GuildTextBasedChannel, Message } from 'discord.js';
 import type { GuildAndPollId, GuildId, PollId, CreatePollData, UpsertPollUserData } from '#types/database';
 import type { RedisClient } from '#extensions/RedisClient';
 import type { PrismaClient, Poll } from '#prisma';
@@ -101,14 +101,14 @@ export class PollService {
 		const { client, validator, logger } = container;
 
 		let poll: Poll | null;
-		let channel: Exclude<GuildTextBasedChannel, StageChannel> | null;
+		let channel: GuildTextBasedChannel | null;
 		let message: Message | null;
 
 		try {
 			poll = await this.get({ pollId });
 			if (isNullish(poll)) return false;
 
-			channel = (await client.channels.fetch(poll.channelId)) as Exclude<GuildTextBasedChannel, StageChannel> | null;
+			channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
 			const { result } = await validator.channels.canSendEmbeds(channel);
 			if (!result || !channel || !channel.isTextBased() || channel.isDMBased()) return false;
 
@@ -132,18 +132,29 @@ export class PollService {
 						components: []
 					})
 					.catch(() => null);
-			}
 
-			await channel.send({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(EmbedColors.Default)
-						.setTitle(`Results: ${poll.title}`)
-						.setDescription(results.join('\n'))
-						.setFooter({ text: `Poll made by ${poll.creator}` })
-						.setTimestamp()
-				]
-			});
+				await message.reply({
+					embeds: [
+						new EmbedBuilder()
+							.setColor(EmbedColors.Default)
+							.setTitle(`Results: ${poll.title}`)
+							.setDescription(results.join('\n'))
+							.setFooter({ text: `Poll made by ${poll.creator}` })
+							.setTimestamp()
+					]
+				});
+			} else {
+				await channel.send({
+					embeds: [
+						new EmbedBuilder()
+							.setColor(EmbedColors.Default)
+							.setTitle(`Results: ${poll.title}`)
+							.setDescription(results.join('\n'))
+							.setFooter({ text: `Poll made by ${poll.creator}` })
+							.setTimestamp()
+					]
+				});
+			}
 
 			await this.delete({ guildId, pollId });
 

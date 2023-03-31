@@ -10,7 +10,6 @@ import type { APISelectMenuOption } from 'discord-api-types/v10';
 
 @ApplyOptions<Command.Options>({
 	description: 'Set the feature flags for a guild',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages],
 	preconditions: ['BotOwner']
 })
 export class DevCommand extends Command {
@@ -40,6 +39,7 @@ export class DevCommand extends Command {
 	}
 
 	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		await interaction.deferReply();
 		const guildId = interaction.options.getString('guild', true);
 
 		const guild = interaction.client.guilds.cache.get(guildId);
@@ -51,7 +51,7 @@ export class DevCommand extends Command {
 		const flagsArray: FeatureFlags[] = Object.values(FeatureFlags).filter((flag) => flag !== 'UNDEFINED');
 		const flagOptions: APISelectMenuOption[] = flagsArray.map((flag) => ({ label: flag, value: flag }));
 
-		const message = await interaction.reply({
+		await interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
@@ -77,12 +77,11 @@ export class DevCommand extends Command {
 						.setLabel('Cancel')
 						.setStyle(ButtonStyle.Danger)
 				])
-			],
-			fetchReply: true
+			]
 		});
 
 		return new FlagHandler({
-			response: message,
+			response: interaction,
 			targetGuild: guild,
 			target: interaction.user
 		});

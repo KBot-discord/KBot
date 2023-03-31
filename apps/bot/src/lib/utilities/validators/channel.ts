@@ -2,9 +2,9 @@ import { KBotErrors } from '#types/Enums';
 import { KBotError } from '#structures/KBotError';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { isNullish } from '@sapphire/utilities';
-import type { Channel, GuildChannel, GuildTextBasedChannel } from 'discord.js';
+import type { Channel, GuildChannel, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 export class ChannelValidator {
 	public async canSendEmbeds(
@@ -19,28 +19,83 @@ export class ChannelValidator {
 			};
 		}
 
-		if (channel.permissionsFor(await channel.guild.members.fetchMe()).has(PermissionFlagsBits.Administrator)) return { result: true };
+		const bot = await channel.guild.members.fetchMe();
+		const clientPermissions = channel.permissionsFor(bot);
+
+		if (clientPermissions.has(PermissionFlagsBits.Administrator)) {
+			return { result: true };
+		}
 
 		const errors = [];
 		if (!channel.viewable) {
-			errors.push(' View Channel');
+			errors.push(' `View Channel`');
 		}
 		if (!canSendMessages(channel)) {
-			errors.push(' Send Messages');
+			errors.push(' `Send Messages`');
 		}
 		if (!canSendEmbeds(channel)) {
-			errors.push(' Embed Links');
+			errors.push(' `Embed Links`');
+		}
+		if (channel.isVoiceBased() && !clientPermissions.has(PermissionFlagsBits.Connect)) {
+			errors.push(' `Connect`');
 		}
 
-		if (errors.length === 0) return { result: true };
+		if (errors.length === 0) {
+			return { result: true };
+		}
 
 		return {
 			result: false,
 			error: new KBotError({
 				identifier: KBotErrors.ChannelPermissions,
 				message: `I don't have the required permission(s) to send messages in ${channelMention(
-					channel.id
-				)}\n\nRequired permission(s):${errors}`
+					channel.id //
+				)}\nRequired permission(s):${errors}`
+			})
+		};
+	}
+
+	public async canModerateVoice(
+		channel: VoiceChannel | StageChannel | null
+	): Promise<{ result: true; error?: undefined } | { result: false; error: KBotError }> {
+		if (isNullish(channel)) {
+			return {
+				result: false,
+				error: new KBotError({
+					identifier: KBotErrors.ChannelPermissions
+				})
+			};
+		}
+
+		const bot = await channel.guild.members.fetchMe();
+		const clientPermissions = channel.permissionsFor(bot);
+
+		if (clientPermissions.has(PermissionFlagsBits.Administrator)) {
+			return { result: true };
+		}
+
+		const errors = [];
+		if (channel.type === ChannelType.GuildStageVoice && !clientPermissions.has(PermissionFlagsBits.ManageChannels)) {
+			errors.push(' `Manage Channel`');
+		}
+		if (!clientPermissions.has(PermissionFlagsBits.MuteMembers)) {
+			errors.push(' `Mute Members`');
+		}
+		if (channel.type === ChannelType.GuildStageVoice && !clientPermissions.has(PermissionFlagsBits.MoveMembers)) {
+			errors.push(' `Move Members`');
+		}
+
+		if (errors.length === 0) {
+			return { result: true };
+		}
+
+		return {
+			result: false,
+			error: new KBotError({
+				identifier: KBotErrors.ChannelPermissions,
+				message: `I don't have the required permission(s) to manage the karaoke events in ${channelMention(
+					channel.id //
+				)}\nRequired permission(s):${errors}`
 			})
 		};
 	}

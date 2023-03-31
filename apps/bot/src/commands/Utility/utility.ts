@@ -13,15 +13,14 @@ import type { UtilityModule } from '#modules/UtilityModule';
 @ApplyOptions<KBotCommandOptions>({
 	module: 'UtilityModule',
 	description: 'Edit the settings of the utility module.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Utility')
 			.setDescription('Edit the settings of the utility module.')
 			.setSubcommands([
-				{ label: '/welcome toggle <value>', description: 'Enable or disable the utility module' }, //
-				{ label: '/welcome settings', description: 'Show the current settings' }
+				{ label: '/utility toggle <value>', description: 'Enable or disable the utility module' }, //
+				{ label: '/utility settings', description: 'Show the current settings' }
 			]);
 	}
 })

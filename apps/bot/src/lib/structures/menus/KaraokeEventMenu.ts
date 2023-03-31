@@ -119,13 +119,14 @@ export class KaraokeEventMenu extends Menu {
 						{ name: BlankSpace, value: BlankSpace, inline: false }
 					);
 				}
+
 				return new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: `${Emoji.Microphone} Karaoke management`, iconURL: getGuildIcon(guild) })
 					.setTitle(`Event #${index + 1} | ${channel.name}`)
 					.addFields([
 						...fields,
-						{ name: 'Voice channel:', value: channelMention(event.id), inline: true },
+						{ name: 'Voice channel:', value: `${channelMention(event.id)}\n\nPermissions:`, inline: true },
 						{ name: 'Text channel:', value: channelMention(event.textChannelId), inline: true },
 						{ name: 'Queue lock:', value: event.locked ? `${Emoji.Locked} locked` : `${Emoji.Unlocked} unlocked`, inline: true }
 					]);

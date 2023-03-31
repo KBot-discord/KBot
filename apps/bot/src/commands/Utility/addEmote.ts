@@ -21,10 +21,8 @@ interface EmojiData {
 @ApplyOptions<KBotCommandOptions>({
 	module: 'UtilityModule',
 	name: 'Add emote',
-	detailedDescription:
-		'(Used on messages) Adds the image attachment, link, or emoji that is in the message. Priority is `emoji > attachment > link`.',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.ManageEmojisAndStickers],
+	requiredClientPermissions: [PermissionFlagsBits.ManageEmojisAndStickers],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //

@@ -1,20 +1,20 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { channelMention, userMention } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { EventModule } from '#modules/EventModule';
-import type { ButtonInteraction, GuildTextBasedChannel } from 'discord.js';
+import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'EventModule',
 	description: 'Join or leave the karaoke queue.',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
+	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	deferOptions: { defer: true, ephemeral: true },
 	helpEmbed: (builder) => {
@@ -23,7 +23,7 @@ import type { ButtonInteraction, GuildTextBasedChannel } from 'discord.js';
 			.setDescription('Join or leave the karaoke queue.')
 			.setSubcommands([
 				{ label: '/karaoke join', description: 'Join the queue' }, //
-				{ label: '/karaoke duet <partner>', description: 'Join queue as a duet' },
+				{ label: '/karaoke duet <partner>', description: 'Join the queue as a duet' },
 				{ label: '/karaoke leave', description: 'Leave the queue' },
 				{ label: '/karaoke queue', description: 'Show the current queue' },
 				{ label: '/karaoke help', description: 'Show info about karaoke commands' }
@@ -55,11 +55,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('duet')
-							.setDescription('Join queue as a duet')
+							.setDescription('Join the queue as a duet')
 							.addUserOption((option) =>
 								option //
 									.setName('partner')
-									.setDescription('Partner for your duet')
+									.setDescription('The partner for your duet')
 									.setRequired(true)
 							)
 					)
@@ -125,7 +125,20 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue({ eventId });
 		if (isNullish(event)) {
+			this.container.logger.error('Failed to fetch an event that was active');
 			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
+		}
+
+		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
+		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
+		if (!voiceResult.result) {
+			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: voiceResult.error });
+		}
+
+		const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
+		const textResult = await this.container.validator.channels.canSendEmbeds(textChannel);
+		if (!textResult.result) {
+			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: textResult.error });
 		}
 
 		const { valid, reason } = karaoke.isJoinValid(event, member.id);
@@ -143,13 +156,8 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		if (updatedEvent.queue.length === 1) {
 			await karaoke.setUserToSinger(interaction.guild.members, updatedEvent.queue[0]);
-			const textChannel = (await interaction.guild.channels.fetch(eventId)) as GuildTextBasedChannel | null;
 
-			if (!textChannel) {
-				return interaction.defaultReply('Something went wrong.');
-			}
-
-			await textChannel.send({
+			await textChannel!.send({
 				content: `${userMention(member.id)} is up!`,
 				embeds: [karaoke.buildQueueEmbed(updatedEvent)],
 				allowedMentions: { users: [] }
@@ -180,7 +188,20 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue({ eventId });
 		if (isNullish(event)) {
-			return interaction.defaultReply("Something went wrong. The bot's dev had been notified of the error.");
+			this.container.logger.error('Failed to fetch an event that was active');
+			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
+		}
+
+		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
+		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
+		if (!voiceResult.result) {
+			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: voiceResult.error });
+		}
+
+		const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
+		const textResult = await this.container.validator.channels.canSendEmbeds(textChannel);
+		if (!textResult.result) {
+			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: textResult.error });
 		}
 
 		const { valid, reason } = karaoke.isJoinValid(event, member.id, partner);
@@ -188,9 +209,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.errorReply(reason);
 		}
 
-		const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel;
-
-		const response = await this.duetConfirmation(textChannel, member.id, partner.id);
+		const response = await this.duetConfirmation(textChannel!, member.id, partner.id);
 		if (isNullish(response)) {
 			return interaction.defaultReply("Your duet partner didn't respond to the confirmation.");
 		} else if (!response) {
@@ -211,7 +230,6 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		if (updatedEvent.queue.length === 1) {
 			await karaoke.setUserToSinger(interaction.guild.members, updatedEvent.queue[0]);
-
 			await textChannel!.send({
 				content: `${userMention(member.id)} & ${userMention(partner.id)} are up!`,
 				embeds: [karaoke.buildQueueEmbed(updatedEvent)],
@@ -238,17 +256,25 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue({ eventId });
 		if (isNullish(event)) {
-			return interaction.defaultReply("Something went wrong. The bot's dev had been notified of the error.");
+			this.container.logger.error('Failed to fetch an event that was active');
+			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
+		}
+
+		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
+		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
+		if (!voiceResult.result) {
+			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: voiceResult.error });
+		}
+
+		const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
+		const textResult = await this.container.validator.channels.canSendEmbeds(textChannel);
+		if (!textResult.result) {
+			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: textResult.error });
 		}
 
 		const userEntry = event.queue.find((entry) => entry.id === member.id || entry.partnerId === member.id);
 		if (isNullish(userEntry)) {
 			return interaction.defaultReply('You are not in the queue.');
-		}
-
-		const textChannel = (await interaction.guild.channels.fetch(eventId)) as GuildTextBasedChannel | null;
-		if (!textChannel) {
-			return interaction.defaultReply('Something went wrong.');
 		}
 
 		if (event.queue[0].id === member.id || event.queue[0].partnerId === member.id) {
@@ -258,8 +284,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 			if (userEntry.partnerId) {
 				const ping = member.id === userEntry.id ? userEntry.partnerId : userEntry.id;
-
-				await textChannel.send({
+				await textChannel!.send({
 					content: `${userMention(userEntry.id)} & ${userMention(userEntry.partnerId)} have left the queue.`,
 					allowedMentions: { users: [ping] }
 				});
@@ -294,7 +319,6 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	// TODO improve help embed
 	public async chatInputHelp(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const { karaoke } = this.module;
 

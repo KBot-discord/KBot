@@ -3,7 +3,7 @@ import { EmbedColors } from '#utils/constants';
 import { ActionRowBuilder, EmbedBuilder, InteractionCollector, ButtonBuilder, ComponentType } from 'discord.js';
 import { ButtonStyle, InteractionType, PermissionFlagsBits } from 'discord-api-types/v10';
 import type { APIActionRowComponent, APIButtonComponent } from 'discord-api-types/v10';
-import type { ButtonInteraction, GuildMember, Message, GuildTextBasedChannel } from 'discord.js';
+import type { ButtonInteraction, GuildMember, Message } from 'discord.js';
 
 export enum ReportButtons {
 	Delete,
@@ -22,15 +22,13 @@ export class ReportHandler {
 	private readonly targetMessage: Message<true>;
 
 	private readonly reportMessage: Message<true>;
-	private readonly reportChannel: GuildTextBasedChannel;
 
 	private collector: InteractionCollector<ButtonInteraction<'cached'>> | null = null;
 
-	public constructor(reportChannel: GuildTextBasedChannel, targetMessage: Message<true>, reportMessage: Message<true>) {
+	public constructor(targetMessage: Message<true>, reportMessage: Message<true>) {
 		this.targetMessage = targetMessage;
 		this.targetMember = targetMessage.member!;
 		this.reportMessage = reportMessage;
-		this.reportChannel = reportChannel;
 
 		if (!isWebhookMessage(this.targetMessage)) {
 			this.setupCollector();
@@ -52,11 +50,11 @@ export class ReportHandler {
 			}
 			await this.toggleButton(true, ReportButtons.Delete);
 			const text = 'Would you like to delete the offending message?';
-			await this.confirmationPrompt(interaction.member, text, ReportButtons.Delete);
+			await this.confirmationPrompt(interaction, text, ReportButtons.Delete);
 		} else if (interaction.customId === ButtonCustomId.Info) {
 			await this.toggleButton(true, ReportButtons.Info);
 			const embed = await getUserInfo(interaction, this.targetMember.id);
-			await this.reportMessage.reply({
+			await interaction.followUp({
 				embeds: [embed]
 			});
 		}
@@ -68,7 +66,7 @@ export class ReportHandler {
 		this.collector?.removeAllListeners();
 	}
 
-	private async confirmationPrompt(initiator: GuildMember, text: string, type: ReportButtons) {
+	private async confirmationPrompt(interaction: ButtonInteraction<'cached'>, text: string, type: ReportButtons) {
 		const row = new ActionRowBuilder<ButtonBuilder>()
 			.addComponents(
 				new ButtonBuilder() //
@@ -83,17 +81,17 @@ export class ReportHandler {
 					.setStyle(ButtonStyle.Danger)
 			);
 
-		const message = await this.reportChannel.send({
+		const message = await interaction.followUp({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setDescription(text)
-					.setFooter({ text: `Confirmation for ${initiator.user.tag}` })
+					.setFooter({ text: `Confirmation for ${interaction.member.user.tag}` })
 			],
 			components: [row]
 		});
 		const filter = (i: ButtonInteraction<'cached'>) => {
-			return i.member.id === initiator.id;
+			return i.member.id === interaction.member.id;
 		};
 
 		message

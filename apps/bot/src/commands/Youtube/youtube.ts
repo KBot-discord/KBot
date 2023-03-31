@@ -4,6 +4,7 @@ import { getGuildIcon } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { MeiliCategories } from '#types/Meili';
 import { YoutubeCustomIds } from '#utils/customIds';
+import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
@@ -19,7 +20,6 @@ import type { YoutubeSubscriptionWithChannel } from '#types/database';
 @ApplyOptions<KBotCommandOptions>({
 	module: 'YoutubeModule',
 	description: 'Add, remove, or edit Youtube subscriptions.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
@@ -80,7 +80,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 							.addStringOption((option) =>
 								option //
 									.setName('subscription')
-									.setDescription('The YouTube account you want to unsubscribe from')
+									.setDescription('The YouTube subscription you want to remove')
 									.setRequired(true)
 									.setAutocomplete(true)
 							)
@@ -92,7 +92,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 							.addStringOption((option) =>
 								option //
 									.setName('subscription')
-									.setDescription('The YouTube account you want to change settings for')
+									.setDescription('The YouTube subscription you want to change settings for')
 									.setRequired(true)
 									.setAutocomplete(true)
 							)
@@ -136,7 +136,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 							.addStringOption((option) =>
 								option //
 									.setName('subscription')
-									.setDescription('The YouTube account you want to change settings for')
+									.setDescription('The YouTube subscription you want to change settings for')
 									.setRequired(true)
 									.setAutocomplete(true)
 							)
@@ -412,9 +412,9 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		}
 
 		const channel = interaction.options.getChannel('channel', true) as GuildTextBasedChannel;
-		const { result } = await this.container.validator.channels.canSendEmbeds(channel);
+		const { result, error } = await this.container.validator.channels.canSendEmbeds(channel);
 		if (!result) {
-			return interaction.defaultReply('I am not able to send embeds in that channel.');
+			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error });
 		}
 
 		await this.createReactionRoleMessage(interaction.guild, channel);

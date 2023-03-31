@@ -8,7 +8,6 @@ import type { CoreModule } from '#modules/CoreModule';
 @ApplyOptions<KBotCommandOptions>({
 	module: 'CoreModule',
 	description: 'Ping the bot to see if it is alive.',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Ping')

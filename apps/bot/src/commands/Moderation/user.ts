@@ -10,7 +10,6 @@ import type { ModerationModule } from '#modules/ModerationModule';
 	module: 'ModerationModule',
 	description: 'Get info on a user.',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
@@ -40,7 +39,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.addUserOption((option) =>
 						option //
 							.setName('target')
-							.setDescription('Select a user or provide ID')
+							.setDescription('The user or the ID of the user to get info for')
 							.setRequired(true)
 					),
 			{

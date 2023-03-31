@@ -6,7 +6,6 @@ import { Time } from '@sapphire/duration';
 
 @ApplyOptions<Command.Options>({
 	description: 'Sync the channels from Holodex',
-	requiredClientPermissions: [PermissionFlagsBits.SendMessages],
 	preconditions: ['BotOwner'],
 	cooldownDelay: Time.Minute * 5,
 	cooldownLimit: 1
