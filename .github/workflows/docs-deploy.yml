@@ -19,7 +19,7 @@ jobs:
       pages: write
       id-token: write
     environment:
-      name: github-pages
+      name: Documentation
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out Git repository
