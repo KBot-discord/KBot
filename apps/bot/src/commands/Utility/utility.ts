@@ -1,6 +1,7 @@
 import { EmbedColors, Emoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
@@ -76,8 +77,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				return this.chatInputSettings(interaction);
 			}
 			default: {
-				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
-				return interaction.errorReply('Something went wrong.');
+				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
 			}
 		}
 	}

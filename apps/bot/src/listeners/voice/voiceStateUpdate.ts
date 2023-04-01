@@ -9,7 +9,7 @@ import type { KaraokeUser } from '#prisma';
 @ApplyOptions<Listener.Options>({
 	event: Events.VoiceStateUpdate
 })
-export class ReadyListener extends Listener {
+export class VoiceListener extends Listener {
 	public async run(oldState: VoiceState, newState: VoiceState) {
 		const { events, validator } = this.container;
 		const client = await newState.guild.members.fetchMe();

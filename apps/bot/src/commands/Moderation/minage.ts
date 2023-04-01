@@ -3,6 +3,7 @@ import { getGuildIcon } from '#utils/Discord';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { ModerationModule } from '#modules/ModerationModule';
+import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
@@ -128,8 +129,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				return this.chatInputSettings(interaction);
 			}
 			default: {
-				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
-				return interaction.errorReply('Something went wrong.');
+				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
 			}
 		}
 	}

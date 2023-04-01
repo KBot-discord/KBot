@@ -1,8 +1,8 @@
 import { Events, Listener, type ChatInputCommandErrorPayload } from '@sapphire/framework';
 import { RESTJSONErrorCodes } from 'discord-api-types/v10';
 import { DiscordAPIError, HTTPError } from 'discord.js';
-import * as Sentry from '@sentry/node';
 import { ApplyOptions } from '@sapphire/decorators';
+import { captureException } from '@sentry/node';
 
 const codesToIgnore = [RESTJSONErrorCodes.UnknownChannel, RESTJSONErrorCodes.UnknownMessage];
 
@@ -17,7 +17,7 @@ export class CommandListener extends Listener {
 			}
 		}
 
-		Sentry.captureException(error);
+		captureException(error);
 
 		return interaction.errorReply('Something went wrong, please try that command again.', true);
 	}

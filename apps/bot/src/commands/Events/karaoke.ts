@@ -103,8 +103,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 				return this.chatInputHelp(interaction);
 			}
 			default: {
-				this.container.logger.fatal(`[${this.name}] Hit default switch in`);
-				return interaction.errorReply('Something went wrong.');
+				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
 			}
 		}
 	}

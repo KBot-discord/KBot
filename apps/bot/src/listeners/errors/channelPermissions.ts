@@ -6,7 +6,7 @@ import type { Payload } from '#types/Errors';
 @ApplyOptions<Listener.Options>({
 	name: KBotErrors.ChannelPermissions
 })
-export class PermissionsListener extends Listener {
+export class ErrorListener extends Listener {
 	public run({ interaction, error }: Payload<KBotErrors.ChannelPermissions>) {
 		return interaction.errorReply(error.message, true);
 	}
