@@ -24,7 +24,7 @@ export class MinageHandler {
 		if (createdAt <= reqAge) return false;
 
 		try {
-			await this.member.send({ embeds: [ModerationModule.formatMinageEmbed(this.member, msg, req, reqDate)] });
+			await this.member.send({ embeds: [ModerationModule.formatMinageEmbed(this.member, msg, req, reqDate)] }).catch(() => null);
 			await this.member.kick(`Account too new. Required age: ${req}, Account age: ${Math.floor((Date.now() - createdAt) / 86400000)}`);
 			return true;
 		} catch (err: unknown) {

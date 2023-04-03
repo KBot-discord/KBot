@@ -49,7 +49,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('add')
-							.setDescription('Add a new emote credit')
+							.setDescription('Add a new emote credit entry')
 							.addStringOption((option) =>
 								option //
 									.setName('emote')

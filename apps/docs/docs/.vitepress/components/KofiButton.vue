@@ -7,7 +7,7 @@
 		rel="noreferrer"
 	>
 		<span class="kofitext">
-			<img src="https://ko-fi.com/img/cuplogo.svg" class="kofiimg" />
+			<img src="https://ko-fi.com/img/cuplogo.svg" class="kofiimg" alt="Kofi cup" />
 			Support Me on Ko-fi
 		</span>
 	</a>

@@ -161,6 +161,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error });
 		}
 
+		const count = await this.module.polls.count({
+			guildId: interaction.guildId
+		});
+		if (count >= 10) {
+			return interaction.errorReply('There can only be a maximum of 10 active polls.');
+		}
+
 		const text = interaction.options.getString('question', true);
 		const time = interaction.options.getString('time', true);
 

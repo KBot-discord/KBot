@@ -28,13 +28,16 @@ export class UtilityTask extends ScheduledTask {
 			const channelData = await this.container.utility.fetchIncidentChannels();
 			if (channelData.length === 0) return;
 
-			const { incidents } = await fetch<StatusPageResult>(
+			const response = await fetch<StatusPageResult>(
 				`${DISCORD_STATUS_BASE}/incidents.json`,
 				{
 					method: FetchMethods.Get
 				},
 				FetchResultTypes.JSON
-			);
+			).catch(() => null);
+			if (!response) return;
+
+			const { incidents } = response;
 			this.container.logger.debug(`[DiscordStatus] Fetched ${incidents.length} incidents`);
 
 			const dbIncidents = await this.container.prisma.discordIncident.findMany({

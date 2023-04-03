@@ -1,7 +1,7 @@
 import { BrandColors, EmbedColors } from '#utils/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, roleMention } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, roleMention } from 'discord.js';
 import humanizeDuration from 'humanize-duration';
 import { Time } from '@sapphire/duration';
 import { container } from '@sapphire/framework';
@@ -132,6 +132,13 @@ export class YoutubeTask extends ScheduledTask {
 			.setThumbnail(stream.channel.photo)
 			.setImage(`https://i.ytimg.com/vi/${stream.id}/maxresdefault.jpg`);
 
+		const components = new ActionRowBuilder<ButtonBuilder>().setComponents([
+			new ButtonBuilder() //
+				.setStyle(ButtonStyle.Link)
+				.setURL(`https://youtu.be/${stream.id}`)
+				.setLabel('Watch Stream')
+		]);
+
 		const keysToSet = new Map<Key, { channelId: string }>();
 
 		const result = await Promise.allSettled(
@@ -162,6 +169,7 @@ export class YoutubeTask extends ScheduledTask {
 				return discordChannel.send({
 					content: subscription.message ?? `${rolePing}${stream.channel.name} is live!`,
 					embeds: [embed],
+					components: [components],
 					allowedMentions: { roles: roleMentions }
 				});
 			})
@@ -217,7 +225,8 @@ export class YoutubeTask extends ScheduledTask {
 
 				return message?.edit({
 					content: 'Stream is offline.',
-					embeds: [embed]
+					embeds: [embed],
+					components: []
 				});
 			})
 		);
