@@ -286,31 +286,34 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 
 		const bot = await members.fetchMe();
 		const fields: APIEmbedField[] = [
-			{
-				name: 'Variables:',
-				value: "`{@member}` - To @ them\n`{membertag}` - The members's discord tag (ex: KBot#7091)\n`{server}` - The server name\n`{nl}` - To add a line break"
-			},
 			{ name: 'Enabled:', value: settings?.enabled ? ':white_check_mark: Welcome messages are enabled' : ':x: Welcome messages are disabled' },
 			{ name: 'Channel:', value: settings?.channelId ? channelMention(settings.channelId) : 'No channel set' },
-			{ name: 'Message:', value: settings?.message || 'No message set' },
-			{ name: 'Title:', value: settings?.title || 'No title set' },
-			{ name: 'Description:', value: settings?.description || 'No description set' },
-			{ name: 'Color:', value: settings?.color ? `\`\`${settings.color}\`\` (see this embed's color)` : 'No color set' },
-			{ name: 'Image:', value: settings?.image ? 'See image below' : 'No image set' }
+			{ name: 'Message:', value: settings?.message ?? 'No message set', inline: true },
+			{ name: 'Title:', value: settings?.title ?? 'No title set', inline: true },
+			{ name: 'Description:', value: settings?.description || 'No description set', inline: true },
+			{ name: 'Color:', value: settings?.color ? `\`${settings.color}\` (see this embed's color)` : 'No color set', inline: true },
+			{ name: 'Image:', value: settings?.image ? 'See image below' : 'No image set', inline: true },
+			{
+				name: 'Variables:',
+				value: `\`{@member}\` - To @ them
+				\`{membertag}\` - The members's discord tag (ex: KBot#7091)
+				\`{server}\` - The name of the server
+				\`{nl}\` - To add a line break`
+			}
 		];
 
 		if (!isNullish(settings) && !isNullish(settings.channelId)) {
 			const welcomeChannel = await channels.fetch(settings.channelId);
 			if (!isNullish(welcomeChannel)) {
-				const modlogViewChannel = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.ViewChannel);
-				const modlogSendMessage = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.SendMessages);
-				const modlogEmbedLinks = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.EmbedLinks);
+				const viewChannel = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.ViewChannel);
+				const sendMessage = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.SendMessages);
+				const embedLinks = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.EmbedLinks);
 
-				const modlogViewString = `View channel: ${this.formatField(modlogViewChannel)}`;
-				const modlogSendString = `Send messages: ${this.formatField(modlogSendMessage)}`;
-				const modlogEmbedString = `Embed links: ${this.formatField(modlogEmbedLinks)}`;
+				const viewString = `View channel: ${this.formatField(viewChannel)}`;
+				const sendString = `Send messages: ${this.formatField(sendMessage)}`;
+				const embedString = `Embed links: ${this.formatField(embedLinks)}`;
 
-				fields.push({ name: 'Channel permissions', value: `${modlogViewString}\n${modlogSendString}\n${modlogEmbedString}`, inline: true });
+				fields.push({ name: 'Channel permissions', value: `${viewString}\n${sendString}\n${embedString}`, inline: true });
 			}
 		}
 

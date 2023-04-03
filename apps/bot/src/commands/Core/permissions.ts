@@ -38,9 +38,10 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		return interaction.reply({
 			embeds: [
-				new EmbedBuilder()
-					.setColor(EmbedColors.Default)
-					.setDescription(`To edit command permissions go to \`Server Settings -> Integrations -> KBot -> Manage\``)
+				new EmbedBuilder().setColor(EmbedColors.Default)
+					.setDescription(`To edit command permissions go to \`Server Settings -> Integrations -> KBot -> Manage\`
+
+					Info about default permissions can be found at: https://docs.kbot.ca/configuration/permissions`)
 			]
 		});
 	}

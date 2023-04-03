@@ -9,7 +9,6 @@ import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import type { InteractionEditReplyOptions } from 'discord.js';
 import type { ModerationSettings } from '#prisma';
 
@@ -178,14 +177,13 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 	public async chatInputTest(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const { member } = interaction;
 		const settings = await this.module.getSettings(interaction.guildId);
-
-		if (!settings || isNullish(settings.minAccountAgeReq) || settings.minAccountAgeReq === 0) {
-			return interaction.defaultReply('Users will not be kicked if the requirement is 0 or not set.');
+		if (!settings) {
+			return interaction.defaultReply('There are not settings to test.');
 		}
 
 		const options: InteractionEditReplyOptions = {};
 
-		const req = settings.minAccountAgeReq;
+		const req = settings.minAccountAgeReq ?? 0;
 		const creation = member.user.createdTimestamp;
 		const reqDay = Math.floor(86400000 * req);
 		const reqDate = Math.floor(creation + reqDay);
@@ -201,12 +199,14 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	private showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: ModerationSettings | null) {
+	private async showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: ModerationSettings | null) {
+		const bot = await interaction.guild.members.fetchMe();
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
+					.setDescription('Run `/minage test` to see what the message would look like')
 					.addFields([
 						{ name: 'Enabled', value: `${settings?.minAccountAgeEnabled ? `true ${Emoji.GreenCheck}` : `false ${Emoji.RedX}`}` },
 						{
@@ -218,6 +218,21 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 							name: 'Kick message',
 							value: `${settings?.minAccountAgeMsg ?? MinageHandler.defaultMessage}`,
 							inline: true
+						},
+						{
+							name: 'Variables:',
+							value: `\`{server}\` - The name of the server
+							\`{req}\` - The required amount of days
+							\`{days}\` - The amount of days until the user can join the server
+							\`{date}\` - The date on which the user can join the server`
+						},
+						{
+							name: 'Permissions:',
+							value: `Kick Members: ${
+								bot.permissions.has(PermissionFlagsBits.KickMembers) //
+									? Emoji.GreenCheck
+									: Emoji.RedX
+							}`
 						}
 					])
 			]
