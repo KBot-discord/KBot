@@ -13,6 +13,6 @@ KBot only uses slash commands.
 
 ## Donations
 
-Any support helps immensely. Everything received goes back into the
+Any support helps immensely. Everything received goes back into the development and hosting of the bot.
 
 <KofiButton />
