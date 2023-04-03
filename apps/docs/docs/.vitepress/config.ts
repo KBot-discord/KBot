@@ -3,8 +3,6 @@ import { createWriteStream } from "node:fs";
 import { resolve } from "node:path";
 import { SitemapStream } from "sitemap";
 
-const plusIcon =
-	'<svg fill="#000000" height="800px" width="800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300.003 300.003" xml:space="preserve"><g><g><path d="M150,0C67.159,0,0.001,67.159,0.001,150c0,82.838,67.157,150.003,149.997,150.003S300.002,232.838,300.002,150 C300.002,67.159,232.839,0,150,0z M213.281,166.501h-48.27v50.469c-0.003,8.463-6.863,15.323-15.328,15.323 c-8.468,0-15.328-6.86-15.328-15.328v-50.464H87.37c-8.466-0.003-15.323-6.863-15.328-15.328c0-8.463,6.863-15.326,15.328-15.328 l46.984,0.003V91.057c0-8.466,6.863-15.328,15.326-15.328c8.468,0,15.331,6.863,15.328,15.328l0.003,44.787l48.265,0.005 c8.466-0.005,15.331,6.86,15.328,15.328C228.607,159.643,221.742,166.501,213.281,166.501z"/></g></g></svg>';
 const links: { url: string; lastmod: number | undefined }[] = [];
 
 export default defineConfig({
@@ -18,40 +16,47 @@ export default defineConfig({
 	themeConfig: {
 		logo: "/assets/logo.png",
 
-		socialLinks: [
-			{ icon: "github", link: "https://github.com/kbot-discord/kbot" },
-			{ icon: "discord", link: "https://kbot.ca/discord" },
-			{ icon: { svg: plusIcon }, link: "https://kbot.ca/invite" },
-		],
-
 		editLink: {
 			pattern:
-				"https://github.com/kbot-discord/docs/edit/main/docs/:path",
+				"https://github.com/kbot-discord/KBot/edit/main/apps/docs/docs/:path",
 			text: "Suggest changes to this page",
 		},
 
 		nav: [
-			{ text: "Introduction", link: "/what-does-kbot-do" },
-			{ text: "Getting Started", link: "/getting-started" },
-			{ text: "Commands", link: "/commands" },
+			{ text: "Dashboard", link: "https://kbot.ca" },
+			{ text: "Invite", link: "https://kbot.ca/invite" },
+			{ text: "Support", link: "https://kbot.ca/discord" },
+			{
+				text: "Source Code",
+				link: "https://github.com/kbot-discord/kbot",
+			},
 		],
 
 		sidebar: [
 			{
-				text: "What does KBot do?",
-				link: "/what-does-kbot-do",
-			},
-			{
-				text: "Getting Started",
-				link: "/getting-started",
+				text: "Home",
+				link: "/",
 			},
 			{
 				text: "Commands",
 				link: "/commands",
 			},
 			{
-				text: "Permissions",
-				link: "/permissions",
+				text: "FAQ",
+				link: "/faq",
+			},
+			{
+				text: "Configuration",
+				items: [
+					{
+						text: "Getting Started",
+						link: "/configuration/getting-started",
+					},
+					{
+						text: "Permissions",
+						link: "/configuration/permissions",
+					},
+				],
 			},
 			{
 				text: "Modules",
@@ -104,6 +109,14 @@ export default defineConfig({
 						],
 					},
 				],
+			},
+			{
+				text: "Terms of Use",
+				link: "https://kbot.ca/terms",
+			},
+			{
+				text: "Privacy Policy",
+				link: "https://kbot.ca/privacy",
 			},
 		],
 	},

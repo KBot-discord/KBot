@@ -4,7 +4,7 @@ title: Commands
 
 # Commands
 
-## Core
+## Core Commands
 
 ### Echo <Badge type='tip' text='Slash' />
 
@@ -30,7 +30,7 @@ Creates a pat gif of the member.
 ### Permissions <Badge type='tip' text='Slash' />
 
 Info on how to change command permissions and the defaults that are set on the bot.
-Same info can be found [here](/permissions.md).
+Same info can be found [here](/configuration/permissions).
 
 ### Ping <Badge type='tip' text='Slash' />
 
@@ -40,7 +40,7 @@ Ping the bot to see if it is alive.
 
 uwu-ify a message.
 
-## Events
+## Event Commands
 
 ### Events <Badge type='tip' text='Slash' />
 
@@ -68,7 +68,7 @@ Join the queue.
 
 #### /karaoke duet
 
-Join the queue as a duet
+Join the queue as a duet.
 
 | Option  | Required | Description                |
 | ------- | :------: | :------------------------- |
@@ -145,7 +145,9 @@ Remove a user from a karaoke queue.
 
 Open the menu to manage karaoke events.
 
-## Moderation
+More info about managing events can be found [here](/events/karaoke#managing-events).
+
+## Moderation Commands
 
 ### Anti-Hoist <Badge type='tip' text='Slash' />
 
@@ -169,7 +171,7 @@ Show the current settings.
 
 ### Minage <Badge type='tip' text='Slash' />
 
-Set a minimum required account age for users to join the server..
+Set a minimum required account age for users to join the server.
 
 ::: tip Required bot permissions
 KBot needs these permissions for the command to run: `Kick Members`.
@@ -178,6 +180,8 @@ KBot needs these permissions for the command to run: `Kick Members`.
 #### /minage set
 
 Set the account age requirements and kick message.
+
+The `response` option can be formatted with variables which are listed [here](/moderation/minage#message-variables).
 
 | Option   | Required | Description                                                               |
 | -------- | :------: | :------------------------------------------------------------------------ |
@@ -249,6 +253,8 @@ Show the current settings.
 
 Send the reported message to the set moderator channel.
 
+You can check out [this](/moderation/report) page to see info about how it works.
+
 ### User <Badge type='tip' text='Slash' />
 
 Get info on a user.
@@ -257,13 +263,15 @@ Get info on a user.
 | ------ | :------: | :---------------------------------------------- |
 | User   |    ✓     | The user or the ID of the user to get info for. |
 
-## Notifications
+## Notification Commands
 
 ### YouTube <Badge type='tip' text='Slash' />
 
-Add, remove, or edit Youtube subscriptions.
+Add, remove, or edit YouTube subscriptions.
 
-Supported channels can be found [here](https://holodex.net/channel?org=All%20Vtubers).
+::: danger Supported channels
+The only supported channels are the ones that are listed on [Holodex](https://holodex.net/channel?org=All%20Vtubers).
+:::
 
 #### /youtube subscribe
 
@@ -309,7 +317,7 @@ Unset YouTube notification settings.
 
 #### /youtube role_reaction
 
-Automatically handle role reactions for youtube subscriptions.
+Automatically handle role reactions for YouTube subscriptions.
 
 | Option  | Required | Description                                     |
 | ------- | :------: | :---------------------------------------------- |
@@ -317,7 +325,7 @@ Automatically handle role reactions for youtube subscriptions.
 
 #### /youtube toggle
 
-Enable or disable the youtube module.
+Enable or disable the YouTube module.
 
 | Option | Required | Description                                                 |
 | ------ | :------: | :---------------------------------------------------------- |
@@ -325,9 +333,9 @@ Enable or disable the youtube module.
 
 #### /youtube subscriptions
 
-Show the current youtube subscriptions.
+Show the current YouTube subscriptions.
 
-## Utility
+## Utility Commands
 
 ### Add Emote <Badge type='tip' text='Context-Menu - Message' />
 
@@ -345,7 +353,7 @@ Get updates about Discord outages sent to a channel.
 
 #### /discordstatus set
 
-Set the channel to send notifications to
+Set the channel to send notifications to.
 
 | Option  | Required | Description                            |
 | ------- | :------: | :------------------------------------- |
@@ -353,19 +361,27 @@ Set the channel to send notifications to
 
 #### /discordstatus unset
 
-Unset the current channel
+Unset the current channel.
 
 #### /discordstatus settings
 
-Show the current settings
+Show the current settings.
 
 ### Emote Credits <Badge type='tip' text='Slash' />
 
 Send emote credits to a channel.
 
+#### /emotecredits add
+
+Add a new emote credit entry.
+
+| Option | Required | Description                             |
+| ------ | :------: | :-------------------------------------- |
+| Emote  |    ✓     | The ID of the emote to add credits for. |
+
 #### /emotecredits set
 
-Set a new emote credits channel
+Set a new emote credits channel.
 
 | Option  | Required | Description                           |
 | ------- | :------: | :------------------------------------ |
@@ -373,11 +389,11 @@ Set a new emote credits channel
 
 #### /emotecredits unset
 
-Reset the emote credits channel
+Reset the emote credits channel.
 
 #### /emotecredits settings
 
-Show the current settings
+Show the current settings.
 
 ### Poll <Badge type='tip' text='Slash' />
 
@@ -403,7 +419,7 @@ Create a poll. There must be at least 2 options.
 
 #### /poll menu
 
-Show the menu for managing polls
+Show the menu for managing polls.
 
 ### Utility <Badge type='tip' text='Slash' />
 
@@ -425,7 +441,7 @@ Enable or disable the utility module.
 
 Show the current settings.
 
-## Welcome
+## Welcome Commands
 
 ### Welcome <Badge type='tip' text='Slash' />
 
@@ -459,7 +475,7 @@ Reset welcome module settings.
 
 #### /welcome test
 
-Test the welcome message
+Test the welcome message.
 
 #### /welcome toggle
 
