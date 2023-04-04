@@ -1,7 +1,7 @@
 import { CustomEmotes, EmbedColors } from '#utils/constants';
 import { pollCacheKey } from '#utils/cache';
 import { container } from '@sapphire/framework';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
 import type { GuildAndPollId, GuildId, PollId, CreatePollData, UpsertPollUserData } from '#types/database';
@@ -100,6 +100,8 @@ export class PollService {
 	public async end({ guildId, pollId }: GuildAndPollId): Promise<boolean> {
 		const { client, validator, logger } = container;
 
+		const guild = client.guilds.cache.get(guildId);
+		const bot = await guild!.members.fetchMe();
 		let poll: Poll | null;
 		let channel: GuildTextBasedChannel | null;
 		let message: Message | null;
@@ -122,28 +124,35 @@ export class PollService {
 		try {
 			await this.removeActive({ guildId, pollId });
 
+			let shouldSend = false;
 			const votes = await this.getVotes({ guildId, pollId });
 			const results = this.calculateResults(poll, votes);
 
-			if (message) {
-				await message
+			if (message && channel.permissionsFor(bot).has(PermissionFlagsBits.ReadMessageHistory)) {
+				const result = await message
 					.edit({
 						embeds: [message.embeds[0], new EmbedBuilder().setColor(EmbedColors.Error).setTitle('Poll has ended')],
 						components: []
 					})
 					.catch(() => null);
 
-				await message.reply({
-					embeds: [
-						new EmbedBuilder()
-							.setColor(EmbedColors.Default)
-							.setTitle(`Results: ${poll.title}`)
-							.setDescription(results.join('\n'))
-							.setFooter({ text: `Poll made by ${poll.creator}` })
-							.setTimestamp()
-					]
-				});
-			} else {
+				if (result) {
+					await result.reply({
+						embeds: [
+							new EmbedBuilder()
+								.setColor(EmbedColors.Default)
+								.setTitle(`Results: ${poll.title}`)
+								.setDescription(results.join('\n'))
+								.setFooter({ text: `Poll made by ${poll.creator}` })
+								.setTimestamp()
+						]
+					});
+				} else {
+					shouldSend = true;
+				}
+			}
+
+			if (shouldSend) {
 				await channel.send({
 					embeds: [
 						new EmbedBuilder()

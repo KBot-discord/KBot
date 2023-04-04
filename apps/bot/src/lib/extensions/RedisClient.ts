@@ -39,7 +39,7 @@ export class RedisClient extends Redis {
 	}
 
 	public async hSet<T = unknown>(hashKey: Key, key: Key, data: T) {
-		return super.hset(hashKey, key, JSON.stringify(data));
+		return super.hset(hashKey, { [key]: JSON.stringify(data) });
 	}
 
 	public async hmSet<T = unknown>(hashKey: Key, data: Map<Key, T>) {
