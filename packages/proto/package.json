@@ -16,7 +16,7 @@
 		"buf:types": "buf generate ../../protos/types"
 	},
 	"devDependencies": {
-		"@bufbuild/protoc-gen-connect-es": "^0.8.4",
+		"@bufbuild/protoc-gen-connect-es": "^0.8.5",
 		"@bufbuild/protoc-gen-es": "^1.2.0",
 		"@sapphire/ts-config": "^3.3.4",
 		"tsup": "^6.7.0"

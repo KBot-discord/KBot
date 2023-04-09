@@ -25,10 +25,10 @@
 		"postbuild": "node ./scripts/sitemap.js"
 	},
 	"dependencies": {
-		"@bufbuild/connect": "^0.8.4",
-		"@bufbuild/connect-node": "^0.8.4",
+		"@bufbuild/connect": "^0.8.5",
+		"@bufbuild/connect-node": "^0.8.5",
 		"@bufbuild/protobuf": "^1.2.0",
-		"@floating-ui/dom": "^1.2.5",
+		"@floating-ui/dom": "^1.2.6",
 		"@fortawesome/free-brands-svg-icons": "^6.4.0",
 		"@fortawesome/free-solid-svg-icons": "^6.4.0",
 		"@kbotdev/proto": "*",
@@ -38,7 +38,7 @@
 		"@sapphire/plugin-api": "^5.0.2",
 		"@skeletonlabs/skeleton": "^1.1.0",
 		"@sveltejs/adapter-node": "^1.2.3",
-		"@sveltejs/kit": "^1.15.0",
+		"@sveltejs/kit": "^1.15.2",
 		"@sveltejs/vite-plugin-svelte": "^2.0.4",
 		"@tailwindcss/forms": "^0.5.3",
 		"@types/node": "^18.15.11",
@@ -47,7 +47,7 @@
 		"autoprefixer": "^10.4.14",
 		"discord-api-types": "^0.37.37",
 		"discord.js": "^14.9.0",
-		"eslint": "^8.37.0",
+		"eslint": "^8.38.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-prettier": "^4.2.1",
 		"eslint-plugin-svelte3": "^4.0.0",
@@ -56,12 +56,12 @@
 		"prettier": "^2.8.7",
 		"prettier-plugin-svelte": "^2.10.0",
 		"svelte": "^3.58.0",
-		"svelte-check": "^3.1.4",
+		"svelte-check": "^3.2.0",
 		"svelte-meta-tags": "^2.7.0",
 		"svelte-sitemap": "^2.6.0",
 		"tailwindcss": "^3.3.1",
 		"vite": "^4.2.1",
-		"vitest": "^0.29.8"
+		"vitest": "^0.30.0"
 	},
 	"lint-staged": {
 		"*.{js,ts,jsx,tsx}": [

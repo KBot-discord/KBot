@@ -13,7 +13,6 @@ import type { CoreModule } from '#modules/CoreModule';
 	module: 'CoreModule',
 	description: 'Sends the provided text to the selected channel.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Echo')
@@ -56,6 +55,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 
 	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const { client, validator } = this.container;
+		await interaction.deferReply();
 
 		const message = interaction.options.getString('text', true);
 		const channel: any = interaction.options.getChannel('channel', true);
