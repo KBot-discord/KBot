@@ -421,7 +421,7 @@ export class KaraokeService {
 
 			if (canUnpin) {
 				const message = await channel.messages.fetch(event.pinMessageId);
-				await message.unpin();
+				await message.unpin().catch(() => null);
 			}
 		}
 	}

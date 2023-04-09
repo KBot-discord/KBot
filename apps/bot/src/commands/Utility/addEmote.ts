@@ -60,7 +60,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 		const emoji = await this.getEmoji(message);
 		if (isNullish(emoji)) {
-			return interaction.errorReply('There is no emoji or file to add.');
+			return interaction.errorReply('There is no emoji or file to add.\n\nSupported file types: `jpeg`/`jpg`, `png`, `gif`');
 		}
 
 		const { staticSlots, animatedSlots, totalSlots } = this.calculateSlots(interaction);
