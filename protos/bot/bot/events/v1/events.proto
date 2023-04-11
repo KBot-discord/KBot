@@ -22,7 +22,7 @@ message UpdateEventSettingsRequest {
   string guild_id = 1;
   types.crud.v1.RequiredBool enabled = 2;
 }
-  
+
 message UpdateEventSettingsResponse {
   EventSettings settings = 1;
 }

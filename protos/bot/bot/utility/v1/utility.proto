@@ -27,7 +27,7 @@ message UpdateUtilitySettingsRequest {
   types.crud.v1.OptionalString incident_channel_id = 3;
   types.crud.v1.OptionalString credits_channel_id = 4;
 }
-  
+
 message UpdateUtilitySettingsResponse {
 	UtilitySettings settings = 1;
 }
