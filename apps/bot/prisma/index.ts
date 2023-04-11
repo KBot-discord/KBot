@@ -8,7 +8,6 @@ createSchema({
 	},
 	generator: {
 		provider: 'prisma-client-js',
-		output: './generated',
-		previewFeatures: ['tracing']
+		output: './generated'
 	}
 }).export(__dirname, 'schema');
