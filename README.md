@@ -31,20 +31,18 @@
 -   [Status page](https://status.kbot.ca/)
 -   [Support server](https://kbot.ca/discord)
 
-## Developing
-
-### Requirements:
+## Development requirements
 
 -   [Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/)
--   [Docker](https://www.docker.com/community-edition) and [Docker Compose](https://docs.docker.com/compose/install/)
+-   [Docker](https://www.docker.com/community-edition), [Docker Compose](https://docs.docker.com/compose/install/), and [Docker Buildx](https://docs.docker.com/build/install-buildx/)
+-   [Buf](https://github.com/bufbuild/buf)
 -   [Redis](https://redis.io/)
 -   [PostgreSQL](https://www.postgresql.org/)
 -   [Meilisearch](https://www.meilisearch.com/)
--   [Buf](https://github.com/bufbuild/buf)
 
 ## Contributing
 
-See the [contribution guide](../../.github/CONTRIBUTING.md) for how to contribute.
+See the [contribution guide](/.github/CONTRIBUTING.md) for how to contribute.
 
 ## Donations
 
