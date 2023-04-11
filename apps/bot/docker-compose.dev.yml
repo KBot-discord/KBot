@@ -27,18 +27,6 @@ services:
       - '127.0.0.1:7700:7700'
     networks:
       - KBot-network
-  #bot:
-  #  image: kbot/bot:latest
-  #  container_name: kbot
-  #  restart: unless-stopped
-  #  depends_on:
-  #    - redis
-  #    - postgres
-  #    - meili
-  #  env_file:
-  #    - .env
-  #  networks:
-  #    - KBot-network
 
 networks:
   KBot-network:

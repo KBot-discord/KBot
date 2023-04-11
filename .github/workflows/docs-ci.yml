@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "apps/docs/**"
+      - "!**/README.md"
 
 jobs:
   build:

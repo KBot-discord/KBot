@@ -32,7 +32,7 @@ message UpdateYoutubeSubscriptionRequest {
   types.crud.v1.OptionalString role = 5;
   types.crud.v1.OptionalString discord_channel = 6;
 }
-  
+
 message UpdateYoutubeSubscriptionResponse {
   YoutubeSubscription subscription = 1;
 }

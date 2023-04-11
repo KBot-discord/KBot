@@ -4,9 +4,8 @@ datasource database {
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  output          = "./generated"
-  previewFeatures = ["tracing"]
+  provider = "prisma-client-js"
+  output   = "./generated"
 }
 
 enum FeatureFlags {

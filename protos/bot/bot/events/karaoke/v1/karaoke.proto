@@ -29,7 +29,7 @@ message UpdateKaraokeScheduledEventRequest {
   types.crud.v1.RequiredString discord_event_id = 4;
   types.crud.v1.OptionalString role_id = 5;
 }
-  
+
 message UpdateKaraokeScheduledEventResponse {
   KaraokeScheduledEvent event = 1;
 }
@@ -39,7 +39,7 @@ message DeleteKaraokeScheduledEventRequest {
   string guild_id = 1;
   string voice_channel_id = 2;
 }
-  
+
 message DeleteKaraokeScheduledEventResponse {
   KaraokeScheduledEvent event = 1;
 }
