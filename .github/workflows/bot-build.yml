@@ -8,6 +8,7 @@ on:
       - "apps/bot/**"
       - "packages/**"
       - "protos/**"
+      - "!**/README.md"
 
 permissions:
   contents: read

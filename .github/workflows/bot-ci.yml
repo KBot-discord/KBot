@@ -6,6 +6,7 @@ on:
       - "apps/bot/**"
       - "packages/**"
       - "protos/**"
+      - "!**/README.md"
 
 jobs:
   dependencies:

@@ -1,13 +1,6 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    "group:allNonMajor"
-  ],
-  "schedule": [
-    "before 10am on Saturday"
-  ],
-  "labels": [
-    "dependencies"
-  ]
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:base", "group:allNonMajor"],
+	"schedule": ["before 10am on Saturday"],
+	"labels": ["dependencies"]
 }

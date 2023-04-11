@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "protos/**"
+      - "!**/README.md"
 
 jobs:
   build:
