@@ -11,7 +11,7 @@
 	},
 	"homepage": "https://github.com/KBot-discord/kbot/tree/main/apps/web",
 	"engines": {
-		"node": "^18.x"
+		"node": ">=18.x"
 	},
 	"scripts": {
 		"dev": "vite dev",
@@ -36,9 +36,9 @@
 	},
 	"devDependencies": {
 		"@sapphire/plugin-api": "^5.0.3",
-		"@skeletonlabs/skeleton": "^1.1.0",
+		"@skeletonlabs/skeleton": "^1.2.0",
 		"@sveltejs/adapter-node": "^1.2.3",
-		"@sveltejs/kit": "^1.15.4",
+		"@sveltejs/kit": "^1.15.5",
 		"@sveltejs/vite-plugin-svelte": "^2.0.4",
 		"@tailwindcss/forms": "^0.5.3",
 		"@types/node": "^18.15.11",

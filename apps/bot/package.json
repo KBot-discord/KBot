@@ -12,7 +12,7 @@
 	},
 	"homepage": "https://github.com/KBot-discord/kbot/tree/main/apps/bot",
 	"engines": {
-		"node": "^18.x"
+		"node": ">=18.x"
 	},
 	"scripts": {
 		"build": "yarn db:generate && tsc -b src",
@@ -38,14 +38,14 @@
 		"@sapphire/discord.js-utilities": "^6.0.5",
 		"@sapphire/duration": "^1.1.0",
 		"@sapphire/fetch": "^2.4.1",
-		"@sapphire/framework": "^4.3.1",
+		"@sapphire/framework": "^4.4.0",
 		"@sapphire/plugin-api": "^5.0.3",
 		"@sapphire/plugin-i18next": "^5.0.3",
 		"@sapphire/plugin-logger": "^3.0.3",
 		"@sapphire/plugin-scheduled-tasks": "^6.0.1",
 		"@sapphire/utilities": "^3.11.1",
-		"@sentry/integrations": "^7.47.0",
-		"@sentry/node": "^7.47.0",
+		"@sentry/integrations": "^7.48.0",
+		"@sentry/node": "^7.48.0",
 		"@skyra/gifenc": "^1.0.1",
 		"bullmq": "^3.10.4",
 		"canvas": "2.10.2",
@@ -55,15 +55,15 @@
 		"dotenv": "^16.0.3",
 		"fuse.js": "^6.6.2",
 		"humanize-duration": "^3.28.0",
-		"ioredis": "^5.3.1",
+		"ioredis": "^5.3.2",
 		"meilisearch": "^0.32.3",
 		"prom-client": "^14.2.0"
 	},
 	"devDependencies": {
 		"@microsoft/tsdoc": "^0.14.2",
-		"@sapphire/eslint-config": "^4.4.0",
+		"@sapphire/eslint-config": "^4.4.1",
 		"@sapphire/prettier-config": "^1.4.5",
-		"@sentry/types": "^7.47.0",
+		"@sentry/types": "^7.48.0",
 		"@types/humanize-duration": "^3.27.1",
 		"@types/node": "^18.15.11",
 		"@typescript-eslint/eslint-plugin": "^5.58.0",

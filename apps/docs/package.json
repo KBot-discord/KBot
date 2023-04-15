@@ -11,6 +11,9 @@
 		"directory": "apps/docs"
 	},
 	"homepage": "https://github.com/KBot-discord/kbot/tree/main/apps/docs",
+	"engines": {
+		"node": ">=18.x"
+	},
 	"scripts": {
 		"dev": "vitepress dev docs",
 		"build": "vitepress build docs",
@@ -18,7 +21,7 @@
 	},
 	"devDependencies": {
 		"sitemap": "^7.1.1",
-		"vitepress": "1.0.0-alpha.65"
+		"vitepress": "1.0.0-alpha.66"
 	},
 	"packageManager": "yarn@3.5.0"
 }
