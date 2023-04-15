@@ -43,6 +43,37 @@ export class HolodexTask extends ScheduledTask {
 
 			logger.debug(`[HolodexTask] Synced ${channels.length} channels (pages: ${page})`);
 
+			const validTwitchChannels = channels.filter(
+				({ twitch, id }) =>
+					twitch !== null &&
+					config.holodex.twitchConflicts.some((channelId) => {
+						return id === channelId;
+					})
+			);
+
+			let shouldContinue = true;
+			const uniqueTwitch = new Set<string>();
+
+			for (const channel of validTwitchChannels) {
+				uniqueTwitch.add(channel.twitch!);
+
+				if (uniqueTwitch.has(channel.twitch!)) {
+					if (shouldContinue) {
+						shouldContinue = false;
+					}
+
+					const dupes = channels.filter((ch) => ch.id === channel.id);
+
+					logger.error(`New Twitch ID conflict found for: ${channel.twitch!}. Please add an entry to config.holodex.twitchConflicts`);
+
+					for (const dupe of dupes) {
+						logger.error(`${dupe.name} (ID: ${dupe.id})`);
+					}
+				}
+			}
+
+			if (!shouldContinue) return;
+
 			await meili.upsertMany(
 				MeiliCategories.YoutubeChannels,
 				channels.map(({ id, name, english_name, org, suborg, group }) => {
@@ -52,17 +83,9 @@ export class HolodexTask extends ScheduledTask {
 
 			await meili.upsertMany(
 				MeiliCategories.TwitchChannels,
-				channels
-					.filter(
-						({ twitch, id }) =>
-							twitch !== null &&
-							config.holodex.twitchConflicts.some((channelId) => {
-								return id === channelId;
-							})
-					)
-					.map(({ twitch, name, english_name, org, suborg, group }) => {
-						return { id: twitch!, name, englishName: english_name, org, subOrg: suborg, group };
-					})
+				validTwitchChannels.map(({ twitch, name, english_name, org, suborg, group }) => {
+					return { id: twitch!, name, englishName: english_name, org, subOrg: suborg, group };
+				})
 			);
 
 			await prisma.$transaction(

@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  workspace:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VARIANT: "18"
+    volumes:
+      - ..:/KBot:cached
+    command: /bin/sh -c "while sleep 1000; do :; done"

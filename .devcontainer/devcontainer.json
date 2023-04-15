@@ -1,0 +1,29 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+	"name": "Full environment",
+	"service": "workspace",
+	"workspaceFolder": "/KBot",
+	"dockerComposeFile": [
+		"docker-compose.workspace.yml",
+		"../apps/bot/docker-compose.dev.yml"
+	],
+	"remoteUser": "node",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bufbuild.vscode-buf",
+				"EditorConfig.EditorConfig",
+				"dbaeumer.vscode-eslint",
+				"yzhang.markdown-all-in-one",
+				"leizongmin.node-module-intellisense",
+				"esbenp.prettier-vscode",
+				"Prisma.prisma",
+				"svelte.svelte-vscode",
+				"bradlc.vscode-tailwindcss",
+				"zxh404.vscode-proto3",
+				"redhat.vscode-yaml"
+			]
+		}
+	}
+}
