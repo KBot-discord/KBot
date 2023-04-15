@@ -16,6 +16,10 @@ export default defineConfig({
 	themeConfig: {
 		logo: "/assets/logo.png",
 
+		search: {
+			provider: "local",
+		},
+
 		editLink: {
 			pattern:
 				"https://github.com/kbot-discord/KBot/edit/main/apps/docs/docs/:path",
