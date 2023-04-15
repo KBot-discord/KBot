@@ -107,7 +107,7 @@ export class ReportHandler {
 					return;
 				}
 				if (type === ReportButtons.Delete) {
-					await this.targetMessage.delete();
+					await this.targetMessage.delete().catch(() => null);
 				}
 			})
 			.catch(async () => {
@@ -147,9 +147,11 @@ export class ReportHandler {
 			updatedRow.components[entry].setDisabled(disabled);
 		});
 
-		await this.reportMessage.edit({
-			embeds: this.reportMessage.embeds,
-			components: [updatedRow]
-		});
+		await this.reportMessage
+			.edit({
+				embeds: this.reportMessage.embeds,
+				components: [updatedRow]
+			})
+			.catch(() => null);
 	}
 }
