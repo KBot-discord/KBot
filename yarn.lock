@@ -832,7 +832,7 @@ __metadata:
   resolution: "@kbotdev/docs@workspace:apps/docs"
   dependencies:
     sitemap: ^7.1.1
-    vitepress: 1.0.0-alpha.66
+    vitepress: 1.0.0-alpha.70
   languageName: unknown
   linkType: soft
 
@@ -903,7 +903,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-svelte3: ^4.0.0
     husky: ^8.0.3
-    postcss: ^8.4.21
+    postcss: ^8.4.22
     prettier: ^2.8.7
     prettier-plugin-svelte: ^2.10.0
     svelte: ^3.58.0
@@ -5077,6 +5077,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mark.js@npm:^8.11.1":
+  version: 8.11.1
+  resolution: "mark.js@npm:8.11.1"
+  checksum: aa6b9ae1c67245348d5b7abd253ef2acd6bb05c6be358d7d192416d964e42665fc10e0e865591c6f93ab9b57e8da1f23c23216e8ebddb580905ea7a0c0df15d4
+  languageName: node
+  linkType: hard
+
 "md5-hex@npm:^3.0.1":
   version: 3.0.1
   resolution: "md5-hex@npm:3.0.1"
@@ -5397,7 +5404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.4":
+"nanoid@npm:^3.3.4, nanoid@npm:^3.3.6":
   version: 3.3.6
   resolution: "nanoid@npm:3.3.6"
   bin:
@@ -5924,6 +5931,17 @@ __metadata:
     picocolors: ^1.0.0
     source-map-js: ^1.0.2
   checksum: e39ac60ccd1542d4f9d93d894048aac0d686b3bb38e927d8386005718e6793dbbb46930f0a523fe382f1bbd843c6d980aaea791252bf5e176180e5a4336d9679
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.22":
+  version: 8.4.22
+  resolution: "postcss@npm:8.4.22"
+  dependencies:
+    nanoid: ^3.3.6
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.2
+  checksum: 7473dfb7ac5b4cb03576c39d687d7fc02c826ab08af97df15b5d3970662532d44a18a0994f392a9c3658ee17c292e7a55990e586b90ca0afcc9f36df13e07029
   languageName: node
   linkType: hard
 
@@ -7666,9 +7684,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:1.0.0-alpha.66":
-  version: 1.0.0-alpha.66
-  resolution: "vitepress@npm:1.0.0-alpha.66"
+"vitepress@npm:1.0.0-alpha.70":
+  version: 1.0.0-alpha.70
+  resolution: "vitepress@npm:1.0.0-alpha.70"
   dependencies:
     "@docsearch/css": ^3.3.3
     "@docsearch/js": ^3.3.3
@@ -7676,13 +7694,14 @@ __metadata:
     "@vue/devtools-api": ^6.5.0
     "@vueuse/core": ^10.0.2
     body-scroll-lock: 4.0.0-beta.0
+    mark.js: ^8.11.1
     minisearch: ^6.0.1
     shiki: ^0.14.1
     vite: ^4.2.1
     vue: ^3.2.47
   bin:
     vitepress: bin/vitepress.js
-  checksum: 4051d8455223a053dd28e88e265339309ca91e35d5ff2be677ff0cc822fbd924b6543359468a5c089ac1ab42182351af2ae6e384e971e9fc8a36a2a887c7c5ce
+  checksum: 1ee9816b5522b4eb1a7693fc0b6c0343d85f1ae46c8ecb1e2cabbb534b5fce5fb836f5a92b49b94c4684c3aff17a85d70e8fae63b9ea3d9e33fcf244a91e4a9c
   languageName: node
   linkType: hard
 

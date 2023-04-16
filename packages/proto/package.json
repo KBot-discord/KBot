@@ -20,6 +20,5 @@
 		"@bufbuild/protoc-gen-es": "^1.2.0",
 		"@sapphire/ts-config": "^4.0.0",
 		"tsup": "^6.7.0"
-	},
-	"packageManager": "yarn@3.4.1"
+	}
 }
