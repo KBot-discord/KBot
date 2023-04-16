@@ -1,5 +1,5 @@
 import { EmbedColors } from '#utils/constants';
-import { AddEmoteCustomIds, AddEmoteFields, buildCustomId } from '#utils/customIds';
+import { AddEmoteCustomIds, CreditCustomIds, CreditFields, CreditType, buildCustomId } from '#utils/customIds';
 import { getGuildEmoteSlots } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
@@ -9,8 +9,8 @@ import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { Credit } from '#types/CustomIds';
 import type { Message, ModalSubmitInteraction } from 'discord.js';
-import type { EmoteCredit } from '#types/CustomIds';
 import type { UtilityModule } from '#modules/UtilityModule';
 
 interface EmojiData {
@@ -84,7 +84,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.addComponents(
 						new ActionRowBuilder<TextInputBuilder>().addComponents(
 							new TextInputBuilder()
-								.setCustomId(AddEmoteFields.Name)
+								.setCustomId(CreditFields.Name)
 								.setLabel('Emote name')
 								.setStyle(TextInputStyle.Short)
 								.setMinLength(1)
@@ -110,7 +110,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		const embed = new EmbedBuilder();
 		const { url } = emojiData;
 
-		const emoteName = modal.fields.getTextInputValue(AddEmoteFields.Name);
+		const emoteName = modal.fields.getTextInputValue(CreditFields.Name);
 		if (!/^\w+$/.test(emoteName)) {
 			return modal.errorReply('That is not a valid emote name.', true);
 		}
@@ -127,8 +127,9 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				new ActionRowBuilder<ButtonBuilder>().addComponents([
 					new ButtonBuilder()
 						.setCustomId(
-							buildCustomId<EmoteCredit>(AddEmoteCustomIds.Credits, {
-								ei: newEmoji.id
+							buildCustomId<Credit>(CreditCustomIds.Create, {
+								ri: newEmoji.id,
+								t: CreditType.Emote
 							})
 						)
 						.setLabel('Add to credits channel')

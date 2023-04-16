@@ -34,6 +34,7 @@ export default defineConfig({
 				text: "Source Code",
 				link: "https://github.com/kbot-discord/kbot",
 			},
+			{ text: "Status", link: "https://status.kbot.ca/" },
 		],
 
 		sidebar: [
@@ -94,8 +95,8 @@ export default defineConfig({
 								link: "/utility/discord-status",
 							},
 							{
-								text: "Emote Credits",
-								link: "/utility/emote-credits",
+								text: "Credits",
+								link: "/utility/credits",
 							},
 							{
 								text: "Polls",
@@ -196,6 +197,8 @@ export default defineConfig({
 			},
 		],
 	],
+
+	markdown: {},
 
 	transformHtml: (_, id, { pageData }) => {
 		if (!/[\\/]404\.html$/.test(id))

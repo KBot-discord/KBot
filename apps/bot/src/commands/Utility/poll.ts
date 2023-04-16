@@ -1,6 +1,6 @@
 import { PollMenu } from '#structures/menus/PollMenu';
 import { buildCustomId, PollCustomIds } from '#utils/customIds';
-import { EmbedColors, Emoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
+import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
 import { parseTimeString } from '#utils/functions';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
@@ -219,7 +219,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			components: this.createPollButtons(options)
 		});
 
-		return interaction.successReply(`${Emoji.GreenCheck} Poll created`);
+		return interaction.successReply(`${KBotEmoji.GreenCheck} Poll created`);
 	}
 
 	public async chatInputMenu(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {

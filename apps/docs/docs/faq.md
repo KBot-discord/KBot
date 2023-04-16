@@ -14,4 +14,4 @@ To start an event, all you need to do is [/manage karaoke start](/commands#manag
 
 For managing events, using [/manage karaoke menu](/commands#manage-karaoke-menu) will bring up the Karaoke management menu.
 
-For more info about Karaoke evemts, please check out [this](/events/karaoke) page.
+For more info about Karaoke events, please check out [this](/events/karaoke) page.

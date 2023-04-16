@@ -1,5 +1,5 @@
 import { EmbedColors } from '#utils/constants';
-import { AddEmoteCustomIds, AddEmoteFields, buildCustomId, parseCustomId } from '#utils/customIds';
+import { CreditCustomIds, CreditFields, parseCustomId } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
 import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -7,8 +7,8 @@ import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import { messageLink } from '@discordjs/builders';
 import { isNullish } from '@sapphire/utilities';
+import type { CreditImageModal } from '#types/CustomIds';
 import type { GuildTextBasedChannel } from 'discord.js';
-import type { EmoteCredit, EmoteCreditModal } from '#types/CustomIds';
 import type { APIEmbedField } from 'discord-api-types/v10';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -17,18 +17,17 @@ import type { APIEmbedField } from 'discord-api-types/v10';
 export class ModalHandler extends InteractionHandler {
 	public override async run(
 		modal: ModalSubmitInteraction<'cached'>,
-		{ channelId, emoji, imageSource, description, artistName, artistLink }: InteractionHandler.ParseResult<this>
+		{ channelId, name, link, source, description, artist }: InteractionHandler.ParseResult<this>
 	) {
 		const fields: APIEmbedField[] = [];
-		if (imageSource) fields.push({ name: 'Image source', value: imageSource });
+		if (source) fields.push({ name: 'Image source', value: source });
 		if (description) fields.push({ name: 'Description', value: description });
-		if (artistName) fields.push({ name: 'Artist', value: artistName, inline: true });
-		if (artistLink) fields.push({ name: "Artist's profile", value: artistLink, inline: true });
+		if (artist) fields.push({ name: 'Artist', value: artist });
 
 		try {
 			const creditsChannel = (await modal.guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
 			if (isNullish(creditsChannel)) {
-				return modal.errorReply("The current credits channel doesn't exist. Please set a new one with `/addemote set`");
+				return modal.errorReply("The current credits channel doesn't exist. Please set a new one with `/credits set`");
 			}
 
 			const { result, error } = await this.container.validator.channels.canSendEmbeds(creditsChannel);
@@ -38,22 +37,17 @@ export class ModalHandler extends InteractionHandler {
 
 			const message = await creditsChannel.send({
 				embeds: [
-					new EmbedBuilder()
+					new EmbedBuilder() //
 						.setColor(EmbedColors.Default)
-						.setTitle(emoji.name!)
-						.setThumbnail(emoji.url)
+						.setTitle(name)
+						.setImage(link)
 						.addFields(fields)
-						.setFooter({ text: `Emote ID: ${emoji.id}` })
 				],
 				components: [
 					new ActionRowBuilder<ButtonBuilder>().addComponents([
-						new ButtonBuilder()
-							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Edit, { ei: emoji.id }))
+						new ButtonBuilder() //
+							.setCustomId(CreditCustomIds.ImageEdit)
 							.setLabel('Edit info')
-							.setStyle(ButtonStyle.Secondary),
-						new ButtonBuilder()
-							.setCustomId(buildCustomId<EmoteCredit>(AddEmoteCustomIds.Refresh, { ei: emoji.id }))
-							.setLabel('Refresh emoji')
 							.setStyle(ButtonStyle.Secondary)
 					])
 				]
@@ -61,11 +55,11 @@ export class ModalHandler extends InteractionHandler {
 			return modal.defaultReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
 		} catch (err) {
 			this.container.logger.error(err);
-			return modal.errorReply('There was an error when trying to create the emote credits.');
+			return modal.errorReply('There was an error when trying to create the credit.');
 		}
 	}
 
-	@validCustomId(AddEmoteCustomIds.ModalCredits)
+	@validCustomId(CreditCustomIds.ImageModalCreate)
 	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
 		const settings = await this.container.utility.getSettings(modal.guildId);
 		if (isNullish(settings) || !settings.enabled) {
@@ -76,20 +70,20 @@ export class ModalHandler extends InteractionHandler {
 		await modal.deferReply({ ephemeral: true });
 
 		const {
-			data: { c, ei }
-		} = parseCustomId<EmoteCreditModal>(modal.customId);
+			data: { c }
+		} = parseCustomId<CreditImageModal>(modal.customId);
 
-		const emoji = modal.guild.emojis.cache.get(ei);
-		if (!emoji) {
-			await modal.defaultFollowup('That emote has been deleted.', true);
+		const name = modal.fields.getTextInputValue(CreditFields.Name);
+		const link = modal.fields.getTextInputValue(CreditFields.Link);
+		const source = modal.fields.getTextInputValue(CreditFields.Source);
+		const description = modal.fields.getTextInputValue(CreditFields.Description);
+		const artist = modal.fields.getTextInputValue(CreditFields.Artist);
+
+		if (!link.startsWith('https://')) {
+			await modal.errorReply(`Invalid image URL. The URL must start with \`https://\``);
 			return this.none();
 		}
 
-		const imageSource = modal.fields.getTextInputValue(AddEmoteFields.CreditLink);
-		const description = modal.fields.getTextInputValue(AddEmoteFields.CreditDescription);
-		const artistName = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistName);
-		const artistLink = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistLink);
-
-		return this.some({ channelId: c, emoji, imageSource, description, artistName, artistLink });
+		return this.some({ channelId: c, name, link, source, description, artist });
 	}
 }

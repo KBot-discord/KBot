@@ -1,10 +1,11 @@
 {
 	"typescript.tsdk": "node_modules/typescript/lib",
+	"eslint.format.enable": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"[svelte]": {
 		"editor.defaultFormatter": "svelte.svelte-vscode"
 	},
 	"[typescript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
 	}
 }

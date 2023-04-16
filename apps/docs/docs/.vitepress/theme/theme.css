@@ -140,6 +140,12 @@ h6 .VPBadge {
 	vertical-align: middle !important;
 }
 
+.VPBadge.info {
+	border-color: rgba(60, 100, 225) !important;
+	color: rgba(80, 127, 240) !important;
+	background-color: rgba(16, 129, 185, 0.05) !important;
+}
+
 /**
  * Containers
  * -------------------------------------------------------------------------- */

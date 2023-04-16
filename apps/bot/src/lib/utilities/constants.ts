@@ -54,7 +54,7 @@ export const KAOMOJI_EMBARRASSED = [' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)..', ' (*^.^*
 export const KAOMOJI_CONFUSE = [' (o_O)?', ' (°ロ°) !?', ' (ーー;)?', ' owo?'];
 export const KAOMOJI_SPARKLES = [' *:･ﾟ✧*:･ﾟ✧ ', ' ☆*:・ﾟ ', '〜☆ ', ' uguu.., ', ' -.-'];
 
-export const Emoji = {
+export const KBotEmoji = {
 	Locked: '🔒',
 	Unlocked: '🔓',
 	GreenCheck: '✅',

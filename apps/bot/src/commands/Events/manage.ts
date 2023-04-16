@@ -1,5 +1,5 @@
 import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
-import { BlankSpace, EmbedColors, Emoji } from '#utils/constants';
+import { BlankSpace, EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
@@ -313,7 +313,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: `${Emoji.Microphone} Karaoke management`, iconURL: getGuildIcon(interaction.guild) })
+					.setAuthor({ name: `${KBotEmoji.Microphone} Karaoke management`, iconURL: getGuildIcon(interaction.guild) })
 					.setTitle(discordEvent.channel.name)
 					.addFields([
 						{ name: 'Scheduled event:', value: discordEvent.name, inline: true },
@@ -321,7 +321,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 						{ name: BlankSpace, value: BlankSpace, inline: false },
 						{ name: 'Voice channel:', value: channelMention(newEvent.id), inline: true },
 						{ name: 'Text channel:', value: channelMention(newEvent.textChannelId), inline: true },
-						{ name: 'Queue lock:', value: newEvent.locked ? `${Emoji.Locked} locked` : `${Emoji.Unlocked} unlocked`, inline: true }
+						{
+							name: 'Queue lock:',
+							value: newEvent.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`,
+							inline: true
+						}
 					])
 			]
 		});

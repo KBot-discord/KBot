@@ -1,25 +1,43 @@
-import { EmbedColors, Emoji, guildEmoteSlots } from '#utils/constants';
+import { CreditType } from './customIds';
+import { EmbedColors, guildEmoteSlots, KBotEmoji } from '#utils/constants';
 import { EmbedBuilder, MessageType, User } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { roleMention, time, userMention } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/rest/v10/user';
 import type {
-	Message,
-	GuildMember,
+	APIUser,
 	ButtonInteraction,
-	CommandInteraction,
-	GuildPremiumTier,
 	Collection,
+	CommandInteraction,
+	Emoji,
+	Guild,
+	GuildMember,
+	GuildPremiumTier,
+	Message,
 	Role,
 	Snowflake,
-	APIUser,
-	Guild
+	Sticker
 } from 'discord.js';
+import type { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/rest/v10/user';
 import type { ImageURLOptions } from '@discordjs/rest';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { FormattedGuild, TransformedLoginData } from '#types/Api';
+
+export function getResourceFromType(guildId: string, resourceId: string, type: CreditType): Emoji | Sticker | null {
+	const guild = container.client.guilds.cache.get(guildId);
+	if (!guild) return null;
+
+	if (type === CreditType.Emote) {
+		const emoji = guild.emojis.cache.get(resourceId);
+		if (emoji) return emoji;
+	} else {
+		const sticker = guild.stickers.cache.get(resourceId);
+		if (sticker) return sticker;
+	}
+
+	return null;
+}
 
 export const getGuildEmoteSlots = (tier: GuildPremiumTier): number => guildEmoteSlots[tier];
 
@@ -49,7 +67,7 @@ export async function transformLoginData({ user, guilds }: LoginData): Promise<T
 }
 
 export async function canManageGuildFilter(guild: RESTAPIPartialCurrentUserGuild | Guild, userId: string): Promise<boolean> {
-	const fetchedGuild = await container.client.guilds.cache.get(guild.id);
+	const fetchedGuild = container.client.guilds.cache.get(guild.id);
 	if (!fetchedGuild) return false;
 
 	const member = await fetchedGuild.members.fetch(userId).catch(() => null);
@@ -64,9 +82,7 @@ export async function canManageGuild(guild: Guild, member: GuildMember | null): 
 		const settings = await container.core.getSettings(guild.id);
 		if (!settings) return false;
 
-		const adminResult = member.permissions?.has(PermissionFlagsBits.ManageGuild);
-
-		return adminResult;
+		return member.permissions?.has(PermissionFlagsBits.ManageGuild);
 	} catch (err: unknown) {
 		container.logger.error(err);
 		return false;
@@ -110,12 +126,12 @@ export async function getUserInfo(interaction: CommandInteraction<'cached'> | Bu
 				{ name: 'Joined at:', value: time(Math.round(member.joinedTimestamp! / 1000), 'F'), inline: true },
 				{ name: `Roles (${member.roles.cache.size - 1})`, value: rolesToString(member.roles.cache) }
 			)
-			.setFooter({ text: `Present in server: ${Emoji.GreenCheck}` });
+			.setFooter({ text: `Present in server: ${KBotEmoji.GreenCheck}` });
 	}
 	const banned = await interaction.guild.bans
 		.fetch(userId)
-		.then((ban) => `${Emoji.GreenCheck} User is banned\nReason: ${ban.reason}`)
-		.catch(() => `${Emoji.RedX} User is not banned`);
+		.then((ban) => `${KBotEmoji.GreenCheck} User is banned\nReason: ${ban.reason}`)
+		.catch(() => `${KBotEmoji.RedX} User is not banned`);
 
 	return embed
 		.setColor(EmbedColors.Error)
@@ -126,7 +142,7 @@ export async function getUserInfo(interaction: CommandInteraction<'cached'> | Bu
 			{ name: '\u200B', value: '\u200B' },
 			{ name: 'Ban status:', value: banned, inline: true }
 		)
-		.setFooter({ text: `Present in server: ${Emoji.RedX}` });
+		.setFooter({ text: `Present in server: ${KBotEmoji.RedX}` });
 }
 
 export function getUserAvatarUrl(user: User | APIUser, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string {

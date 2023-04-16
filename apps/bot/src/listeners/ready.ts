@@ -18,7 +18,8 @@ export class ReadyListener extends Listener {
 
 	private async syncMeili(): Promise<void> {
 		const commands = this.container.stores.get('commands');
-		const documents: DocumentCommand[] = [...commands.values()]
+		const documents: DocumentCommand[] = commands
+			.toJSON()
 			.filter((cmd) => !this.commandsToFilter.includes(cmd.name))
 			.filter((cmd) => cmd.category && !this.categoriesToFilter.includes(cmd.category))
 			.map((command, index) => {
