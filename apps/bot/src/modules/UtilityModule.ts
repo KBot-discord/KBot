@@ -1,13 +1,14 @@
 import { PollService, UtilitySettingsService } from '#services/utility';
-import { AddEmoteCustomIds, AddEmoteFields, buildCustomId } from '#utils/customIds';
+import { CreditCustomIds, CreditFields, buildCustomId } from '#utils/customIds';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import type { CreditType } from '#utils/customIds';
+import type { CreditImageModal, CreditModal } from '#types/CustomIds';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { UtilitySettings } from '#prisma';
 import type { UpsertUtilitySettingsData } from '#types/database';
-import type { EmoteCreditModal } from '#types/CustomIds';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Utility Module'
@@ -43,53 +44,75 @@ export class UtilityModule extends Module {
 		return this.settings.getIncidentChannels();
 	}
 
-	public buildEmoteCreditModal(channelId: string, emoteId: string): ModalBuilder {
-		return new ModalBuilder()
-			.setCustomId(
-				buildCustomId<EmoteCreditModal>(AddEmoteCustomIds.ModalCredits, {
-					c: channelId,
-					ei: emoteId
-				})
+	public buildCreditModal(channelId: string, resourceId?: string, type?: CreditType): ModalBuilder {
+		const customId =
+			resourceId && type
+				? buildCustomId<CreditModal>(CreditCustomIds.ResourceModalCreate, {
+						c: channelId,
+						ri: resourceId,
+						t: type
+				  })
+				: buildCustomId<CreditImageModal>(CreditCustomIds.ImageModalCreate, {
+						c: channelId
+				  });
+
+		const components: ActionRowBuilder<TextInputBuilder>[] = [
+			new ActionRowBuilder<TextInputBuilder>().addComponents(
+				new TextInputBuilder()
+					.setCustomId(CreditFields.Source)
+					.setLabel('The source of the image')
+					.setStyle(TextInputStyle.Paragraph)
+					.setMinLength(0)
+					.setMaxLength(100)
+					.setRequired(isNullish(resourceId))
+			),
+			new ActionRowBuilder<TextInputBuilder>().addComponents(
+				new TextInputBuilder()
+					.setCustomId(CreditFields.Description)
+					.setLabel('The description of the credit entry')
+					.setStyle(TextInputStyle.Paragraph)
+					.setMinLength(0)
+					.setMaxLength(100)
+					.setRequired(false)
+			),
+			new ActionRowBuilder<TextInputBuilder>().addComponents(
+				new TextInputBuilder()
+					.setCustomId(CreditFields.Artist)
+					.setLabel('The artist')
+					.setStyle(TextInputStyle.Short)
+					.setMinLength(0)
+					.setMaxLength(100)
+					.setRequired(false)
 			)
-			.setTitle('Add a credit for an emote')
-			.addComponents(
+		];
+
+		if (!resourceId) {
+			components.unshift(
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditLink)
-						.setLabel('Image source')
+						.setCustomId(CreditFields.Name)
+						.setLabel('The title of the credit entry')
+						.setStyle(TextInputStyle.Short)
+						.setMinLength(0)
+						.setMaxLength(50)
+						.setRequired(true)
+				),
+				new ActionRowBuilder<TextInputBuilder>().addComponents(
+					new TextInputBuilder()
+						.setCustomId(CreditFields.Link)
+						.setLabel('The link of the image')
 						.setStyle(TextInputStyle.Paragraph)
 						.setMinLength(0)
 						.setMaxLength(100)
-						.setRequired(false)
-				),
-				new ActionRowBuilder<TextInputBuilder>().addComponents(
-					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditDescription)
-						.setLabel('Description')
-						.setStyle(TextInputStyle.Paragraph)
-						.setMinLength(0)
-						.setMaxLength(100)
-						.setRequired(false)
-				),
-				new ActionRowBuilder<TextInputBuilder>().addComponents(
-					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditArtistName)
-						.setLabel("Artist's name")
-						.setStyle(TextInputStyle.Short)
-						.setMinLength(0)
-						.setMaxLength(100)
-						.setRequired(false)
-				),
-				new ActionRowBuilder<TextInputBuilder>().addComponents(
-					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditArtistLink)
-						.setLabel("Artist's profile")
-						.setStyle(TextInputStyle.Short)
-						.setMinLength(0)
-						.setMaxLength(100)
-						.setRequired(false)
+						.setRequired(true)
 				)
 			);
+		}
+
+		return new ModalBuilder() //
+			.setCustomId(customId)
+			.setTitle('Add a credit entry')
+			.addComponents(components);
 	}
 }
 

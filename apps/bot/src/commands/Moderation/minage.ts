@@ -1,4 +1,4 @@
-import { EmbedColors, Emoji } from '#utils/constants';
+import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
@@ -145,7 +145,9 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? Emoji.GreenCheck : Emoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(
+						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
+					)
 			]
 		});
 	}
@@ -208,7 +210,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
 					.setDescription('Run `/minage test` to see what the message would look like')
 					.addFields([
-						{ name: 'Enabled', value: `${settings?.minAccountAgeEnabled ? `true ${Emoji.GreenCheck}` : `false ${Emoji.RedX}`}` },
+						{ name: 'Enabled', value: `${settings?.minAccountAgeEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}` },
 						{
 							name: 'Account age requirement',
 							value: `${settings?.minAccountAgeReq ?? 0}`,
@@ -230,8 +232,8 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 							name: 'Permissions:',
 							value: `Kick Members: ${
 								bot.permissions.has(PermissionFlagsBits.KickMembers) //
-									? Emoji.GreenCheck
-									: Emoji.RedX
+									? KBotEmoji.GreenCheck
+									: KBotEmoji.RedX
 							}`
 						}
 					])

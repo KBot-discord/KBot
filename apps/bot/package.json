@@ -92,7 +92,6 @@
 			"prettier --write --loglevel=warn \"{src,tests,prisma}/**/*.{js,ts,json}\""
 		]
 	},
-	"packageManager": "yarn@3.5.0",
 	"imports": {
 		"#prisma": "./prisma/generated/index.js",
 		"#hooks/register": "./dist/lib/hooks/register.js",

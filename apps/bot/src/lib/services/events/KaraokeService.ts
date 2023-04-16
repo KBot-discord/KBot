@@ -1,4 +1,4 @@
-import { CacheValues, EmbedColors, Emoji } from '#utils/constants';
+import { CacheValues, EmbedColors, KBotEmoji } from '#utils/constants';
 import { karaokeEventActiveCacheKey, karaokeEventExistsCacheKey } from '#utils/cache';
 import { isNullish } from '@sapphire/utilities';
 import { ChannelType, EmbedBuilder, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
@@ -468,11 +468,11 @@ export class KaraokeService {
 	public buildQueueEmbed(event: KaraokeEventWithUsers): EmbedBuilder {
 		const { queue } = event;
 
-		const footerText = `Queue lock: ${event.locked ? Emoji.Locked : Emoji.Unlocked} | Size ${queue.length}/50`;
+		const footerText = `Queue lock: ${event.locked ? KBotEmoji.Locked : KBotEmoji.Unlocked} | Size ${queue.length}/50`;
 
 		const embed = new EmbedBuilder() //
 			.setColor(EmbedColors.Default)
-			.setAuthor({ name: `${Emoji.Microphone} Karaoke queue` })
+			.setAuthor({ name: `${KBotEmoji.Microphone} Karaoke queue` })
 			.setFooter({ text: footerText });
 
 		if (queue.length === 0) {

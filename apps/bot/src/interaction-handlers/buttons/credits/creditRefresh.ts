@@ -1,23 +1,24 @@
-import { AddEmoteCustomIds, parseCustomId } from '#utils/customIds';
+import { CreditCustomIds, parseCustomId, CreditType } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
+import { getResourceFromType } from '#utils/Discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder, ButtonInteraction } from 'discord.js';
 import { Time } from '@sapphire/duration';
-import type { EmoteCredit } from '#types/CustomIds';
+import type { Credit } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { emoji }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { resource }: InteractionHandler.ParseResult<this>) {
 		try {
 			const embed = interaction.message.embeds[0];
 			const updatedEmbed: EmbedBuilder = EmbedBuilder.from(embed);
 
-			updatedEmbed.setTitle(emoji.name!);
+			updatedEmbed.setTitle(resource.name!);
 
 			await interaction.message.edit({
 				embeds: [updatedEmbed]
@@ -27,7 +28,7 @@ export class ButtonHandler extends InteractionHandler {
 		}
 	}
 
-	@validCustomId(AddEmoteCustomIds.Refresh)
+	@validCustomId(CreditCustomIds.ResourceRefresh)
 	@interactionRatelimit(Time.Second * 10, 1)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageEmojisAndStickers)) {
@@ -44,19 +45,19 @@ export class ButtonHandler extends InteractionHandler {
 		await interaction.deferUpdate();
 
 		const {
-			data: { ei }
-		} = parseCustomId<EmoteCredit>(interaction.customId);
+			data: { ri, t }
+		} = parseCustomId<Credit>(interaction.customId);
 
-		const emoji = interaction.guild.emojis.cache.get(ei);
-		if (!emoji) {
-			await interaction.defaultFollowup('That emote has been deleted.', true);
+		const resource = getResourceFromType(interaction.guildId, ri, t);
+		if (!resource) {
+			await interaction.defaultFollowup(`That ${t === CreditType.Emote ? 'emote' : 'sticker'} has been deleted.`, true);
 			return this.none();
 		}
 
-		if (interaction.message.embeds[0].title === emoji.name) {
+		if (interaction.message.embeds[0].title === resource.name) {
 			return this.none();
 		}
 
-		return this.some({ emoji });
+		return this.some({ resource });
 	}
 }

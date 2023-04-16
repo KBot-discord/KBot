@@ -1,4 +1,4 @@
-import { AddEmoteCustomIds, parseCustomId } from '#utils/customIds';
+import { CreditCustomIds, parseCustomId, CreditType } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
@@ -6,22 +6,18 @@ import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Time } from '@sapphire/duration';
 import { ButtonInteraction } from 'discord.js';
-import type { EmoteCredit } from '#types/CustomIds';
+import type { Credit } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { channelId, emoteId }: InteractionHandler.ParseResult<this>) {
-		if (isNullish(channelId)) {
-			return interaction.defaultReply('There is no channel set up for credits. You can set one with `/emotecredits set`.', true);
-		}
-
-		const modal = this.container.utility.buildEmoteCreditModal(channelId, emoteId);
+		const modal = this.container.utility.buildCreditModal(channelId, emoteId, CreditType.Emote);
 		return interaction.showModal(modal);
 	}
 
-	@validCustomId(AddEmoteCustomIds.Credits)
+	@validCustomId(CreditCustomIds.Create)
 	@interactionRatelimit(Time.Second * 30, 5)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageEmojisAndStickers)) {
@@ -35,10 +31,15 @@ export class ButtonHandler extends InteractionHandler {
 			return this.none();
 		}
 
-		const {
-			data: { ei }
-		} = parseCustomId<EmoteCredit>(interaction.customId);
+		if (isNullish(settings.creditsChannelId)) {
+			await interaction.defaultReply('There is no channel set up for credits. You can set one with `/credits set`.', true);
+			return this.none();
+		}
 
-		return this.some({ channelId: settings.creditsChannelId, emoteId: ei });
+		const {
+			data: { ri }
+		} = parseCustomId<Credit>(interaction.customId);
+
+		return this.some({ channelId: settings.creditsChannelId, emoteId: ri });
 	}
 }

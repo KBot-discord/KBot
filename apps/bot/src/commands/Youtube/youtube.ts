@@ -1,5 +1,5 @@
 import { YoutubeMenu } from '#structures/menus/YoutubeMenu';
-import { EmbedColors, Emoji } from '#utils/constants';
+import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { MeiliCategories } from '#types/Meili';
@@ -435,7 +435,9 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Youtube module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? Emoji.GreenCheck : Emoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(
+						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
+					)
 			]
 		});
 	}

@@ -1,4 +1,4 @@
-import { EmbedColors, Emoji } from '#utils/constants';
+import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { WelcomeModule } from '#modules/WelcomeModule';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
@@ -196,7 +196,9 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Welcome module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? Emoji.GreenCheck : Emoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(
+						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
+					)
 			]
 		});
 	}
@@ -332,6 +334,6 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 	}
 
 	private formatField(bool: boolean): string {
-		return bool ? Emoji.GreenCheck : Emoji.RedX;
+		return bool ? KBotEmoji.GreenCheck : KBotEmoji.RedX;
 	}
 }

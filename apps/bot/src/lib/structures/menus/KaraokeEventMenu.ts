@@ -1,4 +1,4 @@
-import { BlankSpace, EmbedColors, Emoji } from '#utils/constants';
+import { BlankSpace, EmbedColors, KBotEmoji } from '#utils/constants';
 import { buildCustomId, KaraokeCustomIds } from '#utils/customIds';
 import { getGuildIcon } from '#utils/Discord';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
@@ -12,8 +12,8 @@ import type { KaraokeMenuButton } from '#types/CustomIds';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 
 const KaraokeEventActions: { id: string; text: string; emoji: string | null }[] = [
-	{ id: KaraokeCustomIds.Lock, text: 'Lock queue', emoji: Emoji.Locked },
-	{ id: KaraokeCustomIds.Unlock, text: 'Unlock queue', emoji: Emoji.Unlocked },
+	{ id: KaraokeCustomIds.Lock, text: 'Lock queue', emoji: KBotEmoji.Locked },
+	{ id: KaraokeCustomIds.Unlock, text: 'Unlock queue', emoji: KBotEmoji.Unlocked },
 	{ id: KaraokeCustomIds.Skip, text: 'Skip queue', emoji: null }
 ];
 
@@ -42,7 +42,7 @@ export class KaraokeEventMenu extends Menu {
 				return [
 					embed
 						.setColor(EmbedColors.Default)
-						.setAuthor({ name: `${Emoji.Microphone} Karaoke management `, iconURL: getGuildIcon(this.guild) })
+						.setAuthor({ name: `${KBotEmoji.Microphone} Karaoke management `, iconURL: getGuildIcon(this.guild) })
 						.setTitle('Home page')
 						.setDescription('This menu allows you to manage events through buttons.')
 						.addFields([
@@ -122,13 +122,13 @@ export class KaraokeEventMenu extends Menu {
 
 				return new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: `${Emoji.Microphone} Karaoke management`, iconURL: getGuildIcon(guild) })
+					.setAuthor({ name: `${KBotEmoji.Microphone} Karaoke management`, iconURL: getGuildIcon(guild) })
 					.setTitle(`Event #${index + 1} | ${channel.name}`)
 					.addFields([
 						...fields,
 						{ name: 'Voice channel:', value: `${channelMention(event.id)}\n\nPermissions:`, inline: true },
 						{ name: 'Text channel:', value: channelMention(event.textChannelId), inline: true },
-						{ name: 'Queue lock:', value: event.locked ? `${Emoji.Locked} locked` : `${Emoji.Unlocked} unlocked`, inline: true }
+						{ name: 'Queue lock:', value: event.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`, inline: true }
 					]);
 			})
 		);
@@ -139,7 +139,7 @@ export class KaraokeEventMenu extends Menu {
 
 		// use !event.locked since we are looking for the old value
 		const index = page.embeds[0].data.fields!.indexOf({ name: 'Queue lock:', value: `${!event.locked}`, inline: true });
-		const lockString = event!.locked ? `${Emoji.Locked} locked` : `${Emoji.Unlocked} unlocked`;
+		const lockString = event!.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`;
 
 		const embed = new EmbedBuilder(page.embeds[0].data).spliceFields(index, 1, { name: 'Queue lock:', value: lockString, inline: true });
 

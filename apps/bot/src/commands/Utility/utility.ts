@@ -1,4 +1,4 @@
-import { EmbedColors, Emoji } from '#utils/constants';
+import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
@@ -94,7 +94,9 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Utility module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? Emoji.GreenCheck : Emoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(
+						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
+					)
 			]
 		});
 	}
@@ -132,7 +134,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Utility module settings', iconURL: getGuildIcon(interaction.guild) })
 					.addFields([
-						{ name: 'Module enabled', value: `${settings?.enabled ? `true ${Emoji.GreenCheck}` : `false ${Emoji.RedX}`}` },
+						{ name: 'Module enabled', value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}` },
 						{
 							name: 'Discord status channel',
 							value: `${settings?.incidentChannelId ? channelMention(settings.incidentChannelId) : 'No channel set'}`,

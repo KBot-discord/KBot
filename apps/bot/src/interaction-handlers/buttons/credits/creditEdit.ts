@@ -1,4 +1,4 @@
-import { AddEmoteCustomIds, AddEmoteFields, buildCustomId, parseCustomId } from '#utils/customIds';
+import { CreditCustomIds, CreditFields, buildCustomId, parseCustomId, CreditType } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
@@ -6,29 +6,28 @@ import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, Butto
 import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Time } from '@sapphire/duration';
-import type { Embed } from 'discord.js';
-import type { EmoteCredit, EmoteEditModal } from '#types/CustomIds';
+import type { Embed, Sticker, Emoji } from 'discord.js';
+import type { Credit, CreditEditModal } from '#types/CustomIds';
 
 interface EmoteCreditEmbed {
-	description: string;
-	artistName: string;
-	artistLink: string;
 	source: string;
+	description: string;
+	artist: string;
 }
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { emoji }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { resource, type }: InteractionHandler.ParseResult<this>) {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
 
-		const modal = this.buildModal(interaction.message.id, emoji.id, data);
+		const modal = this.buildModal(interaction.message.id, resource.id!, type, data);
 
 		return interaction.showModal(modal);
 	}
 
-	@validCustomId(AddEmoteCustomIds.Edit)
+	@validCustomId(CreditCustomIds.ResourceEdit)
 	@interactionRatelimit(Time.Second * 30, 5)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageEmojisAndStickers)) {
@@ -43,78 +42,79 @@ export class ButtonHandler extends InteractionHandler {
 		}
 
 		const {
-			data: { ei }
-		} = parseCustomId<EmoteCredit>(interaction.customId);
+			data: { ri, t }
+		} = parseCustomId<Credit>(interaction.customId);
 
-		const emoji = interaction.guild.emojis.cache.get(ei);
-		if (!emoji) {
-			await interaction.defaultReply('This emote has been deleted.', true);
-			return this.none();
+		let resource: Emoji | Sticker;
+		if (t === CreditType.Emote) {
+			const emoji = interaction.guild.emojis.cache.get(ri);
+			if (!emoji) {
+				await interaction.defaultFollowup('That emote has been deleted.', true);
+				return this.none();
+			}
+
+			resource = emoji;
+		} else {
+			const sticker = interaction.guild.stickers.cache.get(ri);
+			if (!sticker) {
+				await interaction.defaultFollowup('That sticker has been deleted.', true);
+				return this.none();
+			}
+
+			resource = sticker;
 		}
 
-		return this.some({ emoji });
+		return this.some({ resource, type: t });
 	}
 
 	private parseEmbedFields(embed: Embed): EmoteCreditEmbed {
 		const { fields } = embed;
 		return {
 			description: fields.find((e) => e.name === 'Description')?.value ?? '',
-			artistName: fields.find((e) => e.name === 'Artist')?.value ?? '',
-			artistLink: fields.find((e) => e.name === "Artist's profile")?.value ?? '',
+			artist: fields.find((e) => e.name === 'Artist')?.value ?? '',
 			source: fields.find((e) => e.name === 'Image source')?.value ?? ''
 		};
 	}
 
-	private buildModal(messageId: string, emoteId: string, data: EmoteCreditEmbed): ModalBuilder {
-		const { description, artistName, artistLink, source } = data;
+	private buildModal(messageId: string, resourceId: string, type: CreditType, data: EmoteCreditEmbed): ModalBuilder {
+		const { description, artist, source } = data;
 		return new ModalBuilder()
 			.setCustomId(
-				buildCustomId<EmoteEditModal>(AddEmoteCustomIds.ModalEdit, {
+				buildCustomId<CreditEditModal>(CreditCustomIds.ResourceModalEdit, {
 					mi: messageId,
-					ei: emoteId
+					ri: resourceId,
+					t: type
 				})
 			)
-			.setTitle('Edit emote credits info')
+			.setTitle(`'Edit ${type === CreditType.Emote ? 'emote' : 'sticker'} credit info'`)
 			.addComponents(
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditLink)
-						.setLabel('Image source')
+						.setCustomId(CreditFields.Source)
+						.setLabel('The source of the image')
 						.setStyle(TextInputStyle.Paragraph)
 						.setMinLength(0)
 						.setMaxLength(100)
-						.setRequired(false)
 						.setValue(source)
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditDescription)
-						.setLabel('Description')
+						.setCustomId(CreditFields.Description)
+						.setLabel('The description of the credit entry')
 						.setStyle(TextInputStyle.Paragraph)
 						.setMinLength(0)
 						.setMaxLength(100)
-						.setRequired(false)
 						.setValue(description)
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditArtistName)
-						.setLabel("Artist's name")
+						.setCustomId(CreditFields.Artist)
+						.setLabel('The artist')
 						.setStyle(TextInputStyle.Short)
 						.setMinLength(0)
 						.setMaxLength(100)
 						.setRequired(false)
-						.setValue(artistName)
-				),
-				new ActionRowBuilder<TextInputBuilder>().addComponents(
-					new TextInputBuilder()
-						.setCustomId(AddEmoteFields.CreditArtistLink)
-						.setLabel("Artist's profile")
-						.setStyle(TextInputStyle.Short)
-						.setMinLength(0)
-						.setMaxLength(100)
-						.setRequired(false)
-						.setValue(artistLink)
+						.setValue(artist)
 				)
 			);
 	}

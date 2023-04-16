@@ -1,4 +1,4 @@
-import { EmbedColors, Emoji } from '#utils/constants';
+import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
@@ -94,7 +94,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Anti-Hoist settings', iconURL: getGuildIcon(interaction.guild) })
 					.setDescription(
-						`${settings.enabled ? Emoji.GreenCheck : Emoji.RedX} Anti-hoist is now ${settings.enabled ? 'enabled' : 'disabled'}`
+						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} Anti-hoist is now ${settings.enabled ? 'enabled' : 'disabled'}`
 					)
 			]
 		});
@@ -112,7 +112,9 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Anti-Hoist settings', iconURL: getGuildIcon(interaction.guild) })
-					.addFields([{ name: 'Enabled', value: `${settings?.antiHoistEnabled ? `true ${Emoji.GreenCheck}` : `false ${Emoji.RedX}`}` }])
+					.addFields([
+						{ name: 'Enabled', value: `${settings?.antiHoistEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}` }
+					])
 			]
 		});
 	}

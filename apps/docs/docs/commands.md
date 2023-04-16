@@ -4,6 +4,31 @@ title: Commands
 
 # Commands
 
+## Glossary
+
+### <Badge type='tip' text='Slash' /> {#command-slash}
+
+The command is a [slash command](https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ).
+
+### <Badge type='tip' text='Context-Menu - Message' /> {#command-context-message}
+
+The command is a Context-Menu command that target messages.
+To use them, right-click or tap a message and select `Apps`.
+
+### <Badge type='tip' text='Context-Menu - User' /> {#command-context-user}
+
+The command is a Context-Menu command that targets users.
+To use them, right-click or tap a user and select `Apps`.
+
+### <Badge type='info' text='Uses autocomplete' /> {#option-autocomplete}
+
+One or more of the options on a command makes use of autocomplete.
+Autocomplete allows you to search for the value you want rather than having to memorize or copy-paste it.
+
+### <Badge type='warning' text='Menu' /> {#feature-menu}
+
+The command creates an interactive menu when run, such as having pages you can move through and/or buttons to edit what is displayed.
+
 ## Core Commands
 
 ### Echo <Badge type='tip' text='Slash' />
@@ -15,7 +40,7 @@ Sends the provided text to the selected channel.
 | Text    |    ✓     | The text of the message.            |
 | Channel |    ✓     | The channel to send the message to. |
 
-### Help <Badge type='tip' text='Slash' />
+### Help <Badge type='tip' text='Slash' /> <Badge type='info' text='Uses autocomplete' />
 
 Get info about the bot and all of it's commands.
 
@@ -30,7 +55,7 @@ Creates a pat gif of the member.
 ### Permissions <Badge type='tip' text='Slash' />
 
 Info on how to change command permissions and the defaults that are set on the bot.
-Same info can be found [here](/configuration/permissions).
+The same info can be found [here](/configuration/permissions).
 
 ### Ping <Badge type='tip' text='Slash' />
 
@@ -105,7 +130,7 @@ Start a karaoke event.
 | Topic         |    ✕     | If it's a stage channel, the topic of the stage (default: "Karaoke Event") |
 | Role          |    ✕     | The role to ping for the event.                                            |
 
-#### /manage karaoke schedule
+#### /manage karaoke schedule <Badge type='info' text='Uses autocomplete' />
 
 Schedule a karaoke event.
 
@@ -115,7 +140,7 @@ Schedule a karaoke event.
 | Text channel  |    ✓     | The channel to show queue rotations and instructions. |
 | Role          |    ✕     | The role to ping for the event.                       |
 
-#### /manage karaoke stop
+#### /manage karaoke stop <Badge type='info' text='Uses autocomplete' />
 
 Stop a karaoke event.
 
@@ -123,7 +148,7 @@ Stop a karaoke event.
 | ------ | :------: | :----------------- |
 | Event  |    ✓     | The event to stop. |
 
-#### /manage karaoke add
+#### /manage karaoke add <Badge type='info' text='Uses autocomplete' />
 
 Add a user to a karaoke queue.
 
@@ -132,7 +157,7 @@ Add a user to a karaoke queue.
 | Event  |    ✓     | The event to add the user to. |
 | User   |    ✓     | The user to add.              |
 
-#### /manage karaoke remove
+#### /manage karaoke remove <Badge type='info' text='Uses autocomplete' />
 
 Remove a user from a karaoke queue.
 
@@ -141,7 +166,7 @@ Remove a user from a karaoke queue.
 | Event  |    ✓     | The event to remove the user from. |
 | User   |    ✓     | The user to remove.                |
 
-#### /manage karaoke menu
+#### /manage karaoke menu <Badge type='warning' text='Menu' />
 
 Open the menu to manage karaoke events.
 
@@ -273,7 +298,7 @@ Add, remove, or edit YouTube subscriptions.
 The only supported channels are the ones that are listed on [Holodex](https://holodex.net/channel?org=All%20Vtubers).
 :::
 
-#### /youtube subscribe
+#### /youtube subscribe <Badge type='info' text='Uses autocomplete' />
 
 Subscribe to a new channel.
 
@@ -281,7 +306,7 @@ Subscribe to a new channel.
 | ------- | :------: | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Account |    ✓     | Search the name of the channel and get an autocompleted list. Only channels on [Holodex](https://holodex.net/channel?org=All%20Vtubers) are supported. |
 
-#### /youtube unsubscribe
+#### /youtube unsubscribe <Badge type='info' text='Uses autocomplete' />
 
 Unsubscribe from a channel.
 
@@ -289,7 +314,7 @@ Unsubscribe from a channel.
 | ------------ | :------: | :------------------------------------------- |
 | Subscription |    ✓     | The YouTube subscription you want to remove. |
 
-#### /youtube set
+#### /youtube set <Badge type='info' text='Uses autocomplete' />
 
 Set YouTube notification settings.
 
@@ -302,7 +327,7 @@ Set YouTube notification settings.
 | Member channel |    ✕     | The channel to send member notifications to.              |
 | Member role    |    ✕     | The role to ping for member notifications.                |
 
-#### /youtube unset
+#### /youtube unset <Badge type='info' text='Uses autocomplete' />
 
 Unset YouTube notification settings.
 
@@ -331,7 +356,7 @@ Enable or disable the YouTube module.
 | ------ | :------: | :---------------------------------------------------------- |
 | Value  |    ✓     | True: the module is enabled. False: The module is disabled. |
 
-#### /youtube subscriptions
+#### /youtube subscriptions <Badge type='warning' text='Menu' />
 
 Show the current YouTube subscriptions.
 
@@ -346,6 +371,46 @@ Priority is `emoji > attachment > link`.
 ::: tip Required bot permissions
 KBot needs these permissions for the command to run: `Manage Emojis and Stickers`.
 :::
+
+### Credits <Badge type='tip' text='Slash' />
+
+Send credits to a channel.
+
+#### /credits emote <Badge type='info' text='Uses autocomplete' />
+
+Add a new emote credit entry.
+
+| Option | Required | Description                               |
+| ------ | :------: | :---------------------------------------- |
+| Name   |    ✓     | The name of the emote to add credits for. |
+
+#### /credits sticker <Badge type='info' text='Uses autocomplete' />
+
+Add a new sticker credit entry.
+
+| Option | Required | Description                                 |
+| ------ | :------: | :------------------------------------------ |
+| Name   |    ✓     | The name of the sticker to add credits for. |
+
+#### /credits image
+
+Add a new image credit entry.
+
+#### /credits set
+
+Set a new emote credits channel.
+
+| Option  | Required | Description                           |
+| ------- | :------: | :------------------------------------ |
+| Channel |    ✓     | The channel to send emote credits to. |
+
+#### /credits unset
+
+Reset the emote credits channel.
+
+#### /credits settings
+
+Show the current settings.
 
 ### Discord Status <Badge type='tip' text='Slash' />
 
@@ -367,34 +432,6 @@ Unset the current channel.
 
 Show the current settings.
 
-### Emote Credits <Badge type='tip' text='Slash' />
-
-Send emote credits to a channel.
-
-#### /emotecredits add
-
-Add a new emote credit entry.
-
-| Option | Required | Description                             |
-| ------ | :------: | :-------------------------------------- |
-| Emote  |    ✓     | The ID of the emote to add credits for. |
-
-#### /emotecredits set
-
-Set a new emote credits channel.
-
-| Option  | Required | Description                           |
-| ------- | :------: | :------------------------------------ |
-| Channel |    ✓     | The channel to send emote credits to. |
-
-#### /emotecredits unset
-
-Reset the emote credits channel.
-
-#### /emotecredits settings
-
-Show the current settings.
-
 ### Poll <Badge type='tip' text='Slash' />
 
 Create, end, or manage polls.
@@ -407,6 +444,12 @@ KBot needs these permissions for the command to run: `View Channel`, `Send Messa
 
 Create a poll. There must be at least 2 options.
 
+::: info Time formatting
+The `Time` option accepts `d` for days, `h`, for hour, `m` for minutes, and `s` for seconds.
+
+Example: `1 day, 2 hours, 3 minutes, and 4 seconds` would be `1d2h3m4s`.
+:::
+
 | Option    | Required | Description                        |
 | --------- | :------: | :--------------------------------- |
 | Question  |    ✓     | The question or topic of the poll. |
@@ -417,7 +460,7 @@ Create a poll. There must be at least 2 options.
 | ...       |   ...    | ...                                |
 | Option 10 |    ✕     | The poll's tenth option.           |
 
-#### /poll menu
+#### /poll menu <Badge type='warning' text='Menu' />
 
 Show the menu for managing polls.
 

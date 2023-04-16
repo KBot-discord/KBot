@@ -12,12 +12,11 @@
 	"scripts": {
 		"build": "tsup"
 	},
+	"dependencies": {
+		"@sapphire/fetch": "^2.4.1"
+	},
 	"devDependencies": {
 		"@types/node": "^18.15.11",
 		"tsup": "^6.7.0"
-	},
-	"packageManager": "yarn@3.4.1",
-	"dependencies": {
-		"@sapphire/fetch": "^2.4.1"
 	}
 }

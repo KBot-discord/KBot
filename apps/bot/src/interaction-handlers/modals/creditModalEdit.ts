@@ -1,11 +1,12 @@
 import { EmbedColors } from '#utils/constants';
-import { AddEmoteCustomIds, AddEmoteFields, parseCustomId } from '#utils/customIds';
+import { CreditCustomIds, CreditFields, parseCustomId, CreditType } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
+import { getResourceFromType } from '#utils/Discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import type { EmoteEditModal } from '#types/CustomIds';
+import type { CreditEditModal } from '#types/CustomIds';
 import type { APIEmbedField } from 'discord-api-types/v10';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -14,25 +15,24 @@ import type { APIEmbedField } from 'discord-api-types/v10';
 export class ModalHandler extends InteractionHandler {
 	public override async run(
 		modal: ModalSubmitInteraction<'cached'>,
-		{ id, emoji, emoteLink, description, artistName, artistLink }: InteractionHandler.ParseResult<this>
+		{ id, resource, type, source, description, artist }: InteractionHandler.ParseResult<this>
 	) {
 		try {
 			const message = await modal.channel!.messages.fetch(id);
 
 			const fields: APIEmbedField[] = [];
 			if (description) fields.push({ name: 'Description', value: description });
-			if (artistName) fields.push({ name: 'Artist', value: artistName, inline: true });
-			if (artistLink) fields.push({ name: "Artist's profile", value: artistLink, inline: true });
-			if (emoteLink) fields.push({ name: 'Image source', value: emoteLink });
+			if (artist) fields.push({ name: 'Artist', value: artist });
+			if (source) fields.push({ name: 'Image source', value: source });
 
 			await message.edit({
 				embeds: [
 					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
-						.setTitle(emoji.name!)
+						.setTitle(resource.name!)
 						.setThumbnail(message.embeds[0].thumbnail!.url)
 						.addFields(fields)
-						.setFooter({ text: `Emote ID: ${emoji.id}` })
+						.setFooter({ text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}` })
 				]
 			});
 		} catch (err) {
@@ -40,7 +40,7 @@ export class ModalHandler extends InteractionHandler {
 		}
 	}
 
-	@validCustomId(AddEmoteCustomIds.ModalEdit)
+	@validCustomId(CreditCustomIds.ResourceModalEdit)
 	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
 		const settings = await this.container.utility.getSettings(modal.guildId);
 		if (isNullish(settings) || !settings.enabled) {
@@ -49,22 +49,21 @@ export class ModalHandler extends InteractionHandler {
 		}
 
 		const {
-			data: { mi, ei }
-		} = parseCustomId<EmoteEditModal>(modal.customId);
+			data: { mi, ri, t }
+		} = parseCustomId<CreditEditModal>(modal.customId);
 
-		const emoji = modal.guild.emojis.cache.get(ei);
-		if (!emoji) {
-			await modal.defaultReply('That emote has been deleted.', true);
+		const resource = getResourceFromType(modal.guildId, ri, t);
+		if (!resource) {
+			await modal.defaultFollowup(`That ${t === CreditType.Emote ? 'emote' : 'sticker'} has been deleted.`, true);
 			return this.none();
 		}
 
 		await modal.deferUpdate();
 
-		const emoteLink = modal.fields.getTextInputValue(AddEmoteFields.CreditLink);
-		const description = modal.fields.getTextInputValue(AddEmoteFields.CreditDescription);
-		const artistName = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistName);
-		const artistLink = modal.fields.getTextInputValue(AddEmoteFields.CreditArtistLink);
+		const source = modal.fields.getTextInputValue(CreditFields.Source);
+		const description = modal.fields.getTextInputValue(CreditFields.Description);
+		const artist = modal.fields.getTextInputValue(CreditFields.Artist);
 
-		return this.some({ id: mi, emoji, emoteLink, description, artistName, artistLink });
+		return this.some({ id: mi, resource, type: t, source, description, artist });
 	}
 }
