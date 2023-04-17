@@ -46,23 +46,24 @@ export class HolodexTask extends ScheduledTask {
 			const validTwitchChannels = channels.filter(
 				({ twitch, id }) =>
 					twitch !== null &&
-					config.holodex.twitchConflicts.some((channelId) => {
+					!config.holodex.twitchConflicts.some((channelId) => {
 						return id === channelId;
 					})
 			);
 
 			let shouldContinue = true;
 			const uniqueTwitch = new Set<string>();
+			const checkedIds = new Set<string>();
 
 			for (const channel of validTwitchChannels) {
-				uniqueTwitch.add(channel.twitch!);
+				if (!uniqueTwitch.has(channel.twitch!)) {
+					uniqueTwitch.add(channel.twitch!);
+				} else if (!checkedIds.has(channel.twitch!)) {
+					checkedIds.add(channel.twitch!);
 
-				if (uniqueTwitch.has(channel.twitch!)) {
-					if (shouldContinue) {
-						shouldContinue = false;
-					}
+					if (shouldContinue) shouldContinue = false;
 
-					const dupes = channels.filter((ch) => ch.id === channel.id);
+					const dupes = channels.filter((ch) => ch.twitch === channel.twitch!);
 
 					logger.error(`New Twitch ID conflict found for: ${channel.twitch!}. Please add an entry to config.holodex.twitchConflicts`);
 

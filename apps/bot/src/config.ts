@@ -61,7 +61,8 @@ export function loadConfig(): void {
 				'UCMDaLlGAjEZze-AsGywXJtg',
 				'UCo59TbTB8i1Xt41rE71ll4g',
 				'UC3-Rfh_Ek-s6EUWS4fT5VPw',
-				'UCSaZUKRGXwKLXTAl2_LMALQ'
+				'UCSaZUKRGXwKLXTAl2_LMALQ',
+				'UC2c8dQYdDadn7tmK_d7o-HQ'
 			]
 		},
 		sentry: {
