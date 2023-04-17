@@ -1,5 +1,5 @@
 ## Builder ##
-FROM node:18-alpine as builder
+FROM node:19-alpine as builder
 
 ## Canvas dependencies
 RUN apk add --no-cache libc6-compat
@@ -11,7 +11,7 @@ COPY . .
 RUN turbo prune --scope=@kbotdev/web --docker
 
 ## Dependencies ##
-FROM node:18-alpine AS deps
+FROM node:19-alpine AS deps
 
 RUN apk add --no-cache libc6-compat && \
 	apk add -q --update openssl && \
@@ -37,7 +37,7 @@ COPY --from=builder /temp/out/full/ .
 RUN yarn turbo build --filter=@kbotdev/web
 
 ## App ##
-FROM node:18-alpine as app
+FROM node:19-alpine as app
 
 ENV NODE_ENV production
 
