@@ -19,7 +19,7 @@ export class DevCommand extends Command {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
-					.setName('youtubesync')
+					.setName('dev_youtubesync')
 					.setDescription(this.description)
 					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 					.setDMPermission(false),

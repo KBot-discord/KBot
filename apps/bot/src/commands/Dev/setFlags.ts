@@ -21,7 +21,7 @@ export class DevCommand extends Command {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
-					.setName('setflags')
+					.setName('dev_setflags')
 					.setDescription(this.description)
 					.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 					.setDMPermission(false)
