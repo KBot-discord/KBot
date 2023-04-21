@@ -25,6 +25,14 @@ enum ModerationActionType {
   UNTIMEOUT
 }
 
+model Blacklist {
+  guildId String @id @unique
+}
+
+model TwitchConflict {
+  channelId String @id @unique
+}
+
 model KaraokeUser {
   id           String       @id
   name         String
