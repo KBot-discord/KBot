@@ -7,9 +7,10 @@
 	import ChannelList from '$components/dashboard/ChannelList.svelte';
 	import Meta from '$components/Meta.svelte';
 	import { getCurrentGuildContext } from '$lib/stores/currentGuild';
+	import InputSection from '$components/dashboard/SettingsSection.svelte';
 
 	export let data: PageData;
-	const { settings, cases } = data;
+	const { settings } = data;
 
 	let currentGuild = getCurrentGuildContext();
 
@@ -19,19 +20,25 @@
 
 <Meta title="Moderation" guildName={data.guild.name} />
 
+<h2 id="main">Moderation</h2>
+
 <form method="POST" use:enhance class="space-y-6">
 	<SettingsRow>
-		<SettingsCard id="anti-hoist" title="Anti-Hoist">
-			<SlideToggle name="anti-hoist-enabled" size="sm" bind:checked={antiHoistEnabled} />
+		<SettingsCard id="anti-hoist" title="Anti-Hoist" documentation>
 			<p>Insert description here.</p>
+			<InputSection title="Enable/Disable">
+				<SlideToggle name="anti-hoist-enabled" size="sm" bind:checked={antiHoistEnabled} />
+			</InputSection>
 		</SettingsCard>
-		<SettingsCard id="report" title="Report">
-			<ChannelList name="report-channel" channels={$currentGuild?.textChannels ?? []} />
-			<p>Insert description here.</p>
+		<SettingsCard id="report" title="Report" documentation>
+			<p>Send a copy of the reported message to the designated channel.</p>
+			<InputSection title="Report channel">
+				<ChannelList name="report-channel" channels={$currentGuild?.textChannels ?? []} />
+			</InputSection>
 		</SettingsCard>
 	</SettingsRow>
 
-	<SettingsCard id="minage" title="Minage">
+	<SettingsCard id="minage" title="Minage" documentation>
 		<input name="minage-req" type="number" class="input" />
 		<textarea
 			name="minage-message"
@@ -42,21 +49,3 @@
 		/>
 	</SettingsCard>
 </form>
-
-<h2 id="cases">Cases</h2>
-<ul>
-	{#each cases as { caseId, userId, userTag, moderatorId, moderatorTag, action, reason }}
-		<li>
-			<div class="flex flex-col">
-				<span>Case ID: {caseId}</span>
-				<span>Action: {action}</span>
-				<span>Reason: {reason}</span>
-				<span>User ID: {userId}</span>
-				<span>User tag: {userTag}</span>
-				<span>Moderator ID: {moderatorId}</span>
-				<span>Moderator tag: {moderatorTag}</span>
-			</div>
-		</li>
-		<hr />
-	{/each}
-</ul>

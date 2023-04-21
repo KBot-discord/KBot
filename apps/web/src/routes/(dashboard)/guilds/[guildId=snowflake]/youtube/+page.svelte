@@ -8,5 +8,6 @@
 
 <Meta title="Youtube" guildName={data.guild.name} />
 
-<h2 class="w-2/3">Guild name: {data.guild?.name}</h2>
+<h2 id="main">YouTube</h2>
+
 <span>{JSON.stringify(settings)}</span>
