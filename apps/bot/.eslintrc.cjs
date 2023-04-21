@@ -1,7 +1,7 @@
 module.exports = {
 	root: true,
 	extends: ['@sapphire', 'plugin:import/recommended', 'plugin:import/typescript'],
-	plugins: ['eslint-plugin-tsdoc', 'import'],
+	plugins: ['import'],
 	parserOptions: {
 		project: './tsconfig.eslint.json',
 		tsconfigRootDir: __dirname
@@ -23,12 +23,7 @@ module.exports = {
 		'@typescript-eslint/no-base-to-string': 0,
 		'@typescript-eslint/consistent-type-imports': 'error',
 		'@typescript-eslint/switch-exhaustiveness-check': 0,
-		'@typescript-eslint/no-duplicate-imports': [
-			'error',
-			{
-				includeExports: false
-			}
-		],
+		'import/no-duplicates': 0,
 		'import/no-unresolved': 'error',
 		'import/no-named-as-default': 0,
 		'import/order': [
