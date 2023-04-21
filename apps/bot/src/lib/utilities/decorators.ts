@@ -4,8 +4,8 @@ import humanizeDuration from 'humanize-duration';
 import { Option } from '@sapphire/framework';
 import type { ButtonInteraction, ModalSubmitInteraction, StringSelectMenuInteraction } from 'discord.js';
 
-export function validCustomId(...customIds: string[]): MethodDecorator {
-	return createMethodDecorator((_t, _p, descriptor) => {
+export function validCustomId(...customIds: string[]) {
+	return createMethodDecorator((_t: any, _p: any, descriptor: any) => {
 		const method = descriptor.value;
 		if (!method) throw new Error('Function preconditions require a value.');
 		if (typeof method !== 'function') throw new Error('Function preconditions can only be applied to functions.');
@@ -23,10 +23,10 @@ export function validCustomId(...customIds: string[]): MethodDecorator {
 	});
 }
 
-export function interactionRatelimit(time: number, limit: number): MethodDecorator {
+export function interactionRatelimit(time: number, limit: number) {
 	const manager = new RateLimitManager(time, limit);
 
-	return createMethodDecorator((_t, _p, descriptor) => {
+	return createMethodDecorator((_t: any, _p: any, descriptor: any) => {
 		const method = descriptor.value;
 		if (!method) throw new Error('Function preconditions require a value.');
 		if (typeof method !== 'function') throw new Error('Function preconditions can only be applied to functions.');
