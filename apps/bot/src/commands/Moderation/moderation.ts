@@ -1,6 +1,6 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';

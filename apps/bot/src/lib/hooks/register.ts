@@ -1,4 +1,7 @@
-import { PreInitializationHook } from './preInitialization';
-import { preInitialization, SapphireClient } from '@sapphire/framework';
+import { PreGenericsInitializationHook } from '#hooks/preGenericsInitialization';
+import { preGenericsInitialization, SapphireClient } from '@sapphire/framework';
 
-SapphireClient.plugins.registerPreInitializationHook(PreInitializationHook[preInitialization], 'KBot-PreInitialization');
+SapphireClient.plugins.registerPreGenericsInitializationHook(
+	PreGenericsInitializationHook[preGenericsInitialization],
+	'KBot-PreGenericsInitialization'
+);

@@ -1,9 +1,10 @@
-import { CoreSettingsService } from '#services/core';
+import { CoreSettingsService } from '#services';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { UpsertCoreSettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
+	name: 'CoreModule',
 	fullName: 'Core Module'
 })
 export class CoreModule extends Module {

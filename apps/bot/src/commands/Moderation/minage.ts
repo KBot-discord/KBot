@@ -1,7 +1,7 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { ModerationModule } from '#modules/ModerationModule';
 import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';

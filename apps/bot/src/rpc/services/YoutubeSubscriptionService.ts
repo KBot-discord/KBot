@@ -13,10 +13,10 @@ import {
 	fromOptional
 } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
-import { Code, ConnectError, HandlerContext } from '@bufbuild/connect';
+import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
+import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 import type { YoutubeSubscription } from '@kbotdev/proto';
 import type { PartialMessage } from '@bufbuild/protobuf';
-import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 
 export function registerYoutubeSubscriptionService(router: ConnectRouter) {
 	router.service(YoutubeSubscriptionService, new YoutubeSubscriptionServiceImpl());

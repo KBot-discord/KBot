@@ -1,4 +1,4 @@
-import { CreditType } from './customIds';
+import { CreditType } from '#utils/customIds';
 import { EmbedColors, guildEmoteSlots, KBotEmoji } from '#utils/constants';
 import { EmbedBuilder, MessageType, User } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';

@@ -1,6 +1,6 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotErrors } from '#types/Enums';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { EmbedBuilder } from 'discord.js';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';

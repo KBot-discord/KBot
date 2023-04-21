@@ -1,7 +1,7 @@
 import { EmbedColors } from '#utils/constants';
 import { AddEmoteCustomIds, CreditCustomIds, CreditFields, CreditType, buildCustomId } from '#utils/customIds';
 import { getGuildEmoteSlots } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';

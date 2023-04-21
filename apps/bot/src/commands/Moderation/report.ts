@@ -3,7 +3,7 @@ import { EmbedColors } from '#utils/constants';
 import { ReportHandler, ReportButtons } from '#structures/handlers/ReportHandler';
 import { KBotErrors } from '#types/Enums';
 import { ReportCustomIds } from '#utils/customIds/report';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { ApplicationCommandType, ButtonStyle, MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';

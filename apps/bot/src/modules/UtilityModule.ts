@@ -1,4 +1,4 @@
-import { PollService, UtilitySettingsService } from '#services/utility';
+import { PollService, UtilitySettingsService } from '#services';
 import { CreditCustomIds, CreditFields, buildCustomId } from '#utils/customIds';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -11,6 +11,7 @@ import type { UtilitySettings } from '#prisma';
 import type { UpsertUtilitySettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
+	name: 'UtilityModule',
 	fullName: 'Utility Module'
 })
 export class UtilityModule extends Module {

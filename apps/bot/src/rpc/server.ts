@@ -1,13 +1,15 @@
-import { registerCoreSettingsService } from './services/core/CoreSettingsService';
-import { registerDiscordService } from './services/discord/DiscordService';
-import { registerEventSettingsService } from './services/events/EventsSettingsService';
-import { registerKaraokeService } from './services/events/KaraokeService';
-import { registerModerationSettingsService } from './services/moderation/ModerationSettingsService';
-import { registerUtilitySettingsService } from './services/utility/UtilitySettingsService';
-import { registerWelcomeSettingsService } from './services/welcome/WelcomeSettingsService';
-import { registerYoutubeChannelService } from './services/youtube/YoutubeChannelService';
-import { registerYoutubeSettingsService } from './services/youtube/YoutubeSettingsService';
-import { registerYoutubeSubscriptionService } from './services/youtube/YoutubeSubscriptionService';
+import {
+	registerCoreSettingsService,
+	registerDiscordService,
+	registerEventSettingsService,
+	registerKaraokeService,
+	registerModerationSettingsService,
+	registerUtilitySettingsService,
+	registerWelcomeSettingsService,
+	registerYoutubeChannelService,
+	registerYoutubeSettingsService
+} from '#rpc/services';
+import { registerYoutubeSubscriptionService } from '#rpc/services/YoutubeSubscriptionService';
 import { connectNodeAdapter } from '@bufbuild/connect-node';
 import * as http2 from 'http2';
 import type { ConnectRouter } from '@bufbuild/connect';

@@ -1,4 +1,4 @@
-import { WelcomeSettingsService } from '#services/welcome';
+import { WelcomeSettingsService } from '#services';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
@@ -8,6 +8,7 @@ import type { WelcomeSettings } from '#prisma';
 import type { UpsertWelcomeSettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
+	name: 'WelcomeModule',
 	fullName: 'Welcome Module'
 })
 export class WelcomeModule extends Module {

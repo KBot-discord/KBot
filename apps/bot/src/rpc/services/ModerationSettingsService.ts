@@ -11,7 +11,7 @@ import {
 } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import { Code, ConnectError, HandlerContext } from '@bufbuild/connect';
+import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 

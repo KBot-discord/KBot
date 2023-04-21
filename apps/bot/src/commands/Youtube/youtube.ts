@@ -1,7 +1,7 @@
 import { YoutubeMenu } from '#structures/menus/YoutubeMenu';
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { MeiliCategories } from '#types/Meili';
 import { YoutubeCustomIds } from '#utils/customIds';
 import { KBotErrors } from '#types/Enums';

@@ -1,5 +1,5 @@
 import { BlankSpace, EmbedColors } from '#utils/constants';
-import { YoutubeSettingsService, YoutubeSubscriptionService } from '#services/youtube';
+import { YoutubeSettingsService, YoutubeSubscriptionService } from '#services';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
@@ -10,6 +10,7 @@ import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { YoutubeSubscriptionWithChannel, UpsertYoutubeSettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
+	name: 'YoutubeModule',
 	fullName: 'Youtube Module'
 })
 export class YoutubeModule extends Module {

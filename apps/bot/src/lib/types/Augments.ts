@@ -3,7 +3,7 @@ import type { CommandInteraction, Message, InteractionResponse } from 'discord.j
 import type { KBotError } from '#structures/KBotError';
 import type { KBotMetrics } from '#observability/KBotMetrics';
 import type { APIMessage } from 'discord-api-types/v10';
-import type { ClientConfig } from './Config';
+import type { ClientConfig } from '#types/Config';
 import type { RedisClient } from '#extensions/RedisClient';
 import type { PrismaClient } from '#prisma';
 import type { Validator } from '#utils/validators';
@@ -14,7 +14,7 @@ import type { UtilityModule } from '#modules/UtilityModule';
 import type { WelcomeModule } from '#modules/WelcomeModule';
 import type { YoutubeModule } from '#modules/YoutubeModule';
 import type { Holodex } from '@kbotdev/holodex';
-import type { KBotErrors } from './Enums';
+import type { KBotErrors } from '#types/Enums';
 
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export type InteractionResponseUnion = void | APIMessage | Message<boolean> | InteractionResponse<boolean>;

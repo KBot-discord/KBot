@@ -1,7 +1,7 @@
 import { authenticated } from '#rpc/middlewares';
 import { YoutubeChannelService, GetYoutubeChannelRequest, GetYoutubeChannelResponse } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
-import { Code, ConnectError, HandlerContext } from '@bufbuild/connect';
+import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 

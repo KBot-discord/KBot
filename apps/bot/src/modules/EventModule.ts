@@ -1,4 +1,4 @@
-import { EventSettingsService, KaraokeService } from '#services/events';
+import { EventSettingsService, KaraokeService } from '#services';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
@@ -6,6 +6,7 @@ import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { UpsertEventSettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
+	name: 'EventModule',
 	fullName: 'Event Module'
 })
 export class EventModule extends Module {

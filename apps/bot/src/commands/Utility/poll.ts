@@ -2,7 +2,7 @@ import { PollMenu } from '#structures/menus/PollMenu';
 import { buildCustomId, PollCustomIds } from '#utils/customIds';
 import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
 import { parseTimeString } from '#utils/functions';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';

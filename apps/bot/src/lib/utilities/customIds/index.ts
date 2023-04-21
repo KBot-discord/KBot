@@ -1,10 +1,10 @@
 import { isNullish } from '@sapphire/utilities';
 
-export * from './addEmote';
-export * from './credits';
-export * from './karaoke';
-export * from './poll';
-export * from './youtube';
+export * from '#utils/customIds/addEmote';
+export * from '#utils/customIds/credits';
+export * from '#utils/customIds/karaoke';
+export * from '#utils/customIds/poll';
+export * from '#utils/customIds/youtube';
 
 export function buildCustomId<T = unknown>(prefix: string, data?: T): string {
 	if (isNullish(data)) return prefix;

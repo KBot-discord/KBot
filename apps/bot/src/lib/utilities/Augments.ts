@@ -1,4 +1,4 @@
-import { EmbedColors } from './constants';
+import { EmbedColors } from '#utils/constants';
 import { CommandInteraction, EmbedBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 
 type InteractionUnion = CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction;

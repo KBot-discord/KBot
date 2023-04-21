@@ -4,10 +4,7 @@ import '@sapphire/plugin-api/register';
 import '#utils/Augments';
 import '#hooks/register';
 
-// TODO: i18n
-// import '@sapphire/plugin-i18next/register';
-
-import { loadConfig } from './config';
+import { loadConfig } from '#config';
 import { connectServer } from '#rpc/server';
 import { KBotClient } from '#extensions/KBotClient';
 import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';

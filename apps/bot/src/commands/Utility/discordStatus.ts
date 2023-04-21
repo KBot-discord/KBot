@@ -1,7 +1,7 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotErrors } from '#types/Enums';
 import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder } from 'discord.js';

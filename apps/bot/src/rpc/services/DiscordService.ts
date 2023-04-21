@@ -20,7 +20,7 @@ import {
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import { ChannelType } from 'discord.js';
-import { Code, ConnectError, HandlerContext } from '@bufbuild/connect';
+import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 
 export function registerDiscordService(router: ConnectRouter) {

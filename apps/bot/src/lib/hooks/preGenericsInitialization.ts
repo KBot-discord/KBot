@@ -6,12 +6,12 @@ import { MeilisearchClient } from '#extensions/MeiliClient';
 import { PrismaClient } from '#prisma';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
-import { container, Plugin, preInitialization } from '@sapphire/framework';
+import { container, Plugin, preGenericsInitialization } from '@sapphire/framework';
 import { Holodex } from '@kbotdev/holodex';
 import type { SapphireClient } from '@sapphire/framework';
 
-export class PreInitializationHook extends Plugin {
-	public static [preInitialization](this: SapphireClient): void {
+export class PreGenericsInitializationHook extends Plugin {
+	public static [preGenericsInitialization](this: SapphireClient): void {
 		try {
 			const { config } = container;
 

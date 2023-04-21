@@ -1,7 +1,7 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { WelcomeModule } from '#modules/WelcomeModule';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';

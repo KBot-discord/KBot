@@ -1,4 +1,4 @@
-import { AntiHoistService, ModerationSettingsService } from '#services/moderation';
+import { AntiHoistService, ModerationSettingsService } from '#services';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { getGuildIcon } from '#utils/Discord';
 import { EmbedColors } from '#utils/constants';
@@ -12,6 +12,7 @@ import type { UpsertModerationSettingsData } from '#types/database';
 import type { ModerationSettings } from '#prisma';
 
 @ApplyOptions<Module.Options>({
+	name: 'ModerationModule',
 	fullName: 'Moderation Module'
 })
 export class ModerationModule extends Module {
