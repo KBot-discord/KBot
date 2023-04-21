@@ -36,7 +36,7 @@ export class StageListener extends Listener {
 
 			await textChannel.send({
 				embeds: [
-					new EmbedBuilder().setColor(EmbedColors.Default).setDescription('If you wish to end the event, please use `/manage karaoke menu`')
+					new EmbedBuilder().setColor(EmbedColors.Default).setDescription('If you wish to end the event, please use `/manage karaoke stop`')
 				]
 			});
 		} catch (err: unknown) {
