@@ -22,7 +22,7 @@ interface EmojiData {
 	module: 'UtilityModule',
 	name: 'Add emote',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.ManageEmojisAndStickers],
+	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -46,7 +46,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				builder //
 					.setName('Add emote')
 					.setType(ApplicationCommandType.Message)
-					.setDefaultMemberPermissions(PermissionFlagsBits.ManageEmojisAndStickers)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions)
 					.setDMPermission(false),
 			{
 				idHints: [],

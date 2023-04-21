@@ -49,7 +49,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				builder //
 					.setName('credits')
 					.setDescription(this.description)
-					.setDefaultMemberPermissions(PermissionFlagsBits.ManageEmojisAndStickers)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions)
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
