@@ -4,13 +4,15 @@ import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import dotenv from 'dotenv';
 import { CommandConfigOptionsStrategy } from '@kbotdev/plugin-modules';
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 import type { ClientConfig } from '#types/Config';
 import type { ModuleConfig } from '@kbotdev/plugin-modules';
 
 export function loadConfig(): void {
 	process.env.NODE_ENV ??= NodeEnvironments.Dev;
 
-	dotenv.config({ path: resolve(__dirname, '../.env') });
+	const dir = fileURLToPath(new URL('.', import.meta.url));
+	dotenv.config({ path: resolve(dir, '../.env') });
 
 	const isDev = envGetString('NODE_ENV') !== NodeEnvironments.Production;
 
@@ -67,6 +69,9 @@ export function loadConfig(): void {
 		},
 		sentry: {
 			dsn: envGetString('SENTRY_DSN')
+		},
+		stats: {
+			topgg: envGetString('DISCORD_STATS_TOPGG')
 		}
 	};
 

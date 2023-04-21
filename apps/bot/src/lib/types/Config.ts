@@ -44,4 +44,7 @@ export interface ClientConfig {
 	sentry: {
 		dsn: string;
 	};
+	stats: {
+		topgg: string;
+	};
 }
