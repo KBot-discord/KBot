@@ -4,9 +4,6 @@
 		"noEmit": true,
 		"incremental": false
 	},
-	"include": [
-      "./",
-      "../src/**/*"
-    ],
+	"include": ["./", "../src/**/*"],
 	"exclude": ["../dist/**/*"]
 }
