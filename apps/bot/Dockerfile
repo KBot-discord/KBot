@@ -1,5 +1,5 @@
 ## Builder ##
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 
 ## Canvas dependencies
 RUN apk add --no-cache libc6-compat
@@ -11,7 +11,7 @@ COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
 ## Dependencies ##
-FROM node:18-alpine AS deps
+FROM node:20-alpine AS deps
 
 RUN apk add -q --update openssl && \
 	apk add -q --no-cache libc6-compat cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make curl && \
@@ -37,7 +37,7 @@ RUN yarn db:generate && \
 	yarn turbo build --filter=@kbotdev/bot
 
 ## App ##
-FROM node:18-alpine as app
+FROM node:20-alpine as app
 
 ## Canvas dependencies
 RUN apk add -q --update cairo jpeg pango giflib && \
