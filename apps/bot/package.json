@@ -82,7 +82,7 @@
 		"schemix": "^1.11.0",
 		"ts-node": "^10.9.1",
 		"tsc-watch": "^6.0.0",
-		"typescript": "^4.9.5",
+		"typescript": "^5.0.0",
 		"vitest": "^0.30.1"
 	},
 	"prettier": "@sapphire/prettier-config",
