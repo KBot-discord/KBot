@@ -786,7 +786,7 @@ __metadata:
     "@sapphire/plugin-api": ^5.0.3
     "@sapphire/plugin-i18next": ^5.0.3
     "@sapphire/plugin-logger": ^3.0.3
-    "@sapphire/plugin-scheduled-tasks": ^6.0.1
+    "@sapphire/plugin-scheduled-tasks": ^7.0.0
     "@sapphire/prettier-config": ^1.4.5
     "@sapphire/utilities": ^3.11.1
     "@sentry/integrations": ^7.48.0
@@ -1340,14 +1340,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sapphire/plugin-scheduled-tasks@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "@sapphire/plugin-scheduled-tasks@npm:6.0.1"
+"@sapphire/plugin-scheduled-tasks@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@sapphire/plugin-scheduled-tasks@npm:7.0.0"
   dependencies:
     "@sapphire/stopwatch": ^1.5.0
     "@sapphire/utilities": ^3.11.1
+    bullmq: ^3.12.0
     tslib: ^2.5.0
-  checksum: c6a32aeacb4ce21340b22be13aead7dcb28793c6500e88e86849567a9324ae9d781314da20cb7080ea4fd8baad0675ba241a9ce594f8fab46aec08ca4f2588a7
+  checksum: 3f0b94c7ef78831219a9c1a2d28ac1cbe0a503cb870ae0db7088a9e9090dd7ff54bee5bfbee39d834438f993e9d1fb04536223342d1fd0e12db416edd6432af5
   languageName: node
   linkType: hard
 
@@ -2538,6 +2539,22 @@ __metadata:
     tslib: ^2.0.0
     uuid: ^9.0.0
   checksum: 9208074b3e5733bb527d732598d2e1ae490dc350eea4a6927b50b3e2be8211c8bfc73a3f77e4b1c14bd633f69dd9ad90db64877bc009c2f1e1bae3e29032f961
+  languageName: node
+  linkType: hard
+
+"bullmq@npm:^3.12.0":
+  version: 3.12.1
+  resolution: "bullmq@npm:3.12.1"
+  dependencies:
+    cron-parser: ^4.6.0
+    glob: ^8.0.3
+    ioredis: ^5.3.2
+    lodash: ^4.17.21
+    msgpackr: ^1.6.2
+    semver: ^7.3.7
+    tslib: ^2.0.0
+    uuid: ^9.0.0
+  checksum: f56cfbf4f457c2572f9ada1f756e4b8c09f666345e225d1843ceb7bb44c1fd796fbaba0ebf803f21c1d925d3ee5c66e69ab5a5349c39a15f78d3fffc873a7e62
   languageName: node
   linkType: hard
 
