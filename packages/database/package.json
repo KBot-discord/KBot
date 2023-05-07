@@ -3,17 +3,12 @@
 	"version": "0.0.0",
 	"license": "AGPL-3.0-or-later",
 	"private": true,
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.js",
-			"types": "./dist.index.d.ts"
-		}
-	},
+	"main": "./index.ts",
+	"types": "./index.ts",
 	"scripts": {
-		"build": "ts-node ./prisma && prisma generate",
+		"lint": "eslint --fix --ext ts src tests",
+		"format": "prettier --write --loglevel=warn \"prisma/**/*.{js,ts,json}\"",
+		"db:generate": "ts-node ./prisma/schemix.ts && prisma generate",
 		"db:push": "prisma db push"
 	},
 	"dependencies": {

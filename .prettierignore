@@ -10,8 +10,6 @@ dist
 build
 infra
 node_modules
-apps/bot/prisma/generated
-packages/proto/src/gen
 yarn.lock
 buf.lock
 LICENSE

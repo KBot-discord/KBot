@@ -8,6 +8,6 @@ createSchema({
 	},
 	generator: {
 		provider: 'prisma-client-js',
-		output: '../dist'
+		output: './client'
 	}
 }).export(__dirname, 'schema');
