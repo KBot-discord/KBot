@@ -13,7 +13,7 @@
 		}
 	},
 	"scripts": {
-		"db:generate": "ts-node ./prisma && prisma generate",
+		"build": "ts-node ./prisma && prisma generate",
 		"db:push": "prisma db push"
 	},
 	"dependencies": {
