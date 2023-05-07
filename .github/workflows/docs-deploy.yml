@@ -35,7 +35,7 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: yarn --immutable
+        run: yarn workspaces focus @kbotdev/apps @kbotdev/docs
 
       - name: Run build
         run: yarn turbo build --filter=@kbotdev/docs

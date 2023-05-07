@@ -1,4 +1,14 @@
+.git
+.idea
+.husky
+.yarn
+.turbo
+assets
+coverage
+dist
+build
+infra
 node_modules
-**/dist
-**/build
-**/infra
+yarn.lock
+buf.lock
+LICENSE
