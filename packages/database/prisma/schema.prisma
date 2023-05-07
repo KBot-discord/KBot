@@ -5,7 +5,7 @@ datasource database {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated"
+  output   = "../dist"
 }
 
 enum FeatureFlags {
@@ -14,23 +14,8 @@ enum FeatureFlags {
   BETA
 }
 
-enum ModerationActionType {
-  UNDEFINED
-  BAN
-  KICK
-  MUTE
-  TIMEOUT
-  UNBAN
-  UNMUTE
-  UNTIMEOUT
-}
-
 model Blacklist {
   guildId String @id @unique
-}
-
-model TwitchConflict {
-  channelId String @id @unique
 }
 
 model KaraokeUser {
@@ -154,6 +139,10 @@ model CoreSettings {
   utilitySettings    UtilitySettings?
   welcomeSettings    WelcomeSettings?
   youtubeSettings    YoutubeSettings?
+}
+
+model TwitchConflict {
+  channelId String @id @unique
 }
 
 model IncidentMessage {

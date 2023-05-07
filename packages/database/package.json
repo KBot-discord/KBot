@@ -1,0 +1,27 @@
+{
+	"name": "@kbotdev/database",
+	"version": "0.0.0",
+	"license": "AGPL-3.0-or-later",
+	"private": true,
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.js",
+			"types": "./dist.index.d.ts"
+		}
+	},
+	"scripts": {
+		"db:generate": "ts-node ./prisma && prisma generate",
+		"db:push": "prisma db push"
+	},
+	"dependencies": {
+		"@prisma/client": "^4.13.0"
+	},
+	"devDependencies": {
+		"prisma": "^4.13.0",
+		"schemix": "^1.12.0",
+		"ts-node": "^10.9.1"
+	}
+}
