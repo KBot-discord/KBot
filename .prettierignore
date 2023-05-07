@@ -1,0 +1,17 @@
+.git
+.prettier*
+.eslint*
+.idea
+.github/pull_request_template.md
+.husky
+.yarn
+assets
+coverage
+dist
+build
+infra
+node_modules
+apps/bot/prisma/generated
+packages/proto/src/gen
+yarn.lock
+buf.lock

@@ -1,0 +1,22 @@
+{
+	"name": "@kbotdev/prettier-config",
+	"version": "0.0.0",
+	"license": "AGPL-3.0-or-later",
+	"private": true,
+	"main": "dist/index.js",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsup",
+		"lint": "eslint --fix --ext ts src",
+		"format": "prettier --write --loglevel=warn \"src/**/*.ts\""
+	},
+	"devDependencies": {
+		"tsup": "^6.7.0",
+		"typescript": "^5.0.4"
+	}
+}

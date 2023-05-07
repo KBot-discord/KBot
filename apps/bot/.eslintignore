@@ -6,6 +6,4 @@ coverage
 dist
 infra
 node_modules
-prisma/generated
-prisma/seed
 src/rpc/gen

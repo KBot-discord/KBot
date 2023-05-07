@@ -3,7 +3,7 @@ import { relative } from 'node:path';
 
 export default defineTsupConfig({
 	dts: false,
-	entry: ['src/**/*.ts', '!src/**/*.d.ts'],
-	format: ['esm'],
+	format: ['cjs'],
+	sourcemap: false,
 	tsconfig: relative(__dirname, './tsconfig.json')
 });
