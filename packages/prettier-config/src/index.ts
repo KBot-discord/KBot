@@ -1,7 +1,7 @@
 module.exports = {
 	$schema: 'http://json.schemastore.org/prettierrc',
 	endOfLine: 'lf',
-	printWidth: 100,
+	printWidth: 150,
 	quoteProps: 'as-needed',
 	semi: true,
 	singleQuote: true,

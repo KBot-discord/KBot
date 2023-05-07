@@ -22,7 +22,7 @@ export class EventModule extends Module {
 		this.container.events = this;
 	}
 
-	public async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
+	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
 		const settings = await this.getSettings(guild.id);
 		return isNullish(settings) ? false : settings.enabled;

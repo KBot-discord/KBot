@@ -15,8 +15,9 @@
 		"node": ">=18.x"
 	},
 	"scripts": {
+		"clean": "rm -r ./node_modules",
 		"dev": "vitepress dev docs",
-		"build": "vitepress build docs",
+		"build": "yarn clean && vitepress build docs",
 		"preview": "vitepress preview docs"
 	},
 	"devDependencies": {

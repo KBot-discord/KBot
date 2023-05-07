@@ -1,5 +1,5 @@
 import type { GuildMember } from 'discord.js';
-import type { ModerationSettings } from '#prisma';
+import type { ModerationSettings } from '@kbotdev/database';
 
 export class AntiHoistService {
 	public readonly usernameRegex = /^[0-9 !"#$%&'()*+,\-.\/:;<=>?@[\\\]^_`]+/g;

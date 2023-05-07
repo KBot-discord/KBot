@@ -47,7 +47,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/notifications toggle\` to enable it.`;
 	};
 
@@ -66,9 +66,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 							.addStringOption((option) =>
 								option //
 									.setName('account')
-									.setDescription(
-										'Search the name of the channel and get an autocompleted list. Only channels on Holodex are supported'
-									)
+									.setDescription('Search the name of the channel and get an autocompleted list. Only channels on Holodex are supported')
 									.setRequired(true)
 									.setAutocomplete(true)
 							)
@@ -223,7 +221,10 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			});
 			if (isNullish(channels)) return interaction.respond([]);
 
-			options = channels.map(({ channelId, channel }) => ({ name: channel.name, value: channelId }));
+			options = channels.map(({ channelId, channel }) => ({
+				name: channel.name,
+				value: channelId
+			}));
 		} else {
 			return interaction.respond([]);
 		}
@@ -231,7 +232,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return interaction.respond(options);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'subscribe': {
 				return this.chatInputSubscribe(interaction);
@@ -405,9 +406,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 
 		const bot = await interaction.guild.members.fetchMe();
 		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
-			return interaction.defaultReply(
-				"I don't have the required permissions for role reactions to work.\n\nMissing permission: `Manage Roles`."
-			);
+			return interaction.defaultReply("I don't have the required permissions for role reactions to work.\n\nMissing permission: `Manage Roles`.");
 		}
 
 		const channel = interaction.options.getChannel('channel', true) as GuildTextBasedChannel;
@@ -435,9 +434,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Youtube module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(
-						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
-					)
+					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
 			]
 		});
 	}

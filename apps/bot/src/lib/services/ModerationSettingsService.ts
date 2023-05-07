@@ -2,7 +2,7 @@ import { moderationCacheKey } from '#utils/cache';
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import type { RedisClient } from '#extensions/RedisClient';
-import type { PrismaClient, ModerationSettings } from '#prisma';
+import type { PrismaClient, ModerationSettings } from '@kbotdev/database';
 import type { GuildId, UpsertModerationSettingsData } from '#types/database';
 
 export class ModerationSettingsService {

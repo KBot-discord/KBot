@@ -1,14 +1,8 @@
 module.exports = {
 	root: true,
-	extends: [
-		'plugin:@typescript-eslint/recommended',
-		'plugin:prettier/recommended',
-		'plugin:import/recommended',
-		'plugin:import/typescript'
-	],
+	extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'plugin:import/recommended', 'plugin:import/typescript'],
 	plugins: ['import'],
 	parser: '@typescript-eslint/parser',
-	ignorePatterns: ['*.cjs'],
 	parserOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020,
@@ -26,6 +20,12 @@ module.exports = {
 		}
 	},
 	rules: {
+		'prettier/prettier': [
+			'error',
+			{
+				printWidth: 150
+			}
+		],
 		'@typescript-eslint/no-empty-function': 'off',
 		'@typescript-eslint/no-non-null-assertion': 'off',
 		'@typescript-eslint/no-explicit-any': 'off',

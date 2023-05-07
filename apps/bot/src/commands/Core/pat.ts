@@ -52,7 +52,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 
 		const user = interaction.options.getUser('user', true);
@@ -92,7 +92,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		return buffer(stream);
 	}
 
-	public async onLoad() {
+	public override async onLoad() {
 		await Promise.all(
 			readdirSync(join(imageFolder, 'pat')).map(async (file) => {
 				this.pats.push(await loadImage(join(imageFolder, `pat/${file}`)));

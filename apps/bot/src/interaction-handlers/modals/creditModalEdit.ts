@@ -32,7 +32,9 @@ export class ModalHandler extends InteractionHandler {
 						.setTitle(resource.name!)
 						.setThumbnail(message.embeds[0].thumbnail!.url)
 						.addFields(fields)
-						.setFooter({ text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}` })
+						.setFooter({
+							text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
+						})
 				]
 			});
 		} catch (err) {

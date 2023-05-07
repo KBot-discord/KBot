@@ -53,7 +53,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const { client, validator } = this.container;
 		await interaction.deferReply();
 

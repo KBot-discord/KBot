@@ -1,3 +1,4 @@
+import { MimeTypes } from '#utils/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { container } from '@sapphire/framework';
@@ -16,15 +17,13 @@ export class StatsTask extends ScheduledTask {
 	public override async run(): Promise<void> {
 		const { client, config } = this.container;
 
-		if (!client.isReady()) return;
-
 		const shardCount = client.shard?.count ?? 1;
 		const guildCount = client.guilds.cache.size;
 
 		await fetch(`https://top.gg/api/bots/${config.discord.id}/stats`, {
 			method: 'POST',
 			headers: {
-				'content-type': 'application/json',
+				'content-type': MimeTypes.ApplicationJson,
 				authorization: config.stats.topgg
 			},
 			body: JSON.stringify({

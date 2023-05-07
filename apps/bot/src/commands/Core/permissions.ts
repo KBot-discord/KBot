@@ -35,7 +35,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		return interaction.reply({
 			embeds: [
 				new EmbedBuilder().setColor(EmbedColors.Default)

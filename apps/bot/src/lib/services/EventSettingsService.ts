@@ -2,7 +2,7 @@ import { eventCacheKey } from '#utils/cache';
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import type { GuildId, UpsertEventSettingsData } from '#types/database';
-import type { EventSettings, PrismaClient } from '#prisma';
+import type { EventSettings, PrismaClient } from '@kbotdev/database';
 import type { RedisClient } from '#extensions/RedisClient';
 
 export class EventSettingsService {

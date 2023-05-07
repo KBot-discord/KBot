@@ -4,7 +4,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { WelcomeSettings } from '#prisma';
+import type { WelcomeSettings } from '@kbotdev/database';
 import type { UpsertWelcomeSettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
@@ -22,7 +22,7 @@ export class WelcomeModule extends Module {
 		this.container.welcome = this;
 	}
 
-	public async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
+	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
 		const settings = await this.getSettings(guild.id);
 		return isNullish(settings) ? false : settings.enabled;

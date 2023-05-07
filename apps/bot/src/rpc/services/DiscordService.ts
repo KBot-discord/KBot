@@ -83,7 +83,14 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 				.filter((channel) => {
 					return !isNullish(channel) && (channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildAnnouncement);
 				})
-				.map((channel) => new DiscordChannel({ id: channel!.id, name: channel!.name, position: channel!.position }));
+				.map(
+					(channel) =>
+						new DiscordChannel({
+							id: channel!.id,
+							name: channel!.name,
+							position: channel!.position
+						})
+				);
 
 			return new GetDiscordTextChannelsResponse({ channels });
 		} catch (err: unknown) {
@@ -114,7 +121,14 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 				.filter((channel) => {
 					return !isNullish(channel) && (channel!.type === ChannelType.GuildVoice || channel!.type === ChannelType.GuildStageVoice);
 				})
-				.map((channel) => new DiscordChannel({ id: channel!.id, name: channel!.name, position: channel!.position }));
+				.map(
+					(channel) =>
+						new DiscordChannel({
+							id: channel!.id,
+							name: channel!.name,
+							position: channel!.position
+						})
+				);
 
 			return new GetDiscordVoiceChannelsResponse({ channels });
 		} catch (err: unknown) {

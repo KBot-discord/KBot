@@ -20,7 +20,6 @@ interface EmojiData {
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'UtilityModule',
-	name: 'Add emote',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
@@ -36,7 +35,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
@@ -55,7 +54,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
 		const message = interaction.options.getMessage('message', true);
 
 		const emoji = await this.getEmoji(message);

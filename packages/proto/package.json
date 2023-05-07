@@ -1,19 +1,25 @@
 {
 	"name": "@kbotdev/proto",
-	"version": "0.0.1",
-	"author": "@kbotdev",
+	"version": "0.0.0",
 	"license": "AGPL-3.0-or-later",
+	"private": true,
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
-	"engines": {
-		"node": "^18.x"
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js",
+			"types": "./dist.index.d.ts"
+		}
 	},
 	"scripts": {
 		"build": "yarn buf:generate && tsup",
 		"buf:generate": "rm -r -f src/gen && yarn buf:bot && yarn buf:types",
 		"buf:bot": "buf generate ../../protos/bot",
-		"buf:types": "buf generate ../../protos/types"
+		"buf:types": "buf generate ../../protos/types",
+		"lint": "eslint --fix --ext ts src",
+		"format": "prettier --write --loglevel=warn \"src/**/*.ts\""
 	},
 	"devDependencies": {
 		"@bufbuild/protoc-gen-connect-es": "^0.8.6",

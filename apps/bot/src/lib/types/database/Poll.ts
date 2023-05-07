@@ -1,4 +1,4 @@
-import type { Poll } from '#prisma';
+import type { Poll } from '@kbotdev/database';
 import type { GuildId } from '#types/database';
 import type { Expand } from '#types/Generic';
 

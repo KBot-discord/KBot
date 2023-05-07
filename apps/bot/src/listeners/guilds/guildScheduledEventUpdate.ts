@@ -38,7 +38,7 @@ export class GuildListener extends Listener {
 		}
 
 		if (
-			oldGuildScheduledEvent.status === GuildScheduledEventStatus.Scheduled &&
+			oldGuildScheduledEvent.status === GuildScheduledEventStatus.Scheduled && //
 			newGuildScheduledEvent.status === GuildScheduledEventStatus.Active
 		) {
 			const {

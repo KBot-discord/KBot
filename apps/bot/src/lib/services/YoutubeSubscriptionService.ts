@@ -1,6 +1,6 @@
 import { container } from '@sapphire/framework';
 import type { UpdateYoutubeSubscriptionData, YoutubeSubscriptionWithChannel, GuildId, GuildAndHolodexChannelId } from '#types/database';
-import type { PrismaClient, YoutubeSubscription } from '#prisma';
+import type { PrismaClient, YoutubeSubscription } from '@kbotdev/database';
 import type { HolodexChannelId } from '#types/database/Holodex';
 
 export class YoutubeSubscriptionService {

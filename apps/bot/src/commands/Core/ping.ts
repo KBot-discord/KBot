@@ -34,7 +34,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const message = await interaction.reply({ content: 'Ping?', fetchReply: true });
 		if (!isMessageInstance(message)) {
 			return interaction.editReply('Failed to retrieve ping :(');

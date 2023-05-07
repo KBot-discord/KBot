@@ -1,7 +1,7 @@
 import { coreCacheKey } from '#utils/cache';
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import type { CoreSettings, PrismaClient } from '#prisma';
+import type { CoreSettings, PrismaClient } from '@kbotdev/database';
 import type { RedisClient } from '#extensions/RedisClient';
 import type { GuildId, UpsertCoreSettingsData } from '#types/database';
 

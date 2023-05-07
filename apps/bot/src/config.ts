@@ -4,16 +4,13 @@ import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import dotenv from 'dotenv';
 import { CommandConfigOptionsStrategy } from '@kbotdev/plugin-modules';
 import { resolve } from 'path';
-import { fileURLToPath } from 'url';
 import type { ClientConfig } from '#types/Config';
 import type { ModuleConfig } from '@kbotdev/plugin-modules';
 
 export function loadConfig(): void {
 	process.env.NODE_ENV ??= NodeEnvironments.Dev;
 
-	const dir = fileURLToPath(new URL('.', import.meta.url));
-	dotenv.config({ path: resolve(dir, '../.env') });
-
+	dotenv.config({ path: resolve(__dirname, '../.env') });
 	const isDev = envGetString('NODE_ENV') !== NodeEnvironments.Production;
 
 	const clientConfig: ClientConfig = {

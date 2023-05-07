@@ -1,6 +1,4 @@
 .git
-.prettier*
-.eslint*
 .idea
 .github/pull_request_template.md
 .husky

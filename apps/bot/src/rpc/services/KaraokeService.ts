@@ -45,7 +45,12 @@ class KaraokeServiceImpl implements ServiceImpl<typeof KaraokeEventService> {
 			const data: Partial<KaraokeScheduledEvent>[] = result //
 				.filter((entry) => entry.discordEventId)
 				.map(({ id, textChannelId, discordEventId, roleId }) => {
-					return { voiceChanneId: id, textChannelId, discordEventId: discordEventId!, roleId: roleId ?? undefined };
+					return {
+						voiceChanneId: id,
+						textChannelId,
+						discordEventId: discordEventId!,
+						roleId: roleId ?? undefined
+					};
 				});
 
 			return new GetKaraokeScheduledEventsResponse({ events: data });

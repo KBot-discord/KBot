@@ -9,10 +9,7 @@ import { PermissionFlagsBits, roleMention, StringSelectMenuInteraction } from 'd
 	interactionHandlerType: InteractionHandlerTypes.SelectMenu
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(
-		interaction: StringSelectMenuInteraction<'cached'>,
-		{ selectedChannels, member }: InteractionHandler.ParseResult<this>
-	) {
+	public override async run(interaction: StringSelectMenuInteraction<'cached'>, { selectedChannels, member }: InteractionHandler.ParseResult<this>) {
 		const subscriptions = await this.container.youtube.subscriptions.getByGuild({
 			guildId: interaction.guildId
 		});
@@ -23,7 +20,10 @@ export class ButtonHandler extends InteractionHandler {
 
 		const roleIds = subscriptions //
 			.filter(({ roleId, memberRoleId }) => (member ? !isNullish(memberRoleId) : !isNullish(roleId)))
-			.map(({ channel, roleId, memberRoleId }) => ({ channel, roleId: member ? memberRoleId : roleId }));
+			.map(({ channel, roleId, memberRoleId }) => ({
+				channel,
+				roleId: member ? memberRoleId : roleId
+			}));
 
 		for (const { roleId } of roleIds) {
 			const role = await interaction.guild.roles.fetch(roleId!);

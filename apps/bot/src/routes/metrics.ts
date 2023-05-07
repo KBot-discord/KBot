@@ -2,7 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { methods, Route, type ApiRequest, type ApiResponse } from '@sapphire/plugin-api';
 import * as promClient from 'prom-client';
 import { container } from '@sapphire/framework';
-import type { MimeTypes } from '@sapphire/plugin-api/dist/lib/utils/MimeTypes';
+import type { MimeTypes } from '@sapphire/plugin-api';
 
 @ApplyOptions<Route.Options>({
 	route: 'metrics'

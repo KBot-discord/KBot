@@ -38,7 +38,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
@@ -139,7 +139,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'create': {
 				return this.chatInputCreate(interaction);

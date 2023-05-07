@@ -3,7 +3,7 @@ import { createMethodDecorator } from '@sapphire/decorators';
 import { Code, ConnectError } from '@bufbuild/connect';
 import type { HandlerContext } from '@bufbuild/connect';
 
-export const authenticated = () => {
+export const authenticated = (): MethodDecorator => {
 	return createMethodDecorator((_: any, __: any, descriptor: any) => {
 		const method = descriptor.value;
 		if (!method) throw new Error('Function preconditions require a [[value]].');

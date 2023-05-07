@@ -10,7 +10,7 @@ import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { InteractionEditReplyOptions } from 'discord.js';
-import type { ModerationSettings } from '#prisma';
+import type { ModerationSettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'ModerationModule',
@@ -25,7 +25,10 @@ import type { ModerationSettings } from '#prisma';
 			.setDescription('Set a minimum required account age for users to join the server.')
 			.setSubcommands([
 				{ label: '/minage toggle <value>', description: 'Enable or disable minage' }, //
-				{ label: '/minage set [days] [message]', description: 'Set the account age requirements and kick message' },
+				{
+					label: '/minage set [days] [message]',
+					description: 'Set the account age requirements and kick message'
+				},
 				{ label: '/minage unset [days] [message]', description: 'Unset the current settings' },
 				{ label: '/minage settings', description: 'Show the current settings' }
 			]);
@@ -36,7 +39,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};
 
@@ -110,7 +113,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
 				return this.chatInputToggle(interaction);
@@ -145,9 +148,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(
-						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
-					)
+					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
 			]
 		});
 	}
@@ -210,7 +211,10 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
 					.setDescription('Run `/minage test` to see what the message would look like')
 					.addFields([
-						{ name: 'Enabled', value: `${settings?.minAccountAgeEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}` },
+						{
+							name: 'Enabled',
+							value: `${settings?.minAccountAgeEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`
+						},
 						{
 							name: 'Account age requirement',
 							value: `${settings?.minAccountAgeReq ?? 0}`,

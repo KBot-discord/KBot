@@ -32,7 +32,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};
 
@@ -51,7 +51,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
 		const { validator, client } = this.container;
 		const message = interaction.options.getMessage('message', true);
 
@@ -87,15 +87,26 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 		if (message.attachments.size > 0) {
 			const files = message.attachments.map((e) => {
-				return new AttachmentBuilder(e.url, { name: e.name ?? undefined, description: e.description ?? undefined }).setSpoiler();
+				return new AttachmentBuilder(e.url, {
+					name: e.name ?? undefined,
+					description: e.description ?? undefined
+				}).setSpoiler();
 			});
 
 			const fileFields: APIEmbedField[] = [];
 
 			files.forEach((file) => {
-				const name = { name: 'File name', value: file.name!.substring(8, file.name!.length), inline: true };
+				const name = {
+					name: 'File name',
+					value: file.name!.substring(8, file.name!.length),
+					inline: true
+				};
 				fileFields.push(name);
-				const desc = { name: 'File description', value: file.description || 'No file description', inline: true };
+				const desc = {
+					name: 'File description',
+					value: file.description || 'No file description',
+					inline: true
+				};
 				fileFields.push(desc);
 			});
 

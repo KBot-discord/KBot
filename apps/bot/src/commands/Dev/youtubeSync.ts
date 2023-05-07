@@ -30,8 +30,8 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		this.container.tasks.create('holodexSync', {}, { repeated: false, delay: 0 });
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+		await this.container.tasks.create('holodexSync', {}, { repeated: false, delay: 0 });
 		return interaction.reply(`Holodex sync started.`);
 	}
 }

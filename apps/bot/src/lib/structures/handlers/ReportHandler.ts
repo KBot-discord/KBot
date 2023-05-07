@@ -42,10 +42,7 @@ export class ReportHandler {
 
 		if (interaction.customId === ButtonCustomId.Delete) {
 			if (!channel.permissionsFor(await interaction.guild.members.fetchMe()).has(PermissionFlagsBits.ManageMessages)) {
-				await interaction.errorFollowup(
-					"I don't have the required permission to delete that message.\n\nRequired permission: Manage Messages",
-					true
-				);
+				await interaction.errorFollowup("I don't have the required permission to delete that message.\n\nRequired permission: Manage Messages", true);
 				return;
 			}
 			await this.toggleButton(true, ReportButtons.Delete);

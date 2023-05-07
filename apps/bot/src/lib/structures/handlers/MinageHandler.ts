@@ -2,7 +2,7 @@ import { ModerationModule } from '#modules/ModerationModule';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import type { GuildMember } from 'discord.js';
-import type { ModerationSettings } from '#prisma';
+import type { ModerationSettings } from '@kbotdev/database';
 
 export class MinageHandler {
 	public constructor(private readonly member: GuildMember, private readonly settings: ModerationSettings) {}

@@ -1,5 +1,6 @@
 import '@kbotdev/plugin-modules/register';
 import '@sapphire/plugin-logger/register';
+import '@sapphire/plugin-scheduled-tasks/register';
 import '@sapphire/plugin-api/register';
 import '#utils/Augments';
 import '#hooks/register';

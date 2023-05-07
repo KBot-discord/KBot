@@ -56,7 +56,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'add_conflict': {

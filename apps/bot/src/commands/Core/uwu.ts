@@ -43,7 +43,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 
 		const message = interaction.options.getMessage('message', true);

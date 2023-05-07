@@ -1,7 +1,7 @@
 import { welcomeCacheKey } from '#utils/cache';
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import type { PrismaClient, WelcomeSettings } from '#prisma';
+import type { PrismaClient, WelcomeSettings } from '@kbotdev/database';
 import type { RedisClient } from '#extensions/RedisClient';
 import type { UpsertWelcomeSettingsData, GuildId } from '#types/database';
 

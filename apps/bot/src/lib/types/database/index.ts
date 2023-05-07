@@ -1,4 +1,4 @@
-import type { CoreSettings } from '#prisma';
+import type { CoreSettings } from '@kbotdev/database';
 
 export * from '#types/database/CoreSettings';
 export * from '#types/database/EventSettings';

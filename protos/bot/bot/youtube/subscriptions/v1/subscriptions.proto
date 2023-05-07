@@ -14,7 +14,6 @@ message YoutubeSubscription {
   google.protobuf.StringValue discord_channel = 7;
 }
 
-// CreateYoutubeSubscription
 message CreateYoutubeSubscriptionRequest {
   string channel_id = 4;
   string guild_id = 5;
@@ -24,7 +23,6 @@ message CreateYoutubeSubscriptionResponse {
   YoutubeSubscription subscription = 1;
 }
 
-// UpdateYoutubeSubscription
 message UpdateYoutubeSubscriptionRequest {
   string channel_id = 1;
   string guild_id = 2;
@@ -37,7 +35,6 @@ message UpdateYoutubeSubscriptionResponse {
   YoutubeSubscription subscription = 1;
 }
 
-// DeleteYoutubeSubscription
 message DeleteYoutubeSubscriptionRequest {
   string channel_id = 1;
   string guild_id = 2;
@@ -47,7 +44,6 @@ message DeleteYoutubeSubscriptionResponse {
   YoutubeSubscription subscription = 1;
 }
 
-// GetGuildYoutubeSubscriptions
 message GetGuildYoutubeSubscriptionsRequest {
   string guild_id = 1;
 }
@@ -56,10 +52,9 @@ message GetGuildYoutubeSubscriptionsResponse {
   repeated YoutubeSubscription subscriptions = 1;
 }
 
-// YoutubeSubscriptionService
 service YoutubeSubscriptionService {
-  rpc CreateYoutubeSubscription (CreateYoutubeSubscriptionRequest) returns (CreateYoutubeSubscriptionResponse);
-  rpc UpdateYoutubeSubscription (UpdateYoutubeSubscriptionRequest) returns (UpdateYoutubeSubscriptionResponse);
-  rpc DeleteYoutubeSubscription (DeleteYoutubeSubscriptionRequest) returns (DeleteYoutubeSubscriptionResponse);
-  rpc GetGuildYoutubeSubscriptions (GetGuildYoutubeSubscriptionsRequest) returns (GetGuildYoutubeSubscriptionsResponse);
+  rpc CreateYoutubeSubscription(CreateYoutubeSubscriptionRequest) returns (CreateYoutubeSubscriptionResponse);
+  rpc UpdateYoutubeSubscription(UpdateYoutubeSubscriptionRequest) returns (UpdateYoutubeSubscriptionResponse);
+  rpc DeleteYoutubeSubscription(DeleteYoutubeSubscriptionRequest) returns (DeleteYoutubeSubscriptionResponse);
+  rpc GetGuildYoutubeSubscriptions(GetGuildYoutubeSubscriptionsRequest) returns (GetGuildYoutubeSubscriptionsResponse);
 }

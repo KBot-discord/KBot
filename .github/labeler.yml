@@ -1,22 +1,22 @@
-'apps:bot':
-  - 'apps/bot/**'
+"apps:bot":
+  - "apps/bot/**"
 
-'apps:docs':
-  - 'apps/docs/**'
+"apps:docs":
+  - "apps/docs/**"
 
-'apps:web':
-  - 'apps/web/**'
+"apps:web":
+  - "apps/web/**"
 
-'packages':
-  - 'packages/**'
-  - '!packages/eslint-config/**'
-  - '!packages/prettier-config/**'
-  - '!packages/ts-config/**'
+"packages":
+  - "packages/**"
+  - "!packages/eslint-config/**"
+  - "!packages/prettier-config/**"
+  - "!packages/ts-config/**"
 
-'config':
-  - 'packages/eslint-config/**'
-  - 'packages/prettier-config/**'
-  - 'packages/ts-config/**'
+"config":
+  - "packages/eslint-config/**"
+  - "packages/prettier-config/**"
+  - "packages/ts-config/**"
 
-'protos':
-  - 'protos/**'
+"protos":
+  - "protos/**"

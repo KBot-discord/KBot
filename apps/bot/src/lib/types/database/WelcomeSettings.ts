@@ -1,4 +1,4 @@
-import type { WelcomeSettings } from '#prisma';
+import type { WelcomeSettings } from '@kbotdev/database';
 
 export interface UpsertWelcomeSettingsData {
 	enabled?: WelcomeSettings['enabled'];

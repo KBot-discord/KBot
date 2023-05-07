@@ -40,9 +40,9 @@
 		"vitest": "^0.31.0"
 	},
 	"lint-staged": {
-		"*.{js,cjs,ts}": [
-			"eslint --fix --ext ts",
-			"prettier --write --loglevel=warn \"**/*.{js,cjs,ts}\""
+		"*.{mjs,cjs,js,ts}": [
+			"eslint --fix --ext js,ts",
+			"prettier --write --loglevel=warn \"**/*.{mjs,cjs,js,ts}\""
 		],
 		"*.{json,yml,yaml,md}": [
 			"prettier --write --loglevel=warn \"**/*.{json,yml,yaml,md}\""

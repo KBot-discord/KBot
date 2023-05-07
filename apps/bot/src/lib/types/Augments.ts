@@ -5,7 +5,7 @@ import type { KBotMetrics } from '#observability/KBotMetrics';
 import type { APIMessage } from 'discord-api-types/v10';
 import type { ClientConfig } from '#types/Config';
 import type { RedisClient } from '#extensions/RedisClient';
-import type { PrismaClient } from '#prisma';
+import type { PrismaClient } from '@kbotdev/database';
 import type { Validator } from '#utils/validators';
 import type { CoreModule } from '#modules/CoreModule';
 import type { EventModule } from '#modules/EventModule';

@@ -1,8 +1,7 @@
 {
 	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"typeRoots": ["../../node_modules/@types"],
 		"noEmit": true
 	},
-	"include": ["./docs/.vitepress/**/*.ts"]
+	"include": ["docs/.vitepress/**/*.ts"]
 }

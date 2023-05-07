@@ -2,7 +2,7 @@ import { youtubeCacheKey } from '#utils/cache';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import type { RedisClient } from '#extensions/RedisClient';
-import type { PrismaClient, YoutubeSettings } from '#prisma';
+import type { PrismaClient, YoutubeSettings } from '@kbotdev/database';
 import type { GuildId, UpsertUtilitySettingsData } from '#types/database';
 
 export class YoutubeSettingsService {

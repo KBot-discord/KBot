@@ -3,7 +3,7 @@ import { Validator } from '#utils/validators';
 import { KBotMetrics } from '#observability/KBotMetrics';
 import { RedisClient } from '#extensions/RedisClient';
 import { MeilisearchClient } from '#extensions/MeiliClient';
-import { PrismaClient } from '#prisma';
+import { PrismaClient } from '@kbotdev/database';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import { container, Plugin, preGenericsInitialization } from '@sapphire/framework';

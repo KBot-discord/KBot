@@ -7,7 +7,7 @@ import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from
 import type { CreditType } from '#utils/customIds';
 import type { CreditImageModal, CreditModal } from '#types/CustomIds';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { UtilitySettings } from '#prisma';
+import type { UtilitySettings } from '@kbotdev/database';
 import type { UpsertUtilitySettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
@@ -27,7 +27,7 @@ export class UtilityModule extends Module {
 		this.container.utility = this;
 	}
 
-	public async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
+	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
 		const settings = await this.getSettings(guild.id).catch(() => null);
 		return isNullish(settings) ? false : settings.enabled;

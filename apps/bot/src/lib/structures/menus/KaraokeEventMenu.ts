@@ -2,12 +2,13 @@ import { BlankSpace, EmbedColors, KBotEmoji } from '#utils/constants';
 import { buildCustomId, KaraokeCustomIds } from '#utils/customIds';
 import { getGuildIcon } from '#utils/Discord';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
-import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
+import { Menu, MenuPageBuilder } from '@kbotdev/menus';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
+import { MenuPagesBuilder } from '@kbotdev/menus';
 import type { Guild, GuildChannel, Message, User } from 'discord.js';
-import type { KaraokeEvent } from '#prisma';
+import type { KaraokeEvent } from '@kbotdev/database';
 import type { KaraokeMenuButton } from '#types/CustomIds';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 
@@ -42,7 +43,10 @@ export class KaraokeEventMenu extends Menu {
 				return [
 					embed
 						.setColor(EmbedColors.Default)
-						.setAuthor({ name: `${KBotEmoji.Microphone} Karaoke management `, iconURL: getGuildIcon(this.guild) })
+						.setAuthor({
+							name: `${KBotEmoji.Microphone} Karaoke management `,
+							iconURL: getGuildIcon(this.guild)
+						})
 						.setTitle('Home page')
 						.setDescription('This menu allows you to manage events through buttons.')
 						.addFields([
@@ -70,7 +74,11 @@ export class KaraokeEventMenu extends Menu {
 						return [
 							row1.addComponents([
 								new ButtonBuilder()
-									.setCustomId(buildCustomId<KaraokeMenuButton>(KaraokeCustomIds.Unschedule, { eventId: event.id }))
+									.setCustomId(
+										buildCustomId<KaraokeMenuButton>(KaraokeCustomIds.Unschedule, {
+											eventId: event.id
+										})
+									)
 									.setStyle(ButtonStyle.Danger)
 									.setLabel('Unschedule event')
 							])
@@ -115,20 +123,35 @@ export class KaraokeEventMenu extends Menu {
 					const discordEvent = await guild.scheduledEvents.fetch(event.discordEventId);
 					fields.push(
 						{ name: 'Scheduled event:', value: discordEvent.name, inline: true },
-						{ name: 'Event time:', value: time(Math.floor(discordEvent.scheduledStartTimestamp! / 1000)), inline: true },
+						{
+							name: 'Event time:',
+							value: time(Math.floor(discordEvent.scheduledStartTimestamp! / 1000)),
+							inline: true
+						},
 						{ name: BlankSpace, value: BlankSpace, inline: false }
 					);
 				}
 
 				return new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: `${KBotEmoji.Microphone} Karaoke management`, iconURL: getGuildIcon(guild) })
+					.setAuthor({
+						name: `${KBotEmoji.Microphone} Karaoke management`,
+						iconURL: getGuildIcon(guild)
+					})
 					.setTitle(`Event #${index + 1} | ${channel.name}`)
 					.addFields([
 						...fields,
-						{ name: 'Voice channel:', value: `${channelMention(event.id)}\n\nPermissions:`, inline: true },
+						{
+							name: 'Voice channel:',
+							value: `${channelMention(event.id)}\n\nPermissions:`,
+							inline: true
+						},
 						{ name: 'Text channel:', value: channelMention(event.textChannelId), inline: true },
-						{ name: 'Queue lock:', value: event.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`, inline: true }
+						{
+							name: 'Queue lock:',
+							value: event.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`,
+							inline: true
+						}
 					]);
 			})
 		);
@@ -138,10 +161,18 @@ export class KaraokeEventMenu extends Menu {
 		const page = menu.getCurrentPage();
 
 		// use !event.locked since we are looking for the old value
-		const index = page.embeds[0].data.fields!.indexOf({ name: 'Queue lock:', value: `${!event.locked}`, inline: true });
+		const index = page.embeds[0].data.fields!.indexOf({
+			name: 'Queue lock:',
+			value: `${!event.locked}`,
+			inline: true
+		});
 		const lockString = event!.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`;
 
-		const embed = new EmbedBuilder(page.embeds[0].data).spliceFields(index, 1, { name: 'Queue lock:', value: lockString, inline: true });
+		const embed = new EmbedBuilder(page.embeds[0].data).spliceFields(index, 1, {
+			name: 'Queue lock:',
+			value: lockString,
+			inline: true
+		});
 
 		return new MenuPageBuilder(page).setEmbeds([embed]);
 	}

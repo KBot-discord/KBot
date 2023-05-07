@@ -15,7 +15,6 @@ message WelcomeSettings {
   google.protobuf.StringValue color = 7;
 }
 
-// GetWelcomeSettings
 message GetWelcomeSettingsRequest {
   string guild_id = 1;
 }
@@ -24,7 +23,6 @@ message GetWelcomeSettingsResponse {
   WelcomeSettings settings = 1;
 }
 
-// UpdateWelcomeSettings
 message UpdateWelcomeSettingsRequest {
   string guild_id = 1;
   types.crud.v1.RequiredBool enabled = 2;
@@ -40,8 +38,7 @@ message UpdateWelcomeSettingsResponse {
   WelcomeSettings settings = 1;
 }
 
-// WelcomeSettingsService
 service WelcomeSettingsService {
-  rpc GetWelcomeSettings (GetWelcomeSettingsRequest) returns (GetWelcomeSettingsResponse);
-  rpc UpdateWelcomeSettings (UpdateWelcomeSettingsRequest) returns (UpdateWelcomeSettingsResponse);
+  rpc GetWelcomeSettings(GetWelcomeSettingsRequest) returns (GetWelcomeSettingsResponse);
+  rpc UpdateWelcomeSettings(UpdateWelcomeSettingsRequest) returns (UpdateWelcomeSettingsResponse);
 }

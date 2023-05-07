@@ -6,7 +6,6 @@ message YoutubeSettings {
   bool enabled = 1;
 }
 
-// GetYoutubeSettings
 message GetYoutubeSettingsRequest {
   string guild_id = 1;
 }
@@ -15,7 +14,6 @@ message GetYoutubeSettingsResponse {
   YoutubeSettings settings = 1;
 }
 
-// UpdateYoutubeSettings
 message UpdateYoutubeSettingsRequest {
   string guild_id = 1;
   bool enabled = 2;
@@ -25,8 +23,7 @@ message UpdateYoutubeSettingsResponse {
   YoutubeSettings settings = 1;
 }
 
-// YoutubeSettingsService
 service YoutubeSettingsService {
-  rpc GetYoutubeSettings (GetYoutubeSettingsRequest) returns (GetYoutubeSettingsResponse);
-  rpc UpdateYoutubeSettings (UpdateYoutubeSettingsRequest) returns (UpdateYoutubeSettingsResponse);
+  rpc GetYoutubeSettings(GetYoutubeSettingsRequest) returns (GetYoutubeSettingsResponse);
+  rpc UpdateYoutubeSettings(UpdateYoutubeSettingsRequest) returns (UpdateYoutubeSettingsResponse);
 }

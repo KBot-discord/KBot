@@ -1,4 +1,4 @@
-import type { UtilitySettings } from '#prisma';
+import type { UtilitySettings } from '@kbotdev/database';
 
 export interface UpsertUtilitySettingsData {
 	enabled?: UtilitySettings['enabled'];

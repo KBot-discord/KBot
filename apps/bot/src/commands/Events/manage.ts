@@ -25,11 +25,23 @@ import type { EventModule } from '#modules/EventModule';
 			.setName('Manage')
 			.setDescription('Create, end, or manage events.')
 			.setSubcommands([
-				{ label: '/manage karaoke start <voice_channel> <text_channel> [topic] [role]', description: 'Start a karaoke event' }, //
-				{ label: '/manage karaoke schedule <discord_event> <text_channel> [role]', description: 'Schedule a karaoke event' },
+				{
+					label: '/manage karaoke start <voice_channel> <text_channel> [topic] [role]',
+					description: 'Start a karaoke event'
+				}, //
+				{
+					label: '/manage karaoke schedule <discord_event> <text_channel> [role]',
+					description: 'Schedule a karaoke event'
+				},
 				{ label: '/manage karaoke stop <event>', description: 'Stop a karaoke event' },
-				{ label: '/manage karaoke add <event> <user>', description: 'Add a user to a karaoke queue' },
-				{ label: '/manage karaoke remove <event> <user>', description: 'Remove a user to a karaoke queue' },
+				{
+					label: '/manage karaoke add <event> <user>',
+					description: 'Add a user to a karaoke queue'
+				},
+				{
+					label: '/manage karaoke remove <event> <user>',
+					description: 'Remove a user to a karaoke queue'
+				},
 				{ label: '/manage karaoke menu', description: 'Open the menu to manage karaoke events' }
 			]);
 	}
@@ -39,7 +51,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/events toggle\` to enable it.`;
 	};
 
@@ -70,12 +82,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 										chan
 											.setName('text_channel')
 											.setDescription('The channel to show queue rotations and instructions')
-											.addChannelTypes(
-												ChannelType.GuildText,
-												ChannelType.PublicThread,
-												ChannelType.GuildStageVoice,
-												ChannelType.GuildVoice
-											)
+											.addChannelTypes(ChannelType.GuildText, ChannelType.PublicThread, ChannelType.GuildStageVoice, ChannelType.GuildVoice)
 											.setRequired(true)
 									)
 									.addStringOption((topic) =>
@@ -106,12 +113,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 										chan
 											.setName('text_channel')
 											.setDescription('The channel to show queue rotations and instructions')
-											.addChannelTypes(
-												ChannelType.GuildText,
-												ChannelType.PublicThread,
-												ChannelType.GuildStageVoice,
-												ChannelType.GuildVoice
-											)
+											.addChannelTypes(ChannelType.GuildText, ChannelType.PublicThread, ChannelType.GuildStageVoice, ChannelType.GuildVoice)
 											.setRequired(true)
 									)
 									.addRoleOption((role) =>
@@ -212,7 +214,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.respond(discordEventOptions);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		switch (interaction.options.getSubcommandGroup(true)) {
 			default: {
 				switch (interaction.options.getSubcommand(true)) {
@@ -260,12 +262,18 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const voiceResult = await validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
-			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: voiceResult.error });
+			return interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: voiceResult.error
+			});
 		}
 
 		const textResult = await validator.channels.canSendEmbeds(textChannel);
 		if (!textResult.result) {
-			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: textResult.error });
+			return interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: textResult.error
+			});
 		}
 
 		await this.module.karaoke.startEvent(interaction.guild, voiceChannel, textChannel, topic, role?.id);
@@ -292,12 +300,18 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const voiceChannel = (await client.channels.fetch(discordEvent.channelId)) as VoiceChannel | StageChannel;
 		const voiceResult = await validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
-			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: voiceResult.error });
+			return interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: voiceResult.error
+			});
 		}
 
 		const textResult = await validator.channels.canSendEmbeds(textChannel);
 		if (!textResult.result) {
-			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: textResult.error });
+			return interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: textResult.error
+			});
 		}
 
 		const newEvent = await this.module.karaoke.createScheduledEvent({
@@ -313,11 +327,18 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: `${KBotEmoji.Microphone} Karaoke management`, iconURL: getGuildIcon(interaction.guild) })
+					.setAuthor({
+						name: `${KBotEmoji.Microphone} Karaoke management`,
+						iconURL: getGuildIcon(interaction.guild)
+					})
 					.setTitle(discordEvent.channel.name)
 					.addFields([
 						{ name: 'Scheduled event:', value: discordEvent.name, inline: true },
-						{ name: 'Event time:', value: time(Math.floor(discordEvent.scheduledStartTimestamp! / 1000)), inline: true },
+						{
+							name: 'Event time:',
+							value: time(Math.floor(discordEvent.scheduledStartTimestamp! / 1000)),
+							inline: true
+						},
 						{ name: BlankSpace, value: BlankSpace, inline: false },
 						{ name: 'Voice channel:', value: channelMention(newEvent.id), inline: true },
 						{ name: 'Text channel:', value: channelMention(newEvent.textChannelId), inline: true },
@@ -378,13 +399,19 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
-			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: voiceResult.error });
+			return interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: voiceResult.error
+			});
 		}
 
 		const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
 		const textResult = await this.container.validator.channels.canSendEmbeds(textChannel);
 		if (!textResult.result) {
-			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: textResult.error });
+			return interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: textResult.error
+			});
 		}
 
 		const { valid, reason } = karaoke.isAddValid(event, member.id);
@@ -441,13 +468,19 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
-			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: voiceResult.error });
+			return interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: voiceResult.error
+			});
 		}
 
 		const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
 		const textResult = await this.container.validator.channels.canSendEmbeds(textChannel);
 		if (!textResult.result) {
-			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error: textResult.error });
+			return interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: textResult.error
+			});
 		}
 
 		const userEntry = event.queue.find((e) => e.id === member.id);
@@ -466,7 +499,9 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 			await interaction.channel!.send({
 				content: `${content} been removed from the queue by ${interaction.user.id}.`,
-				allowedMentions: { users: userEntry.partnerId ? [userEntry.id, userEntry.partnerId] : [userEntry.id] }
+				allowedMentions: {
+					users: userEntry.partnerId ? [userEntry.id, userEntry.partnerId] : [userEntry.id]
+				}
 			});
 		}
 

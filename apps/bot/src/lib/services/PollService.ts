@@ -6,7 +6,7 @@ import { isNullish } from '@sapphire/utilities';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
 import type { GuildAndPollId, GuildId, PollId, CreatePollData, UpsertPollUserData } from '#types/database';
 import type { RedisClient } from '#extensions/RedisClient';
-import type { PrismaClient, Poll } from '#prisma';
+import type { PrismaClient, Poll } from '@kbotdev/database';
 import type { PollResultPayload } from '#types/Tasks';
 import type { Key } from '#types/Generic';
 
@@ -79,8 +79,8 @@ export class PollService {
 		return this.cache.hGetAll<number>(pollKey);
 	}
 
-	public createTask(expiresIn: number, { guildId, pollId }: PollResultPayload) {
-		container.tasks.create(
+	public async createTask(expiresIn: number, { guildId, pollId }: PollResultPayload) {
+		await container.tasks.create(
 			'pollResults',
 			{ guildId, pollId },
 			{

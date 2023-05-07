@@ -59,7 +59,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -86,9 +86,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Events module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(
-						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
-					)
+					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
 			]
 		});
 	}
@@ -101,7 +99,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Events module settings', iconURL: getGuildIcon(interaction.guild) })
-					.addFields([{ name: 'Module enabled', value: `${settings?.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX}` }])
+					.addFields([
+						{
+							name: 'Module enabled',
+							value: `${settings?.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX}`
+						}
+					])
 			]
 		});
 	}

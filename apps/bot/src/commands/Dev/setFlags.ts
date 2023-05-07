@@ -1,6 +1,6 @@
 import { EmbedColors } from '#utils/constants';
-import { FeatureFlags } from '#prisma';
 import { FlagHandler } from '#structures/handlers/FlagHandler';
+import { FeatureFlags } from '@kbotdev/database';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
@@ -38,7 +38,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		const guildId = interaction.options.getString('guild', true);
 
@@ -49,7 +49,10 @@ export class DevCommand extends Command {
 
 		const currentFlags = await this.container.core.getSettings(guild.id).then((res) => res?.flags ?? []);
 		const flagsArray: FeatureFlags[] = Object.values(FeatureFlags).filter((flag) => flag !== 'UNDEFINED');
-		const flagOptions: APISelectMenuOption[] = flagsArray.map((flag) => ({ label: flag, value: flag }));
+		const flagOptions: APISelectMenuOption[] = flagsArray.map((flag) => ({
+			label: flag,
+			value: flag
+		}));
 
 		await interaction.editReply({
 			embeds: [

@@ -15,7 +15,7 @@ import type {
 	UpdateEventData,
 	KaraokeEventWithUsers
 } from '#types/database';
-import type { PrismaClient, KaraokeEvent, KaraokeUser } from '#prisma';
+import type { PrismaClient, KaraokeEvent, KaraokeUser } from '@kbotdev/database';
 import type { VoiceChannel, StageChannel, Guild, GuildTextBasedChannel, Message, TextChannel, GuildMember, GuildMemberManager } from 'discord.js';
 import type { RedisClient } from '#extensions/RedisClient';
 

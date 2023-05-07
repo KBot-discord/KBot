@@ -9,7 +9,7 @@ import { EmbedBuilder } from 'discord.js';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { UpsertModerationSettingsData } from '#types/database';
-import type { ModerationSettings } from '#prisma';
+import type { ModerationSettings } from '@kbotdev/database';
 
 @ApplyOptions<Module.Options>({
 	name: 'ModerationModule',
@@ -28,7 +28,7 @@ export class ModerationModule extends Module {
 		this.container.moderation = this;
 	}
 
-	public async isEnabled({ guild }: IsEnabledContext) {
+	public override async isEnabled({ guild }: IsEnabledContext) {
 		if (isNullish(guild)) return false;
 		const settings = await this.getSettings(guild.id);
 		return isNullish(settings) ? false : settings.enabled;

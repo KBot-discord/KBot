@@ -11,7 +11,7 @@ import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { InteractionEditReplyOptions, ColorResolvable, NewsChannel, TextChannel } from 'discord.js';
-import type { WelcomeSettings } from '#prisma';
+import type { WelcomeSettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'WelcomeModule',
@@ -160,7 +160,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -196,9 +196,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Welcome module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(
-						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
-					)
+					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
 			]
 		});
 	}
@@ -288,12 +286,22 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 
 		const bot = await members.fetchMe();
 		const fields: APIEmbedField[] = [
-			{ name: 'Enabled:', value: settings?.enabled ? ':white_check_mark: Welcome messages are enabled' : ':x: Welcome messages are disabled' },
-			{ name: 'Channel:', value: settings?.channelId ? channelMention(settings.channelId) : 'No channel set' },
+			{
+				name: 'Enabled:',
+				value: settings?.enabled ? ':white_check_mark: Welcome messages are enabled' : ':x: Welcome messages are disabled'
+			},
+			{
+				name: 'Channel:',
+				value: settings?.channelId ? channelMention(settings.channelId) : 'No channel set'
+			},
 			{ name: 'Message:', value: settings?.message ?? 'No message set', inline: true },
 			{ name: 'Title:', value: settings?.title ?? 'No title set', inline: true },
 			{ name: 'Description:', value: settings?.description || 'No description set', inline: true },
-			{ name: 'Color:', value: settings?.color ? `\`${settings.color}\` (see this embed's color)` : 'No color set', inline: true },
+			{
+				name: 'Color:',
+				value: settings?.color ? `\`${settings.color}\` (see this embed's color)` : 'No color set',
+				inline: true
+			},
 			{ name: 'Image:', value: settings?.image ? 'See image below' : 'No image set', inline: true },
 			{
 				name: 'Variables:',
@@ -315,7 +323,11 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 				const sendString = `Send messages: ${this.formatField(sendMessage)}`;
 				const embedString = `Embed links: ${this.formatField(embedLinks)}`;
 
-				fields.push({ name: 'Channel permissions', value: `${viewString}\n${sendString}\n${embedString}`, inline: true });
+				fields.push({
+					name: 'Channel permissions',
+					value: `${viewString}\n${sendString}\n${embedString}`,
+					inline: true
+				});
 			}
 		}
 

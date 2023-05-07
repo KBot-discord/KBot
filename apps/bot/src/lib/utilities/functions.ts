@@ -1,5 +1,10 @@
 import { Duration, Time } from '@sapphire/duration';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function isFunction(object: any): object is Function {
+	return typeof object === 'function';
+}
+
 export function flattenObject(object: any) {
 	const result: any = {};
 

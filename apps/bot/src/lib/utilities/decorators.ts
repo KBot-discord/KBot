@@ -39,7 +39,9 @@ export function interactionRatelimit(time: number, limit: number) {
 
 			if (bucket.limited) {
 				await interaction.errorReply(
-					`You are using that too fast. Try again in ${humanizeDuration(bucket.remainingTime, { maxDecimalPoints: 0 })}`,
+					`You are using that too fast. Try again in ${humanizeDuration(bucket.remainingTime, {
+						maxDecimalPoints: 0
+					})}`,
 					true
 				);
 				return Option.none;
