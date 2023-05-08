@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   build-and-deploy:
+    name: Build and deploy
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -22,6 +23,7 @@ jobs:
     environment:
       name: Documentation
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3

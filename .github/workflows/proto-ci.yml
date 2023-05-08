@@ -7,8 +7,10 @@ on:
       - "!**/README.md"
 
 jobs:
-  build:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3

@@ -9,9 +9,10 @@ permissions:
 
 jobs:
   label:
+    name: Label
     runs-on: ubuntu-latest
     steps:
-      - name: Label
+      - name: Label pull request
         uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
