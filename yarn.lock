@@ -1064,6 +1064,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/eslint-config@workspace:packages/eslint-config"
   dependencies:
+    "@kbotdev/prettier-config": "workspace:^"
     "@typescript-eslint/eslint-plugin": ^5.59.2
     "@typescript-eslint/parser": ^5.59.2
     eslint: ^8.40.0
@@ -3156,12 +3157,6 @@ __metadata:
   checksum: c3243e41974445691c63f8b405df1d5a24049dc33d324fe448dc572e561a7b772ae982692900b1a5960901cc4fc7def25a629b9c69a4208ee89d12ab3332617a
   languageName: node
   linkType: hard
-
-"client-063457@workspace:packages/database/prisma/client":
-  version: 0.0.0-use.local
-  resolution: "client-063457@workspace:packages/database/prisma/client"
-  languageName: unknown
-  linkType: soft
 
 "cliui@npm:^8.0.1":
   version: 8.0.1

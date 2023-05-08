@@ -7,12 +7,12 @@
 			"cache": true
 		},
 		"lint": {
-			"dependsOn": ["build"],
+			"dependsOn": ["^build", "build"],
 			"outputs": [],
 			"cache": true
 		},
 		"format": {
-			"dependsOn": ["build"],
+			"dependsOn": ["^build", "build"],
 			"outputs": [],
 			"cache": true
 		},
