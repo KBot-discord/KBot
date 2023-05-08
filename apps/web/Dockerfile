@@ -1,5 +1,5 @@
 ## Builder ##
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 
 ## Canvas dependencies
 RUN apk add --no-cache libc6-compat
@@ -11,13 +11,13 @@ COPY . .
 RUN turbo prune --scope=@kbotdev/web --docker
 
 ## Dependencies ##
-FROM node:18-alpine AS deps
+FROM node:20-alpine AS deps
 
 RUN apk add --no-cache libc6-compat && \
 	apk add -q --update openssl && \
 	apk add -q --no-cache libc6-compat curl && \
 	curl -sSL \
-      "https://github.com/bufbuild/buf/releases/download/v1.15.1/buf-$(uname -s)-$(uname -m)" \
+      "https://github.com/bufbuild/buf/releases/download/v1.18.0/buf-$(uname -s)-$(uname -m)" \
       -o "/usr/local/bin/buf" && \
     chmod +x "/usr/local/bin/buf" && \
 	apk update
@@ -37,7 +37,7 @@ COPY --from=builder /temp/out/full/ .
 RUN yarn turbo build --filter=@kbotdev/web
 
 ## App ##
-FROM node:18-alpine as app
+FROM node:20-alpine as app
 
 ENV NODE_ENV production
 

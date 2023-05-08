@@ -1,6 +1,6 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
@@ -10,7 +10,7 @@ import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { APIEmbedField } from 'discord-api-types/v10';
-import type { ModerationSettings } from '#prisma';
+import type { ModerationSettings } from '@kbotdev/database';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommandOptions>({
@@ -22,10 +22,22 @@ import type { ModerationModule } from '#modules/ModerationModule';
 			.setName('Moderation')
 			.setDescription('Edit the settings of the moderation module.')
 			.setSubcommands([
-				{ label: '/moderation toggle <value>', description: 'Enable or disable the moderation module' }, //
-				{ label: '/moderation set <report_channel>', description: 'Set new moderation module settings' },
-				{ label: '/moderation unset <report_channel>', description: 'Reset moderation module settings' },
-				{ label: '/moderation permissions', description: "Audit the bot's permissions for moderation features" },
+				{
+					label: '/moderation toggle <value>',
+					description: 'Enable or disable the moderation module'
+				}, //
+				{
+					label: '/moderation set <report_channel>',
+					description: 'Set new moderation module settings'
+				},
+				{
+					label: '/moderation unset <report_channel>',
+					description: 'Reset moderation module settings'
+				},
+				{
+					label: '/moderation permissions',
+					description: "Audit the bot's permissions for moderation features"
+				},
 				{ label: '/moderation settings', description: 'Show the current settings' }
 			]);
 	}
@@ -94,7 +106,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -129,10 +141,11 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: 'Moderation module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(
-						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
-					)
+					.setAuthor({
+						name: 'Moderation module settings',
+						iconURL: getGuildIcon(interaction.guild)
+					})
+					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
 			]
 		});
 	}
@@ -177,7 +190,11 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					const reportSendString = `Send messages: ${this.formatField(reportSendMessage)}`;
 					const reportEmbedString = `Embed links: ${this.formatField(reportEmbedLinks)}`;
 
-					fields.push({ name: 'Report channel', value: `${reportViewString}\n${reportSendString}\n${reportEmbedString}`, inline: true });
+					fields.push({
+						name: 'Report channel',
+						value: `${reportViewString}\n${reportSendString}\n${reportEmbedString}`,
+						inline: true
+					});
 				}
 			}
 		}
@@ -189,10 +206,21 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setAuthor({ name: 'Moderation module permissions', iconURL: getGuildIcon(interaction.guild) })
+					.setAuthor({
+						name: 'Moderation module permissions',
+						iconURL: getGuildIcon(interaction.guild)
+					})
 					.addFields([
-						{ name: 'Minage', value: `Kick Members: ${this.formatField(kickPermissions)}`, inline: true },
-						{ name: 'Anti-hoist', value: `Manage Nicknames: ${this.formatField(antiHoistPermissions)}`, inline: true },
+						{
+							name: 'Minage',
+							value: `Kick Members: ${this.formatField(kickPermissions)}`,
+							inline: true
+						},
+						{
+							name: 'Anti-hoist',
+							value: `Manage Nicknames: ${this.formatField(antiHoistPermissions)}`,
+							inline: true
+						},
 						...fields
 					])
 			]
@@ -214,7 +242,10 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			.setColor(EmbedColors.Default)
 			.setAuthor({ name: 'Moderation module settings', iconURL: getGuildIcon(interaction.guild) })
 			.addFields([
-				{ name: 'Module enabled', value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}` },
+				{
+					name: 'Module enabled',
+					value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`
+				},
 				{
 					name: 'Anti-Hoist',
 					value: `${settings?.antiHoistEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`,

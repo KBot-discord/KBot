@@ -1,5 +1,5 @@
 import { minutesFromNow } from '#utils/functions';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import type { Key } from '#types/Generic';

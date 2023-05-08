@@ -1,4 +1,4 @@
-import type { HolodexChannel } from '#prisma';
+import type { HolodexChannel } from '@kbotdev/database';
 
 export interface HolodexChannelId {
 	channelId: HolodexChannel['youtubeId'];

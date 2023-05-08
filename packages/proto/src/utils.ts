@@ -1,5 +1,6 @@
+import { OptionalAction, RequiredAction } from './gen/types/crud/v1/crud_pb';
+import type { OptionalInt32, OptionalString, RequiredBool, RequiredString } from './gen/types/crud/v1/crud_pb';
 import type { PartialMessage } from '@bufbuild/protobuf';
-import { OptionalAction, OptionalInt32, OptionalString, RequiredAction, RequiredBool, RequiredString } from './gen/types/crud/v1/crud_pb';
 
 export function fromRequired(value: RequiredBool | undefined): boolean | undefined;
 export function fromRequired(value: RequiredString | undefined): string | undefined;

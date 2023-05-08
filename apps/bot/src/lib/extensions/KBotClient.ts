@@ -1,7 +1,6 @@
 import { transformLoginData } from '#utils/Discord';
 import { container, LogLevel, SapphireClient } from '@sapphire/framework';
 import { ActivityType, IntentsBitField, OAuth2Scopes } from 'discord.js';
-import { ScheduledTaskRedisStrategy } from '@sapphire/plugin-scheduled-tasks/register-redis';
 
 export class KBotClient extends SapphireClient {
 	public constructor() {
@@ -38,16 +37,14 @@ export class KBotClient extends SapphireClient {
 				}
 			},
 			tasks: {
-				strategy: new ScheduledTaskRedisStrategy({
-					bull: {
-						connection: {
-							host: config.redis.host,
-							port: config.redis.port,
-							password: config.redis.password
-						},
-						defaultJobOptions: { removeOnComplete: 0, removeOnFail: 0 }
-					}
-				})
+				bull: {
+					connection: {
+						host: config.redis.host,
+						port: config.redis.port,
+						password: config.redis.password
+					},
+					defaultJobOptions: { removeOnComplete: 0, removeOnFail: 0 }
+				}
 			},
 			modules: {
 				enabled: true,

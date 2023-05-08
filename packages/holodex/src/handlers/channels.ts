@@ -26,13 +26,7 @@ export class ChannelHandler {
 		);
 	}
 
-	public async getList({
-		limit = 100,
-		offset = 0
-	}: {
-		limit?: number;
-		offset?: number;
-	}): Promise<HolodexChannel[]> {
+	public async getList({ limit = 100, offset = 0 }: { limit?: number; offset?: number }): Promise<HolodexChannel[]> {
 		const url = new URL(`${BASE_URL}/channels`);
 		url.searchParams.append('type', 'vtuber');
 		url.searchParams.append('limit', `${limit}`);

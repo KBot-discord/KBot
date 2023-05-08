@@ -1,7 +1,5 @@
 ## Builds ##
 dist
-prisma/generated
-prisma/seed
 src/rpc/gen
 
 ## Dependencies ##

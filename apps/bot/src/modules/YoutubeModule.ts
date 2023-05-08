@@ -1,15 +1,16 @@
 import { BlankSpace, EmbedColors } from '#utils/constants';
-import { YoutubeSettingsService, YoutubeSubscriptionService } from '#services/youtube';
+import { YoutubeSettingsService, YoutubeSubscriptionService } from '#services';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
-import type { YoutubeSettings } from '#prisma';
+import type { YoutubeSettings } from '@kbotdev/database';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { YoutubeSubscriptionWithChannel, UpsertYoutubeSettingsData } from '#types/database';
 
 @ApplyOptions<Module.Options>({
+	name: 'YoutubeModule',
 	fullName: 'Youtube Module'
 })
 export class YoutubeModule extends Module {
@@ -25,7 +26,7 @@ export class YoutubeModule extends Module {
 		this.container.youtube = this;
 	}
 
-	public async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
+	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
 		const settings = await this.settings.get({ guildId: guild.id });
 		return isNullish(settings) ? false : settings.enabled;
@@ -54,11 +55,23 @@ export class YoutubeModule extends Module {
 			.setURL(`https://www.youtube.com/channel/${channel.youtubeId}`)
 			.setFields([
 				{ name: 'Message', value: message ?? 'No message set.' },
-				{ name: 'Channel', value: discordChannelId ? channelMention(discordChannelId) : 'No channel set.', inline: true },
+				{
+					name: 'Channel',
+					value: discordChannelId ? channelMention(discordChannelId) : 'No channel set.',
+					inline: true
+				},
 				{ name: 'Role', value: roleId ? roleMention(roleId) : 'No role set.', inline: true },
 				{ name: BlankSpace, value: BlankSpace },
-				{ name: 'Member Channel', value: memberDiscordChannelId ? channelMention(memberDiscordChannelId) : 'No channel set.', inline: true },
-				{ name: 'Member Role', value: memberRoleId ? roleMention(memberRoleId) : 'No role set.', inline: true }
+				{
+					name: 'Member Channel',
+					value: memberDiscordChannelId ? channelMention(memberDiscordChannelId) : 'No channel set.',
+					inline: true
+				},
+				{
+					name: 'Member Role',
+					value: memberRoleId ? roleMention(memberRoleId) : 'No role set.',
+					inline: true
+				}
 			])
 			.setThumbnail(channel.image);
 	}

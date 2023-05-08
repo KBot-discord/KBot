@@ -12,7 +12,6 @@ message KaraokeScheduledEvent {
   google.protobuf.StringValue role_id = 4;
 }
 
-// GetKaraokeScheduled
 message GetKaraokeScheduledEventsRequest {
   string guild_id = 1;
 }
@@ -21,7 +20,6 @@ message GetKaraokeScheduledEventsResponse {
   repeated KaraokeScheduledEvent events = 1;
 }
 
-// UpdateKaraokeScheduled
 message UpdateKaraokeScheduledEventRequest {
   string guild_id = 1;
   string voice_channel_id = 2;
@@ -34,7 +32,6 @@ message UpdateKaraokeScheduledEventResponse {
   KaraokeScheduledEvent event = 1;
 }
 
-// DeleteKaraokeScheduled
 message DeleteKaraokeScheduledEventRequest {
   string guild_id = 1;
   string voice_channel_id = 2;
@@ -44,9 +41,8 @@ message DeleteKaraokeScheduledEventResponse {
   KaraokeScheduledEvent event = 1;
 }
 
-// KaraokeEventService
 service KaraokeEventService {
-  rpc GetKaraokeScheduledEvents (GetKaraokeScheduledEventsRequest) returns (GetKaraokeScheduledEventsResponse);
-  rpc UpdateKaraokeScheduledEvent (UpdateKaraokeScheduledEventRequest) returns (UpdateKaraokeScheduledEventResponse);
-  rpc DeleteKaraokeScheduledEvent (DeleteKaraokeScheduledEventRequest) returns (DeleteKaraokeScheduledEventResponse);
+  rpc GetKaraokeScheduledEvents(GetKaraokeScheduledEventsRequest) returns (GetKaraokeScheduledEventsResponse);
+  rpc UpdateKaraokeScheduledEvent(UpdateKaraokeScheduledEventRequest) returns (UpdateKaraokeScheduledEventResponse);
+  rpc DeleteKaraokeScheduledEvent(DeleteKaraokeScheduledEventRequest) returns (DeleteKaraokeScheduledEventResponse);
 }

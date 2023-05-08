@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+// RPCs for the bot's core services
 package bot.core.v1;
 
 enum FeatureFlags {
@@ -8,7 +9,6 @@ enum FeatureFlags {
   FEATURE_FLAGS_BETA = 2;
 }
 
-// GetGuildFeatureFlags
 message GetGuildFeatureFlagsRequest {
   string guild_id = 1;
 }
@@ -17,7 +17,6 @@ message GetGuildFeatureFlagsResponse {
   repeated FeatureFlags flags = 3;
 }
 
-// CoreSettingsService
 service CoreSettingsService {
-  rpc GetGuildFeatureFlags (GetGuildFeatureFlagsRequest) returns (GetGuildFeatureFlagsResponse);
+  rpc GetGuildFeatureFlags(GetGuildFeatureFlagsRequest) returns (GetGuildFeatureFlagsResponse);
 }

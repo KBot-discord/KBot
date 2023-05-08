@@ -43,7 +43,9 @@ export class ModalHandler extends InteractionHandler {
 						.setTitle(resource.name!)
 						.setThumbnail(resource.url)
 						.addFields(fields)
-						.setFooter({ text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}` })
+						.setFooter({
+							text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
+						})
 				],
 				components: [
 					new ActionRowBuilder<ButtonBuilder>().addComponents([
@@ -52,7 +54,12 @@ export class ModalHandler extends InteractionHandler {
 							.setLabel('Edit info')
 							.setStyle(ButtonStyle.Secondary),
 						new ButtonBuilder()
-							.setCustomId(buildCustomId<Credit>(CreditCustomIds.ResourceRefresh, { ri: resource.id!, t: type }))
+							.setCustomId(
+								buildCustomId<Credit>(CreditCustomIds.ResourceRefresh, {
+									ri: resource.id!,
+									t: type
+								})
+							)
 							.setLabel('Refresh name')
 							.setStyle(ButtonStyle.Secondary)
 					])

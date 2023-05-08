@@ -1,6 +1,6 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
@@ -8,7 +8,7 @@ import { channelMention } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { UtilitySettings } from '#prisma';
+import type { UtilitySettings } from '@kbotdev/database';
 import type { UtilityModule } from '#modules/UtilityModule';
 
 @ApplyOptions<KBotCommandOptions>({
@@ -61,7 +61,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -94,9 +94,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Utility module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(
-						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
-					)
+					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
 			]
 		});
 	}
@@ -134,7 +132,10 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Utility module settings', iconURL: getGuildIcon(interaction.guild) })
 					.addFields([
-						{ name: 'Module enabled', value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}` },
+						{
+							name: 'Module enabled',
+							value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`
+						},
 						{
 							name: 'Discord status channel',
 							value: `${settings?.incidentChannelId ? channelMention(settings.incidentChannelId) : 'No channel set'}`,

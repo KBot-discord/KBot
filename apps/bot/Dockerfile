@@ -1,27 +1,27 @@
 ## Builder ##
-FROM node:18-alpine as builder
-
-## Canvas dependencies
-RUN apk add --no-cache libc6-compat
+FROM node:20-alpine as builder
 
 WORKDIR /temp
+
+RUN apk add --no-cache libc6-compat
 
 RUN yarn global add turbo
 COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
 ## Dependencies ##
-FROM node:18-alpine AS deps
+FROM node:20-alpine AS deps
 
-RUN apk add -q --update openssl && \
-	apk add -q --no-cache libc6-compat cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make curl && \
+ENV NODE_ENV=production
+
+WORKDIR /temp
+
+RUN apk add -q --no-cache openssl libc6-compat cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make curl && \
 	curl -sSL \
-      "https://github.com/bufbuild/buf/releases/download/v1.15.1/buf-$(uname -s)-$(uname -m)" \
+      "https://github.com/bufbuild/buf/releases/download/v1.18.0/buf-$(uname -s)-$(uname -m)" \
       -o "/usr/local/bin/buf" && \
     chmod +x "/usr/local/bin/buf" && \
 	apk update
-
-WORKDIR /temp
 
 COPY .yarn .yarn/
 COPY protos protos/
@@ -37,14 +37,16 @@ RUN yarn db:generate && \
 	yarn turbo build --filter=@kbotdev/bot
 
 ## App ##
-FROM node:18-alpine as app
+FROM node:20-alpine as app
+
+WORKDIR /app
 
 ## Canvas dependencies
 RUN apk add -q --update cairo jpeg pango giflib && \
-    yarn global add prisma
+    yarn global add prisma && \
+	addgroup --system --gid 1001 kbot && \
+	adduser --system --uid 1001 kbot
 
-RUN addgroup --system --gid 1001 kbot
-RUN adduser --system --uid 1001 kbot
 USER kbot
 
 COPY --from=deps /temp/node_modules node_modules/

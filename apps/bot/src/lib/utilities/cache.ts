@@ -10,15 +10,9 @@ export const karaokeEventActiveCacheKey = (guildId: string, eventId: string) => 
 
 export const moderationCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:moderation` as Key;
 
-export const premiumCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:premium` as Key;
-
-export const twitchCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:twitch` as Key;
-
 export const utilityCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:utility` as Key;
 export const pollCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:utility:polls` as Key;
 
 export const welcomeCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:welcome` as Key;
 
 export const youtubeCacheKey = (guildId: string) => `${baseCacheKey(guildId)}:youtube` as Key;
-
-export const patreonTokenCacheKey = 'kbot:premium:patreon:token' as Key;

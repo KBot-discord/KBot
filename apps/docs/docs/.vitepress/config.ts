@@ -1,201 +1,195 @@
-import { defineConfig } from "vitepress";
-import { createWriteStream } from "node:fs";
-import { resolve } from "node:path";
-import { SitemapStream } from "sitemap";
+import { defineConfig } from 'vitepress';
+import { createWriteStream } from 'node:fs';
+import { resolve } from 'node:path';
+import { SitemapStream } from 'sitemap';
 
 const links: { url: string; lastmod: number | undefined }[] = [];
 
 export default defineConfig({
-	base: "/",
-	lang: "en-US",
-	title: "KBot Documentation",
-	description: "Documentation for KBot",
+	base: '/',
+	lang: 'en-US',
+	title: 'KBot Documentation',
+	description: 'Documentation for KBot',
 	lastUpdated: true,
 	cleanUrls: true,
 
 	themeConfig: {
-		logo: "/assets/logo.png",
+		logo: '/assets/logo.png',
 
 		search: {
-			provider: "local",
+			provider: 'local'
 		},
 
 		editLink: {
-			pattern:
-				"https://github.com/kbot-discord/KBot/edit/main/apps/docs/docs/:path",
-			text: "Suggest changes to this page",
+			pattern: 'https://github.com/kbot-discord/KBot/edit/main/apps/docs/docs/:path',
+			text: 'Suggest changes to this page'
 		},
 
 		nav: [
-			{ text: "Dashboard", link: "https://kbot.ca" },
-			{ text: "Invite", link: "https://kbot.ca/invite" },
-			{ text: "Support", link: "https://kbot.ca/discord" },
+			{ text: 'Dashboard', link: 'https://kbot.ca' },
+			{ text: 'Invite', link: 'https://kbot.ca/invite' },
+			{ text: 'Support', link: 'https://kbot.ca/discord' },
 			{
-				text: "Source Code",
-				link: "https://github.com/kbot-discord/kbot",
+				text: 'Source Code',
+				link: 'https://github.com/kbot-discord/kbot'
 			},
-			{ text: "Status", link: "https://status.kbot.ca/" },
+			{ text: 'Status', link: 'https://status.kbot.ca/' }
 		],
 
 		sidebar: [
 			{
-				text: "Home",
-				link: "/",
+				text: 'Home',
+				link: '/'
 			},
 			{
-				text: "Commands",
-				link: "/commands",
+				text: 'Commands',
+				link: '/commands'
 			},
 			{
-				text: "FAQ",
-				link: "/faq",
+				text: 'FAQ',
+				link: '/faq'
 			},
 			{
-				text: "Configuration",
+				text: 'Configuration',
 				items: [
 					{
-						text: "Getting Started",
-						link: "/configuration/getting-started",
+						text: 'Getting Started',
+						link: '/configuration/getting-started'
 					},
 					{
-						text: "Permissions",
-						link: "/configuration/permissions",
-					},
-				],
+						text: 'Permissions',
+						link: '/configuration/permissions'
+					}
+				]
 			},
 			{
-				text: "Modules",
+				text: 'Modules',
 				items: [
 					{
-						text: "Events",
-						items: [{ text: "Karaoke", link: "/events/karaoke" }],
+						text: 'Events',
+						items: [{ text: 'Karaoke', link: '/events/karaoke' }]
 					},
 					{
-						text: "Moderation",
+						text: 'Moderation',
 						items: [
 							{
-								text: "Anti-Hoist",
-								link: "/moderation/anti-hoist",
+								text: 'Anti-Hoist',
+								link: '/moderation/anti-hoist'
 							},
-							{ text: "Minage", link: "/moderation/minage" },
-							{ text: "Report", link: "/moderation/report" },
-						],
+							{ text: 'Minage', link: '/moderation/minage' },
+							{ text: 'Report', link: '/moderation/report' }
+						]
 					},
 					{
-						text: "Notifications",
-						items: [
-							{ text: "YouTube", link: "/notifications/youtube" },
-						],
+						text: 'Notifications',
+						items: [{ text: 'YouTube', link: '/notifications/youtube' }]
 					},
 					{
-						text: "Utility",
+						text: 'Utility',
 						items: [
 							{
-								text: "Discord Status",
-								link: "/utility/discord-status",
+								text: 'Discord Status',
+								link: '/utility/discord-status'
 							},
 							{
-								text: "Credits",
-								link: "/utility/credits",
+								text: 'Credits',
+								link: '/utility/credits'
 							},
 							{
-								text: "Polls",
-								link: "/utility/polls",
-							},
-						],
+								text: 'Polls',
+								link: '/utility/polls'
+							}
+						]
 					},
 					{
-						text: "Welcome",
+						text: 'Welcome',
 						items: [
 							{
-								text: "Overview",
-								link: "/welcome/overview",
-							},
-						],
-					},
-				],
+								text: 'Overview',
+								link: '/welcome/overview'
+							}
+						]
+					}
+				]
 			},
 			{
-				text: "Terms of Use",
-				link: "https://kbot.ca/terms",
+				text: 'Terms of Use',
+				link: 'https://kbot.ca/terms'
 			},
 			{
-				text: "Privacy Policy",
-				link: "https://kbot.ca/privacy",
-			},
-		],
+				text: 'Privacy Policy',
+				link: 'https://kbot.ca/privacy'
+			}
+		]
 	},
 
 	vite: {
-		plugins: [],
+		plugins: []
 	},
 
 	head: [
-		["meta", { charset: "utf-8" }],
+		['meta', { charset: 'utf-8' }],
 		[
-			"meta",
+			'meta',
 			{
-				name: "viewport",
-				content: "width=device-width, initial-scale=1",
-			},
+				name: 'viewport',
+				content: 'width=device-width, initial-scale=1'
+			}
 		],
 		[
-			"link",
+			'link',
 			{
-				rel: "apple-touch-icon",
-				sizes: "180x180",
-				href: "/apple-touch-icon.png",
-			},
+				rel: 'apple-touch-icon',
+				sizes: '180x180',
+				href: '/apple-touch-icon.png'
+			}
 		],
 		[
-			"link",
+			'link',
 			{
-				rel: "icon",
-				type: "image/png",
-				sizes: "32x32",
-				href: "/favicon-32x32.png",
-			},
+				rel: 'icon',
+				type: 'image/png',
+				sizes: '32x32',
+				href: '/favicon-32x32.png'
+			}
 		],
 		[
-			"link",
+			'link',
 			{
-				rel: "icon",
-				type: "image/png",
-				sizes: "16x16",
-				href: "/favicon-16x16.png",
-			},
+				rel: 'icon',
+				type: 'image/png',
+				sizes: '16x16',
+				href: '/favicon-16x16.png'
+			}
 		],
-		["link", { rel: "manifest", href: "/site.webmanifest" }],
-		["link", { rel: "shortcut icon", href: "/favicon.ico" }],
+		['link', { rel: 'manifest', href: '/site.webmanifest' }],
+		['link', { rel: 'shortcut icon', href: '/favicon.ico' }],
 
 		// OpenGraph
-		["meta", { property: "og:url", content: "https://docs.kbot.ca/" }],
-		["meta", { property: "og:type", content: "website" }],
-		["meta", { property: "og:title", content: "KBot Documentation" }],
+		['meta', { property: 'og:url', content: 'https://docs.kbot.ca/' }],
+		['meta', { property: 'og:type', content: 'website' }],
+		['meta', { property: 'og:title', content: 'KBot Documentation' }],
+		['meta', { property: 'og:description', content: 'Documentation for KBot' }],
 		[
-			"meta",
-			{ property: "og:description", content: "Documentation for KBot" },
-		],
-		[
-			"meta",
+			'meta',
 			{
-				property: "theme-color",
-				"data-react-helmet": "true",
-				content: "#006BFC",
-			},
+				property: 'theme-color',
+				'data-react-helmet': 'true',
+				content: '#006BFC'
+			}
 		],
 
 		// Twitter
-		["meta", { property: "twitter:card", content: "summary" }],
-		["meta", { property: "twitter:url", content: "https://docs.kbot.ca/" }],
-		["meta", { property: "twitter:title", content: "KBot Documentation" }],
+		['meta', { property: 'twitter:card', content: 'summary' }],
+		['meta', { property: 'twitter:url', content: 'https://docs.kbot.ca/' }],
+		['meta', { property: 'twitter:title', content: 'KBot Documentation' }],
 		[
-			"meta",
+			'meta',
 			{
-				property: "twitter:description",
-				content: "Documentation for KBot",
-			},
-		],
+				property: 'twitter:description',
+				content: 'Documentation for KBot'
+			}
+		]
 	],
 
 	markdown: {},
@@ -203,19 +197,19 @@ export default defineConfig({
 	transformHtml: (_, id, { pageData }) => {
 		if (!/[\\/]404\.html$/.test(id))
 			links.push({
-				url: pageData.relativePath.replace(/((^|\/)index)?\.md$/, "$2"),
-				lastmod: pageData.lastUpdated,
+				url: pageData.relativePath.replace(/((^|\/)index)?\.md$/, '$2'),
+				lastmod: pageData.lastUpdated
 			});
 	},
 
 	buildEnd: async ({ outDir }) => {
 		const sitemap = new SitemapStream({
-			hostname: "https://docs.kbot.ca/",
+			hostname: 'https://docs.kbot.ca/'
 		});
-		const writeStream = createWriteStream(resolve(outDir, "sitemap.xml"));
+		const writeStream = createWriteStream(resolve(outDir, 'sitemap.xml'));
 		sitemap.pipe(writeStream);
 		links.forEach((link) => sitemap.write(link));
 		sitemap.end();
-		await new Promise((result) => writeStream.on("finish", result));
-	},
+		await new Promise((result) => writeStream.on('finish', result));
+	}
 });

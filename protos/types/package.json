@@ -1,0 +1,8 @@
+{
+	"name": "@kbotdev/protobuf-types",
+	"private": true,
+	"scripts": {
+		"lint": "buf lint .",
+		"format": "buf format . -w"
+	}
+}

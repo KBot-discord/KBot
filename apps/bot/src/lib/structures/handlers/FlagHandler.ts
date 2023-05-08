@@ -4,7 +4,7 @@ import { isGuildBasedChannel } from '@sapphire/discord.js-utilities';
 import { container } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
 import type { ButtonInteraction, StringSelectMenuInteraction, User, GuildTextBasedChannel, Guild, ChatInputCommandInteraction } from 'discord.js';
-import type { FeatureFlags } from '#prisma';
+import type { FeatureFlags } from '@kbotdev/database';
 
 export class FlagHandler {
 	private readonly response: ChatInputCommandInteraction;

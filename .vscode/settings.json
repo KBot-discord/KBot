@@ -7,5 +7,9 @@
 	},
 	"[typescript]": {
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
-	}
+	},
+	"[proto3]": {
+		"editor.defaultFormatter": "bufbuild.vscode-buf"
+	},
+	"editor.formatOnSave": true
 }

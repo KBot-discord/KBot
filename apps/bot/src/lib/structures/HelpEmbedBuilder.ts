@@ -67,6 +67,8 @@ export class HelpEmbedBuilder {
 		return this.embed //
 			.setColor(EmbedColors.Default)
 			.setFields(fields)
-			.setFooter({ text: '<option> - The is option required • [option] - The option is not required' });
+			.setFooter({
+				text: '<option> - The is option required • [option] - The option is not required'
+			});
 	}
 }

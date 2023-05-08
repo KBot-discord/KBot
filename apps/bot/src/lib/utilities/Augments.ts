@@ -1,4 +1,4 @@
-import { EmbedColors } from './constants';
+import { EmbedColors } from '#utils/constants';
 import { CommandInteraction, EmbedBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 
 type InteractionUnion = CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction;
@@ -6,7 +6,11 @@ type InteractionUnion = CommandInteraction | MessageComponentInteraction | Modal
 function formatResponse(interaction: InteractionUnion, color: EmbedColors, text: string, tryEphemeral?: boolean) {
 	const embed = new EmbedBuilder().setColor(color).setDescription(text);
 	const ephemeral = interaction.ephemeral ?? tryEphemeral;
-	return { embeds: [embed], allowedMentions: { users: [interaction.user.id], roles: [] }, ephemeral };
+	return {
+		embeds: [embed],
+		allowedMentions: { users: [interaction.user.id], roles: [] },
+		ephemeral
+	};
 }
 
 function _safeReply(interaction: InteractionUnion, color: EmbedColors, text: string, tryEphemeral?: boolean) {

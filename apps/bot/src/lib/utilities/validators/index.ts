@@ -1,4 +1,4 @@
-import { ChannelValidator } from './channel';
+import { ChannelValidator } from '#utils/validators/channel';
 import { ClientValidator } from '#utils/validators/client';
 
 export class Validator {

@@ -1,10 +1,10 @@
-import { container, Listener } from '@sapphire/framework';
+import { container, Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { DocumentCommand } from '#types/Meili';
 import type { KBotClient } from '#extensions/KBotClient';
 
 @ApplyOptions<Listener.Options>({
-	name: 'ready',
+	name: Events.ClientReady,
 	once: true
 })
 export class ReadyListener extends Listener {

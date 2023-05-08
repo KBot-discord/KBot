@@ -38,6 +38,10 @@ export const enum BrandColors {
 	Youtube = '#FF0000'
 }
 
+export const enum MimeTypes {
+	ApplicationJson = 'application/json'
+}
+
 export const CacheValues = {
 	Exists: 'EXISTS',
 	DoesNotExist: 'DOES_NOT_EXIST',
@@ -67,11 +71,10 @@ export const CustomEmotes = {
 	BlueSquare: '<:blue:1089252072874053702>'
 };
 
-export const guildEmoteSlots = [
-	50, // None
-	100, // Tier 1
-	150, // Tier 2
-	250 // Tier 3
-];
+export const GuildEmoteSlots = [50, 100, 150, 250];
+
+export const GuildStickerSlots = [5, 15, 30, 60];
+
+export const GuildSoundboardSlots = [8, 24, 36, 48];
 
 export const FooterIcon = 'https://cdn.discordapp.com/avatars/918237593789947925/85a70e5d476e32cfdcccbe51f2279e17.png';

@@ -3,7 +3,7 @@ import { container } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import type { GuildMember, GuildTextBasedChannel, HexColorString } from 'discord.js';
-import type { WelcomeSettings } from '#prisma';
+import type { WelcomeSettings } from '@kbotdev/database';
 
 export class WelcomeHandler {
 	public constructor(private readonly member: GuildMember) {}

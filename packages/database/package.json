@@ -1,0 +1,24 @@
+{
+	"name": "@kbotdev/database",
+	"version": "0.0.0",
+	"license": "AGPL-3.0-or-later",
+	"private": true,
+	"main": "./index.ts",
+	"types": "./index.ts",
+	"scripts": {
+		"lint": "eslint --fix --ext ts prisma",
+		"format": "prettier --write --loglevel=warn \"prisma/**/*.{js,ts,json}\"",
+		"db:generate": "ts-node ./prisma/schemix.ts && prisma generate",
+		"db:push": "prisma db push"
+	},
+	"dependencies": {
+		"@prisma/client": "^4.13.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.1.0",
+		"prisma": "^4.13.0",
+		"schemix": "^1.12.0",
+		"ts-node": "^10.9.1",
+		"typescript": "^5.0.4"
+	}
+}

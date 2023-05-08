@@ -1,6 +1,6 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
@@ -59,7 +59,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -86,9 +86,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Events module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(
-						`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`
-					)
+					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
 			]
 		});
 	}
@@ -101,7 +99,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Events module settings', iconURL: getGuildIcon(interaction.guild) })
-					.addFields([{ name: 'Module enabled', value: `${settings?.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX}` }])
+					.addFields([
+						{
+							name: 'Module enabled',
+							value: `${settings?.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX}`
+						}
+					])
 			]
 		});
 	}

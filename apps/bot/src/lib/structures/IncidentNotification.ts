@@ -1,7 +1,7 @@
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import type { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
-import type { IncidentMessage } from '#prisma';
+import type { IncidentMessage } from '@kbotdev/database';
 
 export class IncidentNotification {
 	public channel: GuildTextBasedChannel | null = null;

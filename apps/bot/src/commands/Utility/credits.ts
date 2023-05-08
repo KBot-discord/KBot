@@ -9,11 +9,11 @@ import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import Fuse from 'fuse.js';
 import { isNullish } from '@sapphire/utilities';
+import fuzzysort from 'fuzzysort';
 import type { GuildTextBasedChannel, GuildEmoji, Sticker, ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { UtilitySettings } from '#prisma';
+import type { UtilitySettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'UtilityModule',
@@ -39,7 +39,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
@@ -49,7 +49,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				builder //
 					.setName('credits')
 					.setDescription(this.description)
-					.setDefaultMemberPermissions(PermissionFlagsBits.ManageEmojisAndStickers)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions)
 					.setDMPermission(false)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -121,25 +121,25 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			cachedData = interaction.guild.stickers.cache.toJSON();
 		}
 
-		const fuzzy = new Fuse(
+		const result = fuzzysort.go(
+			search,
 			cachedData.filter(({ name }) => !isNullish(name)),
 			{
-				keys: [
-					{ name: 'name', weight: 0.8 },
-					{ name: 'id', weight: 1 }
-				]
+				limit: 25,
+				all: true,
+				keys: ['name', 'id']
 			}
 		);
 
-		const options: ApplicationCommandOptionChoiceData[] =
-			search === ''
-				? cachedData.map(({ id, name }) => ({ name: `${name!} (ID: ${id})`, value: id }))
-				: fuzzy.search(search).map(({ item }) => ({ name: `${item.name!} (ID: ${item.id})`, value: item.id }));
+		const options: ApplicationCommandOptionChoiceData[] = result.map(({ obj }) => ({
+			name: `${obj.name!} (ID: ${obj.id})`,
+			value: obj.id
+		}));
 
 		return interaction.respond(options.slice(0, 24));
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		const subcommand = interaction.options.getSubcommand(true);
 
 		switch (subcommand) {

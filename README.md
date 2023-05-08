@@ -16,29 +16,29 @@
 
 ## Project
 
--   `/apps`
-    -   `/apps/bot` - Discord bot
-    -   `/apps/docs` - Documentation for the bot
-    -   `/apps/web` - A dashboard to edit bot settings
--   `/packages` - Shared packages
--   `/protos` - API protobuf files
+- `/apps`
+  - `/apps/bot` - Discord bot
+  - `/apps/docs` - Documentation for the bot
+  - `/apps/web` - Dashboard to edit bot settings
+- `/packages` - Shared packages
+- `/protos` - Protobuf files
 
 ## Links
 
--   [Bot invite](https://discord.com/api/oauth2/authorize?client_id=918237593789947925&permissions=1376425339926&scope=bot)
--   [Dashboard](https://kbot.ca/)
--   [Documentation](https://docs.kbot.ca/)
--   [Status page](https://status.kbot.ca/)
--   [Support server](https://kbot.ca/discord)
+- [Bot invite](https://discord.com/api/oauth2/authorize?client_id=918237593789947925&permissions=1376425339926&scope=bot)
+- [Dashboard](https://kbot.ca/)
+- [Documentation](https://docs.kbot.ca/)
+- [Status page](https://status.kbot.ca/)
+- [Support server](https://kbot.ca/discord)
 
 ## Development requirements
 
--   [Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/)
--   [Docker](https://www.docker.com/community-edition), [Docker Compose](https://docs.docker.com/compose/install/), and [Docker Buildx](https://docs.docker.com/build/install-buildx/)
--   [Buf](https://github.com/bufbuild/buf)
--   [Redis](https://redis.io/)
--   [PostgreSQL](https://www.postgresql.org/)
--   [Meilisearch](https://www.meilisearch.com/)
+- [Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/)
+- [Docker](https://www.docker.com/community-edition), [Docker Compose](https://docs.docker.com/compose/install/), and [Docker Buildx](https://docs.docker.com/build/install-buildx/)
+- [Buf](https://github.com/bufbuild/buf)
+- [Redis](https://redis.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Meilisearch](https://www.meilisearch.com/)
 
 ## Contributing
 

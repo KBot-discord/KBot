@@ -4,7 +4,7 @@ import { isNullish } from '@sapphire/utilities';
 import { ChannelType } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
-import type { KaraokeUser } from '#prisma';
+import type { KaraokeUser } from '@kbotdev/database';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.VoiceStateUpdate
@@ -54,7 +54,7 @@ export class VoiceListener extends Listener {
 
 		// Mute new joins
 		if (
-			newState.channel?.type === ChannelType.GuildVoice &&
+			newState.channel?.type === ChannelType.GuildVoice && //
 			!newState.serverMute &&
 			newState.channelId === eventId &&
 			isNullish(oldState.channel)
@@ -93,9 +93,7 @@ export class VoiceListener extends Listener {
 			}
 
 			// Remove user from queue
-			const user = queue.find(
-				({ id, partnerId, eventId }) => eventId === oldState.channelId && (id === oldState.id || partnerId === oldState.id)
-			);
+			const user = queue.find(({ id, partnerId, eventId }) => eventId === oldState.channelId && (id === oldState.id || partnerId === oldState.id));
 			if (isNullish(user)) return;
 
 			await events.karaoke.removeUserFromQueue({ eventId }, { id: user.id, partnerId: user.partnerId ?? undefined });

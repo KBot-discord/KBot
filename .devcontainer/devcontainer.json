@@ -3,10 +3,7 @@
 	"service": "workspace",
 	"workspaceFolder": "/KBot",
 	"remoteUser": "node",
-	"dockerComposeFile": [
-		"docker-compose.workspace.yml",
-		"../apps/bot/docker-compose.dev.yml"
-	],
+	"dockerComposeFile": ["docker-compose.workspace.yml", "../apps/bot/docker-compose.dev.yml"],
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -25,10 +22,11 @@
 		}
 	},
 	"features": {
-		"docker-in-docker": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest",
 			"moby": true,
-			"dockerDashComposeVersion": "v2"
+			"dockerDashComposeVersion": "v2",
+			"installDockerBuildx": true
 		}
 	}
 }

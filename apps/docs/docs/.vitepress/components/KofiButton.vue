@@ -35,7 +35,7 @@ a.kofi-button {
 	padding: 2px 11px;
 	border-radius: 3px;
 	color: #fff;
-	font-family: "Quicksand", Helvetica, Century Gothic, sans-serif !important;
+	font-family: 'Quicksand', Helvetica, Century Gothic, sans-serif !important;
 	font-weight: 700;
 	font-size: 14px;
 }

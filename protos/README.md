@@ -6,12 +6,12 @@
 
 ## Directories
 
--   `/protos/bot` - Discord bot RPCs
--   `/protos/types` - Shared RPC types
+- `/protos/bot` - Discord bot RPCs
+- `/protos/types` - Shared protobuf types
 
 ## Development requirements
 
--   [Buf](https://buf.build)
+- [Buf](https://buf.build)
 
 ## Developing
 
@@ -30,5 +30,5 @@ buf build protos
 To test breaking changes:
 
 ```bash
-buf breaking protos --against '.git#branch=main'
+buf breaking protos --against ".git#branch=main"
 ```

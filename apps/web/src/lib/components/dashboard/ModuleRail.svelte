@@ -6,15 +6,13 @@
 	import {
 		faList,
 		faHome,
-		faGear,
-		faMicrophone,
 		faGavel,
 		faScrewdriverWrench,
 		faDoorOpen,
 		faPenToSquare,
 		type IconDefinition
 	} from '@fortawesome/free-solid-svg-icons';
-	import { faTwitch, faYoutube } from '@fortawesome/free-brands-svg-icons';
+	import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 	import { writable, type Writable } from 'svelte/store';
 	import { page } from '$app/stores';
 	import { getCurrentGuildContext } from '$lib/stores/currentGuild';
@@ -24,13 +22,11 @@
 
 	const modules: { name: string; link: string; icon: IconDefinition }[] = [
 		{ name: 'Home', link: '', icon: faHome },
-		{ name: 'Core', link: '/core', icon: faGear },
-		{ name: 'Events', link: '/events', icon: faMicrophone },
 		{ name: 'Moderation', link: '/moderation', icon: faGavel },
-		{ name: 'Twitch', link: '/twitch', icon: faTwitch },
 		{ name: 'Utility', link: '/utility', icon: faScrewdriverWrench },
 		{ name: 'Welcome', link: '/welcome', icon: faDoorOpen },
-		{ name: 'Youtube', link: '/youtube', icon: faYoutube }
+		{ name: 'Youtube', link: '/youtube', icon: faYoutube },
+		{ name: 'Logs', link: '/logs', icon: faPenToSquare }
 	];
 
 	function scrollIntoView({ target }: any) {
@@ -84,16 +80,6 @@
 					<Fa icon={module.icon} />
 				</AppRailTile>
 			{/each}
-			<AppRailTile
-				label="Logs"
-				href={`/guilds/${$currentGuild?.guild.id}/logs`}
-				data-sveltekit-preload-data="hover"
-				value={'logs'}
-				{disabled}
-				{tag}
-			>
-				<Fa icon={faPenToSquare} />
-			</AppRailTile>
 		</svelte:fragment>
 	</AppRail>
 	{#if $currentGuild}

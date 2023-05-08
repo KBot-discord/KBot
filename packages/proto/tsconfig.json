@@ -1,12 +1,9 @@
 {
-	"extends": "../../tsconfig.base.json",
+	"extends": "@kbotdev/ts-config",
 	"compilerOptions": {
-		"rootDir": "./src",
-		"outDir": "./dist",
-		"composite": false,
-		"moduleResolution": "node",
-		"preserveConstEnums": true,
-		"tsBuildInfoFile": "./dist/.tsbuildinfo"
+		"rootDir": "src",
+		"outDir": "dist",
+		"tsBuildInfoFile": "dist/.tsbuildinfo"
 	},
-	"include": ["./src"]
+	"include": ["src"]
 }

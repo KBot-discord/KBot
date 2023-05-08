@@ -1,6 +1,6 @@
-import type { YoutubeSubscription, YoutubeSettings, HolodexChannel } from '#prisma';
+import type { YoutubeSubscription, YoutubeSettings, HolodexChannel } from '@kbotdev/database';
 import type { GuildId } from '#types/database/index';
-import type { HolodexChannelId } from './Holodex';
+import type { HolodexChannelId } from '#types/database/Holodex';
 
 export type GuildAndHolodexChannelId = GuildId & HolodexChannelId;
 

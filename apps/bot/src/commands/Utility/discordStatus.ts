@@ -1,7 +1,7 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotErrors } from '#types/Enums';
 import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder } from 'discord.js';
@@ -10,7 +10,7 @@ import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { GuildTextBasedChannel } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { UtilitySettings } from '#prisma';
+import type { UtilitySettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'UtilityModule',
@@ -23,7 +23,10 @@ import type { UtilitySettings } from '#prisma';
 			.setName('Discord Status')
 			.setDescription('Get updates about Discord outages sent to a channel.')
 			.setSubcommands([
-				{ label: '/discordstatus set <channel>', description: 'Set the channel to send notifications to' }, //
+				{
+					label: '/discordstatus set <channel>',
+					description: 'Set the channel to send notifications to'
+				}, //
 				{ label: '/discordstatus unset', description: 'Unset the current channel' },
 				{ label: '/discordstatus settings', description: 'Show the current settings' }
 			]);
@@ -34,7 +37,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
@@ -75,7 +78,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		switch (interaction.options.getSubcommand(true)) {
 			case 'set': {
 				return this.chatInputSet(interaction);

@@ -1,13 +1,13 @@
-import type { CoreSettings } from '#prisma';
+import type { CoreSettings } from '@kbotdev/database';
 
-export * from './CoreSettings';
-export * from './EventSettings';
-export * from './Karaoke';
-export * from './ModerationSettings';
-export * from './Poll';
-export * from './UtilitySettings';
-export * from './WelcomeSettings';
-export * from './Youtube';
+export * from '#types/database/CoreSettings';
+export * from '#types/database/EventSettings';
+export * from '#types/database/Karaoke';
+export * from '#types/database/ModerationSettings';
+export * from '#types/database/Poll';
+export * from '#types/database/UtilitySettings';
+export * from '#types/database/WelcomeSettings';
+export * from '#types/database/Youtube';
 
 export interface GuildId {
 	guildId: CoreSettings['guildId'];

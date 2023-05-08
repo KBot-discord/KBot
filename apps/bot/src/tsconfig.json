@@ -3,25 +3,25 @@
 	"compilerOptions": {
 		"outDir": "../dist",
 		"rootDir": ".",
-		"baseUrl": "./",
+		"baseUrl": ".",
+		"skipLibCheck": true,
+		"tsBuildInfoFile": "../dist/.tsbuildinfo",
 		"typeRoots": ["./lib/types/**/*", "../prisma/generated", "../../../node_modules/@types"],
 		"paths": {
-			"#prisma": ["../prisma/generated"],
+			"#config": ["config.ts"],
 			"#extensions/*": ["lib/extensions/*"],
-			"#hooks/register": ["lib/hooks/register"],
+			"#hooks/*": ["lib/hooks/*"],
 			"#observability/*": ["lib/observability/*"],
 			"#services/*": ["lib/services/*"],
+			"#services": ["lib/services/index.ts"],
 			"#structures/*": ["lib/structures/*"],
 			"#types/*": ["lib/types/*"],
+			"#types/CustomIds": ["lib/types/CustomIds/index.ts"],
+			"#types/database": ["lib/types/database/index.ts"],
 			"#utils/*": ["lib/utilities/*"],
 			"#modules/*": ["modules/*"],
 			"#rpc/*": ["rpc/*"]
-		},
-		"allowJs": true,
-		"noImplicitAny": true,
-		"skipLibCheck": true,
-		"tsBuildInfoFile": "../dist/.tsbuildinfo"
+		}
 	},
-	"include": ["./"],
-	"exclude": ["./tsconfig.json"]
+	"include": ["."]
 }

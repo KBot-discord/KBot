@@ -1,6 +1,6 @@
-import { CreditType } from './customIds';
-import { EmbedColors, guildEmoteSlots, KBotEmoji } from '#utils/constants';
-import { EmbedBuilder, MessageType, User } from 'discord.js';
+import { CreditType } from '#utils/customIds';
+import { EmbedColors, GuildEmoteSlots, KBotEmoji } from '#utils/constants';
+import { EmbedBuilder, MessageType, User, isJSONEncodable, type JSONEncodable } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { roleMention, time, userMention } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
@@ -19,10 +19,14 @@ import type {
 	Snowflake,
 	Sticker
 } from 'discord.js';
-import type { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/rest/v10/user';
+import type { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/v10';
 import type { ImageURLOptions } from '@discordjs/rest';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { FormattedGuild, TransformedLoginData } from '#types/Api';
+
+export function encode<T>(data: T | JSONEncodable<T>) {
+	return isJSONEncodable(data) ? data.toJSON() : data;
+}
 
 export function getResourceFromType(guildId: string, resourceId: string, type: CreditType): Emoji | Sticker | null {
 	const guild = container.client.guilds.cache.get(guildId);
@@ -39,7 +43,7 @@ export function getResourceFromType(guildId: string, resourceId: string, type: C
 	return null;
 }
 
-export const getGuildEmoteSlots = (tier: GuildPremiumTier): number => guildEmoteSlots[tier];
+export const getGuildEmoteSlots = (tier: GuildPremiumTier): number => GuildEmoteSlots[tier];
 
 export async function transformLoginData({ user, guilds }: LoginData): Promise<TransformedLoginData> {
 	if (!user) return { user, guilds: [] };
@@ -123,7 +127,11 @@ export async function getUserInfo(interaction: CommandInteraction<'cached'> | Bu
 			.setDescription(`${userMention(user.id)} | ${bot}`)
 			.addFields(
 				{ name: 'Created at:', value: createdAt, inline: true },
-				{ name: 'Joined at:', value: time(Math.round(member.joinedTimestamp! / 1000), 'F'), inline: true },
+				{
+					name: 'Joined at:',
+					value: time(Math.round(member.joinedTimestamp! / 1000), 'F'),
+					inline: true
+				},
 				{ name: `Roles (${member.roles.cache.size - 1})`, value: rolesToString(member.roles.cache) }
 			)
 			.setFooter({ text: `Present in server: ${KBotEmoji.GreenCheck}` });
@@ -137,11 +145,7 @@ export async function getUserInfo(interaction: CommandInteraction<'cached'> | Bu
 		.setColor(EmbedColors.Error)
 		.setThumbnail(getUserAvatarUrl(user))
 		.setDescription(`${userMention(user.id)} | ${bot}`)
-		.addFields(
-			{ name: 'Created at:', value: createdAt },
-			{ name: '\u200B', value: '\u200B' },
-			{ name: 'Ban status:', value: banned, inline: true }
-		)
+		.addFields({ name: 'Created at:', value: createdAt }, { name: '\u200B', value: '\u200B' }, { name: 'Ban status:', value: banned, inline: true })
 		.setFooter({ text: `Present in server: ${KBotEmoji.RedX}` });
 }
 

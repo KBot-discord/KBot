@@ -21,10 +21,7 @@ export class ButtonHandler extends InteractionHandler {
 				eventId
 			});
 			if (!exists) {
-				return interaction.defaultFollowup(
-					'There is no event to change the lock for. Run `/manage karaoke menu` to see the updated menu.',
-					true
-				);
+				return interaction.defaultFollowup('There is no event to change the lock for. Run `/manage karaoke menu` to see the updated menu.', true);
 			}
 
 			const active = await karaoke.eventActive({

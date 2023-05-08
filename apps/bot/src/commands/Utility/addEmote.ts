@@ -1,7 +1,7 @@
 import { EmbedColors } from '#utils/constants';
 import { AddEmoteCustomIds, CreditCustomIds, CreditFields, CreditType, buildCustomId } from '#utils/customIds';
 import { getGuildEmoteSlots } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -20,9 +20,8 @@ interface EmojiData {
 
 @ApplyOptions<KBotCommandOptions>({
 	module: 'UtilityModule',
-	name: 'Add emote',
 	preconditions: ['ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.ManageEmojisAndStickers],
+	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -36,7 +35,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		super(context, { ...options });
 	}
 
-	public disabledMessage = (moduleFullName: string): string => {
+	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
@@ -46,7 +45,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				builder //
 					.setName('Add emote')
 					.setType(ApplicationCommandType.Message)
-					.setDefaultMemberPermissions(PermissionFlagsBits.ManageEmojisAndStickers)
+					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions)
 					.setDMPermission(false),
 			{
 				idHints: [],
@@ -55,7 +54,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
 		const message = interaction.options.getMessage('message', true);
 
 		const emoji = await this.getEmoji(message);

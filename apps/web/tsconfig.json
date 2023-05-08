@@ -12,7 +12,6 @@
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
 		"importHelpers": true,
-		"importsNotUsedAsValues": "error",
 		"incremental": false,
 		"newLine": "lf",
 		"noEmitHelpers": true,

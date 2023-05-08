@@ -1,4 +1,4 @@
-import type { ModerationSettings } from '#prisma';
+import type { ModerationSettings } from '@kbotdev/database';
 
 export interface UpsertModerationSettingsData {
 	enabled?: ModerationSettings['enabled'];

@@ -1,4 +1,4 @@
-import { AntiHoistService, ModerationSettingsService } from '#services/moderation';
+import { AntiHoistService, ModerationSettingsService } from '#services';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { getGuildIcon } from '#utils/Discord';
 import { EmbedColors } from '#utils/constants';
@@ -9,9 +9,10 @@ import { EmbedBuilder } from 'discord.js';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { UpsertModerationSettingsData } from '#types/database';
-import type { ModerationSettings } from '#prisma';
+import type { ModerationSettings } from '@kbotdev/database';
 
 @ApplyOptions<Module.Options>({
+	name: 'ModerationModule',
 	fullName: 'Moderation Module'
 })
 export class ModerationModule extends Module {
@@ -27,7 +28,7 @@ export class ModerationModule extends Module {
 		this.container.moderation = this;
 	}
 
-	public async isEnabled({ guild }: IsEnabledContext) {
+	public override async isEnabled({ guild }: IsEnabledContext) {
 		if (isNullish(guild)) return false;
 		const settings = await this.getSettings(guild.id);
 		return isNullish(settings) ? false : settings.enabled;

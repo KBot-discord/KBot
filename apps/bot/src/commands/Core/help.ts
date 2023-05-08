@@ -45,12 +45,15 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		const search = interaction.options.getString('command', true);
 		const result = await this.container.meili.get<DocumentCommand>('commands', search);
 
-		const options: ApplicationCommandOptionChoiceData[] = result.hits.map(({ name }) => ({ name, value: name }));
+		const options: ApplicationCommandOptionChoiceData[] = result.hits.map(({ name }) => ({
+			name,
+			value: name
+		}));
 
 		return interaction.respond(options);
 	}
 
-	public async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 		const option = interaction.options.getString('command');
 

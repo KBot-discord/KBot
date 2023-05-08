@@ -1,6 +1,6 @@
 import { imageFolder } from '#utils/constants';
 import { getMemberAvatarUrl } from '#utils/Discord';
-import { KBotCommand, KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
@@ -52,7 +52,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
 		await interaction.deferReply();
 
 		const user = interaction.options.getUser('user', true);
@@ -92,7 +92,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		return buffer(stream);
 	}
 
-	public async onLoad() {
+	public override async onLoad() {
 		await Promise.all(
 			readdirSync(join(imageFolder, 'pat')).map(async (file) => {
 				this.pats.push(await loadImage(join(imageFolder, `pat/${file}`)));

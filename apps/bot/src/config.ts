@@ -11,7 +11,6 @@ export function loadConfig(): void {
 	process.env.NODE_ENV ??= NodeEnvironments.Dev;
 
 	dotenv.config({ path: resolve(__dirname, '../.env') });
-
 	const isDev = envGetString('NODE_ENV') !== NodeEnvironments.Production;
 
 	const clientConfig: ClientConfig = {
@@ -67,6 +66,9 @@ export function loadConfig(): void {
 		},
 		sentry: {
 			dsn: envGetString('SENTRY_DSN')
+		},
+		stats: {
+			topgg: envGetString('DISCORD_STATS_TOPGG')
 		}
 	};
 

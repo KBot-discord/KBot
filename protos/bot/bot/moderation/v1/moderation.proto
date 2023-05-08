@@ -13,7 +13,6 @@ message ModerationSettings {
   bool antihoist_enabled = 7;
 }
 
-// GetModerationSettings
 message GetModerationSettingsRequest {
   string guild_id = 1;
 }
@@ -22,7 +21,6 @@ message GetModerationSettingsResponse {
   ModerationSettings settings = 1;
 }
 
-// UpdateModerationSettings
 message UpdateModerationSettingsRequest {
   string guild_id = 1;
   types.crud.v1.RequiredBool enabled = 2;
@@ -36,8 +34,7 @@ message UpdateModerationSettingsResponse {
   ModerationSettings settings = 1;
 }
 
-// ModerationSettingsService
 service ModerationSettingsService {
-  rpc GetModerationSettings (GetModerationSettingsRequest) returns (GetModerationSettingsResponse);
-  rpc UpdateModerationSettings (UpdateModerationSettingsRequest) returns (UpdateModerationSettingsResponse);
+  rpc GetModerationSettings(GetModerationSettingsRequest) returns (GetModerationSettingsResponse);
+  rpc UpdateModerationSettings(UpdateModerationSettingsRequest) returns (UpdateModerationSettingsResponse);
 }

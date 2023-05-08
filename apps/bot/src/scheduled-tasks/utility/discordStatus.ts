@@ -6,7 +6,7 @@ import { EmbedBuilder, time, TimestampStyles } from 'discord.js';
 import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
 import { container } from '@sapphire/framework';
 import type { StatusPageIncident, StatusPageResult } from '#types/DiscordStatus';
-import type { IncidentMessage, Prisma } from '#prisma';
+import type { IncidentMessage, Prisma } from '@kbotdev/database';
 
 interface DatabaseIncidentData {
 	updatedAt: Date | undefined;

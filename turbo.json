@@ -2,46 +2,34 @@
 	"$schema": "https://turborepo.org/schema.json",
 	"pipeline": {
 		"build": {
-			"dependsOn": [
-				"^build"
-			],
-			"outputs": [
-				"dist/**",
-				"build/**"
-			],
+			"dependsOn": ["^build", "^db:generate"],
+			"outputs": ["dist/**", "build/**"],
 			"cache": true
 		},
 		"lint": {
-			"dependsOn": [
-				"build"
-			],
+			"dependsOn": ["^build", "build"],
+			"outputs": [],
+			"cache": true
+		},
+		"format": {
+			"dependsOn": ["^build", "build"],
 			"outputs": [],
 			"cache": true
 		},
 		"test": {
-			"outputs": [],
+			"outputs": ["coverage"],
 			"cache": true
 		},
 		"dev": {
 			"cache": false
 		},
 		"db:generate": {
-			"outputs": [
-				"apps/bot/prisma/schema.prisma",
-				"apps/bot/prisma/generated"
-			],
 			"cache": false
 		},
 		"db:push": {
-			"inputs": [
-				"apps/bot/prisma/schema.prisma"
-			],
 			"cache": false
 		},
 		"db:deploy": {
-			"inputs": [
-				"apps/bot/prisma/schema.prisma"
-			],
 			"cache": false
 		}
 	}

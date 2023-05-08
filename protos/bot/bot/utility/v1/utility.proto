@@ -11,7 +11,6 @@ message UtilitySettings {
   google.protobuf.StringValue credits_channel_id = 3;
 }
 
-// GetUtilitySettings
 message GetUtilitySettingsRequest {
   string guild_id = 1;
 }
@@ -20,7 +19,6 @@ message GetUtilitySettingsResponse {
   UtilitySettings settings = 1;
 }
 
-// UpdateUtilitySettings
 message UpdateUtilitySettingsRequest {
   string guild_id = 1;
   types.crud.v1.RequiredBool enabled = 2;
@@ -29,11 +27,10 @@ message UpdateUtilitySettingsRequest {
 }
 
 message UpdateUtilitySettingsResponse {
-	UtilitySettings settings = 1;
+  UtilitySettings settings = 1;
 }
 
-// UtilitySettingsService
 service UtilitySettingsService {
-  rpc GetUtilitySettings (GetUtilitySettingsRequest) returns (GetUtilitySettingsResponse);
-  rpc UpdateUtilitySettings (UpdateUtilitySettingsRequest) returns (UpdateUtilitySettingsResponse);
+  rpc GetUtilitySettings(GetUtilitySettingsRequest) returns (GetUtilitySettingsResponse);
+  rpc UpdateUtilitySettings(UpdateUtilitySettingsRequest) returns (UpdateUtilitySettingsResponse);
 }

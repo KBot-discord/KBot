@@ -1,4 +1,4 @@
-import type { KaraokeEvent, KaraokeUser } from '#prisma';
+import type { KaraokeEvent, KaraokeUser } from '@kbotdev/database';
 import type { GuildId } from '#types/database/index';
 import type { Expand } from '#types/Generic';
 

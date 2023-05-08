@@ -6,7 +6,7 @@ import { ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
 import type { Guild, Message, User, APIEmbedField } from 'discord.js';
-import type { Poll } from '#prisma';
+import type { Poll } from '@kbotdev/database';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 import type { PollMenuButton } from '#types/CustomIds';
 

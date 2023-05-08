@@ -32,7 +32,7 @@ export class ButtonHandler extends InteractionHandler {
 	@validCustomId(CreditCustomIds.ImageEdit)
 	@interactionRatelimit(Time.Second * 30, 5)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageEmojisAndStickers)) {
+		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
 			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', true);
 			return this.none();
 		}

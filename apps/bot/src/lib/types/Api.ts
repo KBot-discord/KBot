@@ -7,7 +7,10 @@ export type IDiscordUser = Pick<DiscordUser, 'id' | 'username' | 'discriminator'
 
 export type IDiscordGuild = Pick<DiscordGuild, 'id' | 'name' | 'icon'>;
 
-export type FormattedGuild = Omit<IDiscordGuild, 'icon'> & { icon: string | null; owner: boolean } & {
+export type FormattedGuild = Omit<IDiscordGuild, 'icon'> & {
+	icon: string | null;
+	owner: boolean;
+} & {
 	features: GuildFeature[];
 	permissions: Permissions;
 };
