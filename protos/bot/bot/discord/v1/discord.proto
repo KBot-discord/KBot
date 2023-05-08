@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-// RPCs for the bot's core services
+/*
+   RPCs for Discord data
+*/
 package bot.discord.v1;
 
 import "google/protobuf/wrappers.proto";

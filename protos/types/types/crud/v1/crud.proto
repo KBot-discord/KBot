@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+/*
+   Types which are useful for CRUD operations
+*/
 package types.crud.v1;
 
 enum OptionalAction {
