@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+/*
+   RPCs for event settings
+*/
 package bot.events.v1;
 
 import "types/crud/v1/crud.proto";

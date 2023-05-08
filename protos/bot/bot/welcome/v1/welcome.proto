@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+/*
+   RPCs for welcome settings
+*/
 package bot.welcome.v1;
 
 import "google/protobuf/wrappers.proto";

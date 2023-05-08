@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+/*
+   RPCs for YouTube guild subscriptions
+*/
 package bot.youtube.subscriptions.v1;
 
 import "google/protobuf/wrappers.proto";

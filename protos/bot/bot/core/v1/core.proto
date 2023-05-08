@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-// RPCs for the bot's core services
+/*
+   RPCs for core settings
+*/
 package bot.core.v1;
 
 enum FeatureFlags {
