@@ -1114,7 +1114,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kbotdev/proto@*, @kbotdev/proto@workspace:^, @kbotdev/proto@workspace:packages/proto":
+"@kbotdev/proto@workspace:^, @kbotdev/proto@workspace:packages/proto":
   version: 0.0.0-use.local
   resolution: "@kbotdev/proto@workspace:packages/proto"
   dependencies:
@@ -1153,7 +1153,7 @@ __metadata:
     "@floating-ui/dom": ^1.2.7
     "@fortawesome/free-brands-svg-icons": ^6.4.0
     "@fortawesome/free-solid-svg-icons": ^6.4.0
-    "@kbotdev/proto": "*"
+    "@kbotdev/proto": "workspace:^"
     "@sapphire/plugin-api": ^5.0.4
     "@skeletonlabs/skeleton": ^1.2.5
     "@sveltejs/adapter-node": ^1.2.4
