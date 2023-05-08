@@ -25,11 +25,12 @@ RUN apk add -q --no-cache openssl libc6-compat cairo-dev jpeg-dev pango-dev gifl
 
 COPY .yarn .yarn/
 COPY protos protos/
+COPY scripts scripts/
 COPY .yarnrc.yml tsconfig.base.json ./
 COPY --from=builder /temp/out/json/ /temp/out/yarn.lock ./
 COPY turbo.json turbo.json
 
-RUN yarn install --immutable
+RUN yarn install
 
 COPY --from=builder /temp/out/full/ .
 
@@ -52,9 +53,8 @@ USER kbot
 COPY --from=deps /temp/node_modules node_modules/
 COPY --from=deps /temp/packages packages/
 COPY --from=deps /temp/apps/bot/assets assets/
-COPY --from=deps /temp/apps/bot/prisma/generated prisma/generated/
-COPY --from=deps /temp/apps/bot/prisma/migrations prisma/migrations/
-COPY --from=deps /temp/apps/bot/prisma/schema.prisma prisma/schema.prisma
+COPY --from=deps /temp/packages/database/prisma/migrations prisma/migrations/
+COPY --from=deps /temp/packages/database/prisma/schema.prisma prisma/schema.prisma
 COPY --from=deps /temp/apps/bot/dist dist/
 COPY --from=deps /temp/apps/bot/package.json ./
 
