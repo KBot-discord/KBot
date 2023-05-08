@@ -9,9 +9,6 @@
 
 "packages":
   - "packages/**"
-  - "!packages/eslint-config/**"
-  - "!packages/prettier-config/**"
-  - "!packages/ts-config/**"
 
 "config":
   - "packages/eslint-config/**"
