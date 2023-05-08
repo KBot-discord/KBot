@@ -6,7 +6,7 @@
 	"main": "./index.ts",
 	"types": "./index.ts",
 	"scripts": {
-		"lint": "eslint --fix --ext ts src tests",
+		"lint": "eslint --fix --ext ts prisma",
 		"format": "prettier --write --loglevel=warn \"prisma/**/*.{js,ts,json}\"",
 		"db:generate": "ts-node ./prisma/schemix.ts && prisma generate",
 		"db:push": "prisma db push"

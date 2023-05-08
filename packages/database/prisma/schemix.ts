@@ -7,7 +7,6 @@ createSchema({
 		url: { env: 'DATABASE_URL' }
 	},
 	generator: {
-		provider: 'prisma-client-js',
-		output: './client'
+		provider: 'prisma-client-js'
 	}
 }).export(__dirname, 'schema');
