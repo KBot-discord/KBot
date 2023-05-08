@@ -6,7 +6,7 @@
 		"baseUrl": ".",
 		"skipLibCheck": true,
 		"tsBuildInfoFile": "../dist/.tsbuildinfo",
-		"typeRoots": ["./lib/types/**/*", "../prisma/generated", "../../../node_modules/@types"],
+		"typeRoots": ["./lib/types/**/*", "../../../node_modules/@types"],
 		"paths": {
 			"#config": ["config.ts"],
 			"#extensions/*": ["lib/extensions/*"],

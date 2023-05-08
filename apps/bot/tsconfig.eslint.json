@@ -4,5 +4,5 @@
 		"allowJs": true,
 		"checkJs": true
 	},
-	"include": ["src", "tests", "tsup.config.ts", "vitest.config.ts"]
+	"include": ["src", "tests", ".eslintrc.cjs", "tsup.config.ts", "vitest.config.ts"]
 }
