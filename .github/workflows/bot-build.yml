@@ -19,7 +19,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  publish:
+  build-and-publish:
+    name: Build and publish
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository

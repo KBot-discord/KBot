@@ -18,10 +18,12 @@ concurrency:
 
 jobs:
   push:
+    name: Push
     runs-on: ubuntu-latest
     strategy:
       matrix:
         module: [bot, types]
+
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
@@ -41,11 +43,11 @@ jobs:
         uses: bufbuild/buf-lint-action@v1
         if: steps.detect-change.outputs.any_changed == 'true'
         with:
-          input: ${{ matrix.module }}
+          input: protos/${{ matrix.module }}
 
       - name: Buf push
         uses: bufbuild/buf-push-action@v1
         if: steps.detect-change.outputs.any_changed == 'true'
         with:
           input: ${{ matrix.module }}
-          buf_token: ${{ secrets.BUF_TOKEN }}
+          buf_token: protos/${{ secrets.BUF_TOKEN }}

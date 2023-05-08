@@ -1,11 +1,13 @@
 "apps:bot":
   - "apps/bot/**"
+  - "protos/**"
 
 "apps:docs":
   - "apps/docs/**"
 
 "apps:web":
   - "apps/web/**"
+  - "protos/**"
 
 "packages":
   - "packages/**"
