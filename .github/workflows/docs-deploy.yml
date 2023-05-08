@@ -1,13 +1,13 @@
 name: Deploy (Docs)
 
 on:
-  workflow_dispatch: {}
   push:
     branches:
       - main
     paths:
       - "apps/docs/**"
       - "!**/README.md"
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
