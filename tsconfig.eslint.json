@@ -3,5 +3,5 @@
 	"compilerOptions": {
 		"noEmit": true
 	},
-	"include": ["apps/**/*.ts", "packages/**/*.ts", "scripts"]
+	"include": ["apps/**/*.ts", "packages/**/*.ts", "scripts", ".eslintrc.cjs"]
 }
