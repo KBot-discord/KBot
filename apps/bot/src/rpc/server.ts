@@ -7,9 +7,9 @@ import {
 	registerUtilitySettingsService,
 	registerWelcomeSettingsService,
 	registerYoutubeChannelService,
-	registerYoutubeSettingsService
+	registerYoutubeSettingsService,
+	registerYoutubeSubscriptionService
 } from '#rpc/services';
-import { registerYoutubeSubscriptionService } from '#rpc/services/YoutubeSubscriptionService';
 import { connectNodeAdapter } from '@bufbuild/connect-node';
 import * as http2 from 'http2';
 import type { ConnectRouter } from '@bufbuild/connect';
