@@ -35,7 +35,7 @@
 		"@kbotdev/eslint-config": "workspace:^",
 		"@kbotdev/prettier-config": "workspace:^",
 		"@kbotdev/ts-config": "workspace:^",
-		"@types/node": "^20.1.0",
+		"@types/node": "^20.1.1",
 		"eslint": "^8.40.0",
 		"husky": "^8.0.3",
 		"lint-staged": "^13.2.2",

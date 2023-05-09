@@ -22,7 +22,7 @@
 		"@sapphire/fetch": "^2.4.1"
 	},
 	"devDependencies": {
-		"@types/node": "^20.1.0",
+		"@types/node": "^20.1.1",
 		"tsup": "^6.7.0"
 	}
 }
