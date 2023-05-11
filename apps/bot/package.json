@@ -44,7 +44,7 @@
 		"@sentry/integrations": "^7.51.2",
 		"@sentry/node": "^7.51.2",
 		"@skyra/gifenc": "^1.0.1",
-		"bullmq": "^3.13.2",
+		"bullmq": "^3.13.4",
 		"canvas": "2.11.2",
 		"canvas-constructor": "^7.0.0",
 		"discord-api-types": "^0.37.42",
