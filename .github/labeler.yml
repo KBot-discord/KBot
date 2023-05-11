@@ -9,6 +9,9 @@
   - "apps/web/**"
   - "protos/**"
 
+"kubernetes":
+  - "k8s/**"
+
 "packages":
   - "packages/**"
 
