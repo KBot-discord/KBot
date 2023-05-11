@@ -1,23 +1,24 @@
 ## Builds ##
-dist
-build
+dist/
+build/
 
 ## Development ##
-infra
-coverage
+infra/
+coverage/
+k8s/result.yml
 
 ## Dependencies ##
-node_modules
+node_modules/
 package-lock.json
 
 ## IDEs ##
-.idea
+.idea/
 
 ## Env ##
 .env
 
 ## Turbo ##
-.turbo
+.turbo/
 
 ## Package manager ##
 .pnp.*

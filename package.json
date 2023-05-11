@@ -25,11 +25,12 @@
 		"lint:bot": "yarn turbo lint --filter=@kbotdev/bot",
 		"lint:docs": "yarn turbo lint --filter=@kbotdev/docs",
 		"lint:web": "yarn turbo lint --filter=@kbotdev/web",
-		"docker:bot": "docker buildx build -f apps/bot/Dockerfile -t kbot/bot .",
-		"docker:web": "docker buildx build -f apps/web/Dockerfile -t kbot/web .",
 		"format": "turbo run format",
 		"db:generate": "turbo run db:generate",
-		"db:push": "turbo run db:push"
+		"db:push": "turbo run db:push",
+		"docker:bot": "docker buildx build -f apps/bot/Dockerfile -t kbot/bot .",
+		"docker:web": "docker buildx build -f apps/web/Dockerfile -t kbot/web .",
+		"k8s:build": "kustomize build ./k8s -o ./k8s/result.yml"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^17.6.3",

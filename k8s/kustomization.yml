@@ -1,0 +1,10 @@
+resources:
+  - configmap.yml
+  - deployments.yml
+  - namespace.yml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+  - name: ghcr.io/kbot-discord/kbot
+    newName: ghcr.io/kbot-discord/kbot
+    newTag: latest
