@@ -17,7 +17,8 @@
 				"svelte.svelte-vscode",
 				"bradlc.vscode-tailwindcss",
 				"zxh404.vscode-proto3",
-				"redhat.vscode-yaml"
+				"redhat.vscode-yaml",
+				"ms-kubernetes-tools.vscode-kubernetes-tools"
 			]
 		}
 	},
@@ -27,6 +28,11 @@
 			"moby": true,
 			"dockerDashComposeVersion": "v2",
 			"installDockerBuildx": true
-		}
+		},
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+			"version": "latest"
+		},
+		"ghcr.io/rio/features/k9s:1": {},
+		"ghcr.io/rio/features/kustomize:1": {}
 	}
 }

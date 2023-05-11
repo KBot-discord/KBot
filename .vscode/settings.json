@@ -11,5 +11,8 @@
 	"[proto3]": {
 		"editor.defaultFormatter": "bufbuild.vscode-buf"
 	},
+	"[prisma]": {
+		"editor.defaultFormatter": "Prisma.prisma"
+	},
 	"editor.formatOnSave": true
 }
