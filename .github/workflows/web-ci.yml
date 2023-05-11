@@ -20,7 +20,7 @@ jobs:
       - name: Set up NodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: yarn
 
       - name: Install dependencies
@@ -43,7 +43,7 @@ jobs:
       - name: Set up NodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: yarn
 
       - name: Install dependencies
@@ -69,7 +69,7 @@ jobs:
       - name: Set up NodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: yarn
 
       - name: Install dependencies
