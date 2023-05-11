@@ -34,8 +34,7 @@ RUN yarn install
 
 COPY --from=builder /temp/out/full/ .
 
-RUN yarn db:generate && \
-	yarn turbo build --filter=@kbotdev/bot
+RUN yarn turbo build --filter=@kbotdev/bot
 
 ## App ##
 FROM node:20-alpine as app
