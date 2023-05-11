@@ -13,17 +13,16 @@
 	},
 	"homepage": "https://github.com/KBot-discord/kbot/tree/main/apps/bot",
 	"engines": {
-		"node": ">=18.x"
+		"node": ">=20.x"
 	},
 	"scripts": {
 		"build": "tsc -b src",
 		"dev": "tsc-watch --noClear -p src/tsconfig.json --onSuccess \"yarn run start\"",
 		"start": "node ./dist/KBot.js",
-		"start:migrate": "yarn migrate && yarn start",
+		"start:migrate": "yarn db:deploy && yarn start",
 		"lint": "eslint --fix --ext ts src tests",
 		"format": "prettier --write --loglevel=warn \"{src,tests}/**/*.{js,ts,json}\"",
-		"test": "vitest",
-		"migrate": "prisma migrate deploy --schema ../../packages/database/prisma/schema.prisma"
+		"test": "vitest"
 	},
 	"dependencies": {
 		"@bufbuild/connect-node": "^0.8.6",
