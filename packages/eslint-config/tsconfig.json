@@ -1,5 +1,5 @@
 {
-	"extends": "@kbotdev/ts-config",
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
 		"rootDir": "src",
 		"outDir": "dist",
