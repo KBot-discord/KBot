@@ -21,10 +21,9 @@
 		"sync": "svelte-kit sync",
 		"check": "svelte-kit sync && svelte-check --tsconfig tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig tsconfig.json --watch",
-		"lint": "prettier --plugin-search-dir . --check . && yarn eslint:node",
+		"lint": "prettier --plugin-search-dir . --check . && eslint src",
 		"lint:fix": "eslint . --fix",
 		"format": "prettier --plugin-search-dir . --write .",
-		"eslint:node": "node --max_old_space_size=4096 ../../node_modules/eslint/bin/eslint.js .",
 		"postbuild": "node ./scripts/sitemap.js"
 	},
 	"dependencies": {
@@ -38,6 +37,7 @@
 		"svelte-fa": "^3.0.3"
 	},
 	"devDependencies": {
+		"@kbotdev/eslint-config": "workspace:^",
 		"@sapphire/plugin-api": "^5.0.4",
 		"@skeletonlabs/skeleton": "^1.5.1",
 		"@sveltejs/adapter-node": "^1.2.4",

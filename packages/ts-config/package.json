@@ -5,10 +5,8 @@
 	"private": true,
 	"main": "tsconfig.json",
 	"exports": {
-		".": {
-			"import": "./tsconfig.json",
-			"require": "./tsconfig.json"
-		}
+		"import": "./tsconfig.json",
+		"require": "./tsconfig.json"
 	},
 	"files": [
 		"tsconfig.json"

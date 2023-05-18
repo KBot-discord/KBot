@@ -389,6 +389,12 @@ module.exports = {
 		'valid-typeof': 'error',
 		'vars-on-top': 'off',
 		yoda: 'error',
+		'prettier/prettier': [
+			'error',
+			{
+				printWidth: 150
+			}
+		],
 		'import/consistent-type-specifier-style': 'off',
 		'import/no-duplicates': 'off',
 		'import/no-unresolved': 'error',
@@ -406,12 +412,6 @@ module.exports = {
 					'object',
 					'type'
 				]
-			}
-		],
-		'prettier/prettier': [
-			'error',
-			{
-				printWidth: 150
 			}
 		]
 	}

@@ -5,14 +5,10 @@
 	"private": true,
 	"main": "src/index.js",
 	"exports": {
-		".": {
-			"import": "./src/index.js",
-			"require": "./src/index.js"
-		}
+		"import": "./src/index.js",
+		"require": "./src/index.js"
 	},
 	"scripts": {
-		"lint": "eslint --ext js src",
-		"lint:fix": "eslint --fix --ext js src",
 		"format": "prettier --write --loglevel=warn \"src/**/*.js\""
 	},
 	"devDependencies": {
