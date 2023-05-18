@@ -9,26 +9,8 @@ on:
       - "!**/README.md"
 
 jobs:
-  dependencies:
-    name: Dependencies
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-
-      - name: Set up NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: yarn
-
-      - name: Install dependencies
-        run: yarn workspaces focus @kbotdev/apps @kbotdev/bot
-
-  build:
-    name: Build
-    needs: dependencies
+  checks:
+    name: Checks
     runs-on: ubuntu-latest
 
     steps:
@@ -52,49 +34,8 @@ jobs:
       - name: Run build
         run: yarn turbo build --filter=@kbotdev/bot
 
-  lint:
-    name: Lint
-    needs: dependencies
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-
-      - name: Set up Buf
-        uses: bufbuild/buf-setup-action@v1
-        with:
-          github_token: ${{ github.token }}
-
-      - name: Set up NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: yarn
-
-      - name: Install dependencies
-        run: yarn workspaces focus @kbotdev/apps @kbotdev/bot
-
       - name: Lint
         run: yarn turbo lint --filter=@kbotdev/bot
-
-  test:
-    name: Test
-    needs: dependencies
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-
-      - name: Set up NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: yarn
-
-      - name: Install dependencies
-        run: yarn workspaces focus @kbotdev/apps @kbotdev/bot
 
       - name: Run tests
         run: yarn turbo test --filter=@kbotdev/bot

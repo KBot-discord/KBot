@@ -25,11 +25,20 @@
 			"outputs": [],
 			"cache": true
 		},
+		"check": {
+			"dependsOn": ["^build"],
+			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
+			"outputs": [],
+			"cache": true
+		},
 		"test": {
 			"outputs": ["coverage/**"],
 			"cache": true
 		},
 		"dev": {
+			"cache": false
+		},
+		"sync": {
 			"cache": false
 		},
 		"buf:generate": {
