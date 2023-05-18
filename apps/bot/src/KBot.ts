@@ -14,7 +14,7 @@ loadConfig();
 
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
 
-async function main() {
+async function main(): Promise<void> {
 	let client: KBotClient | undefined = undefined;
 	try {
 		const { discord, api, rpc } = container.config;

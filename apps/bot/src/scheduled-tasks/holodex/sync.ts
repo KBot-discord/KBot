@@ -22,7 +22,7 @@ export class HolodexTask extends ScheduledTask {
 		const channels: HolodexChannel[] = [];
 
 		try {
-			const fetchChannels = async () => {
+			const fetchChannels = async (): Promise<void> => {
 				const fetchedChannels = await holodex.channels.getList({
 					offset: page * 100
 				});
@@ -35,6 +35,7 @@ export class HolodexTask extends ScheduledTask {
 
 			logger.debug('[HolodexTask] Syncing channels');
 
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			while (pagesLeft) {
 				await fetchChannels();
 			}
@@ -114,6 +115,7 @@ export class HolodexTask extends ScheduledTask {
 }
 
 declare module '@sapphire/plugin-scheduled-tasks' {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface ScheduledTasks {
 		holodexSync: never;
 	}

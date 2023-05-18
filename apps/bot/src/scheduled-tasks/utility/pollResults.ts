@@ -16,6 +16,7 @@ export class UtilityTask extends ScheduledTask {
 }
 
 declare module '@sapphire/plugin-scheduled-tasks' {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface ScheduledTasks {
 		pollResults: never;
 	}

@@ -6,11 +6,15 @@ import type { Module } from '@kbotdev/plugin-modules';
 export abstract class KBotCommand<M extends Module = Module> extends ModuleCommand<M> {
 	public helpEmbed: EmbedBuilder;
 
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, {
-			...options,
-			description: options.description ?? (options.detailedDescription as string)
-		});
+	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions, module: M) {
+		super(
+			context,
+			{
+				...options,
+				description: options.description ?? (options.detailedDescription as string)
+			},
+			module
+		);
 
 		this.helpEmbed = options
 			.helpEmbed(new HelpEmbedBuilder()) //
@@ -23,6 +27,6 @@ export abstract class KBotCommand<M extends Module = Module> extends ModuleComma
 	}
 }
 
-export interface KBotCommandOptions extends ModuleCommand.Options {
+export type KBotCommandOptions = ModuleCommand.Options & {
 	helpEmbed: (builder: HelpEmbedBuilder) => HelpEmbedBuilder;
-}
+};

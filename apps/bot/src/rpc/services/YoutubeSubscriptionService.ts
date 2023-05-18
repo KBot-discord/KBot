@@ -18,7 +18,7 @@ import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 import type { YoutubeSubscription } from '@kbotdev/proto';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
-export function registerYoutubeSubscriptionService(router: ConnectRouter) {
+export function registerYoutubeSubscriptionService(router: ConnectRouter): void {
 	router.service(YoutubeSubscriptionService, new YoutubeSubscriptionServiceImpl());
 }
 

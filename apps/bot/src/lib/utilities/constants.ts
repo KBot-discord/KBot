@@ -42,13 +42,6 @@ export const enum MimeTypes {
 	ApplicationJson = 'application/json'
 }
 
-export const CacheValues = {
-	Exists: 'EXISTS',
-	DoesNotExist: 'DOES_NOT_EXIST',
-	Active: 'ACTIVE',
-	Inactive: 'INACTIVE'
-} as const;
-
 export const POLL_NUMBERS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
 
 export const POLL_TIME_LIMIT = Time.Month;
@@ -78,3 +71,5 @@ export const GuildStickerSlots = [5, 15, 30, 60];
 export const GuildSoundboardSlots = [8, 24, 36, 48];
 
 export const FooterIcon = 'https://cdn.discordapp.com/avatars/918237593789947925/85a70e5d476e32cfdcccbe51f2279e17.png';
+
+export const HexColorRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/;

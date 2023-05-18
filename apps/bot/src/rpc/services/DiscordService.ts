@@ -23,7 +23,7 @@ import { ChannelType } from 'discord.js';
 import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 
-export function registerDiscordService(router: ConnectRouter) {
+export function registerDiscordService(router: ConnectRouter): void {
 	router.service(DiscordService, new DiscordServiceImpl());
 }
 
@@ -119,7 +119,7 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 			const channelCollection = await guild.channels.fetch();
 			const channels = channelCollection
 				.filter((channel) => {
-					return !isNullish(channel) && (channel!.type === ChannelType.GuildVoice || channel!.type === ChannelType.GuildStageVoice);
+					return !isNullish(channel) && (channel.type === ChannelType.GuildVoice || channel.type === ChannelType.GuildStageVoice);
 				})
 				.map(
 					(channel) =>
@@ -179,7 +179,6 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 			const discordUser = new DiscordUser({
 				id: user.id,
 				username: user.username,
-				discriminator: user.discriminator,
 				avatar
 			});
 

@@ -1,3 +1,4 @@
-export * from './structures/Holodex';
-export * from './types/channels';
-export * from './types/videos';
+export * from './handlers';
+export * from './lib/structures';
+export * from './lib/types';
+export * from './lib/utilities';

@@ -9,19 +9,17 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import { ActionRowBuilder, channelMention, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js';
 import type { APISelectMenuOption } from 'discord-api-types/v10';
 import type { YoutubeModule } from '#modules/YoutubeModule';
 import type { DocumentYoutubeChannel } from '#types/Meili';
 import type { ApplicationCommandOptionChoiceData, GuildTextBasedChannel, BaseMessageOptions, Guild } from 'discord.js';
-import type { YoutubeSubscriptionWithChannel } from '#types/database';
+import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'YoutubeModule',
 	description: 'Add, remove, or edit Youtube subscriptions.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Youtube')
@@ -44,14 +42,14 @@ import type { YoutubeSubscriptionWithChannel } from '#types/database';
 })
 export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.youtube);
 	}
 
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/notifications toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -232,7 +230,8 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return interaction.respond(options);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'subscribe': {
 				return this.chatInputSubscribe(interaction);
@@ -261,9 +260,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		}
 	}
 
-	public async chatInputSubscribe(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		await interaction.deferReply();
-
+	public async chatInputSubscribe(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const accountId = interaction.options.getString('account', true);
 
 		const exists = await this.module.subscriptions.exists({
@@ -303,9 +300,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		});
 	}
 
-	public async chatInputUnsubscribe(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		await interaction.deferReply();
-
+	public async chatInputUnsubscribe(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const accountId = interaction.options.getString('subscription', true);
 
 		const subscription = await this.module.subscriptions.delete({
@@ -321,9 +316,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return interaction.defaultReply(`Successfully unsubscribed from ${subscription.channel.name}`);
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		await interaction.deferReply();
-
+	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const accountId = interaction.options.getString('subscription', true);
 
 		const exists = await this.module.subscriptions.exists({
@@ -358,9 +351,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return this.showSettings(interaction, subscription);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		await interaction.deferReply();
-
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const accountId = interaction.options.getString('subscription', true);
 
 		const exists = await this.module.subscriptions.exists({
@@ -401,9 +392,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return this.showSettings(interaction, subscription);
 	}
 
-	public async chatInputRoleReaction(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		await interaction.deferReply();
-
+	public async chatInputRoleReaction(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const bot = await interaction.guild.members.fetchMe();
 		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
 			return interaction.defaultReply("I don't have the required permissions for role reactions to work.\n\nMissing permission: `Manage Roles`.");
@@ -420,12 +409,12 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return interaction.defaultReply(`Role reaction embed sent in ${channelMention(channel.id)}`);
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 
 		const value = interaction.options.getBoolean('value', true);
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			enabled: value
 		});
 
@@ -439,7 +428,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		});
 	}
 
-	public async chatInputSubscriptions(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputSubscriptions(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const subscriptions = await this.module.subscriptions.getByGuild({
 			guildId: interaction.guildId
 		});
@@ -447,13 +436,16 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return new YoutubeMenu(subscriptions).run(interaction, interaction.user);
 	}
 
-	private showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, subscription: YoutubeSubscriptionWithChannel) {
+	private async showSettings(
+		interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>,
+		subscription: YoutubeSubscriptionWithChannel
+	): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [this.container.youtube.buildSubscriptionEmbed(subscription)]
 		});
 	}
 
-	private async createReactionRoleMessage(guild: Guild, channel: GuildTextBasedChannel) {
+	private async createReactionRoleMessage(guild: Guild, channel: GuildTextBasedChannel): Promise<unknown> {
 		const subscriptions = await this.module.subscriptions.getByGuild({
 			guildId: guild.id
 		});
@@ -462,7 +454,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 
 		const message = await channel.send(messageOptions);
 
-		await this.module.upsertSettings(guild.id, {
+		await this.module.settings.upsert(guild.id, {
 			reactionRoleMessageId: message.id,
 			reactionRoleChannelId: message.channelId
 		});
@@ -470,13 +462,13 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return message;
 	}
 
-	private async updateReactionRoleMessage(guild: Guild) {
-		const settings = await this.module.getSettings(guild.id);
-		if (!settings || !settings.reactionRoleChannelId || !settings.reactionRoleMessageId) return;
+	private async updateReactionRoleMessage(guild: Guild): Promise<unknown> {
+		const settings = await this.module.settings.get(guild.id);
+		if (!settings?.reactionRoleChannelId || !settings.reactionRoleMessageId) return;
 
 		const channel = (await guild.channels.fetch(settings.reactionRoleChannelId)) as GuildTextBasedChannel | null;
 		if (!channel) {
-			return this.module.upsertSettings(guild.id, {
+			return this.module.settings.upsert(guild.id, {
 				reactionRoleMessageId: null,
 				reactionRoleChannelId: null
 			});
@@ -493,7 +485,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		const editMessage = await oldMessage?.edit(messageOptions).catch(() => null);
 
 		if (!editMessage) {
-			return this.module.upsertSettings(guild.id, {
+			return this.module.settings.upsert(guild.id, {
 				reactionRoleMessageId: null,
 				reactionRoleChannelId: null
 			});

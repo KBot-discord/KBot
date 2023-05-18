@@ -2,35 +2,61 @@
 	"$schema": "https://turborepo.org/schema.json",
 	"pipeline": {
 		"build": {
-			"dependsOn": ["^db:generate", "^build"],
+			"dependsOn": ["db:generate", "buf:generate", "^build"],
+			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
 			"outputs": ["dist/**", "build/**"],
 			"cache": true
 		},
 		"lint": {
-			"dependsOn": ["^build", "build"],
+			"dependsOn": ["^build"],
+			"inputs": ["packages/eslint-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
+			"outputs": [],
+			"cache": true
+		},
+		"lint:fix": {
+			"dependsOn": ["^build"],
+			"inputs": ["packages/eslint-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
 			"outputs": [],
 			"cache": true
 		},
 		"format": {
-			"dependsOn": ["^build", "build"],
+			"dependsOn": ["^build"],
+			"inputs": ["packages/prettier-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
+			"outputs": [],
+			"cache": true
+		},
+		"check": {
+			"dependsOn": ["^build"],
+			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
 			"outputs": [],
 			"cache": true
 		},
 		"test": {
-			"outputs": ["coverage"],
+			"outputs": ["coverage/**"],
 			"cache": true
 		},
 		"dev": {
 			"cache": false
 		},
+		"sync": {
+			"cache": false
+		},
+		"buf:generate": {
+			"inputs": ["protos/**"],
+			"cache": true
+		},
 		"db:generate": {
+			"inputs": ["prisma/schema.prisma"],
 			"cache": false
 		},
 		"db:push": {
+			"inputs": ["prisma/schema.prisma"],
 			"cache": false
 		},
 		"db:deploy": {
+			"inputs": ["prisma/schema.prisma"],
 			"cache": false
 		}
-	}
+	},
+	"globalEnv": ["NODE_ENV"]
 }

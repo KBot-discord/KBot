@@ -1,9 +1,1 @@
-.github
-.husky
-.yarn
-assets
-coverage
 dist
-infra
-node_modules
-src/rpc/gen

@@ -6,17 +6,15 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuild
 import { isNullish } from '@sapphire/utilities';
 import { channelMention, userMention } from '@discordjs/builders';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { EventModule } from '#modules/EventModule';
 import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'EventModule',
 	description: 'Join or leave the karaoke queue.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	deferOptions: { defer: true, ephemeral: true },
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Karaoke')
@@ -32,14 +30,14 @@ import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChann
 })
 export class EventsCommand extends KBotCommand<EventModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.events);
 	}
 
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou, or a moderator, can run \`/events toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -85,7 +83,8 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		await interaction.deferReply({ ephemeral: true });
 		switch (interaction.options.getSubcommand(true)) {
 			case 'join': {
 				return this.chatInputJoin(interaction);
@@ -108,7 +107,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 	}
 
-	public async chatInputJoin(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputJoin(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { karaoke } = this.module;
 		const { guildId, member } = interaction;
 
@@ -117,18 +116,18 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.eventActive({ guildId, eventId });
+		const active = await karaoke.eventActive(guildId, eventId);
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to join.');
 		}
 
-		const event = await karaoke.getEventWithQueue({ eventId });
+		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
 			this.container.logger.error('Failed to fetch an event that was active');
 			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
 		}
 
-		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
+		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -172,7 +171,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply('You have successfully joined the queue.');
 	}
 
-	public async chatInputDuet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputDuet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { karaoke } = this.module;
 		const { guildId, member } = interaction;
 
@@ -181,7 +180,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.eventActive({ guildId, eventId });
+		const active = await karaoke.eventActive(guildId, eventId);
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to join.');
 		}
@@ -191,13 +190,13 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('That user is not in this server.');
 		}
 
-		const event = await karaoke.getEventWithQueue({ eventId });
+		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
 			this.container.logger.error('Failed to fetch an event that was active');
 			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
 		}
 
-		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
+		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -251,7 +250,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply('Successfully joined queue.');
 	}
 
-	public async chatInputLeave(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputLeave(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { karaoke } = this.module;
 		const { member } = interaction;
 
@@ -260,18 +259,18 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.eventActive({ guildId: interaction.guildId, eventId });
+		const active = await karaoke.eventActive(interaction.guildId, eventId);
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to leave from.');
 		}
 
-		const event = await karaoke.getEventWithQueue({ eventId });
+		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
 			this.container.logger.error('Failed to fetch an event that was active');
 			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
 		}
 
-		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
+		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -311,7 +310,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.defaultReply('Successfully left queue.');
 	}
 
-	public async chatInputQueue(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputQueue(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { guildId } = interaction;
 		const { karaoke } = this.module;
 
@@ -321,12 +320,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.eventActive({ guildId, eventId });
+		const active = await karaoke.eventActive(guildId, eventId);
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to show the queue for.');
 		}
 
-		const event = await karaoke.getEventWithQueue({ eventId });
+		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
 			return interaction.defaultReply('There is no event to show.');
 		}
@@ -336,10 +335,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputHelp(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputHelp(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { karaoke } = this.module;
 
-		const events = await karaoke.getEventByGuild({ guildId: interaction.guildId });
+		const events = await karaoke.getEventByGuild(interaction.guildId);
 		const formattedEvents =
 			events.length === 0
 				? []

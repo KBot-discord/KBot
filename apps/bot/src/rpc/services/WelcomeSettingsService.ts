@@ -12,10 +12,10 @@ import {
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
-import type { PartialMessage } from '@bufbuild/protobuf';
 import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
+import type { PartialMessage } from '@bufbuild/protobuf';
 
-export function registerWelcomeSettingsService(router: ConnectRouter) {
+export function registerWelcomeSettingsService(router: ConnectRouter): void {
 	router.service(WelcomeSettingsService, new WelcomeSettingsServiceImpl());
 }
 
@@ -34,7 +34,7 @@ class WelcomeSettingsServiceImpl implements ServiceImpl<typeof WelcomeSettingsSe
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await welcome.getSettings(guildId);
+			const settings = await welcome.settings.get(guildId);
 			if (isNullish(settings)) {
 				return new GetWelcomeSettingsResponse({ settings: undefined });
 			}
@@ -75,7 +75,7 @@ class WelcomeSettingsServiceImpl implements ServiceImpl<typeof WelcomeSettingsSe
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await welcome.upsertSettings(guildId, {
+			const settings = await welcome.settings.upsert(guildId, {
 				enabled: fromRequired(enabled),
 				channelId: fromOptional(channelId),
 				message: fromOptional(message),

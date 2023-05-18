@@ -1,13 +1,13 @@
-export interface PollResultPayload {
+export type PollResultPayload = {
 	guildId: string;
 	pollId: string;
-}
+};
 
-export interface UnlockChannelPayload {
+export type UnlockChannelPayload = {
 	channelId: string;
-}
+};
 
-export interface UnmuteUserPayload {
+export type UnmuteUserPayload = {
 	guildId: string;
 	userId: string;
-}
+};

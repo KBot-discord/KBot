@@ -7,8 +7,8 @@ on:
       - "!**/README.md"
 
 jobs:
-  build:
-    name: Build
+  checks:
+    name: Checks
     runs-on: ubuntu-latest
 
     steps:

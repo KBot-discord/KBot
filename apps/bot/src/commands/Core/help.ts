@@ -4,22 +4,21 @@ import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
+import { container } from '@sapphire/framework';
 import type { ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
 import type { KBotCommand } from '#extensions/KBotCommand';
 import type { DocumentCommand } from '#types/Meili';
 
 @ApplyOptions<ModuleCommand.Options>({
-	module: 'CoreModule',
-	description: "Get info about the bot and all of it's commands.",
-	deferOptions: { defer: true }
+	description: "Get info about the bot and all of it's commands."
 })
 export class CoreCommand extends ModuleCommand<CoreModule> {
 	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
-		super(context, { ...options });
+		super(context, { ...options }, container.core);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -53,7 +52,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		return interaction.respond(options);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 		const option = interaction.options.getString('command');
 
@@ -64,7 +63,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		return this.chatInputInfo(interaction);
 	}
 
-	public async chatInputInfo(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputInfo(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
@@ -81,7 +80,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		});
 	}
 
-	public async chatInputCommand(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, option: string) {
+	public async chatInputCommand(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, option: string): Promise<unknown> {
 		const command = this.container.stores.get('commands').get(option) as KBotCommand | undefined;
 		if (!command) {
 			return interaction.errorReply('That command does not exist.');

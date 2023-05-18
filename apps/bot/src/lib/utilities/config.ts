@@ -2,7 +2,7 @@ import { flattenObject } from '#utils/functions';
 import { isNullOrUndefinedOrEmpty } from '@sapphire/utilities';
 import type { ClientConfig } from '#types/Config';
 
-export function validateConfig(config: ClientConfig) {
+export function validateConfig(config: ClientConfig): boolean {
 	let error = false;
 	const flattenedConfig = flattenObject(config);
 

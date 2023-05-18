@@ -8,18 +8,16 @@ import type { ContextMenuCommandErrorPayload } from '@sapphire/framework';
 const codesToIgnore = [RESTJSONErrorCodes.UnknownChannel, RESTJSONErrorCodes.UnknownMessage];
 
 @ApplyOptions<Listener.Options>({
-	name: Events.ContextMenuCommandError
+	event: Events.ContextMenuCommandError
 })
 export class CommandListener extends Listener {
-	public async run(error: Error, { interaction }: ContextMenuCommandErrorPayload) {
+	public async run(error: Error, { interaction }: ContextMenuCommandErrorPayload): Promise<void> {
 		if (error instanceof DiscordAPIError || error instanceof HTTPError) {
-			if (codesToIgnore.includes(error.status)) {
-				return;
-			}
+			if (codesToIgnore.includes(error.status)) return;
 		}
 
 		captureException(error);
 
-		return interaction.errorReply('Something went wrong, please try that command again.', true);
+		await interaction.errorReply('Something went wrong, please try that command again.', true);
 	}
 }

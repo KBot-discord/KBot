@@ -6,17 +6,15 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { ModerationSettings } from '@kbotdev/database';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'ModerationModule',
 	description: 'Prevent usernames that place the user to the top of the member list.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageNicknames],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Anti-Hoist')
@@ -29,14 +27,14 @@ import type { ModerationModule } from '#modules/ModerationModule';
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.moderation);
 	}
 
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -67,7 +65,8 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
 				return this.chatInputToggle(interaction);
@@ -81,10 +80,10 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		}
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			antiHoistEnabled: value
 		});
 
@@ -100,13 +99,16 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		const settings = await this.module.getSettings(interaction.guildId);
+	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
 
-	private showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: ModerationSettings | null) {
+	private async showSettings(
+		interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>,
+		settings: ModerationSettings | null
+	): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()

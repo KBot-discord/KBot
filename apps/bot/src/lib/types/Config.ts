@@ -1,4 +1,6 @@
-export interface ClientConfig {
+import type { RedisClientOptions } from '@kbotdev/redis';
+
+export type ClientConfig = {
 	isDev: boolean;
 	discord: {
 		token: string;
@@ -27,11 +29,7 @@ export interface ClientConfig {
 		url: string;
 		cacheExpiry: number;
 	};
-	redis: {
-		host: string;
-		port: number;
-		password: string;
-	};
+	redis: RedisClientOptions;
 	meili: {
 		host: string;
 		port: number;
@@ -47,4 +45,4 @@ export interface ClientConfig {
 	stats: {
 		topgg: string;
 	};
-}
+};

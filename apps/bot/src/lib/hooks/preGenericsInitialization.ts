@@ -1,8 +1,14 @@
 import { rootFolder } from '#utils/constants';
 import { Validator } from '#utils/validators';
 import { KBotMetrics } from '#observability/KBotMetrics';
-import { RedisClient } from '#extensions/RedisClient';
 import { MeilisearchClient } from '#extensions/MeiliClient';
+import { CoreModule } from '#modules/CoreModule';
+import { EventModule } from '#modules/EventModule';
+import { ModerationModule } from '#modules/ModerationModule';
+import { UtilityModule } from '#modules/UtilityModule';
+import { WelcomeModule } from '#modules/WelcomeModule';
+import { YoutubeModule } from '#modules/YoutubeModule';
+import { RedisClient } from '@kbotdev/redis';
 import { PrismaClient } from '@kbotdev/database';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
@@ -40,11 +46,18 @@ export class PreGenericsInitializationHook extends Plugin {
 					}
 				}
 			});
-			container.redis = new RedisClient();
+			container.redis = new RedisClient(container.config.redis);
 			container.meili = new MeilisearchClient();
 			container.holodex = new Holodex({ apiKey: config.holodex.apiKey });
 
 			void container.meili.sync();
+
+			container.core = new CoreModule();
+			container.events = new EventModule();
+			container.moderation = new ModerationModule();
+			container.utility = new UtilityModule();
+			container.welcome = new WelcomeModule();
+			container.youtube = new YoutubeModule();
 		} catch (err: unknown) {
 			container.logger.fatal(err);
 			this.destroy();

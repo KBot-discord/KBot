@@ -33,7 +33,10 @@ export class MinageHandler {
 		}
 	}
 
-	private calculateAge(req: number) {
+	private calculateAge(req: number): {
+		reqAge: number;
+		reqDate: number;
+	} {
 		const creation = this.member.user.createdTimestamp;
 		const reqDay = Math.floor(86400000 * req);
 		const reqAge = Math.floor(Date.now() - reqDay);

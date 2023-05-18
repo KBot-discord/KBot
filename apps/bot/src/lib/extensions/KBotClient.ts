@@ -62,6 +62,7 @@ export class KBotClient extends SapphireClient {
 			container.prisma.$disconnect(), //
 			container.redis.quit()
 		]);
-		return super.destroy();
+
+		super.destroy();
 	}
 }

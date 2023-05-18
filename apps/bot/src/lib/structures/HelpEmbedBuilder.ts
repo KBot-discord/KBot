@@ -4,17 +4,17 @@ import type { APIEmbedField } from 'discord.js';
 
 export class HelpEmbedBuilder {
 	private readonly embed = new EmbedBuilder();
-	private type: 'Slash command' | 'Context-menu command' | undefined = undefined;
+	private type: 'Context-menu command' | 'Slash command' | undefined = undefined;
 	private target: string | undefined = undefined;
-	private optionsField: string[] = [];
+	private readonly optionsField: string[] = [];
 	private subcommandsField: string[] = [];
 
-	public setType(type: 'Slash command' | 'Context-menu command'): this {
+	public setType(type: 'Context-menu command' | 'Slash command'): this {
 		this.type = type;
 		return this;
 	}
 
-	public setTarget(target: 'user' | 'message') {
+	public setTarget(target: 'message' | 'user'): this {
 		this.target = target;
 		return this;
 	}

@@ -8,18 +8,18 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { Credit } from '#types/CustomIds';
 import type { Message, ModalSubmitInteraction } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
+import type { InteractionResponseUnion } from '#types/Augments';
 
-interface EmojiData {
+type EmojiData = {
 	url: string;
 	animated: boolean;
-}
+};
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'UtilityModule',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
@@ -32,14 +32,14 @@ interface EmojiData {
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.utility);
 	}
 
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -54,7 +54,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
 		const message = interaction.options.getMessage('message', true);
 
 		const emoji = await this.getEmoji(message);
@@ -99,13 +99,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					time: 60_000
 				})
 				.then(async (modalInteraction) => this.handleSubmit(modalInteraction, emoji, slotsLeft))
-				.catch(() => interaction.errorReply('The modal has timed out.'));
+				.catch(async () => interaction.errorReply('The modal has timed out.'));
 		} catch {
 			return interaction.errorReply('There was an error when trying to add the emoji.');
 		}
 	}
 
-	private async handleSubmit(modal: ModalSubmitInteraction<'cached'>, emojiData: EmojiData, slotsLeft: string) {
+	private async handleSubmit(modal: ModalSubmitInteraction<'cached'>, emojiData: EmojiData, slotsLeft: string): Promise<InteractionResponseUnion> {
 		const embed = new EmbedBuilder();
 		const { url } = emojiData;
 
@@ -138,7 +138,11 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		});
 	}
 
-	private calculateSlots(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	private calculateSlots(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): {
+		staticSlots: number;
+		animatedSlots: number;
+		totalSlots: number;
+	} {
 		const allEmojis = interaction.guild.emojis.cache;
 		const totalSlots = getGuildEmoteSlots(interaction.guild.premiumTier);
 		const animatedEmojiCount = allEmojis.filter((e) => Boolean(e.animated)).size;
@@ -174,8 +178,8 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 
 		if (emojiEmbed) {
-			const response = await fetch(emojiEmbed[0], FetchResultTypes.Result);
-			const contentType = response.headers.get('content-type');
+			const response = await fetch(emojiEmbed[0], FetchResultTypes.Result).catch(() => null);
+			const contentType = response?.headers.get('content-type');
 			if (!response || !contentType) return null;
 
 			const resType = contentType.match(/\/\S*(png|jpg|gif)/);

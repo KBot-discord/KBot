@@ -1,11 +1,11 @@
 import { Duration, Time } from '@sapphire/duration';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
 export function isFunction(object: any): object is Function {
 	return typeof object === 'function';
 }
 
-export function flattenObject(object: any) {
+export function flattenObject(object: Record<any, any>): any {
 	const result: any = {};
 
 	for (const i in object) {
@@ -24,7 +24,7 @@ export function flattenObject(object: any) {
 	return result;
 }
 
-export function minutesFromNow(minutes: number, time?: number) {
+export function minutesFromNow(minutes: number, time?: number): number {
 	return Math.floor(((time ?? Date.now()) + minutes * Time.Minute) / 1000);
 }
 

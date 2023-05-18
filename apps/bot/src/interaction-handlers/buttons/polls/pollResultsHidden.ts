@@ -12,7 +12,7 @@ import type { PollMenuButton } from '#types/CustomIds';
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const {
 			client,
 			utility: { polls }
@@ -24,22 +24,26 @@ export class ButtonHandler extends InteractionHandler {
 				pollId
 			});
 			if (!active) {
-				return interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
+				await interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
+				return;
 			}
 
 			const poll = await polls.get({ pollId });
 			if (isNullish(poll)) {
-				return interaction.errorReply('There was an error when trying to show the poll results.');
+				await interaction.errorReply('There was an error when trying to show the poll results.');
+				return;
 			}
 
 			const channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
 			if (!channel) {
-				return interaction.errorReply("The channel that the poll was sent in doesn't exist anymore.");
+				await interaction.errorReply("The channel that the poll was sent in doesn't exist anymore.");
+				return;
 			}
 
-			const message = await channel.messages.fetch(pollId);
+			const message = await channel.messages.fetch(pollId).catch(() => null);
 			if (!message) {
-				return interaction.errorReply("The poll doesn't exist anymore.");
+				await interaction.errorReply("The poll doesn't exist anymore.");
+				return;
 			}
 
 			const votes = await polls.getVotes({
@@ -48,7 +52,7 @@ export class ButtonHandler extends InteractionHandler {
 			});
 			const results = polls.calculateResults(poll, votes);
 
-			return interaction.editReply({
+			await interaction.editReply({
 				embeds: [
 					new EmbedBuilder()
 						.setColor(EmbedColors.Default)
@@ -60,13 +64,14 @@ export class ButtonHandler extends InteractionHandler {
 			});
 		} catch (err) {
 			this.container.logger.error(err);
-			return interaction.errorReply('There was an error when trying to show the poll results.');
+			await interaction.errorReply('There was an error when trying to show the poll results.');
 		}
 	}
 
 	@validCustomId(PollCustomIds.ResultsHidden)
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		const settings = await this.container.utility.getSettings(interaction.guildId);
+		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();

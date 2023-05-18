@@ -29,15 +29,15 @@ export class KBotMetrics {
 		};
 	}
 
-	public incrementCommand({ command, value = 1 }: { command: string; value?: number }) {
+	public incrementCommand({ command, value = 1 }: { command: string; value?: number }): void {
 		this.counters.commands.inc({ command }, value);
 	}
 
-	public incrementYoutube({ success, value = 1 }: { success: boolean; value?: number }) {
+	public incrementYoutube({ success, value = 1 }: { success: boolean; value?: number }): void {
 		this.counters.youtube.inc({ success: `${success}` }, value);
 	}
 
-	public incrementHolodex({ value = 1 }: { value?: number }) {
+	public incrementHolodex({ value = 1 }: { value?: number }): void {
 		this.counters.holodex.inc(value);
 	}
 
@@ -46,7 +46,7 @@ export class KBotMetrics {
 			name: 'kbot_bot_guilds_total',
 			help: 'Gauge for total amount of guilds.',
 			registers: [register],
-			collect() {
+			collect(): void {
 				if (container.client.isReady()) {
 					this.set(container.client.guilds.cache.size);
 				}
@@ -57,7 +57,7 @@ export class KBotMetrics {
 			name: 'kbot_bot_users_total',
 			help: 'Gauge for total amount of users.',
 			registers: [register],
-			collect() {
+			collect(): void {
 				if (container.client.isReady()) {
 					this.set(container.client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0));
 				}
@@ -68,7 +68,7 @@ export class KBotMetrics {
 			name: 'kbot_bot_karaoke_events_total',
 			help: 'Gauge for total amount of karaoke events.',
 			registers: [register],
-			async collect() {
+			async collect(): Promise<void> {
 				if (container.client.isReady()) {
 					this.set(await container.prisma.karaokeEvent.count());
 				}
@@ -79,7 +79,7 @@ export class KBotMetrics {
 			name: 'kbot_bot_holodex_channels_total',
 			help: 'Gauge for total amount of holodex channels.',
 			registers: [register],
-			async collect() {
+			async collect(): Promise<void> {
 				if (container.client.isReady()) {
 					this.set(await container.prisma.holodexChannel.count());
 				}

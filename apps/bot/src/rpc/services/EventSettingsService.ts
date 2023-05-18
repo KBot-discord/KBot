@@ -13,7 +13,7 @@ import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
-export function registerEventSettingsService(router: ConnectRouter) {
+export function registerEventSettingsService(router: ConnectRouter): void {
 	router.service(EventSettingsService, new EventSettingsServiceImpl());
 }
 
@@ -32,7 +32,7 @@ class EventSettingsServiceImpl implements ServiceImpl<typeof EventSettingsServic
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await events.getSettings(guildId);
+			const settings = await events.settings.get(guildId);
 
 			const data: PartialMessage<GetEventSettingsResponse> = { settings: settings ?? undefined };
 
@@ -62,7 +62,7 @@ class EventSettingsServiceImpl implements ServiceImpl<typeof EventSettingsServic
 		try {
 			const enabledValue = fromRequired(enabled);
 
-			const settings = await events.upsertSettings(guildId, {
+			const settings = await events.settings.upsert(guildId, {
 				enabled: enabledValue
 			});
 

@@ -3,17 +3,17 @@ import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { container } from '@sapphire/framework';
 import type { EmbedBuilder, Message, User } from 'discord.js';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
-import type { YoutubeSubscriptionWithChannel } from '#types/database';
+import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
 
 export class YoutubeMenu extends Menu {
-	private subscriptions: YoutubeSubscriptionWithChannel[];
+	private readonly subscriptions: YoutubeSubscriptionWithChannel[];
 
 	public constructor(subscriptions: YoutubeSubscriptionWithChannel[]) {
 		super();
 		this.subscriptions = subscriptions;
 	}
 
-	public override run(messageOrInteraction: Message | AnyInteractableInteraction, target?: User) {
+	public override async run(messageOrInteraction: AnyInteractableInteraction | Message, target?: User): Promise<this> {
 		const embeds = this.buildEmbeds();
 		const pages = this.buildPages(embeds);
 

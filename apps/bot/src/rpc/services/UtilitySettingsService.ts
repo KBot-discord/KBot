@@ -15,7 +15,7 @@ import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
-export function registerUtilitySettingsService(router: ConnectRouter) {
+export function registerUtilitySettingsService(router: ConnectRouter): void {
 	router.service(UtilitySettingsService, new UtilitySettingsServiceImpl());
 }
 
@@ -34,7 +34,7 @@ class UtilitySettingsServiceImpl implements ServiceImpl<typeof UtilitySettingsSe
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await utility.getSettings(guildId);
+			const settings = await utility.settings.get(guildId);
 			if (isNullish(settings)) {
 				return new GetUtilitySettingsResponse({ settings: undefined });
 			}
@@ -71,7 +71,7 @@ class UtilitySettingsServiceImpl implements ServiceImpl<typeof UtilitySettingsSe
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await utility.upsertSettings(guildId, {
+			const settings = await utility.settings.upsert(guildId, {
 				enabled: fromRequired(enabled),
 				incidentChannelId: fromOptional(incidentChannelId),
 				creditsChannelId: fromOptional(creditsChannelId)

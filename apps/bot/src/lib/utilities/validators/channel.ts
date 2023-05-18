@@ -1,4 +1,3 @@
-import { KBotErrors } from '#types/Enums';
 import { KBotError } from '#structures/KBotError';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
@@ -9,14 +8,9 @@ import type { Channel, GuildChannel, GuildTextBasedChannel, StageChannel, VoiceC
 export class ChannelValidator {
 	public async canSendEmbeds(
 		channel: Channel | GuildChannel | GuildTextBasedChannel | null
-	): Promise<{ result: true; error?: undefined } | { result: false; error: KBotError }> {
+	): Promise<{ result: false; error?: KBotError } | { result: true; error?: undefined }> {
 		if (isNullish(channel) || !channel.isTextBased() || channel.isDMBased()) {
-			return {
-				result: false,
-				error: new KBotError({
-					identifier: KBotErrors.ChannelPermissions
-				})
-			};
+			return { result: false };
 		}
 
 		const bot = await channel.guild.members.fetchMe();
@@ -46,25 +40,20 @@ export class ChannelValidator {
 
 		return {
 			result: false,
-			error: new KBotError({
-				identifier: KBotErrors.ChannelPermissions,
-				message: `I don't have the required permission(s) to send messages in ${channelMention(
+			error: new KBotError(
+				`I don't have the required permission(s) to send messages in ${channelMention(
 					channel.id //
-				)}\nRequired permission(s):${errors}`
-			})
+				)}\nRequired permission(s):${errors}`,
+				'CHANNEL_PERMISSIONS'
+			)
 		};
 	}
 
 	public async canModerateVoice(
-		channel: VoiceChannel | StageChannel | null
-	): Promise<{ result: true; error?: undefined } | { result: false; error: KBotError }> {
+		channel: StageChannel | VoiceChannel | null
+	): Promise<{ result: false; error?: KBotError } | { result: true; error?: undefined }> {
 		if (isNullish(channel)) {
-			return {
-				result: false,
-				error: new KBotError({
-					identifier: KBotErrors.ChannelPermissions
-				})
-			};
+			return { result: false };
 		}
 
 		const bot = await channel.guild.members.fetchMe();
@@ -91,12 +80,12 @@ export class ChannelValidator {
 
 		return {
 			result: false,
-			error: new KBotError({
-				identifier: KBotErrors.ChannelPermissions,
-				message: `I don't have the required permission(s) to manage the karaoke events in ${channelMention(
+			error: new KBotError(
+				`I don't have the required permission(s) to manage the karaoke events in ${channelMention(
 					channel.id //
-				)}\nRequired permission(s):${errors}`
-			})
+				)}\nRequired permission(s):${errors}`,
+				'CHANNEL_PERMISSIONS'
+			)
 		};
 	}
 }

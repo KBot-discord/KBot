@@ -9,17 +9,17 @@ import { Time } from '@sapphire/duration';
 import type { Embed, Sticker, Emoji } from 'discord.js';
 import type { Credit, CreditEditModal } from '#types/CustomIds';
 
-interface EmoteCreditEmbed {
+type EmoteCreditEmbed = {
 	source: string;
 	description: string;
 	artist: string;
-}
+};
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { resource, type }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { resource, type }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
 
 		const modal = this.buildModal(interaction.message.id, resource.id!, type, data);
@@ -29,13 +29,14 @@ export class ButtonHandler extends InteractionHandler {
 
 	@validCustomId(CreditCustomIds.ResourceEdit)
 	@interactionRatelimit(Time.Second * 30, 5)
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
 			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', true);
 			return this.none();
 		}
 
-		const settings = await this.container.utility.getSettings(interaction.guildId);
+		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();

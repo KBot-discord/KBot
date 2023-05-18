@@ -7,8 +7,8 @@ on:
       - "!**/README.md"
 
 jobs:
-  lint:
-    name: Lint
+  checks:
+    name: Checks
     runs-on: ubuntu-latest
 
     steps:

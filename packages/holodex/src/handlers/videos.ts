@@ -1,8 +1,8 @@
-import { BASE_URL, ContentType } from '../utils/constants';
+import { BASE_URL, ContentType } from '../lib/utilities/constants';
 import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
-import type { HolodexOptions } from '../structures/Holodex';
-import type { HolodexVideoWithChannel } from '../types/videos';
-import type { PaginatedResponse } from '../types/api';
+import type { HolodexOptions } from '../lib/structures/Holodex';
+import type { HolodexVideoWithChannel } from '../lib/types/videos';
+import type { PaginatedResponse } from '../lib/types/api';
 
 export class VideoHandler {
 	private readonly apiKey: string;

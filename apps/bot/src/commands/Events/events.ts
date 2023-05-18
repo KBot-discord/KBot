@@ -6,11 +6,10 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { EmbedBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { EventModule } from '#modules/EventModule';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'EventModule',
 	description: 'Edit the settings of the events module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -25,10 +24,10 @@ import type { EventModule } from '#modules/EventModule';
 })
 export class EventsCommand extends KBotCommand<EventModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.events);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -59,7 +58,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -74,10 +73,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			enabled: value
 		});
 
@@ -91,8 +90,8 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		const settings = await this.module.getSettings(interaction.guildId);
+	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		const settings = await this.module.settings.get(interaction.guildId);
 
 		return interaction.editReply({
 			embeds: [

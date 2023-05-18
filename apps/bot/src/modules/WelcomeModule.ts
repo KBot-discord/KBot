@@ -1,52 +1,29 @@
 import { WelcomeSettingsService } from '#services';
 import { Module } from '@kbotdev/plugin-modules';
-import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { WelcomeSettings } from '@kbotdev/database';
-import type { UpsertWelcomeSettingsData } from '#types/database';
 
-@ApplyOptions<Module.Options>({
-	name: 'WelcomeModule',
-	fullName: 'Welcome Module'
-})
 export class WelcomeModule extends Module {
-	private readonly settings: WelcomeSettingsService;
+	public readonly settings: WelcomeSettingsService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
-		super(context, { ...options });
+	public constructor(options?: Module.Options) {
+		super({ ...options, fullName: 'Welcome Module' });
 
 		this.settings = new WelcomeSettingsService();
-
-		this.container.welcome = this;
 	}
 
 	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
-		const settings = await this.getSettings(guild.id);
+		const settings = await this.settings.get(guild.id);
 		return isNullish(settings) ? false : settings.enabled;
 	}
 
-	public async getSettings(guildId: string): Promise<WelcomeSettings | null> {
-		return this.settings.get({ guildId });
-	}
-
-	public async upsertSettings(guildId: string, data: UpsertWelcomeSettingsData): Promise<WelcomeSettings> {
-		return this.settings.upsert({ guildId }, data);
-	}
-
-	public static formatText(text: string, member: GuildMember) {
+	public static formatText(text: string, member: GuildMember): string {
 		return text
 			.replaceAll('{nl}', '\n')
 			.replaceAll('{@member}', `<@${member.id}>`)
 			.replaceAll('{membertag}', `${member.user.tag}`)
 			.replaceAll('{server}', `${member.guild.name}`);
-	}
-}
-
-declare module '@kbotdev/plugin-modules' {
-	interface Modules {
-		WelcomeModule: never;
 	}
 }

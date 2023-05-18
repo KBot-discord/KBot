@@ -1,4 +1,3 @@
-export * from '#services/AntiHoistService';
 export * from '#services/CoreSettingsService';
 export * from '#services/EventSettingsService';
 export * from '#services/KaraokeService';

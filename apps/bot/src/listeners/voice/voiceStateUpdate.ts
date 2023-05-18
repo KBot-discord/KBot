@@ -10,7 +10,7 @@ import type { KaraokeUser } from '@kbotdev/database';
 	event: Events.VoiceStateUpdate
 })
 export class VoiceListener extends Listener {
-	public async run(oldState: VoiceState, newState: VoiceState) {
+	public async run(oldState: VoiceState, newState: VoiceState): Promise<void> {
 		const { events, validator } = this.container;
 		const client = await newState.guild.members.fetchMe();
 
@@ -31,25 +31,19 @@ export class VoiceListener extends Listener {
 		// Filter mutes and deafens
 		if (oldState.channel?.id === newState.channel?.id) return;
 
-		const settings = await events.getSettings(newState.guild.id);
+		const settings = await events.settings.get(newState.guild.id);
 		if (isNullish(settings) || !settings.enabled) return;
 
 		// Check if the event exists
-		const exists = await events.karaoke.eventExists({
-			guildId: oldState.guild.id,
-			eventId
-		});
+		const exists = await events.karaoke.eventExists(oldState.guild.id, eventId);
 		if (!exists) return;
 
 		// Check if the event is active
-		const eventActive = await events.karaoke.eventActive({
-			guildId: oldState.guild.id,
-			eventId
-		});
+		const eventActive = await events.karaoke.eventActive(oldState.guild.id, eventId);
 		if (!eventActive) return;
 
 		// Get the event from the database
-		const event = await events.karaoke.getEventWithQueue({ eventId });
+		const event = await events.karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) return;
 
 		// Mute new joins
@@ -115,7 +109,7 @@ export class VoiceListener extends Listener {
 		}
 	}
 
-	private isUserInQueue(queue: KaraokeUser[], userId: string) {
+	private isUserInQueue(queue: KaraokeUser[], userId: string): boolean {
 		return queue.some((user) => user.id === userId);
 	}
 }

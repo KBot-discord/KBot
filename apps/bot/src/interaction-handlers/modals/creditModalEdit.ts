@@ -16,7 +16,7 @@ export class ModalHandler extends InteractionHandler {
 	public override async run(
 		modal: ModalSubmitInteraction<'cached'>,
 		{ id, resource, type, source, description, artist }: InteractionHandler.ParseResult<this>
-	) {
+	): Promise<void> {
 		try {
 			const message = await modal.channel!.messages.fetch(id);
 
@@ -38,13 +38,14 @@ export class ModalHandler extends InteractionHandler {
 				]
 			});
 		} catch (err) {
-			return this.container.logger.error(err);
+			this.container.logger.error(err);
 		}
 	}
 
 	@validCustomId(CreditCustomIds.ResourceModalEdit)
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
-		const settings = await this.container.utility.getSettings(modal.guildId);
+		const settings = await this.container.utility.settings.get(modal.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
 			return this.none();

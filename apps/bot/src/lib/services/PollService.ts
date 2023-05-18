@@ -1,12 +1,19 @@
 import { CustomEmotes, EmbedColors } from '#utils/constants';
-import { pollCacheKey } from '#utils/cache';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
+import {
+	type PrismaClient,
+	type Poll,
+	type PollId,
+	type CreatePollData,
+	type GuildAndPollId,
+	type GuildId,
+	type UpsertPollUserData,
+	pollCacheKey
+} from '@kbotdev/database';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
-import type { GuildAndPollId, GuildId, PollId, CreatePollData, UpsertPollUserData } from '#types/database';
-import type { RedisClient } from '#extensions/RedisClient';
-import type { PrismaClient, Poll } from '@kbotdev/database';
+import type { RedisClient } from '@kbotdev/redis';
 import type { PollResultPayload } from '#types/Tasks';
 import type { Key } from '#types/Generic';
 
@@ -74,12 +81,12 @@ export class PollService {
 		await this.cache.hSet<number>(pollKey, userKey, option);
 	}
 
-	public async getVotes({ guildId, pollId }: GuildAndPollId) {
+	public async getVotes({ guildId, pollId }: GuildAndPollId): Promise<Map<string, number>> {
 		const pollKey = this.pollKey(guildId, pollId);
 		return this.cache.hGetAll<number>(pollKey);
 	}
 
-	public async createTask(expiresIn: number, { guildId, pollId }: PollResultPayload) {
+	public async createTask(expiresIn: number, { guildId, pollId }: PollResultPayload): Promise<void> {
 		await container.tasks.create(
 			'pollResults',
 			{ guildId, pollId },
@@ -93,7 +100,7 @@ export class PollService {
 		);
 	}
 
-	public deleteTask(pollId: string) {
+	public async deleteTask(pollId: string): Promise<void> {
 		return container.tasks.delete(this.pollJobId(pollId));
 	}
 
@@ -203,9 +210,9 @@ export class PollService {
 		return this.cache.sRem(this.setKey(guildId), this.memberKey(pollId));
 	}
 
-	private readonly pollKey = (guildId: string, pollId: string) => `${pollCacheKey(guildId)}:${pollId}` as Key;
-	private readonly pollUserKey = (userId: string) => `user:${userId}` as Key;
-	private readonly setKey = (guildId: string) => `${pollCacheKey(guildId)}:active` as Key;
-	private readonly memberKey = (pollId: string) => `polls:${pollId}:active` as Key;
-	private readonly pollJobId = (pollId: string) => `poll:${pollId}`;
+	private readonly pollKey = (guildId: string, pollId: string): Key => `${pollCacheKey(guildId)}:${pollId}` as Key;
+	private readonly pollUserKey = (userId: string): Key => `user:${userId}` as Key;
+	private readonly setKey = (guildId: string): Key => `${pollCacheKey(guildId)}:active` as Key;
+	private readonly memberKey = (pollId: string): Key => `polls:${pollId}:active` as Key;
+	private readonly pollJobId = (pollId: string): Key => `poll:${pollId}` as Key;
 }

@@ -6,7 +6,10 @@
 	"include": [
 		"apps/**/*.ts", //
 		"packages/**/*.ts",
-		"scripts",
-		".eslintrc.cjs"
-	]
+		"scripts/*.ts",
+		".eslintrc.cjs",
+		"packages/eslint-config/**/*.js",
+		"packages/prettier-config/**/*.js"
+	],
+	"exclude": ["node_modules"]
 }

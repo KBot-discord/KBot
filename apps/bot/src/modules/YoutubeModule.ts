@@ -1,43 +1,27 @@
 import { BlankSpace, EmbedColors } from '#utils/constants';
 import { YoutubeSettingsService, YoutubeSubscriptionService } from '#services';
 import { Module } from '@kbotdev/plugin-modules';
-import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
-import type { YoutubeSettings } from '@kbotdev/database';
+import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { YoutubeSubscriptionWithChannel, UpsertYoutubeSettingsData } from '#types/database';
 
-@ApplyOptions<Module.Options>({
-	name: 'YoutubeModule',
-	fullName: 'Youtube Module'
-})
 export class YoutubeModule extends Module {
 	public readonly settings: YoutubeSettingsService;
 	public readonly subscriptions: YoutubeSubscriptionService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
-		super(context, { ...options });
+	public constructor(options?: Module.Options) {
+		super({ ...options, fullName: 'Youtube Module' });
 
 		this.settings = new YoutubeSettingsService();
 		this.subscriptions = new YoutubeSubscriptionService();
-
-		this.container.youtube = this;
 	}
 
 	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
-		const settings = await this.settings.get({ guildId: guild.id });
+		const settings = await this.settings.get(guild.id);
 		return isNullish(settings) ? false : settings.enabled;
-	}
-
-	public async getSettings(guildId: string): Promise<YoutubeSettings | null> {
-		return this.settings.get({ guildId });
-	}
-
-	public async upsertSettings(guildId: string, data: UpsertYoutubeSettingsData): Promise<YoutubeSettings> {
-		return this.settings.upsert({ guildId }, data);
 	}
 
 	public buildSubscriptionEmbed({
@@ -74,11 +58,5 @@ export class YoutubeModule extends Module {
 				}
 			])
 			.setThumbnail(channel.image);
-	}
-}
-
-declare module '@kbotdev/plugin-modules' {
-	interface Modules {
-		YoutubeModule: never;
 	}
 }
