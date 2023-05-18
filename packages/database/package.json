@@ -25,7 +25,6 @@
 		"@sapphire/utilities": "^3.11.2"
 	},
 	"devDependencies": {
-		"@kbotdev/eslint-config": "workspace:^",
 		"eslint": "^8.40.0",
 		"prettier": "^2.8.8",
 		"typescript": "^5.0.4"

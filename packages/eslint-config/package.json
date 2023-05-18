@@ -3,17 +3,15 @@
 	"version": "0.0.0",
 	"license": "AGPL-3.0-or-later",
 	"private": true,
-	"main": "dist/index.js",
+	"main": "src/index.js",
 	"exports": {
-		"import": "./dist/index.js",
-		"require": "./dist/index.js"
+		"import": "./src/index.js",
+		"require": "./src/index.js"
 	},
 	"scripts": {
-		"build": "tsup",
-		"check": "tsc",
-		"lint": "eslint --ext ts src && yarn check",
-		"lint:fix": "eslint --fix --ext ts src",
-		"format": "prettier --write --loglevel=warn \"src/**/*.ts\""
+		"lint": "eslint --ext js src",
+		"lint:fix": "eslint --fix --ext js src",
+		"format": "prettier --write --loglevel=warn \"src/**/*.js\""
 	},
 	"devDependencies": {
 		"@types/node": "^20.1.7",

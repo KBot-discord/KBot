@@ -7,7 +7,9 @@
 		"apps/**/*.ts", //
 		"packages/**/*.ts",
 		"scripts/*.ts",
-		".eslintrc.cjs"
+		".eslintrc.cjs",
+		"packages/eslint-config/src/index.js",
+		"packages/prettier-config/src/index.js"
 	],
 	"exclude": ["node_modules"]
 }
