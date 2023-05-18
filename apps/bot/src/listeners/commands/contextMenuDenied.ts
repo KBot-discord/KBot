@@ -3,10 +3,10 @@ import { ApplyOptions } from '@sapphire/decorators';
 import type { UserError, ContextMenuCommandDeniedPayload } from '@sapphire/framework';
 
 @ApplyOptions<Listener.Options>({
-	name: Events.ContextMenuCommandDenied
+	event: Events.ContextMenuCommandDenied
 })
 export class CommandListener extends Listener {
-	public run(error: UserError, payload: ContextMenuCommandDeniedPayload) {
-		return payload.interaction.errorReply(error.message, true);
+	public async run(error: UserError, payload: ContextMenuCommandDeniedPayload): Promise<void> {
+		await payload.interaction.errorReply(error.message, true);
 	}
 }

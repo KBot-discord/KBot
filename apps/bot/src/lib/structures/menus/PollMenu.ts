@@ -11,7 +11,7 @@ import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities'
 import type { PollMenuButton } from '#types/CustomIds';
 
 export class PollMenu extends Menu {
-	private guild: Guild;
+	private readonly guild: Guild;
 	private polls: Poll[] = [];
 
 	public constructor(guild: Guild) {
@@ -19,7 +19,7 @@ export class PollMenu extends Menu {
 		this.guild = guild;
 	}
 
-	public override async run(messageOrInteraction: Message | AnyInteractableInteraction, target?: User) {
+	public override async run(messageOrInteraction: AnyInteractableInteraction | Message, target?: User): Promise<this> {
 		const embeds = await this.buildEmbeds();
 		const pages = this.buildPages(embeds);
 

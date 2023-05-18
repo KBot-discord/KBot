@@ -14,27 +14,27 @@ export type MeiliDocument<T extends MeiliIndex> = T extends typeof MeiliCategori
 	? DocumentTwitchChannel
 	: never;
 
-interface DocumentBase {
+type DocumentBase = {
 	id: string;
-}
+};
 
-export interface DocumentCommand extends DocumentBase {
+export type DocumentCommand = DocumentBase & {
 	name: string;
 	description: string;
-}
+};
 
-export interface DocumentYoutubeChannel extends DocumentBase {
+export type DocumentYoutubeChannel = DocumentBase & {
 	name: string;
 	englishName: string | null;
 	org: string | null;
 	subOrg: string | null;
 	group: string | null;
-}
+};
 
-export interface DocumentTwitchChannel extends DocumentBase {
+export type DocumentTwitchChannel = DocumentBase & {
 	name: string;
 	englishName: string | null;
 	org: string | null;
 	subOrg: string | null;
 	group: string | null;
-}
+};

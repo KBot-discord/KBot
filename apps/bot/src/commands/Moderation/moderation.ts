@@ -8,13 +8,12 @@ import { channelMention } from '@discordjs/builders';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { APIEmbedField } from 'discord-api-types/v10';
-import type { ModerationSettings } from '@kbotdev/database';
+import type { ModerationSettings } from '@kbotdev/prisma';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'ModerationModule',
 	description: 'Edit the settings of the moderation module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -44,10 +43,10 @@ import type { ModerationModule } from '#modules/ModerationModule';
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.moderation);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -106,7 +105,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -130,10 +129,10 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		}
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			enabled: value
 		});
 
@@ -150,30 +149,30 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		});
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const reportChannel = interaction.options.getChannel('report_channel');
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			reportChannelId: reportChannel?.id
 		});
 
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const reportChannel = interaction.options.getBoolean('report_channel');
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			reportChannelId: reportChannel ? null : undefined
 		});
 
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputPermissions(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputPermissions(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { channels, members } = interaction.guild;
 
-		const settings = await this.module.getSettings(interaction.guildId);
+		const settings = await this.module.settings.get(interaction.guildId);
 
 		const bot = await members.fetchMe();
 		const fields: APIEmbedField[] = [];
@@ -227,8 +226,8 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		const settings = await this.module.getSettings(interaction.guildId);
+	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
@@ -237,7 +236,10 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		return bool ? KBotEmoji.GreenCheck : KBotEmoji.RedX;
 	}
 
-	private showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: ModerationSettings | null) {
+	private async showSettings(
+		interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>,
+		settings: ModerationSettings | null
+	): Promise<unknown> {
 		const embed = new EmbedBuilder()
 			.setColor(EmbedColors.Default)
 			.setAuthor({ name: 'Moderation module settings', iconURL: getGuildIcon(interaction.guild) })

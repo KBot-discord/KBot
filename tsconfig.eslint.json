@@ -6,7 +6,8 @@
 	"include": [
 		"apps/**/*.ts", //
 		"packages/**/*.ts",
-		"scripts",
+		"scripts/*.ts",
 		".eslintrc.cjs"
-	]
+	],
+	"exclude": ["node_modules"]
 }

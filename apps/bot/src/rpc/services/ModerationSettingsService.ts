@@ -15,7 +15,7 @@ import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
-export function registerModerationSettingsService(router: ConnectRouter) {
+export function registerModerationSettingsService(router: ConnectRouter): void {
 	router.service(ModerationSettingsService, new ModerationSettingsServiceImpl());
 }
 
@@ -37,7 +37,7 @@ class ModerationSettingsServiceImpl implements ServiceImpl<typeof ModerationSett
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await moderation.getSettings(guildId);
+			const settings = await moderation.settings.get(guildId);
 			if (isNullish(settings)) {
 				return new GetModerationSettingsResponse({ settings: undefined });
 			}
@@ -76,7 +76,7 @@ class ModerationSettingsServiceImpl implements ServiceImpl<typeof ModerationSett
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await moderation.upsertSettings(guildId, {
+			const settings = await moderation.settings.upsert(guildId, {
 				enabled: fromRequired(enabled),
 				reportChannelId: fromOptional(reportChannelId),
 				minAccountAgeReq: fromOptional(minageReq),

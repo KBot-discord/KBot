@@ -4,7 +4,7 @@ import { isNullish } from '@sapphire/utilities';
 import type { GuildMember } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	name: Events.GuildMemberUpdate
+	event: Events.GuildMemberUpdate
 })
 export class GuildListener extends Listener {
 	public async run(oldMember: GuildMember, newMember: GuildMember): Promise<void> {
@@ -14,7 +14,7 @@ export class GuildListener extends Listener {
 			newMember.manageable && //
 			(oldMember.nickname !== newMember.nickname || oldMember.user.username !== newMember.user.username)
 		) {
-			const settings = await moderation.getSettings(newMember.guild.id);
+			const settings = await moderation.settings.get(newMember.guild.id);
 			if (isNullish(settings) || !settings.enabled) return;
 
 			await moderation.antiHoist.parseMember(newMember, settings);

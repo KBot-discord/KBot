@@ -1,7 +1,7 @@
 import { MeiliCategories } from '#types/Meili';
 import { MeiliSearch } from 'meilisearch';
 import { container } from '@sapphire/framework';
-import type { SearchResponse } from 'meilisearch';
+import type { SearchResponse, EnqueuedTask } from 'meilisearch';
 import type { MeiliDocument, MeiliIndex } from '#types/Meili';
 
 export class MeilisearchClient extends MeiliSearch {
@@ -20,7 +20,7 @@ export class MeilisearchClient extends MeiliSearch {
 		}
 	}
 
-	public async get<T = unknown>(index: MeiliIndex, searchString: string) {
+	public async get<T = unknown>(index: MeiliIndex, searchString: string): Promise<SearchResponse<T>> {
 		return super
 			.index(index) //
 			.search<MeiliDocument<typeof index>>(searchString, {
@@ -28,25 +28,25 @@ export class MeilisearchClient extends MeiliSearch {
 			}) as unknown as Promise<SearchResponse<T>>;
 	}
 
-	public async upsertMany(index: MeiliIndex, documents: MeiliDocument<typeof index>[]) {
+	public async upsertMany(index: MeiliIndex, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
 		return super
 			.index(index) //
 			.addDocuments(documents);
 	}
 
-	public async update(index: MeiliIndex, document: MeiliDocument<typeof index>) {
+	public async update(index: MeiliIndex, document: MeiliDocument<typeof index>): Promise<EnqueuedTask> {
 		return super
 			.index(index) //
 			.updateDocuments([document]);
 	}
 
-	public async updateMany(index: MeiliIndex, documents: MeiliDocument<typeof index>[]) {
+	public async updateMany(index: MeiliIndex, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
 		return super
 			.index(index) //
 			.updateDocuments(documents);
 	}
 
-	public async resetIndex(index: MeiliIndex, documents: MeiliDocument<typeof index>[]) {
+	public async resetIndex(index: MeiliIndex, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
 		await super.index(index).deleteAllDocuments();
 		return super
 			.index(index) //

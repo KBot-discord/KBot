@@ -17,7 +17,7 @@ export class FlagHandler {
 		this.setupCollector(response.channel as GuildTextBasedChannel, target, targetGuild);
 	}
 
-	private setupCollector(channel: GuildTextBasedChannel, target: User, targetGuild: Guild) {
+	private setupCollector(channel: GuildTextBasedChannel, target: User, targetGuild: Guild): void {
 		this.collector = new InteractionCollector<ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>>(target.client, {
 			filter: (interaction) => interaction.member.id === target.id,
 			time: Time.Minute * 14,
@@ -29,7 +29,7 @@ export class FlagHandler {
 			.on('end', this.handleEnd.bind(this));
 	}
 
-	private async handleCollect(targetGuild: Guild, interaction: ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>) {
+	private async handleCollect(targetGuild: Guild, interaction: ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>): Promise<void> {
 		await interaction.deferUpdate();
 
 		if (interaction.customId === 'featureflags-menu') {
@@ -38,7 +38,7 @@ export class FlagHandler {
 			this.collector?.stop();
 
 			if (interaction.customId === 'featureflags-save') {
-				const settings = await container.core.upsertSettings(targetGuild.id, {
+				const settings = await container.core.settings.upsert(targetGuild.id, {
 					flags: this.flags
 				});
 
@@ -59,7 +59,7 @@ export class FlagHandler {
 		}
 	}
 
-	private async handleEnd() {
+	private async handleEnd(): Promise<void> {
 		this.collector?.removeAllListeners();
 	}
 }

@@ -57,13 +57,13 @@ export class ReportHandler {
 		}
 	}
 
-	private async handleEnd() {
+	private async handleEnd(): Promise<void> {
 		await this.toggleButton(true, ReportButtons.Delete, ReportButtons.Info);
 
 		this.collector?.removeAllListeners();
 	}
 
-	private async confirmationPrompt(interaction: ButtonInteraction<'cached'>, text: string, type: ReportButtons) {
+	private async confirmationPrompt(interaction: ButtonInteraction<'cached'>, text: string, type: ReportButtons): Promise<void> {
 		const row = new ActionRowBuilder<ButtonBuilder>()
 			.addComponents(
 				new ButtonBuilder() //
@@ -87,7 +87,7 @@ export class ReportHandler {
 			],
 			components: [row]
 		});
-		const filter = (i: ButtonInteraction<'cached'>) => {
+		const filter = (i: ButtonInteraction<'cached'>): boolean => {
 			return i.member.id === interaction.member.id;
 		};
 
@@ -115,10 +115,11 @@ export class ReportHandler {
 
 	private setupCollector(): void {
 		this.collector = new InteractionCollector<ButtonInteraction<'cached'>>(this.targetMember.client, {
-			filter: (i) => {
+			filter: (i): Promise<boolean> | boolean => {
 				if (i.customId === ButtonCustomId.Delete) {
 					return i.memberPermissions.has(PermissionFlagsBits.ManageMessages) && i.member.id !== this.targetMember.id;
 				}
+
 				return i.memberPermissions.has(PermissionFlagsBits.ManageMessages);
 			},
 

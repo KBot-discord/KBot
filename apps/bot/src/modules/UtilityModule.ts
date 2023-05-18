@@ -1,47 +1,30 @@
 import { PollService, UtilitySettingsService } from '#services';
 import { CreditCustomIds, CreditFields, buildCustomId } from '#utils/customIds';
 import { Module } from '@kbotdev/plugin-modules';
-import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import type { CreditType } from '#utils/customIds';
 import type { CreditImageModal, CreditModal } from '#types/CustomIds';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { UtilitySettings } from '@kbotdev/database';
-import type { UpsertUtilitySettingsData } from '#types/database';
 
-@ApplyOptions<Module.Options>({
-	name: 'UtilityModule',
-	fullName: 'Utility Module'
-})
 export class UtilityModule extends Module {
 	public readonly settings: UtilitySettingsService;
 	public readonly polls: PollService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
-		super(context, { ...options });
+	public constructor(options?: Module.Options) {
+		super({ ...options, fullName: 'Utility Module' });
 
 		this.settings = new UtilitySettingsService();
 		this.polls = new PollService();
-
-		this.container.utility = this;
 	}
 
 	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
-		const settings = await this.getSettings(guild.id).catch(() => null);
+		const settings = await this.settings.get(guild.id).catch(() => null);
 		return isNullish(settings) ? false : settings.enabled;
 	}
 
-	public async getSettings(guildId: string): Promise<UtilitySettings | null> {
-		return this.settings.get({ guildId });
-	}
-
-	public async upsertSettings(guildId: string, data: UpsertUtilitySettingsData): Promise<UtilitySettings> {
-		return this.settings.upsert({ guildId }, data);
-	}
-
-	public async fetchIncidentChannels() {
+	public async fetchIncidentChannels(): Promise<{ guildId: string; channelId: string }[]> {
 		return this.settings.getIncidentChannels();
 	}
 
@@ -114,11 +97,5 @@ export class UtilityModule extends Module {
 			.setCustomId(customId)
 			.setTitle('Add a credit entry')
 			.addComponents(components);
-	}
-}
-
-declare module '@kbotdev/plugin-modules' {
-	interface Modules {
-		UtilityModule: never;
 	}
 }

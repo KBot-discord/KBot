@@ -1,14 +1,14 @@
-export interface StatusPageResult {
+export type StatusPageResult = {
 	incidents: StatusPageIncident[];
-}
+};
 
-export interface StatusPageIncident {
+export type StatusPageIncident = {
 	id: string;
 	name: string;
-	status: 'investigating' | 'identified' | 'monitoring' | 'resolved' | 'postmortem';
+	status: 'identified' | 'investigating' | 'monitoring' | 'postmortem' | 'resolved';
 	created_at: string;
 	updated_at: string | null;
-	impact: 'none' | 'minor' | 'major' | 'critical';
+	impact: 'critical' | 'major' | 'minor' | 'none';
 	started_at: string;
 	incident_updates: {
 		status: string;
@@ -16,4 +16,4 @@ export interface StatusPageIncident {
 		created_at: string;
 	}[];
 	components: { name: string }[];
-}
+};

@@ -3,15 +3,14 @@ import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
 
-function getRandomInt(max: number) {
+function getRandomInt(max: number): number {
 	return Math.floor(Math.random() * max);
 }
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'CoreModule',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -25,10 +24,10 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly character = /[a-zA-Z]/;
 
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.core);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -43,7 +42,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 
 		const message = interaction.options.getMessage('message', true);
@@ -63,7 +62,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		return interaction.editReply({ content: uwuText });
 	}
 
-	private convertString(string: string) {
+	private convertString(string: string): string {
 		let converted = '';
 		let currentWord = '';
 
@@ -85,7 +84,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		return converted;
 	}
 
-	private convertWord(word: string) {
+	private convertWord(word: string): string {
 		word = word.toLowerCase();
 		let uwu = word.replace(/[.?!,]+$/g, '');
 		const punctuations = word.slice(uwu.length);

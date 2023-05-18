@@ -1,19 +1,19 @@
-import type { KBotErrors } from '#types/Enums';
-import type { KBotError } from '#structures/KBotError';
 import type { CommandInteraction } from 'discord.js';
 import type { ModuleCommand } from '@kbotdev/plugin-modules';
+import type { KBotErrors } from '#types/Enums';
+import type { KBotError } from '#structures/KBotError';
 
-export interface ErrorPayload {
+export type ErrorPayload = {
 	error: KBotError;
-}
+};
 
-export interface ChannelPermissionsPayload extends ErrorPayload {
+export type ChannelPermissionsPayload = ErrorPayload & {
 	interaction: CommandInteraction;
-}
+};
 
-export interface UnknownCommandPayload extends ErrorPayload {
+export type UnknownCommandPayload = ErrorPayload & {
 	interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>;
-}
+};
 
 export type Payload<T extends KBotErrors> = T extends KBotErrors.ChannelPermissions
 	? ChannelPermissionsPayload

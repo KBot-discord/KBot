@@ -3,10 +3,10 @@ import { isMessageInstance } from '@sapphire/discord.js-utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
+import { container } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'CoreModule',
 	description: 'Ping the bot to see if it is alive.',
 	helpEmbed: (builder) => {
 		return builder //
@@ -16,10 +16,10 @@ import type { CoreModule } from '#modules/CoreModule';
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.core);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -34,7 +34,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const message = await interaction.reply({ content: 'Ping?', fetchReply: true });
 		if (!isMessageInstance(message)) {
 			return interaction.editReply('Failed to retrieve ping :(');

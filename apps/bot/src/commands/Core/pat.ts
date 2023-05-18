@@ -7,22 +7,20 @@ import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage } from 'canvas-constructor/cairo';
 import { AttachmentBuilder } from 'discord.js';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import { join } from 'node:path';
 import { readdirSync } from 'fs';
 import { buffer } from 'node:stream/consumers';
 import type { CoreModule } from '#modules/CoreModule';
 import type { Image } from 'canvas-constructor/cairo';
 
-interface PatOptions {
+type PatOptions = {
 	resolution?: number;
 	delay?: number;
-}
+};
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'CoreModule',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	deferOptions: { defer: true },
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Pat')
@@ -31,13 +29,13 @@ interface PatOptions {
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
-	private pats: Image[] = [];
+	private readonly pats: Image[] = [];
 
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.core);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -52,7 +50,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 
 		const user = interaction.options.getUser('user', true);
@@ -92,7 +90,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		return buffer(stream);
 	}
 
-	public override async onLoad() {
+	public override async onLoad(): Promise<void> {
 		await Promise.all(
 			readdirSync(join(imageFolder, 'pat')).map(async (file) => {
 				this.pats.push(await loadImage(join(imageFolder, `pat/${file}`)));
@@ -100,7 +98,15 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	private calculateDimensions(i: number, frames: number) {
+	private calculateDimensions(
+		i: number,
+		frames: number
+	): {
+		width: number;
+		height: number;
+		offsetX: number;
+		offsetY: number;
+	} {
 		const j =
 			i < frames / 2 //
 				? i

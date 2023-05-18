@@ -3,10 +3,10 @@ import { ApplyOptions } from '@sapphire/decorators';
 import type { UserError, ChatInputCommandDeniedPayload } from '@sapphire/framework';
 
 @ApplyOptions<Listener.Options>({
-	name: Events.ChatInputCommandDenied
+	event: Events.ChatInputCommandDenied
 })
 export class CommandListener extends Listener {
-	public run(error: UserError, payload: ChatInputCommandDeniedPayload) {
-		return payload.interaction.errorReply(error.message, true);
+	public async run(error: UserError, payload: ChatInputCommandDeniedPayload): Promise<void> {
+		await payload.interaction.errorReply(error.message, true);
 	}
 }

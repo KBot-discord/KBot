@@ -3,25 +3,29 @@
 	"version": "0.0.0",
 	"license": "AGPL-3.0-or-later",
 	"private": true,
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
-	"types": "dist/index.d.ts",
+	"module": "src/index.ts",
+	"main": "src/index.ts",
+	"types": "src/index.ts",
 	"exports": {
 		".": {
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js",
-			"types": "./dist.index.d.ts"
+			"import": "./src/index.ts",
+			"require": "./src/index.ts",
+			"types": "./src/index.ts"
 		}
 	},
 	"scripts": {
-		"build": "tsup",
-		"lint": "eslint --fix --ext ts src",
+		"check": "tsc",
+		"lint": "eslint --ext ts src && yarn check",
+		"lint:fix": "eslint --fix --ext ts src",
 		"format": "prettier --write --loglevel=warn \"src/**/*.ts\""
 	},
 	"dependencies": {
 		"@sapphire/fetch": "^2.4.1"
 	},
 	"devDependencies": {
+		"@kbotdev/eslint-config": "workspace:^",
+		"eslint": "^8.40.0",
+		"prettier": "^2.8.8",
 		"tsup": "^6.7.0"
 	}
 }

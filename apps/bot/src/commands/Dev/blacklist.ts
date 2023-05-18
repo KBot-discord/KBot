@@ -12,7 +12,7 @@ export class DevCommand extends Command {
 		super(context, { ...options });
 	}
 
-	public override registerApplicationCommands(registry: Command.Registry) {
+	public override registerApplicationCommands(registry: Command.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -60,7 +60,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'add': {
@@ -78,7 +78,7 @@ export class DevCommand extends Command {
 		}
 	}
 
-	public async chatInputAdd(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputAdd(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		await this.container.prisma.blacklist.upsert({
@@ -95,7 +95,7 @@ export class DevCommand extends Command {
 		return interaction.defaultReply(`${guildId} added to the blacklist.`);
 	}
 
-	public async chatInputRemove(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputRemove(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		await this.container.prisma.blacklist
@@ -107,7 +107,7 @@ export class DevCommand extends Command {
 		return interaction.defaultReply(`${guildId} added to the blacklist.`);
 	}
 
-	public async chatInputIsBlacklisted(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputIsBlacklisted(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		const result = await this.container.prisma.blacklist.count({

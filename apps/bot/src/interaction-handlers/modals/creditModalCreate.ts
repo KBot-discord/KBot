@@ -19,7 +19,7 @@ export class ModalHandler extends InteractionHandler {
 	public override async run(
 		modal: ModalSubmitInteraction<'cached'>,
 		{ channelId, resource, type, source, description, artist }: InteractionHandler.ParseResult<this>
-	) {
+	): Promise<void> {
 		const fields: APIEmbedField[] = [];
 		if (source) fields.push({ name: 'Image source', value: source });
 		if (description) fields.push({ name: 'Description', value: description });
@@ -28,12 +28,14 @@ export class ModalHandler extends InteractionHandler {
 		try {
 			const creditsChannel = (await modal.guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
 			if (isNullish(creditsChannel)) {
-				return modal.errorReply("The current credits channel doesn't exist. Please set a new one with `/credits set`");
+				await modal.errorReply("The current credits channel doesn't exist. Please set a new one with `/credits set`");
+				return;
 			}
 
 			const { result, error } = await this.container.validator.channels.canSendEmbeds(creditsChannel);
 			if (!result) {
-				return modal.client.emit(KBotErrors.ChannelPermissions, { interaction: modal, error });
+				modal.client.emit(KBotErrors.ChannelPermissions, { interaction: modal, error });
+				return;
 			}
 
 			const message = await creditsChannel.send({
@@ -65,16 +67,17 @@ export class ModalHandler extends InteractionHandler {
 					])
 				]
 			});
-			return modal.defaultReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
+			await modal.defaultReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
 		} catch (err) {
 			this.container.logger.error(err);
-			return modal.errorReply('There was an error when trying to create the credit.');
+			await modal.errorReply('There was an error when trying to create the credit.');
 		}
 	}
 
 	@validCustomId(CreditCustomIds.ResourceModalCreate)
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
-		const settings = await this.container.utility.getSettings(modal.guildId);
+		const settings = await this.container.utility.settings.get(modal.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
 			return this.none();

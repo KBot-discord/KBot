@@ -1,10 +1,11 @@
 import { CreditType } from '#utils/customIds';
 import { EmbedColors, GuildEmoteSlots, KBotEmoji } from '#utils/constants';
-import { EmbedBuilder, MessageType, User, isJSONEncodable, type JSONEncodable } from 'discord.js';
+import { EmbedBuilder, MessageType, User, isJSONEncodable } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { roleMention, time, userMention } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
+import type { JSONEncodable } from 'discord.js';
 import type {
 	APIUser,
 	ButtonInteraction,
@@ -24,7 +25,7 @@ import type { ImageURLOptions } from '@discordjs/rest';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { FormattedGuild, TransformedLoginData } from '#types/Api';
 
-export function encode<T>(data: T | JSONEncodable<T>) {
+export function encode<T>(data: JSONEncodable<T> | T): T {
 	return isJSONEncodable(data) ? data.toJSON() : data;
 }
 
@@ -58,9 +59,10 @@ export async function transformLoginData({ user, guilds }: LoginData): Promise<T
 	if (!guilds) return { user: formattedUser, guilds: [] };
 
 	const formattedGuilds: FormattedGuild[] = await Promise.all(
-		guilds
+		guilds.length > 0
 			? guilds
-					.filter((guild) => canManageGuildFilter(guild, user.id)) //
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+					.filter(async (guild) => canManageGuildFilter(guild, user.id)) //
 					.map(({ id, name, icon, owner, permissions, features }) => {
 						return { id, name, icon: icon ?? '', owner, permissions, features };
 					})
@@ -70,7 +72,7 @@ export async function transformLoginData({ user, guilds }: LoginData): Promise<T
 	return { user: formattedUser, guilds: formattedGuilds };
 }
 
-export async function canManageGuildFilter(guild: RESTAPIPartialCurrentUserGuild | Guild, userId: string): Promise<boolean> {
+export async function canManageGuildFilter(guild: Guild | RESTAPIPartialCurrentUserGuild, userId: string): Promise<boolean> {
 	const fetchedGuild = container.client.guilds.cache.get(guild.id);
 	if (!fetchedGuild) return false;
 
@@ -83,10 +85,10 @@ export async function canManageGuild(guild: Guild, member: GuildMember | null): 
 	if (guild.ownerId === member.id) return true;
 
 	try {
-		const settings = await container.core.getSettings(guild.id);
+		const settings = await container.core.settings.get(guild.id);
 		if (!settings) return false;
 
-		return member.permissions?.has(PermissionFlagsBits.ManageGuild);
+		return member.permissions.has(PermissionFlagsBits.ManageGuild);
 	} catch (err: unknown) {
 		container.logger.error(err);
 		return false;
@@ -108,10 +110,10 @@ export function rolesToString(roles: Collection<Snowflake, Role>): string {
 				.toString();
 }
 
-export async function getUserInfo(interaction: CommandInteraction<'cached'> | ButtonInteraction<'cached'>, userId: string): Promise<EmbedBuilder> {
+export async function getUserInfo(interaction: ButtonInteraction<'cached'> | CommandInteraction<'cached'>, userId: string): Promise<EmbedBuilder> {
 	const user = await interaction.client.users.fetch(userId, { force: true });
 	const member = await interaction.guild.members.fetch(userId).catch(() => null);
-	const userBanner = await getUserBannerUrl(user);
+	const userBanner = getUserBannerUrl(user);
 	const embed = new EmbedBuilder()
 		.setAuthor({ name: `${user.tag} - ${user.id}` })
 		.setImage(userBanner!)
@@ -149,13 +151,13 @@ export async function getUserInfo(interaction: CommandInteraction<'cached'> | Bu
 		.setFooter({ text: `Present in server: ${KBotEmoji.RedX}` });
 }
 
-export function getUserAvatarUrl(user: User | APIUser, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string {
+export function getUserAvatarUrl(user: APIUser | User, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string {
 	if (user instanceof User) {
 		return user.avatar //
 			? user.avatarURL({ forceStatic, size, extension: 'png' })!
 			: user.defaultAvatarURL;
 	}
-	return user.avatar ?? createDefaultAvatar(user);
+	return user.avatar ?? createDefaultAvatar();
 }
 
 export function getMemberAvatarUrl(member: GuildMember, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string {
@@ -164,8 +166,8 @@ export function getMemberAvatarUrl(member: GuildMember, { forceStatic = false, s
 		: getUserAvatarUrl(member.user, { forceStatic, extension: 'png' });
 }
 
-export function createDefaultAvatar(user: APIUser): string {
-	return `https://cdn.discordapp.com/embed/avatars/${Number(user.discriminator) % 5}.png`;
+export function createDefaultAvatar(): string {
+	return `https://cdn.discordapp.com/embed/avatars/${Math.random() * 4}.png`;
 }
 
 export function getUserBannerUrl(user: User, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string | null | undefined {

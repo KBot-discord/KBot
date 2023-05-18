@@ -2,11 +2,10 @@ import { BlankSpace, EmbedColors, KBotEmoji } from '#utils/constants';
 import { buildCustomId, KaraokeCustomIds } from '#utils/customIds';
 import { getGuildIcon } from '#utils/Discord';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
-import { Menu, MenuPageBuilder } from '@kbotdev/menus';
+import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
-import { MenuPagesBuilder } from '@kbotdev/menus';
 import type { Guild, GuildChannel, Message, User } from 'discord.js';
 import type { KaraokeEvent } from '@kbotdev/database';
 import type { KaraokeMenuButton } from '#types/CustomIds';
@@ -19,7 +18,7 @@ const KaraokeEventActions: { id: string; text: string; emoji: string | null }[] 
 ];
 
 export class KaraokeEventMenu extends Menu {
-	private guild;
+	private readonly guild;
 	private events: { event: KaraokeEvent; channel: GuildChannel }[] = [];
 
 	public constructor(guild: Guild) {
@@ -27,7 +26,7 @@ export class KaraokeEventMenu extends Menu {
 		this.guild = guild;
 	}
 
-	public override async run(messageOrInteraction: Message | AnyInteractableInteraction, target?: User) {
+	public override async run(messageOrInteraction: AnyInteractableInteraction | Message, target?: User): Promise<this> {
 		const embeds = await this.buildEmbeds();
 		const pages = this.buildPages(embeds);
 
@@ -110,7 +109,7 @@ export class KaraokeEventMenu extends Menu {
 		const { guild } = this;
 
 		this.events = await Promise.all(
-			((await karaoke.getEventByGuild({ guildId: guild.id })) ?? []).map(async (event) => ({
+			((await karaoke.getEventByGuild(guild.id)) ?? []).map(async (event) => ({
 				event,
 				channel: (await client.channels.fetch(event.id)) as GuildChannel
 			}))
@@ -166,7 +165,7 @@ export class KaraokeEventMenu extends Menu {
 			value: `${!event.locked}`,
 			inline: true
 		});
-		const lockString = event!.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`;
+		const lockString = event.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`;
 
 		const embed = new EmbedBuilder(page.embeds[0].data).spliceFields(index, 1, {
 			name: 'Queue lock:',

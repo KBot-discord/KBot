@@ -1,45 +1,29 @@
-import { AntiHoistService, ModerationSettingsService } from '#services';
+import { ModerationSettingsService } from '#services';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { getGuildIcon } from '#utils/Discord';
 import { EmbedColors } from '#utils/constants';
+import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
 import { Module } from '@kbotdev/plugin-modules';
-import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import { EmbedBuilder } from 'discord.js';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { UpsertModerationSettingsData } from '#types/database';
-import type { ModerationSettings } from '@kbotdev/database';
 
-@ApplyOptions<Module.Options>({
-	name: 'ModerationModule',
-	fullName: 'Moderation Module'
-})
 export class ModerationModule extends Module {
 	public readonly settings: ModerationSettingsService;
-	public readonly antiHoist: AntiHoistService;
+	public readonly antiHoist: AntiHoistHandler;
 
-	public constructor(context: Module.Context, options: Module.Options) {
-		super(context, { ...options });
+	public constructor(options?: Module.Options) {
+		super({ ...options, fullName: 'Moderation Module' });
 
-		this.antiHoist = new AntiHoistService();
+		this.antiHoist = new AntiHoistHandler();
 		this.settings = new ModerationSettingsService();
-
-		this.container.moderation = this;
 	}
 
-	public override async isEnabled({ guild }: IsEnabledContext) {
+	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
-		const settings = await this.getSettings(guild.id);
+		const settings = await this.settings.get(guild.id);
 		return isNullish(settings) ? false : settings.enabled;
-	}
-
-	public async getSettings(guildId: string): Promise<ModerationSettings | null> {
-		return this.settings.get({ guildId });
-	}
-
-	public async upsertSettings(guildId: string, data: UpsertModerationSettingsData): Promise<ModerationSettings> {
-		return this.settings.upsert({ guildId }, data);
 	}
 
 	public static formatMinageMessage(member: GuildMember, message: string, req: number, reqDate: number): string {
@@ -53,7 +37,7 @@ export class ModerationModule extends Module {
 			.replaceAll('{date}', `${stampDate}`);
 	}
 
-	public static formatMinageEmbed(member: GuildMember, msg: string | undefined | null, req: number, reqDate: number) {
+	public static formatMinageEmbed(member: GuildMember, msg: string | null | undefined, req: number, reqDate: number): EmbedBuilder {
 		const message = msg ?? MinageHandler.defaultMessage;
 
 		const formattedMessage = ModerationModule.formatMinageMessage(member, message, req, reqDate);
@@ -62,13 +46,7 @@ export class ModerationModule extends Module {
 		return new EmbedBuilder()
 			.setColor(EmbedColors.Default)
 			.setAuthor({ name: 'You have been kicked due to your account being too new' })
-			.setThumbnail(icon!)
+			.setThumbnail(icon ?? null)
 			.setDescription(formattedMessage);
-	}
-}
-
-declare module '@kbotdev/plugin-modules' {
-	interface Modules {
-		ModerationModule: never;
 	}
 }

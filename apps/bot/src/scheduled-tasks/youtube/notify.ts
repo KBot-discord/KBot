@@ -111,7 +111,7 @@ export class YoutubeTask extends ScheduledTask {
 		);
 	}
 
-	private async handleLive(stream: HolodexVideoWithChannel) {
+	private async handleLive(stream: HolodexVideoWithChannel): Promise<void> {
 		const { client, youtube, validator, metrics, logger, redis } = this.container;
 
 		logger.debug(`[YoutubeTask] Sending notification for ${stream.title}`);
@@ -186,7 +186,7 @@ export class YoutubeTask extends ScheduledTask {
 		metrics.incrementYoutube({ success: true });
 	}
 
-	private async handleEnded(stream: HolodexVideoWithChannel, messages: Map<string, { channelId: string }>) {
+	private async handleEnded(stream: HolodexVideoWithChannel, messages: Map<string, { channelId: string }>): Promise<void> {
 		const { client, validator } = this.container;
 
 		const fields: APIEmbedField[] = [];
@@ -232,7 +232,7 @@ export class YoutubeTask extends ScheduledTask {
 		);
 	}
 
-	private readonly notificationKey = (streamId: string) => `youtube:streams:${streamId}:notified` as Key;
-	private readonly messagesKey = (streamId: string) => `youtube:streams:${streamId}:messages` as Key;
-	private readonly messageKey = (messageId: string) => messageId as Key;
+	private readonly notificationKey = (streamId: string): Key => `youtube:streams:${streamId}:notified` as Key;
+	private readonly messagesKey = (streamId: string): Key => `youtube:streams:${streamId}:messages` as Key;
+	private readonly messageKey = (messageId: string): Key => messageId as Key;
 }

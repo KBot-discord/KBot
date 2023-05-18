@@ -1,44 +1,22 @@
 import { EventSettingsService, KaraokeService } from '#services';
 import { Module } from '@kbotdev/plugin-modules';
-import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { UpsertEventSettingsData } from '#types/database';
 
-@ApplyOptions<Module.Options>({
-	name: 'EventModule',
-	fullName: 'Event Module'
-})
 export class EventModule extends Module {
 	public readonly settings: EventSettingsService;
 	public readonly karaoke: KaraokeService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
-		super(context, { ...options });
+	public constructor(options?: Module.Options) {
+		super({ ...options, fullName: 'Event Module' });
 
 		this.settings = new EventSettingsService();
 		this.karaoke = new KaraokeService();
-
-		this.container.events = this;
 	}
 
 	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
 		if (isNullish(guild)) return false;
-		const settings = await this.getSettings(guild.id);
+		const settings = await this.settings.get(guild.id);
 		return isNullish(settings) ? false : settings.enabled;
-	}
-
-	public async getSettings(guildId: string) {
-		return this.settings.get({ guildId });
-	}
-
-	public async upsertSettings(guildId: string, data: UpsertEventSettingsData) {
-		return this.settings.upsert({ guildId }, data);
-	}
-}
-
-declare module '@kbotdev/plugin-modules' {
-	interface Modules {
-		EventModule: never;
 	}
 }

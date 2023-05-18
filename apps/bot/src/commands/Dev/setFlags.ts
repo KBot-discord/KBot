@@ -1,6 +1,6 @@
 import { EmbedColors } from '#utils/constants';
 import { FlagHandler } from '#structures/handlers/FlagHandler';
-import { FeatureFlags } from '@kbotdev/database';
+import { FeatureFlags } from '@kbotdev/prisma';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
@@ -17,7 +17,7 @@ export class DevCommand extends Command {
 		super(context, { ...options });
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -38,7 +38,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 		const guildId = interaction.options.getString('guild', true);
 
@@ -47,7 +47,7 @@ export class DevCommand extends Command {
 			return interaction.errorReply('That guild does not exist.');
 		}
 
-		const currentFlags = await this.container.core.getSettings(guild.id).then((res) => res?.flags ?? []);
+		const currentFlags = await this.container.core.settings.get(guild.id).then((res) => res?.flags ?? []);
 		const flagsArray: FeatureFlags[] = Object.values(FeatureFlags).filter((flag) => flag !== 'UNDEFINED');
 		const flagOptions: APISelectMenuOption[] = flagsArray.map((flag) => ({
 			label: flag,

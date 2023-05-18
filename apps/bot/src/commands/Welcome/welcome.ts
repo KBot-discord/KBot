@@ -1,20 +1,20 @@
-import { EmbedColors, KBotEmoji } from '#utils/constants';
+import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/Discord';
 import { WelcomeModule } from '#modules/WelcomeModule';
 import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
+import { KBotError } from '#structures/KBotError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { channelMention, EmbedBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
 import type { APIEmbedField } from 'discord-api-types/v10';
-import type { InteractionEditReplyOptions, ColorResolvable, NewsChannel, TextChannel } from 'discord.js';
-import type { WelcomeSettings } from '@kbotdev/database';
+import type { InteractionEditReplyOptions, ColorResolvable } from 'discord.js';
+import type { WelcomeSettings } from '@kbotdev/prisma';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'WelcomeModule',
 	description: 'Edit the settings of the welcome module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -38,10 +38,10 @@ import type { WelcomeSettings } from '@kbotdev/database';
 })
 export class EventsCommand extends KBotCommand<WelcomeModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.welcome);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -160,7 +160,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -184,10 +184,10 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		}
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			enabled: value
 		});
 
@@ -201,15 +201,19 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		});
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		const channel = interaction.options.getChannel('channel') as TextChannel | NewsChannel | null;
+	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		const channel = interaction.options.getChannel('channel');
 		const message = interaction.options.getString('message');
 		const title = interaction.options.getString('title');
 		const description = interaction.options.getString('description');
 		const image = interaction.options.getString('image');
 		const color = interaction.options.getString('color');
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		if (color && HexColorRegex.test(color)) {
+			throw new KBotError('Please provide a valid Hex color.', 'INVALID_HEX');
+		}
+
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			channelId: channel?.id,
 			message: message ?? undefined,
 			title: title ?? undefined,
@@ -221,7 +225,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const channel = interaction.options.getBoolean('channel');
 		const message = interaction.options.getBoolean('message');
 		const title = interaction.options.getBoolean('title');
@@ -229,7 +233,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		const image = interaction.options.getBoolean('image');
 		const color = interaction.options.getBoolean('color');
 
-		const settings = await this.module.upsertSettings(interaction.guildId, {
+		const settings = await this.module.settings.upsert(interaction.guildId, {
 			channelId: channel ? null : undefined,
 			message: message ? null : undefined,
 			title: title ? null : undefined,
@@ -241,9 +245,9 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputTest(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputTest(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { member } = interaction;
-		const settings = await this.module.getSettings(interaction.guildId);
+		const settings = await this.module.settings.get(interaction.guildId);
 		if (!settings || (!settings.message && !settings.title && !settings.description && !settings.image)) {
 			return interaction.defaultReply('There are no settings to test');
 		}
@@ -256,7 +260,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 
 		if (settings.title || settings.description || settings.image) {
 			const embed = new EmbedBuilder()
-				.setColor((settings.color as ColorResolvable) ?? EmbedColors.Default)
+				.setColor((settings.color as ColorResolvable | undefined) ?? EmbedColors.Default)
 				.setImage(settings.image)
 				.setFooter({ text: `Total members: ${interaction.guild.memberCount}` })
 				.setTimestamp();
@@ -275,13 +279,13 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return interaction.editReply(options);
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
-		const settings = await this.module.getSettings(interaction.guildId);
+	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: WelcomeSettings | null) {
+	private async showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: WelcomeSettings | null): Promise<unknown> {
 		const { channels, members } = interaction.guild;
 
 		const bot = await members.fetchMe();
@@ -296,7 +300,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 			},
 			{ name: 'Message:', value: settings?.message ?? 'No message set', inline: true },
 			{ name: 'Title:', value: settings?.title ?? 'No title set', inline: true },
-			{ name: 'Description:', value: settings?.description || 'No description set', inline: true },
+			{ name: 'Description:', value: settings?.description ?? 'No description set', inline: true },
 			{
 				name: 'Color:',
 				value: settings?.color ? `\`${settings.color}\` (see this embed's color)` : 'No color set',

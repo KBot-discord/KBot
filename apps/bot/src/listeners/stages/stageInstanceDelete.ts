@@ -6,7 +6,7 @@ import { EmbedBuilder } from 'discord.js';
 import type { StageInstance, GuildTextBasedChannel } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	name: Events.StageInstanceDelete
+	event: Events.StageInstanceDelete
 })
 export class StageListener extends Listener {
 	public async run(stageInstance: StageInstance): Promise<void> {
@@ -14,18 +14,13 @@ export class StageListener extends Listener {
 
 		if (isNullish(stageInstance.guild) || isNullish(stageInstance.channel)) return;
 
-		const settings = await events.getSettings(stageInstance.guildId);
+		const settings = await events.settings.get(stageInstance.guildId);
 		if (isNullish(settings) || !settings.enabled) return;
 
-		const active = await events.karaoke.eventActive({
-			guildId: stageInstance.guildId,
-			eventId: stageInstance.channelId
-		});
+		const active = await events.karaoke.eventActive(stageInstance.guildId, stageInstance.channelId);
 		if (!active) return;
 
-		const event = await events.karaoke.getEvent({
-			eventId: stageInstance.channelId
-		});
+		const event = await events.karaoke.getEvent(stageInstance.channelId);
 		if (isNullish(event)) return;
 
 		const textChannel = (await stageInstance.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;

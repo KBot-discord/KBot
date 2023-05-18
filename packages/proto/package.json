@@ -3,28 +3,33 @@
 	"version": "0.0.0",
 	"license": "AGPL-3.0-or-later",
 	"private": true,
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
+	"type": "module",
+	"main": "dist/index.cjs",
+	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js",
-			"types": "./dist.index.d.ts"
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs",
+			"types": "./dist/index.d.ts"
 		}
 	},
 	"scripts": {
-		"build": "yarn buf:generate && tsup",
+		"build": "tsup",
 		"buf:generate": "rm -r -f src/gen && yarn buf:bot && yarn buf:types",
 		"buf:bot": "buf generate ../../protos/bot",
 		"buf:types": "buf generate ../../protos/types",
-		"lint": "eslint --fix --ext ts src",
+		"check": "tsc --noEmit",
+		"lint": "eslint --ext ts src && yarn check",
+		"lint:fix": "eslint --fix --ext ts src",
 		"format": "prettier --write --loglevel=warn \"src/**/*.ts\""
 	},
 	"devDependencies": {
-		"@bufbuild/protoc-gen-connect-es": "^0.8.6",
+		"@bufbuild/protoc-gen-connect-es": "^0.9.0",
 		"@bufbuild/protoc-gen-es": "^1.2.0",
-		"@sapphire/ts-config": "^4.0.0",
+		"@kbotdev/eslint-config": "workspace:^",
+		"eslint": "^8.40.0",
+		"prettier": "^2.8.8",
 		"tsup": "^6.7.0"
 	}
 }

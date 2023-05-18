@@ -5,7 +5,7 @@ WORKDIR /temp
 
 RUN apk add --no-cache libc6-compat
 
-RUN yarn global add turbo
+RUN yarn global add turbo@1.9.3
 COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
@@ -34,8 +34,7 @@ RUN yarn install
 
 COPY --from=builder /temp/out/full/ .
 
-RUN yarn db:generate && \
-	yarn turbo build --filter=@kbotdev/bot
+RUN yarn turbo build --filter=@kbotdev/bot
 
 ## App ##
 FROM node:20-alpine as app
@@ -53,8 +52,8 @@ USER kbot
 COPY --from=deps /temp/node_modules node_modules/
 COPY --from=deps /temp/packages packages/
 COPY --from=deps /temp/apps/bot/assets assets/
-COPY --from=deps /temp/packages/database/prisma/migrations prisma/migrations/
-COPY --from=deps /temp/packages/database/prisma/schema.prisma prisma/schema.prisma
+COPY --from=deps /temp/packages/prisma/prisma/migrations prisma/migrations/
+COPY --from=deps /temp/packages/prisma/prisma/schema.prisma prisma/schema.prisma
 COPY --from=deps /temp/apps/bot/dist dist/
 COPY --from=deps /temp/apps/bot/package.json ./
 

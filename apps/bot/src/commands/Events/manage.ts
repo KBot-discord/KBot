@@ -8,18 +8,16 @@ import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { channelMention, time, userMention } from '@discordjs/builders';
-import { EmbedBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { EmbedBuilder, type VoiceBasedChannel } from 'discord.js';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { GuildTextBasedChannel, StageChannel, VoiceChannel, GuildScheduledEvent, ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { EventModule } from '#modules/EventModule';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'EventModule',
 	description: 'Create, end, or manage events.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	deferOptions: { defer: true, ephemeral: true },
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Manage')
@@ -48,14 +46,14 @@ import type { EventModule } from '#modules/EventModule';
 })
 export class EventsCommand extends KBotCommand<EventModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.events);
 	}
 
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/events toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -188,12 +186,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const focusedOption = interaction.options.getFocused(true);
 
 		if (focusedOption.name === 'event') {
-			const events = await this.module.karaoke.getEventByGuild({ guildId: interaction.guildId });
+			const events = await this.module.karaoke.getEventByGuild(interaction.guildId);
 			if (events.length === 0) {
 				return interaction.respond([]);
 			}
 
-			const channelData = await Promise.all(events.map(({ id }) => interaction.guild.channels.fetch(id)));
+			const channelData = await Promise.all(events.map(async ({ id }) => interaction.guild.channels.fetch(id)));
 
 			const eventOptions: ApplicationCommandOptionChoiceData[] = channelData //
 				.filter((e) => !isNullish(e))
@@ -214,7 +212,8 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.respond(discordEventOptions);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+		await interaction.deferReply({ ephemeral: true });
 		switch (interaction.options.getSubcommandGroup(true)) {
 			default: {
 				switch (interaction.options.getSubcommand(true)) {
@@ -244,18 +243,15 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 	}
 
-	public async chatInputKaraokeStart(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputKaraokeStart(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { validator } = this.container;
 
-		const voiceChannel = interaction.options.getChannel('voice_channel', true) as StageChannel | VoiceChannel;
+		const voiceChannel = interaction.options.getChannel('voice_channel', true) as VoiceBasedChannel;
 		const textChannel = interaction.options.getChannel('text_channel', true) as GuildTextBasedChannel;
 		const topic = interaction.options.getString('topic');
 		const role = interaction.options.getRole('role');
 
-		const exists = await this.module.karaoke.eventExists({
-			guildId: interaction.guildId,
-			eventId: voiceChannel.id
-		});
+		const exists = await this.module.karaoke.eventExists(interaction.guildId, voiceChannel.id);
 		if (exists) {
 			return interaction.defaultReply('There is already an event in that channel.');
 		}
@@ -281,7 +277,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply('The karaoke event has started.');
 	}
 
-	public async chatInputKaraokeSchedule(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputKaraokeSchedule(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { client, validator } = this.container;
 
 		const discordEventId = interaction.options.getString('discord_event', true);
@@ -297,7 +293,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('There is no channel set for that Discord event.');
 		}
 
-		const voiceChannel = (await client.channels.fetch(discordEvent.channelId)) as VoiceChannel | StageChannel;
+		const voiceChannel = (await client.channels.fetch(discordEvent.channelId)) as StageChannel | VoiceChannel;
 		const voiceResult = await validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -352,25 +348,26 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputKaraokeStop(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputKaraokeStop(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const eventId = interaction.options.getString('event', true);
 
-		const active = await this.module.karaoke.eventActive({
-			guildId: interaction.guildId,
-			eventId
-		});
+		const active = await this.module.karaoke.eventActive(interaction.guildId, eventId);
 		if (!active) {
 			return interaction.defaultReply('There is no karaoke event to stop.');
 		}
 
-		const event = await this.module.karaoke.getEvent({ eventId });
+		const event = await this.module.karaoke.getEvent(eventId);
+		// TODO: Better error handling
+		if (!event) {
+			return interaction.errorReply('There was an error when ending the event. The devs will work on a fix soon.');
+		}
 
-		await this.module.karaoke.endEvent(interaction.guild, event!);
+		await this.module.karaoke.endEvent(interaction.guild, event);
 
 		return interaction.successReply('The karaoke event has ended.');
 	}
 
-	public async chatInputKaraokeAdd(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputKaraokeAdd(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { guildId } = interaction;
 		const { karaoke } = this.module;
 
@@ -381,7 +378,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.errorReply('That user is not in this server.');
 		}
 
-		const active = await karaoke.eventActive({ guildId, eventId });
+		const active = await karaoke.eventActive(guildId, eventId);
 		if (!active) {
 			return interaction.errorReply('There is no karaoke event to add a user to.');
 		}
@@ -390,13 +387,13 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.errorReply('That user is not in the event channel.');
 		}
 
-		const event = await karaoke.getEventWithQueue({ eventId });
+		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
 			this.container.logger.error('Failed to fetch an event that was active');
 			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
 		}
 
-		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
+		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -439,7 +436,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply(`${member.user.tag} has been added to the queue.`);
 	}
 
-	public async chatInputKaraokeRemove(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputKaraokeRemove(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const { guildId } = interaction;
 		const { karaoke } = this.module;
 
@@ -450,7 +447,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.errorReply('That user is not in this server.');
 		}
 
-		const active = await karaoke.eventActive({ guildId, eventId });
+		const active = await karaoke.eventActive(guildId, eventId);
 		if (!active) {
 			return interaction.errorReply('There is no karaoke event to remove a user from.');
 		}
@@ -459,13 +456,13 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.errorReply('That user is not in the event channel.');
 		}
 
-		const event = await karaoke.getEventWithQueue({ eventId });
+		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
 			this.container.logger.error('Failed to fetch an event that was active');
 			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
 		}
 
-		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as VoiceChannel | StageChannel | null;
+		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -508,7 +505,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply(`${member.user.tag} has been removed from the queue.`);
 	}
 
-	public async chatInputKaraokeMenu(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputKaraokeMenu(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		return new KaraokeEventMenu(interaction.guild).run(interaction);
 	}
 }

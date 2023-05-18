@@ -13,10 +13,10 @@ import {
 } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
 import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
-import type { KaraokeScheduledEvent } from '@kbotdev/proto';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
+import type { KaraokeScheduledEvent } from '@kbotdev/proto';
 
-export function registerKaraokeService(router: ConnectRouter) {
+export function registerKaraokeService(router: ConnectRouter): void {
 	router.service(KaraokeEventService, new KaraokeServiceImpl());
 }
 
@@ -38,9 +38,7 @@ class KaraokeServiceImpl implements ServiceImpl<typeof KaraokeEventService> {
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const result = await events.karaoke.getEventByGuild({
-				guildId
-			});
+			const result = await events.karaoke.getEventByGuild(guildId);
 
 			const data: Partial<KaraokeScheduledEvent>[] = result //
 				.filter((entry) => entry.discordEventId)
@@ -48,7 +46,7 @@ class KaraokeServiceImpl implements ServiceImpl<typeof KaraokeEventService> {
 					return {
 						voiceChanneId: id,
 						textChannelId,
-						discordEventId: discordEventId!,
+						discordEventId: discordEventId ?? undefined,
 						roleId: roleId ?? undefined
 					};
 				});
@@ -115,10 +113,7 @@ class KaraokeServiceImpl implements ServiceImpl<typeof KaraokeEventService> {
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const result = await events.karaoke.deleteScheduledEvent({
-				guildId,
-				eventId: voiceChannelId
-			});
+			const result = await events.karaoke.deleteScheduledEvent(guildId, voiceChannelId);
 
 			const data: Partial<KaraokeScheduledEvent> = {
 				voiceChannelId: result?.id,

@@ -4,14 +4,14 @@ import type { DocumentCommand } from '#types/Meili';
 import type { KBotClient } from '#extensions/KBotClient';
 
 @ApplyOptions<Listener.Options>({
-	name: Events.ClientReady,
+	event: Events.ClientReady,
 	once: true
 })
 export class ReadyListener extends Listener {
 	private readonly commandsToFilter = ['help'];
 	private readonly categoriesToFilter = ['Dev'];
 
-	public async run(client: KBotClient) {
+	public async run(client: KBotClient): Promise<void> {
 		await this.syncMeili();
 		this.container.logger.info(`${client.user!.tag} is online.`);
 	}

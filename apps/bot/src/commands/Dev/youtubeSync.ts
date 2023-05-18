@@ -15,7 +15,7 @@ export class DevCommand extends Command {
 		super(context, { ...options });
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -30,7 +30,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await this.container.tasks.create('holodexSync', {}, { repeated: false, delay: 0 });
 		return interaction.reply(`Holodex sync started.`);
 	}

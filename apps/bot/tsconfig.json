@@ -1,0 +1,26 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"baseUrl": "./src",
+		"tsBuildInfoFile": "./dist/.tsbuildinfo",
+		"noEmit": true,
+		"typeRoots": ["./src/lib/types/**/*", "../../node_modules/@types"],
+		"paths": {
+			"#config": ["config.ts"],
+			"#extensions/*": ["lib/extensions/*"],
+			"#hooks/*": ["lib/hooks/*"],
+			"#observability/*": ["lib/observability/*"],
+			"#services/*": ["lib/services/*"],
+			"#services": ["lib/services/index.ts"],
+			"#structures/*": ["lib/structures/*"],
+			"#types/*": ["lib/types/*"],
+			"#utils/*": ["lib/utilities/*"],
+			"#modules/*": ["modules/*"],
+			"#rpc/*": ["rpc/*"]
+		}
+	},
+	"include": ["src"],
+	"exclude": ["node_modules"]
+}

@@ -4,15 +4,20 @@ import { ApplyOptions } from '@sapphire/decorators';
 import type { Payload } from '#types/Errors';
 
 @ApplyOptions<Listener.Options>({
-	name: KBotErrors.UnknownCommand
+	event: KBotErrors.UnknownCommand
 })
 export class CommandListener extends Listener {
-	public async run({ interaction }: Payload<KBotErrors.UnknownCommand>) {
-		const commandName = interaction.command!.name;
-		const subcommandGroup = interaction.options.getSubcommandGroup();
-		const subcommand = interaction.options.getSubcommand();
+	public async run({ interaction }: Payload<KBotErrors.UnknownCommand>): Promise<void> {
+		if (interaction.command) {
+			const commandName = interaction.command.name;
+			const subcommandGroup = interaction.options.getSubcommandGroup();
+			const subcommand = interaction.options.getSubcommand();
 
-		this.container.logger.fatal(`[Unknown Command] There was no method to process "${commandName}/${subcommandGroup}/${subcommand}"`);
-		return interaction.errorReply("Not sure how you did that, but I'm not able to process that command.", true);
+			this.container.logger.fatal(`[Unknown Command] There was no method to process "${commandName}/${subcommandGroup}/${subcommand}"`);
+		} else {
+			this.container.logger.fatal(`[Unknown Command] Received an interaction with no command\nInteraction type: ${interaction.type}`);
+		}
+
+		await interaction.errorReply("Not sure how you did that, but I'm not able to process that command.", true);
 	}
 }

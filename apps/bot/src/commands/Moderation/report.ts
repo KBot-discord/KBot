@@ -10,16 +10,14 @@ import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
 import { channelMention, userMention } from '@discordjs/builders';
 import { isNullish } from '@sapphire/utilities';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { GuildMember, GuildTextBasedChannel, Message, MessageCreateOptions } from 'discord.js';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommandOptions>({
-	module: 'ModerationModule',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	deferOptions: { defer: true, ephemeral: true },
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Report')
@@ -29,14 +27,14 @@ import type { ModerationModule } from '#modules/ModerationModule';
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
 	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options });
+		super(context, { ...options }, container.moderation);
 	}
 
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry) {
+	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -51,11 +49,12 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
+		await interaction.deferReply({ ephemeral: true });
 		const { validator, client } = this.container;
 		const message = interaction.options.getMessage('message', true);
 
-		const settings = await this.module.getSettings(interaction.guildId);
+		const settings = await this.module.settings.get(interaction.guildId);
 		if (isNullish(settings)) {
 			return interaction.errorReply("Something went wrong when fetching this server's settings.");
 		}
@@ -88,7 +87,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		if (message.attachments.size > 0) {
 			const files = message.attachments.map((e) => {
 				return new AttachmentBuilder(e.url, {
-					name: e.name ?? undefined,
+					name: e.name,
 					description: e.description ?? undefined
 				}).setSpoiler();
 			});
@@ -104,7 +103,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				fileFields.push(name);
 				const desc = {
 					name: 'File description',
-					value: file.description || 'No file description',
+					value: file.description ?? 'No file description',
 					inline: true
 				};
 				fileFields.push(desc);
@@ -139,8 +138,8 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			row.components[ReportButtons.Delete].setDisabled(true);
 			row.components[ReportButtons.Info].setDisabled(true);
 		} else if (
-			member.permissions?.has(PermissionFlagsBits.Administrator) ||
-			member.permissions?.has(PermissionFlagsBits.BanMembers) ||
+			member.permissions.has(PermissionFlagsBits.Administrator) ||
+			member.permissions.has(PermissionFlagsBits.BanMembers) ||
 			member.id === ownerId ||
 			message.type !== MessageType.Default
 		) {

@@ -6,7 +6,7 @@ import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildScheduledEvent } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	name: Events.GuildScheduledEventUpdate
+	event: Events.GuildScheduledEventUpdate
 })
 export class GuildListener extends Listener {
 	public async run(oldGuildScheduledEvent: GuildScheduledEvent, newGuildScheduledEvent: GuildScheduledEvent): Promise<void> {
@@ -22,18 +22,16 @@ export class GuildListener extends Listener {
 				guildId,
 				channel: { id: eventId }
 			} = oldGuildScheduledEvent;
-			const settings = await events.getSettings(newGuildScheduledEvent.guildId);
+			const settings = await events.settings.get(newGuildScheduledEvent.guildId);
 			if (isNullish(settings) || !settings.enabled) return;
 
-			const exists = await events.karaoke.eventExists({ guildId, eventId });
+			const exists = await events.karaoke.eventExists(guildId, eventId);
 			if (!exists) return;
 
-			const active = await events.karaoke.eventActive({ guildId, eventId });
+			const active = await events.karaoke.eventActive(guildId, eventId);
 			if (active) return;
 
-			await events.karaoke.deleteEvent({
-				eventId: oldGuildScheduledEvent.channel.id
-			});
+			await events.karaoke.deleteEvent(oldGuildScheduledEvent.channel.id);
 			return;
 		}
 
@@ -53,18 +51,16 @@ export class GuildListener extends Listener {
 			]);
 			if (!result) return;
 
-			const settings = await events.getSettings(newGuildScheduledEvent.guildId);
+			const settings = await events.settings.get(newGuildScheduledEvent.guildId);
 			if (isNullish(settings) || !settings.enabled) return;
 
-			const exists = await events.karaoke.eventExists({ guildId, eventId });
+			const exists = await events.karaoke.eventExists(guildId, eventId);
 			if (!exists) return;
 
-			const active = await events.karaoke.eventActive({ guildId, eventId });
+			const active = await events.karaoke.eventActive(guildId, eventId);
 			if (active) return;
 
-			const event = await events.karaoke.getEvent({
-				eventId: oldGuildScheduledEvent.channel.id
-			});
+			const event = await events.karaoke.getEvent(oldGuildScheduledEvent.channel.id);
 			if (isNullish(event)) return;
 
 			await events.karaoke.startScheduledEvent(oldGuildScheduledEvent.guild, event, oldGuildScheduledEvent.name);

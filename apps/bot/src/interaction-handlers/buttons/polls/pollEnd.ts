@@ -10,7 +10,7 @@ import type { PollMenuButton } from '#types/CustomIds';
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>) {
+	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const {
 			utility: { polls }
 		} = this.container;
@@ -21,7 +21,8 @@ export class ButtonHandler extends InteractionHandler {
 				pollId
 			});
 			if (!active) {
-				return interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
+				await interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
+				return;
 			}
 
 			const success = await polls.end({
@@ -31,18 +32,20 @@ export class ButtonHandler extends InteractionHandler {
 
 			if (success) {
 				polls.deleteTask(pollId);
-				return interaction.successReply('Poll ended.');
+				await interaction.successReply('Poll ended.');
+				return;
 			}
 
-			return interaction.defaultReply('Poll already ended.');
+			await interaction.defaultReply('Poll already ended.');
 		} catch (err) {
 			this.container.logger.error(err);
 		}
 	}
 
 	@validCustomId(PollCustomIds.End)
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
-		const settings = await this.container.utility.getSettings(interaction.guildId);
+		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();

@@ -14,7 +14,7 @@ export class DevCommand extends Command {
 		super(context, { ...options });
 	}
 
-	public override registerApplicationCommands(registry: Command.Registry) {
+	public override registerApplicationCommands(registry: Command.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -56,7 +56,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'add_conflict': {
@@ -74,7 +74,7 @@ export class DevCommand extends Command {
 		}
 	}
 
-	public async chatInputAddConflict(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputAddConflict(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const channelId = interaction.options.getString('channel', true);
 
 		await this.container.prisma.twitchConflict.upsert({
@@ -86,7 +86,7 @@ export class DevCommand extends Command {
 		return interaction.defaultReply(`${channelId} will be filtered out.`);
 	}
 
-	public async chatInputRemoveConflict(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputRemoveConflict(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const channelId = interaction.options.getString('channel', true);
 
 		await this.container.prisma.twitchConflict
@@ -98,7 +98,7 @@ export class DevCommand extends Command {
 		return interaction.defaultReply(`${channelId} added to the blacklist.`);
 	}
 
-	public async chatInputConflictList(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public async chatInputConflictList(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		const result = await this.container.prisma.twitchConflict.findMany();
 
 		const embed = new EmbedBuilder() //

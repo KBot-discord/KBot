@@ -1,157 +1,106 @@
-import { CacheValues, EmbedColors, KBotEmoji } from '#utils/constants';
-import { karaokeEventActiveCacheKey, karaokeEventExistsCacheKey } from '#utils/cache';
+import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { isNullish } from '@sapphire/utilities';
 import { ChannelType, EmbedBuilder, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { roleMention, userMention } from '@discordjs/builders';
+import { KaraokeRepository } from '@kbotdev/database';
 import type {
 	AddToQueueData,
 	RemoveFromQueueData,
 	CreateEventData,
 	CreateScheduledEventData,
 	KaraokeEventId,
-	GuildAndKaraokeEventId,
-	GuildId,
 	UpdateEventData,
 	KaraokeEventWithUsers
-} from '#types/database';
-import type { PrismaClient, KaraokeEvent, KaraokeUser } from '@kbotdev/database';
+} from '@kbotdev/database';
+import type { KaraokeEvent, KaraokeUser } from '@kbotdev/prisma';
 import type { VoiceChannel, StageChannel, Guild, GuildTextBasedChannel, Message, TextChannel, GuildMember, GuildMemberManager } from 'discord.js';
-import type { RedisClient } from '#extensions/RedisClient';
 
 export class KaraokeService {
-	private readonly database: PrismaClient;
-	private readonly cache: RedisClient;
-
-	private readonly existsKey = karaokeEventExistsCacheKey;
-	private readonly isActiveKey = karaokeEventActiveCacheKey;
+	private readonly repository: KaraokeRepository;
 
 	public constructor() {
-		this.database = container.prisma;
-		this.cache = container.redis;
-	}
-
-	public async getEvent({ eventId }: KaraokeEventId) {
-		return this.database.karaokeEvent.findUnique({
-			where: { id: eventId }
-		});
-	}
-
-	public async getEventWithQueue({ eventId }: KaraokeEventId) {
-		return this.database.karaokeEvent.findUnique({
-			where: { id: eventId },
-			include: { queue: { orderBy: { createdAt: 'asc' } } }
-		});
-	}
-
-	public async getEventByGuild({ guildId }: GuildId) {
-		return this.database.karaokeEvent.findMany({
-			where: { guildId }
-		});
-	}
-
-	public async deleteEvent({ eventId }: KaraokeEventId) {
-		return this.database.karaokeEvent
-			.delete({
-				where: { id: eventId }
-			})
-			.catch(() => null);
-	}
-
-	public async deleteScheduledEvent({ guildId, eventId }: GuildAndKaraokeEventId) {
-		await this.setEventExists({ eventId, guildId }, false);
-		return this.deleteEvent({ eventId });
-	}
-
-	public async updateQueueLock({ eventId }: KaraokeEventId, isLocked: boolean) {
-		return this.database.karaokeEvent.update({
-			where: { id: eventId },
-			data: { locked: isLocked }
-		});
-	}
-
-	public async createEvent({ id, guildId, textChannelId, pinMessageId }: CreateEventData) {
-		await this.setEventExists({ eventId: id, guildId }, true);
-		return this.database.karaokeEvent.create({
-			data: {
-				id,
-				textChannelId,
-				locked: false,
-				isActive: true,
-				pinMessageId,
-				eventSettings: { connect: { guildId } }
+		this.repository = new KaraokeRepository({
+			database: container.prisma,
+			cache: {
+				client: container.redis
 			}
 		});
 	}
 
-	public async createScheduledEvent({ id, guildId, textChannelId, discordEventId, roleId }: CreateScheduledEventData) {
-		await this.setEventExists({ eventId: id, guildId }, true);
-		return this.database.karaokeEvent.create({
-			data: {
-				id,
-				textChannelId,
-				locked: false,
-				isActive: false,
-				discordEventId,
-				roleId,
-				eventSettings: { connect: { guildId } }
-			}
-		});
+	public async getEvent(eventId: string): Promise<KaraokeEvent | null> {
+		return this.repository.getEvent({ eventId });
 	}
 
-	public async updateEvent({ id, textChannelId, locked, isActive, discordEventId, roleId }: UpdateEventData) {
-		return this.database.karaokeEvent.update({
-			where: { id },
-			data: { textChannelId, locked, isActive, discordEventId, roleId }
-		});
+	public async getEventWithQueue(eventId: string): Promise<
+		| (KaraokeEvent & {
+				queue: KaraokeUser[];
+		  })
+		| null
+	> {
+		return this.repository.getEventWithQueue({ eventId });
 	}
 
-	public async countEvents({ guildId }: GuildId) {
-		return this.database.karaokeEvent.count({
-			where: { guildId }
-		});
+	public async getEventByGuild(guildId: string): Promise<KaraokeEvent[]> {
+		return this.repository.getEventByGuild({ guildId });
 	}
 
-	public async eventExists({ guildId, eventId }: GuildAndKaraokeEventId): Promise<boolean> {
-		const key = this.existsKey(guildId, eventId);
-
-		const result = await this.cache.get(key);
-
-		return result === CacheValues.Exists;
+	public async deleteEvent(eventId: string): Promise<KaraokeEvent | null> {
+		return this.repository.deleteEvent({ eventId });
 	}
 
-	public async eventActive({ guildId, eventId }: GuildAndKaraokeEventId): Promise<boolean> {
-		const key = this.isActiveKey(guildId, eventId);
-
-		const result = await this.cache.get(key);
-
-		return result === CacheValues.Active;
+	public async deleteScheduledEvent(guildId: string, eventId: string): Promise<KaraokeEvent | null> {
+		return this.repository.deleteScheduledEvent({ guildId, eventId });
 	}
 
-	public async addUserToQueue({ eventId }: KaraokeEventId, { id, name, partnerId, partnerName }: AddToQueueData) {
-		const data = await this.database.karaokeUser.create({
-			data: { id, name, partnerId, partnerName, karaokeEvent: { connect: { id: eventId } } },
-			include: {
-				karaokeEvent: {
-					include: { queue: { orderBy: { createdAt: 'asc' } } }
-				}
-			}
-		});
-
-		return data.karaokeEvent;
+	public async updateQueueLock(eventId: string, isLocked: boolean): Promise<KaraokeEvent> {
+		return this.repository.updateQueueLock({ eventId }, isLocked);
 	}
 
-	public async removeUserFromQueue({ eventId }: KaraokeEventId, { id }: RemoveFromQueueData) {
-		const data = await this.database.karaokeUser.delete({
-			where: { id_eventId: { id, eventId } },
-			include: {
-				karaokeEvent: {
-					include: { queue: { orderBy: { createdAt: 'asc' } } }
-				}
-			}
-		});
+	public async createEvent(data: CreateEventData): Promise<KaraokeEvent> {
+		return this.repository.createEvent(data);
+	}
 
-		return data.karaokeEvent;
+	public async createScheduledEvent(data: CreateScheduledEventData): Promise<KaraokeEvent> {
+		return this.repository.createScheduledEvent(data);
+	}
+
+	public async updateEvent(data: UpdateEventData): Promise<KaraokeEvent> {
+		return this.repository.updateEvent(data);
+	}
+
+	public async countEvents(guildId: string): Promise<number> {
+		return this.repository.countEvents({ guildId });
+	}
+
+	public async eventExists(guildId: string, eventId: string): Promise<boolean> {
+		return this.repository.eventExists({ guildId, eventId });
+	}
+
+	public async eventActive(guildId: string, eventId: string): Promise<boolean> {
+		return this.repository.eventActive({ guildId, eventId });
+	}
+
+	public async addUserToQueue(
+		{ eventId }: KaraokeEventId,
+		data: AddToQueueData
+	): Promise<
+		KaraokeEvent & {
+			queue: KaraokeUser[];
+		}
+	> {
+		return this.repository.addUserToQueue({ eventId }, data);
+	}
+
+	public async removeUserFromQueue(
+		{ eventId }: KaraokeEventId,
+		data: RemoveFromQueueData
+	): Promise<
+		KaraokeEvent & {
+			queue: KaraokeUser[];
+		}
+	> {
+		return this.repository.removeUserFromQueue({ eventId }, data);
 	}
 
 	public async setUserToSinger(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<boolean | null> {
@@ -325,7 +274,7 @@ export class KaraokeService {
 		event: KaraokeEventWithUsers,
 		memberId: string,
 		partner?: GuildMember
-	): { valid: true; reason?: undefined } | { valid: false; reason: string } {
+	): { valid: false; reason: string } | { valid: true; reason?: undefined } {
 		if (event.locked) {
 			return { valid: false, reason: 'The karaoke queue is locked.' };
 		}
@@ -350,7 +299,7 @@ export class KaraokeService {
 		return { valid: true };
 	}
 
-	public isAddValid(event: KaraokeEventWithUsers, memberId: string): { valid: true; reason?: undefined } | { valid: false; reason: string } {
+	public isAddValid(event: KaraokeEventWithUsers, memberId: string): { valid: false; reason: string } | { valid: true; reason?: undefined } {
 		if (event.queue.length > 50) {
 			return { valid: false, reason: 'Queue limit of 50 people has been reached.' };
 		}
@@ -368,7 +317,7 @@ export class KaraokeService {
 		pingRole?: string | null
 	): Promise<KaraokeEvent | null> {
 		try {
-			const exists = await this.eventExists({ eventId: voiceChannel.id, guildId: guild.id });
+			const exists = await this.eventExists(guild.id, voiceChannel.id);
 			if (exists) {
 				return null;
 			}
@@ -378,8 +327,8 @@ export class KaraokeService {
 
 			const announcement = await this.postEventInstructions(voiceChannel, textChannel, embed, pingRole);
 
-			await this.setEventExists({ eventId: voiceChannel.id, guildId: guild.id }, true);
-			await this.setEventActive({ eventId: voiceChannel.id, guildId: guild.id }, true);
+			await this.setEventExists(guild.id, voiceChannel.id, true);
+			await this.setEventActive(guild.id, voiceChannel.id, true);
 			return this.createEvent({
 				id: voiceChannel.id,
 				guildId: voiceChannel.guildId,
@@ -392,15 +341,13 @@ export class KaraokeService {
 		}
 	}
 
-	public async endEvent(guild: Guild, event: KaraokeEvent) {
+	public async endEvent(guild: Guild, event: KaraokeEvent): Promise<void> {
 		const bot = await guild.members.fetchMe();
 		const voiceChannel = (await guild.channels.fetch(event.id)) as StageChannel | VoiceChannel;
 
-		await Promise.allSettled([
-			this.setEventExists({ eventId: event.id, guildId: event.guildId }, false),
-			this.setEventActive({ eventId: event.id, guildId: event.guildId }, false),
-			this.deleteEvent({ eventId: event.id })
-		]);
+		await this.setEventExists(event.guildId, event.id, false);
+		await this.setEventActive(event.guildId, event.id, false);
+		await this.deleteEvent(event.id);
 
 		if (voiceChannel.type === ChannelType.GuildStageVoice && voiceChannel.stageInstance) {
 			await voiceChannel.stageInstance.delete();
@@ -410,7 +357,7 @@ export class KaraokeService {
 				await Promise.all(
 					voiceChannel.members //
 						.filter((member) => member.voice.serverMute)
-						.map((member) => member.voice.setMute(false))
+						.map(async (member) => member.voice.setMute(false))
 				);
 			}
 		}
@@ -428,7 +375,7 @@ export class KaraokeService {
 
 	public async startScheduledEvent(guild: Guild, event: KaraokeEvent, eventName: string): Promise<KaraokeEvent | null> {
 		try {
-			const exists = await this.eventExists({ eventId: event.id, guildId: guild.id });
+			const exists = await this.eventExists(guild.id, event.id);
 			if (!exists) {
 				return null;
 			}
@@ -449,7 +396,7 @@ export class KaraokeService {
 
 			const announcement = await this.postEventInstructions(voiceChannel, textChannel, embed, event.roleId);
 
-			await this.setEventActive({ eventId: voiceChannel.id, guildId: guild.id }, true);
+			await this.setEventActive(guild.id, event.id, true);
 			return this.updateEvent({
 				id: voiceChannel.id,
 				textChannelId: textChannel.id,
@@ -489,20 +436,12 @@ export class KaraokeService {
 		return embed;
 	}
 
-	private async setEventExists({ guildId, eventId }: GuildAndKaraokeEventId, exists: boolean): Promise<boolean> {
-		const key = this.existsKey(guildId, eventId);
-
-		const value = exists ? CacheValues.Exists : CacheValues.DoesNotExist;
-
-		return (await this.cache.set(key, value)) === 'OK';
+	private async setEventExists(guildId: string, eventId: string, exists: boolean): Promise<void> {
+		return this.repository.setEventExists({ guildId, eventId }, exists);
 	}
 
-	private async setEventActive({ guildId, eventId }: GuildAndKaraokeEventId, active: boolean): Promise<boolean> {
-		const key = this.isActiveKey(guildId, eventId);
-
-		const value = active ? CacheValues.Active : CacheValues.Inactive;
-
-		return (await this.cache.set(key, value)) === 'OK';
+	private async setEventActive(guildId: string, eventId: string, active: boolean): Promise<void> {
+		return this.repository.setEventActive({ guildId, eventId }, active);
 	}
 
 	private async rotate(memberManager: GuildMemberManager, event: KaraokeEventWithUsers): Promise<KaraokeEventWithUsers> {

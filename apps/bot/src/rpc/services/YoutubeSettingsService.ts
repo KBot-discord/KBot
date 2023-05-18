@@ -12,7 +12,7 @@ import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 
-export function registerYoutubeSettingsService(router: ConnectRouter) {
+export function registerYoutubeSettingsService(router: ConnectRouter): void {
 	router.service(YoutubeSettingsService, new YoutubeSettingsServiceImpl());
 }
 
@@ -31,9 +31,7 @@ class YoutubeSettingsServiceImpl implements ServiceImpl<typeof YoutubeSettingsSe
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await youtube.settings.get({
-				guildId
-			});
+			const settings = await youtube.settings.get(guildId);
 
 			const data: PartialMessage<GetYoutubeSettingsResponse> = {
 				settings: settings ? { enabled: settings.enabled } : undefined
@@ -63,10 +61,7 @@ class YoutubeSettingsServiceImpl implements ServiceImpl<typeof YoutubeSettingsSe
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await youtube.settings.upsert(
-				{ guildId }, //
-				{ enabled }
-			);
+			const settings = await youtube.settings.upsert(guildId, { enabled });
 
 			const data: PartialMessage<UpdateYoutubeSettingsResponse> = {
 				settings: settings ? { enabled: settings.enabled } : undefined

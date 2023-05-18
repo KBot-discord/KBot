@@ -1,7 +1,14 @@
 import { container } from '@sapphire/framework';
-import type { UpdateYoutubeSubscriptionData, YoutubeSubscriptionWithChannel, GuildId, GuildAndHolodexChannelId } from '#types/database';
-import type { PrismaClient, YoutubeSubscription } from '@kbotdev/database';
-import type { HolodexChannelId } from '#types/database/Holodex';
+import type {
+	PrismaClient,
+	HolodexChannelId,
+	YoutubeSubscription,
+	GuildAndHolodexChannelId,
+	GuildId,
+	UpdateYoutubeSubscriptionData,
+	YoutubeSubscriptionWithChannel,
+	HolodexChannel
+} from '@kbotdev/database';
 
 export class YoutubeSubscriptionService {
 	private readonly database: PrismaClient;
@@ -51,7 +58,14 @@ export class YoutubeSubscriptionService {
 			.catch(() => null);
 	}
 
-	public async upsert({ guildId, channelId }: GuildAndHolodexChannelId, data?: UpdateYoutubeSubscriptionData) {
+	public async upsert(
+		{ guildId, channelId }: GuildAndHolodexChannelId,
+		data?: UpdateYoutubeSubscriptionData
+	): Promise<
+		YoutubeSubscription & {
+			channel: HolodexChannel;
+		}
+	> {
 		return this.database.youtubeSubscription.upsert({
 			where: { channelId_guildId: { guildId, channelId } },
 			update: { ...data },
@@ -76,13 +90,13 @@ export class YoutubeSubscriptionService {
 		});
 	}
 
-	public async countByGuild({ guildId }: GuildId) {
+	public async countByGuild({ guildId }: GuildId): Promise<number> {
 		return this.database.youtubeSubscription.count({
 			where: { guildId }
 		});
 	}
 
-	public async exists({ channelId, guildId }: GuildAndHolodexChannelId) {
+	public async exists({ channelId, guildId }: GuildAndHolodexChannelId): Promise<boolean> {
 		const result = await this.database.youtubeSubscription.count({
 			where: { channelId, guildId }
 		});

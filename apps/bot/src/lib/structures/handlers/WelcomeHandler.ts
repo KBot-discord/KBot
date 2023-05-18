@@ -2,7 +2,7 @@ import { WelcomeModule } from '#modules/WelcomeModule';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
-import type { GuildMember, GuildTextBasedChannel, HexColorString } from 'discord.js';
+import type { GuildMember, GuildTextBasedChannel, HexColorString, Message } from 'discord.js';
 import type { WelcomeSettings } from '@kbotdev/database';
 
 export class WelcomeHandler {
@@ -11,7 +11,7 @@ export class WelcomeHandler {
 	public async run(): Promise<void> {
 		const { client, welcome, validator } = container;
 
-		const settings = await welcome.getSettings(this.member.guild.id);
+		const settings = await welcome.settings.get(this.member.guild.id);
 		if (isNullish(settings) || !settings.enabled || isNullish(settings.channelId)) return;
 		if (!settings.message && !settings.title && !settings.description) return;
 
@@ -32,7 +32,7 @@ export class WelcomeHandler {
 		await this.withMessageAndEmbed(channel, settings);
 	}
 
-	private async withEmbed(channel: GuildTextBasedChannel, settings: WelcomeSettings) {
+	private async withEmbed(channel: GuildTextBasedChannel, settings: WelcomeSettings): Promise<Message<true>> {
 		const embed = this.createTemplateEmbed(settings.color, settings.image);
 
 		if (settings.title) {
@@ -49,7 +49,7 @@ export class WelcomeHandler {
 		});
 	}
 
-	private async withMessage(channel: GuildTextBasedChannel, settings: WelcomeSettings) {
+	private async withMessage(channel: GuildTextBasedChannel, settings: WelcomeSettings): Promise<Message<true>> {
 		const message = WelcomeModule.formatText(settings.message!, this.member);
 
 		return channel.send({
@@ -58,7 +58,7 @@ export class WelcomeHandler {
 		});
 	}
 
-	private async withMessageAndEmbed(channel: GuildTextBasedChannel, settings: WelcomeSettings) {
+	private async withMessageAndEmbed(channel: GuildTextBasedChannel, settings: WelcomeSettings): Promise<Message<true>> {
 		const embed = this.createTemplateEmbed(settings.color, settings.image);
 
 		if (settings.title) {
@@ -79,9 +79,9 @@ export class WelcomeHandler {
 		});
 	}
 
-	private createTemplateEmbed(color: string | null, image: string | null) {
+	private createTemplateEmbed(color: string | null, image: string | null): EmbedBuilder {
 		const embed = new EmbedBuilder()
-			.setColor(<HexColorString>color ?? '#006BFC')
+			.setColor((color as HexColorString | undefined) ?? '#006BFC')
 			.setFooter({ text: `Total members: ${this.member.guild.memberCount}` })
 			.setTimestamp();
 		if (image) embed.setImage(image);

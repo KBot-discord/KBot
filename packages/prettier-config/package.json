@@ -12,11 +12,15 @@
 	},
 	"scripts": {
 		"build": "tsup",
-		"lint": "eslint --fix --ext ts src",
+		"check": "tsc",
+		"lint": "eslint --ext ts src && yarn check",
+		"lint:fix": "eslint --fix --ext ts src",
 		"format": "prettier --write --loglevel=warn \"src/**/*.ts\""
 	},
 	"devDependencies": {
-		"tsup": "^6.7.0",
-		"typescript": "^5.0.4"
+		"@kbotdev/eslint-config": "workspace:^",
+		"eslint": "^8.40.0",
+		"prettier": "^2.8.8",
+		"tsup": "^6.7.0"
 	}
 }

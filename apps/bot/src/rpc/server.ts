@@ -11,10 +11,10 @@ import {
 	registerYoutubeSubscriptionService
 } from '#rpc/services';
 import { connectNodeAdapter } from '@bufbuild/connect-node';
-import * as http2 from 'http2';
+import { createServer } from 'http2';
 import type { ConnectRouter } from '@bufbuild/connect';
 
-function routes(router: ConnectRouter) {
+function routes(router: ConnectRouter): void {
 	registerCoreSettingsService(router);
 	registerDiscordService(router);
 	registerEventSettingsService(router);
@@ -27,7 +27,7 @@ function routes(router: ConnectRouter) {
 	registerYoutubeSubscriptionService(router);
 }
 
-export const connectServer = http2.createServer(
+export const connectServer = createServer(
 	connectNodeAdapter({
 		routes, //
 		connect: true,

@@ -6,7 +6,7 @@ import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
-export function registerCoreSettingsService(router: ConnectRouter) {
+export function registerCoreSettingsService(router: ConnectRouter): void {
 	router.service(CoreSettingsService, new CoreSettingsServiceImpl());
 }
 
@@ -28,7 +28,7 @@ class CoreSettingsServiceImpl implements ServiceImpl<typeof CoreSettingsService>
 		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
 
 		try {
-			const settings = await core.getSettings(guildId);
+			const settings = await core.settings.get(guildId);
 			if (!settings) {
 				return new GetGuildFeatureFlagsResponse({ flags: [] });
 			}

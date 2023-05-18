@@ -3,19 +3,19 @@ import type { Permissions } from 'discord-api-types/globals';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { DiscordGuild, DiscordUser } from '@kbotdev/proto';
 
-export type IDiscordUser = Pick<DiscordUser, 'id' | 'username' | 'discriminator' | 'avatar'>;
+export type IDiscordUser = Pick<DiscordUser, 'avatar' | 'discriminator' | 'id' | 'username'>;
 
-export type IDiscordGuild = Pick<DiscordGuild, 'id' | 'name' | 'icon'>;
+export type IDiscordGuild = Pick<DiscordGuild, 'icon' | 'id' | 'name'>;
 
 export type FormattedGuild = Omit<IDiscordGuild, 'icon'> & {
-	icon: string | null;
-	owner: boolean;
-} & {
 	features: GuildFeature[];
 	permissions: Permissions;
+} & {
+	icon: string | null;
+	owner: boolean;
 };
 
-export interface TransformedLoginData extends LoginData {
+export type TransformedLoginData = LoginData & {
 	user: IDiscordUser | null | undefined;
 	guilds: FormattedGuild[] | null | undefined;
-}
+};

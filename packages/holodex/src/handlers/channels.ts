@@ -1,7 +1,7 @@
-import { BASE_URL, ContentType } from '../utils/constants';
+import { BASE_URL, ContentType } from '../lib/utilities/constants';
 import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
-import type { HolodexOptions } from '../structures/Holodex';
-import type { HolodexChannel } from '../types/channels';
+import type { HolodexOptions } from '../lib/structures/Holodex';
+import type { HolodexChannel } from '../lib/types/channels';
 
 export class ChannelHandler {
 	private readonly apiKey: string;

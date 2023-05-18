@@ -1,7 +1,7 @@
 import type { Counter } from 'prom-client';
 
-export interface KBotCounters {
+export type KBotCounters = {
 	commands: Counter;
 	youtube: Counter;
 	holodex: Counter;
-}
+};

@@ -8,10 +8,10 @@ import { container } from '@sapphire/framework';
 import type { StatusPageIncident, StatusPageResult } from '#types/DiscordStatus';
 import type { IncidentMessage, Prisma } from '@kbotdev/database';
 
-interface DatabaseIncidentData {
+type DatabaseIncidentData = {
 	updatedAt: Date | undefined;
 	notifications: IncidentNotification[];
-}
+};
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'discordStatus',
@@ -76,7 +76,12 @@ export class UtilityTask extends ScheduledTask {
 		}
 	}
 
-	private async handleNotifications(incident: StatusPageIncident, embed: EmbedBuilder, notifications: IncidentNotification[], newIncident = false) {
+	private async handleNotifications(
+		incident: StatusPageIncident,
+		embed: EmbedBuilder,
+		notifications: IncidentNotification[],
+		newIncident = false
+	): Promise<void> {
 		const { prisma } = this.container;
 
 		const validNotifications: IncidentNotification[] = [];

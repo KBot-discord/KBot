@@ -2,10 +2,10 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Listener, Events } from '@sapphire/framework';
 
 @ApplyOptions<Listener.Options>({
-	name: Events.ListenerError
+	event: Events.ListenerError
 })
 export class ErrorListener extends Listener {
-	public run(error: Error) {
+	public async run(error: Error): Promise<void> {
 		this.container.logger.error(error);
 	}
 }
