@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-invalid-void-type */
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import type { MeilisearchClient } from '#extensions/MeiliClient';
 import type { CommandInteraction, Message, InteractionResponse } from 'discord.js';
 import type { KBotError } from '#structures/KBotError';
