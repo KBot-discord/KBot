@@ -35,7 +35,7 @@ const fetchRoles = async (cookie: string, guild: Guild) => {
 };
 
 export const load: LayoutServerLoad = ({ locals, cookies }) => {
-	const cookie = cookies.get(env.PUBLIC_COOKIE);
+	const cookie = cookies.get(env.PUBLIC_COOKIE!);
 	if (!cookie || !locals.guild) {
 		throw redirect(302, '/guilds');
 	}

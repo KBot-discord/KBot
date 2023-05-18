@@ -9,7 +9,7 @@ export function getServerTransport(): Transport {
 
 	transport = connectNode({
 		httpVersion: '2',
-		baseUrl: env.BASE_RPC_URL
+		baseUrl: env.BASE_RPC_URL!
 	});
 
 	return transport;

@@ -4,7 +4,7 @@ import { env } from '$env/dynamic/public';
 import { useClient, Clients } from '$rpc';
 
 export const handleGuildsRoute: Handle = async ({ event, resolve }) => {
-	const cookie = event.cookies.get(env.PUBLIC_COOKIE);
+	const cookie = event.cookies.get(env.PUBLIC_COOKIE!);
 	if (!cookie || !event.locals.user) {
 		return new Response(undefined, {
 			status: 302,

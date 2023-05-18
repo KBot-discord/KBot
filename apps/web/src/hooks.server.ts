@@ -8,7 +8,7 @@ import { useClient, Clients } from '$rpc';
 const protectedRoutes = ['/guilds', '/premium/manage'];
 
 export const handleAll: Handle = async ({ event, resolve }) => {
-	const cookie = event.cookies.get(env.PUBLIC_COOKIE);
+	const cookie = event.cookies.get(env.PUBLIC_COOKIE!);
 	if (!cookie) {
 		if (protectedRoutes.some((route) => event.url.pathname.startsWith(route))) {
 			return new Response(undefined, {

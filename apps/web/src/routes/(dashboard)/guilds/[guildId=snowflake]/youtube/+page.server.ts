@@ -25,7 +25,7 @@ const fetchYoutubeSubscriptions = async (cookie: string, guild: Guild) => {
 };
 
 export const load: PageServerLoad = ({ cookies, locals }) => {
-	const cookie = cookies.get(env.PUBLIC_COOKIE);
+	const cookie = cookies.get(env.PUBLIC_COOKIE!);
 	if (!cookie || !locals.guild) {
 		throw redirect(302, '/guilds');
 	}
