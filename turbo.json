@@ -8,19 +8,19 @@
 			"cache": true
 		},
 		"lint": {
-			"dependsOn": [],
+			"dependsOn": ["^build"],
 			"inputs": ["packages/eslint-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
 			"outputs": [],
 			"cache": true
 		},
 		"lint:fix": {
-			"dependsOn": [],
+			"dependsOn": ["^build"],
 			"inputs": ["packages/eslint-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
 			"outputs": [],
 			"cache": true
 		},
 		"format": {
-			"dependsOn": [],
+			"dependsOn": ["^build"],
 			"inputs": ["packages/prettier-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
 			"outputs": [],
 			"cache": true
