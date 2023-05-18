@@ -5,7 +5,7 @@ WORKDIR /temp
 
 RUN apk add --no-cache libc6-compat
 
-RUN yarn global add turbo@1.9.3
+RUN yarn global add turbo
 COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
