@@ -44,7 +44,11 @@ export class ButtonHandler extends InteractionHandler {
 
 	@validCustomId(PollCustomIds.End)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction<'cached'>) {
+	public override async parse(interaction: ButtonInteraction) {
+		if (!interaction.inCachedGuild()) {
+			return this.none();
+		}
+
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);

@@ -1,5 +1,5 @@
 import { EmbedColors } from '#utils/constants';
-import { getUserAvatarUrl } from '#utils/Discord';
+import { getUserAvatarUrl } from '#utils/discord';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -40,7 +40,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		);
 	}
 
-	public override async autocompleteRun(interaction: ModuleCommand.AutocompleteInteraction<'cached'>): Promise<void> {
+	public override async autocompleteRun(interaction: ModuleCommand.AutocompleteInteraction): Promise<void> {
 		const search = interaction.options.getString('command', true);
 		const result = await this.container.meili.get<DocumentCommand>('commands', search);
 
@@ -52,7 +52,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		return interaction.respond(options);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		const option = interaction.options.getString('command');
 
@@ -63,7 +63,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		return this.chatInputInfo(interaction);
 	}
 
-	public async chatInputInfo(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputInfo(interaction: ModuleCommand.ChatInputCommandInteraction): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
@@ -80,8 +80,8 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		});
 	}
 
-	public async chatInputCommand(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, option: string): Promise<unknown> {
-		const command = this.container.stores.get('commands').get(option) as KBotCommand | undefined;
+	public async chatInputCommand(interaction: ModuleCommand.ChatInputCommandInteraction, option: string): Promise<unknown> {
+		const command = this.container.stores.get('commands').get(option) as KBotCommand<any> | undefined;
 		if (!command) {
 			return interaction.errorReply('That command does not exist.');
 		}

@@ -1,5 +1,5 @@
 import { authenticated } from '#rpc/middlewares';
-import { canManageGuild } from '#utils/Discord';
+import { canManageGuild } from '#utils/discord';
 import { CoreSettingsService, FeatureFlags, GetGuildFeatureFlagsRequest, GetGuildFeatureFlagsResponse } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
 import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';

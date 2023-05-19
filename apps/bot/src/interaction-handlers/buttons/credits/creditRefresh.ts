@@ -1,6 +1,6 @@
 import { CreditCustomIds, parseCustomId, CreditType } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { getResourceFromType } from '#utils/Discord';
+import { getResourceFromType } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
@@ -31,7 +31,11 @@ export class ButtonHandler extends InteractionHandler {
 	@validCustomId(CreditCustomIds.ResourceRefresh)
 	@interactionRatelimit(Time.Second * 10, 1)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction<'cached'>) {
+	public override async parse(interaction: ButtonInteraction) {
+		if (!interaction.inCachedGuild()) {
+			return this.none();
+		}
+
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
 			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', true);
 			return this.none();

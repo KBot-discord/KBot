@@ -1,7 +1,8 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { getGuildIcon } from '#utils/discord';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
+import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
@@ -9,7 +10,7 @@ import { EmbedBuilder } from 'discord.js';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { EventModule } from '#modules/EventModule';
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
 	description: 'Edit the settings of the events module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -23,7 +24,7 @@ import type { EventModule } from '#modules/EventModule';
 	}
 })
 export class EventsCommand extends KBotCommand<EventModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
+	public constructor(context: ModuleCommand.Context, options: KBotCommand.Options) {
 		super(context, { ...options }, container.events);
 	}
 
@@ -58,7 +59,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -68,12 +69,15 @@ export class EventsCommand extends KBotCommand<EventModule> {
 				return this.chatInputSettings(interaction);
 			}
 			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
+				return interaction.client.emit(KBotErrors.UnknownCommand, {
+					interaction,
+					error: new UnknownCommandError()
+				});
 			}
 		}
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -90,7 +94,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return interaction.editReply({

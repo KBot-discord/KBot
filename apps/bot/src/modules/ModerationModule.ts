@@ -1,8 +1,7 @@
 import { ModerationSettingsService } from '#services';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
-import { getGuildIcon } from '#utils/Discord';
+import { getGuildIcon } from '#utils/discord';
 import { EmbedColors } from '#utils/constants';
-import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
 import { Module } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { EmbedBuilder } from 'discord.js';
@@ -11,12 +10,10 @@ import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 
 export class ModerationModule extends Module {
 	public readonly settings: ModerationSettingsService;
-	public readonly antiHoist: AntiHoistHandler;
 
 	public constructor(options?: Module.Options) {
 		super({ ...options, fullName: 'Moderation Module' });
 
-		this.antiHoist = new AntiHoistHandler();
 		this.settings = new ModerationSettingsService();
 	}
 

@@ -1,4 +1,5 @@
-import { transformLoginData } from '#utils/Discord';
+import { KBotLogger } from './KBotLogger';
+import { transformLoginData } from '#utils/discord';
 import { container, LogLevel, SapphireClient } from '@sapphire/framework';
 import { ActivityType, IntentsBitField, OAuth2Scopes } from 'discord.js';
 
@@ -20,7 +21,7 @@ export class KBotClient extends SapphireClient {
 				activities: [{ name: '/help', type: ActivityType.Playing }]
 			},
 			logger: {
-				level: config.isDev ? LogLevel.Debug : LogLevel.Info
+				instance: new KBotLogger(config.isDev ? LogLevel.Debug : LogLevel.Info)
 			},
 			api: {
 				origin: config.web.url,

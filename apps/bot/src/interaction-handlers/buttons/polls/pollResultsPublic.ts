@@ -2,6 +2,7 @@ import { EmbedColors } from '#utils/constants';
 import { parseCustomId, PollCustomIds } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
 import { KBotErrors } from '#types/Enums';
+import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, ButtonInteraction } from 'discord.js';
@@ -71,16 +72,23 @@ export class ButtonHandler extends InteractionHandler {
 
 	@validCustomId(PollCustomIds.ResultsPublic)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction<'cached'>) {
+	public override async parse(interaction: ButtonInteraction) {
+		if (!interaction.inCachedGuild()) {
+			return this.none();
+		}
+
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();
 		}
 
-		const { result, error } = await this.container.validator.channels.canSendEmbeds(interaction.channel);
+		const { result } = await this.container.validator.channels.canSendEmbeds(interaction.channel);
 		if (!result) {
-			interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error });
+			interaction.client.emit(KBotErrors.ChannelPermissions, {
+				interaction,
+				error: new ChannelPermissionsError()
+			});
 			return this.none();
 		}
 

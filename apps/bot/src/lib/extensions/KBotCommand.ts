@@ -3,10 +3,10 @@ import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EmbedBuilder } from 'discord.js';
 import type { Module } from '@kbotdev/plugin-modules';
 
-export abstract class KBotCommand<M extends Module = Module> extends ModuleCommand<M> {
+export abstract class KBotCommand<M extends Module> extends ModuleCommand<M> {
 	public helpEmbed: EmbedBuilder;
 
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions, module: M) {
+	public constructor(context: KBotCommand.Context, options: KBotCommand.Options, module: M) {
 		super(
 			context,
 			{
@@ -27,6 +27,19 @@ export abstract class KBotCommand<M extends Module = Module> extends ModuleComma
 	}
 }
 
-export type KBotCommandOptions = ModuleCommand.Options & {
-	helpEmbed: (builder: HelpEmbedBuilder) => HelpEmbedBuilder;
-};
+export namespace KBotCommand {
+	export type Options = ModuleCommand.Options & {
+		/**
+		 * The data that will be shown when the help command is used.
+		 */
+		helpEmbed: (builder: HelpEmbedBuilder) => HelpEmbedBuilder;
+	};
+
+	export type JSON = ModuleCommand.JSON;
+	export type Context = ModuleCommand.Context;
+	export type RunInTypes = ModuleCommand.RunInTypes;
+	export type ChatInputCommandInteraction = ModuleCommand.ChatInputCommandInteraction<'cached'>;
+	export type ContextMenuCommandInteraction = ModuleCommand.ContextMenuCommandInteraction<'cached'>;
+	export type AutocompleteInteraction = ModuleCommand.AutocompleteInteraction<'cached'>;
+	export type Registry = ModuleCommand.Registry;
+}

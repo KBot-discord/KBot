@@ -110,9 +110,9 @@ export function rolesToString(roles: Collection<Snowflake, Role>): string {
 				.toString();
 }
 
-export async function getUserInfo(interaction: ButtonInteraction<'cached'> | CommandInteraction<'cached'>, userId: string): Promise<EmbedBuilder> {
+export async function getUserInfo(interaction: ButtonInteraction | CommandInteraction, userId: string): Promise<EmbedBuilder> {
 	const user = await interaction.client.users.fetch(userId, { force: true });
-	const member = await interaction.guild.members.fetch(userId).catch(() => null);
+	const member = await interaction.guild?.members.fetch(userId).catch(() => null);
 	const userBanner = getUserBannerUrl(user);
 	const embed = new EmbedBuilder()
 		.setAuthor({ name: `${user.tag} - ${user.id}` })
@@ -138,16 +138,25 @@ export async function getUserInfo(interaction: ButtonInteraction<'cached'> | Com
 			)
 			.setFooter({ text: `Present in server: ${KBotEmoji.GreenCheck}` });
 	}
-	const banned = await interaction.guild.bans
+
+	const banned = await interaction.guild?.bans
 		.fetch(userId)
 		.then((ban) => `${KBotEmoji.GreenCheck} User is banned\nReason: ${ban.reason}`)
 		.catch(() => `${KBotEmoji.RedX} User is not banned`);
+
+	embed.setFields({ name: 'Created at:', value: createdAt });
+
+	if (banned) {
+		embed.addFields(
+			{ name: '\u200B', value: '\u200B' }, //
+			{ name: 'Ban status:', value: banned, inline: true }
+		);
+	}
 
 	return embed
 		.setColor(EmbedColors.Error)
 		.setThumbnail(getUserAvatarUrl(user))
 		.setDescription(`${userMention(user.id)} | ${bot}`)
-		.addFields({ name: 'Created at:', value: createdAt }, { name: '\u200B', value: '\u200B' }, { name: 'Ban status:', value: banned, inline: true })
 		.setFooter({ text: `Present in server: ${KBotEmoji.RedX}` });
 }
 

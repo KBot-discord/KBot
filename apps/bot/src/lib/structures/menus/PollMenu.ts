@@ -1,6 +1,6 @@
 import { EmbedColors } from '#utils/constants';
 import { buildCustomId, PollCustomIds } from '#utils/customIds';
-import { getGuildIcon } from '#utils/Discord';
+import { getGuildIcon } from '#utils/discord';
 import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
 import { ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';

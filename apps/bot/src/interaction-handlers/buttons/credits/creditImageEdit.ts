@@ -32,7 +32,11 @@ export class ButtonHandler extends InteractionHandler {
 	@validCustomId(CreditCustomIds.ImageEdit)
 	@interactionRatelimit(Time.Second * 30, 5)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction<'cached'>) {
+	public override async parse(interaction: ButtonInteraction) {
+		if (!interaction.inCachedGuild()) {
+			return this.none();
+		}
+
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
 			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', true);
 			return this.none();

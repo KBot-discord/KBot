@@ -1,12 +1,12 @@
 import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/Discord';
+import { getGuildIcon } from '#utils/discord';
 import { WelcomeModule } from '#modules/WelcomeModule';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
-import { KBotError } from '#structures/KBotError';
+import { KBotError } from '#structures/errors/KBotError';
+import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { channelMention, EmbedBuilder } from 'discord.js';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
@@ -14,7 +14,7 @@ import type { APIEmbedField } from 'discord-api-types/v10';
 import type { InteractionEditReplyOptions, ColorResolvable } from 'discord.js';
 import type { WelcomeSettings } from '@kbotdev/prisma';
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
 	description: 'Edit the settings of the welcome module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -37,11 +37,11 @@ import type { WelcomeSettings } from '@kbotdev/prisma';
 	}
 })
 export class EventsCommand extends KBotCommand<WelcomeModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
+	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
 		super(context, { ...options }, container.welcome);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -160,7 +160,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
 			case 'toggle': {
@@ -179,12 +179,15 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 				return this.chatInputSettings(interaction);
 			}
 			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
+				return interaction.client.emit(KBotErrors.UnknownCommand, {
+					interaction,
+					error: new UnknownCommandError()
+				});
 			}
 		}
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -201,7 +204,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		});
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const channel = interaction.options.getChannel('channel');
 		const message = interaction.options.getString('message');
 		const title = interaction.options.getString('title');
@@ -210,7 +213,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		const color = interaction.options.getString('color');
 
 		if (color && HexColorRegex.test(color)) {
-			throw new KBotError('Please provide a valid Hex color.', 'INVALID_HEX');
+			throw new KBotError('Please provide a valid Hex color.', { code: 'INVALID_HEX' });
 		}
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -225,7 +228,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputUnset(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const channel = interaction.options.getBoolean('channel');
 		const message = interaction.options.getBoolean('message');
 		const title = interaction.options.getBoolean('title');
@@ -245,7 +248,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputTest(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputTest(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { member } = interaction;
 		const settings = await this.module.settings.get(interaction.guildId);
 		if (!settings || (!settings.message && !settings.title && !settings.description && !settings.image)) {
@@ -279,13 +282,13 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return interaction.editReply(options);
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: WelcomeSettings | null): Promise<unknown> {
+	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: WelcomeSettings | null): Promise<unknown> {
 		const { channels, members } = interaction.guild;
 
 		const bot = await members.fetchMe();

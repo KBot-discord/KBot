@@ -1,5 +1,5 @@
 import { authenticated } from '#rpc/middlewares';
-import { canManageGuild, getGuildIcon, getUserAvatarUrl } from '#utils/Discord';
+import { canManageGuild, getGuildIcon, getUserAvatarUrl } from '#utils/discord';
 import {
 	DiscordGuild,
 	DiscordChannel,

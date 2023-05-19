@@ -1,12 +1,11 @@
-import { getMemberAvatarUrl } from '#utils/Discord';
+import { getMemberAvatarUrl } from '#utils/discord';
 import { EmbedColors } from '#utils/constants';
 import { ReportHandler, ReportButtons } from '#structures/handlers/ReportHandler';
 import { KBotErrors } from '#types/Enums';
 import { ReportCustomIds } from '#utils/customIds/report';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { ApplicationCommandType, ButtonStyle, MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
 import { channelMention, userMention } from '@discordjs/builders';
 import { isNullish } from '@sapphire/utilities';
@@ -15,7 +14,7 @@ import type { GuildMember, GuildTextBasedChannel, Message, MessageCreateOptions 
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { ModerationModule } from '#modules/ModerationModule';
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -26,7 +25,7 @@ import type { ModerationModule } from '#modules/ModerationModule';
 	}
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
+	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
 		super(context, { ...options }, container.moderation);
 	}
 
@@ -34,7 +33,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -49,7 +48,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
+	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
 		const { validator, client } = this.container;
 		const message = interaction.options.getMessage('message', true);

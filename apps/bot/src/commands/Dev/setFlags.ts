@@ -10,7 +10,8 @@ import type { APISelectMenuOption } from 'discord-api-types/v10';
 
 @ApplyOptions<Command.Options>({
 	description: 'Set the feature flags for a guild',
-	preconditions: ['BotOwner']
+	preconditions: ['BotOwnerOnly'],
+	runIn: ['GUILD_ANY']
 })
 export class DevCommand extends Command {
 	public constructor(context: ModuleCommand.Context, options: Command.Options) {
@@ -38,7 +39,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		const guildId = interaction.options.getString('guild', true);
 

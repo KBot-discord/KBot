@@ -1,11 +1,10 @@
 import { EmbedColors } from '#utils/constants';
 import { AddEmoteCustomIds, CreditCustomIds, CreditFields, CreditType, buildCustomId } from '#utils/customIds';
-import { getGuildEmoteSlots } from '#utils/Discord';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { getGuildEmoteSlots } from '#utils/discord';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { isNullish } from '@sapphire/utilities';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
@@ -19,7 +18,7 @@ type EmojiData = {
 	animated: boolean;
 };
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
@@ -31,7 +30,7 @@ type EmojiData = {
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
+	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
 		super(context, { ...options }, container.utility);
 	}
 
@@ -39,7 +38,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -54,7 +53,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
+	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
 		const message = interaction.options.getMessage('message', true);
 
 		const emoji = await this.getEmoji(message);
@@ -138,7 +137,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		});
 	}
 
-	private calculateSlots(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): {
+	private calculateSlots(interaction: KBotCommand.ContextMenuCommandInteraction): {
 		staticSlots: number;
 		animatedSlots: number;
 		totalSlots: number;

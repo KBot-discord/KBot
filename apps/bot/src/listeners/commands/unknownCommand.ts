@@ -1,23 +1,25 @@
 import { KBotErrors } from '#types/Enums';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import type { Payload } from '#types/Errors';
+import type { UnknownCommandPayload } from '#types/Errors';
 
 @ApplyOptions<Listener.Options>({
 	event: KBotErrors.UnknownCommand
 })
-export class CommandListener extends Listener {
-	public async run({ interaction }: Payload<KBotErrors.UnknownCommand>): Promise<void> {
+export class CommandListener extends Listener<typeof KBotErrors.UnknownCommand> {
+	public async run(payload: UnknownCommandPayload): Promise<void> {
+		const { interaction } = payload;
+
 		if (interaction.command) {
 			const commandName = interaction.command.name;
 			const subcommandGroup = interaction.options.getSubcommandGroup();
 			const subcommand = interaction.options.getSubcommand();
 
-			this.container.logger.fatal(`[Unknown Command] There was no method to process "${commandName}/${subcommandGroup}/${subcommand}"`);
+			this.container.logger.sentryMessage(`There was no method to process "${commandName}/${subcommandGroup}/${subcommand}"`, payload);
 		} else {
-			this.container.logger.fatal(`[Unknown Command] Received an interaction with no command\nInteraction type: ${interaction.type}`);
+			this.container.logger.sentryMessage('Received an interaction with no command', payload);
 		}
 
-		await interaction.errorReply("Not sure how you did that, but I'm not able to process that command.", true);
+		await interaction.errorReply('I was not able to find the command you were trying to run.', true);
 	}
 }

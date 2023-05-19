@@ -8,6 +8,10 @@ export type ClientConfig = {
 		secret: string;
 		devServers: Array<string>;
 		ownerIds: Array<string>;
+		webhookError: {
+			id: string;
+			token: string;
+		};
 	};
 	web: {
 		url: string;

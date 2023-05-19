@@ -1,11 +1,7 @@
-export const enum KBotEvents {
-	YoutubeReactionRole = 'youtubeReactionRole'
-}
-
-export const enum KBotErrors {
-	ChannelPermissions = 'channelPermissions',
-	UnknownCommand = 'unknownCommand'
-}
+export const KBotErrors = {
+	ChannelPermissions: 'channelPermissions',
+	UnknownCommand: 'unknownCommand'
+} as const;
 
 export const KBOT_ERRORS = ['CHANNEL_PERMISSIONS', 'UNKNOWN_COMMAND', 'INVALID_HEX'] as const;
 

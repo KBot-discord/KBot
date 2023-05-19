@@ -56,7 +56,11 @@ export class ButtonHandler extends InteractionHandler {
 	@validCustomId(KaraokeCustomIds.Lock, KaraokeCustomIds.Unlock)
 	@interactionRatelimit(Time.Second * 5, 1)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction<'cached'>) {
+	public override async parse(interaction: ButtonInteraction) {
+		if (!interaction.inCachedGuild()) {
+			return this.none();
+		}
+
 		const menu = KaraokeEventMenu.handlers.get(interaction.user.id);
 		if (isNullish(menu)) {
 			await interaction.defaultReply('Please run `/manage karaoke menu` again.', true);

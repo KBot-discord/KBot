@@ -1,5 +1,6 @@
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { WelcomeHandler } from '#structures/handlers/WelcomeHandler';
+import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
@@ -20,7 +21,7 @@ export class GuildListener extends Listener {
 		const wasKicked = await new MinageHandler(member, settings).run();
 		if (wasKicked) return;
 
-		await moderation.antiHoist.parseMember(member, settings);
+		await new AntiHoistHandler().parseMember(member, settings);
 
 		await new WelcomeHandler(member).run();
 	}

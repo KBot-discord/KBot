@@ -1,3 +1,4 @@
+import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullish } from '@sapphire/utilities';
@@ -17,7 +18,7 @@ export class GuildListener extends Listener {
 			const settings = await moderation.settings.get(newMember.guild.id);
 			if (isNullish(settings) || !settings.enabled) return;
 
-			await moderation.antiHoist.parseMember(newMember, settings);
+			await new AntiHoistHandler().parseMember(newMember, settings);
 		}
 	}
 }

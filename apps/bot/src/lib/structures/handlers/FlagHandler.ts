@@ -6,10 +6,12 @@ import { Time } from '@sapphire/duration';
 import type { ButtonInteraction, StringSelectMenuInteraction, User, GuildTextBasedChannel, Guild, ChatInputCommandInteraction } from 'discord.js';
 import type { FeatureFlags } from '@kbotdev/database';
 
+type InteractionUnion = ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>;
+
 export class FlagHandler {
 	private readonly response: ChatInputCommandInteraction;
 
-	private collector: InteractionCollector<ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>> | null = null;
+	private collector: InteractionCollector<InteractionUnion> | null = null;
 	private flags: FeatureFlags[] = [];
 
 	public constructor({ response, targetGuild, target }: { response: ChatInputCommandInteraction; targetGuild: Guild; target: User }) {
@@ -18,7 +20,7 @@ export class FlagHandler {
 	}
 
 	private setupCollector(channel: GuildTextBasedChannel, target: User, targetGuild: Guild): void {
-		this.collector = new InteractionCollector<ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>>(target.client, {
+		this.collector = new InteractionCollector<InteractionUnion>(target.client, {
 			filter: (interaction) => interaction.member.id === target.id,
 			time: Time.Minute * 14,
 			guild: isGuildBasedChannel(channel) ? channel.guild : undefined,
@@ -29,7 +31,7 @@ export class FlagHandler {
 			.on('end', this.handleEnd.bind(this));
 	}
 
-	private async handleCollect(targetGuild: Guild, interaction: ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>): Promise<void> {
+	private async handleCollect(targetGuild: Guild, interaction: ButtonInteraction | StringSelectMenuInteraction): Promise<void> {
 		await interaction.deferUpdate();
 
 		if (interaction.customId === 'featureflags-menu') {

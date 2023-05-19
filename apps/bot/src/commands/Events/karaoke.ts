@@ -1,16 +1,16 @@
 import { EmbedColors } from '#utils/constants';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
+import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
 import { channelMention, userMention } from '@discordjs/builders';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { EventModule } from '#modules/EventModule';
 import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
 	description: 'Join or leave the karaoke queue.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
@@ -29,7 +29,7 @@ import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChann
 	}
 })
 export class EventsCommand extends KBotCommand<EventModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
+	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
 		super(context, { ...options }, container.events);
 	}
 
@@ -37,7 +37,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou, or a moderator, can run \`/events toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -83,7 +83,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
 		switch (interaction.options.getSubcommand(true)) {
 			case 'join': {
@@ -102,12 +102,15 @@ export class EventsCommand extends KBotCommand<EventModule> {
 				return this.chatInputHelp(interaction);
 			}
 			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
+				return interaction.client.emit(KBotErrors.UnknownCommand, {
+					interaction,
+					error: new UnknownCommandError()
+				});
 			}
 		}
 	}
 
-	public async chatInputJoin(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputJoin(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { karaoke } = this.module;
 		const { guildId, member } = interaction;
 
@@ -171,7 +174,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply('You have successfully joined the queue.');
 	}
 
-	public async chatInputDuet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputDuet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { karaoke } = this.module;
 		const { guildId, member } = interaction;
 
@@ -250,7 +253,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply('Successfully joined queue.');
 	}
 
-	public async chatInputLeave(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputLeave(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { karaoke } = this.module;
 		const { member } = interaction;
 
@@ -310,7 +313,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.defaultReply('Successfully left queue.');
 	}
 
-	public async chatInputQueue(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputQueue(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { guildId } = interaction;
 		const { karaoke } = this.module;
 
@@ -335,7 +338,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputHelp(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputHelp(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { karaoke } = this.module;
 
 		const events = await karaoke.getEventByGuild(interaction.guildId);

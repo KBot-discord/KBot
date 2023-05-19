@@ -78,7 +78,11 @@ export class ButtonHandler extends InteractionHandler {
 
 	@validCustomId(YoutubeCustomIds.RoleReaction, YoutubeCustomIds.RoleReactionMember)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: StringSelectMenuInteraction<'cached'>) {
+	public override async parse(interaction: StringSelectMenuInteraction) {
+		if (!interaction.inCachedGuild()) {
+			return this.none();
+		}
+
 		const bot = await interaction.guild.members.fetchMe();
 		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
 			await interaction.defaultReply("I don't have the required permissions to edit your roles.", true);

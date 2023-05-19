@@ -1,6 +1,5 @@
 import type { MeilisearchClient } from '#extensions/MeiliClient';
-import type { CommandInteraction, Message, InteractionResponse } from 'discord.js';
-import type { KBotError } from '#structures/KBotError';
+import type { Message, InteractionResponse } from 'discord.js';
 import type { KBotMetrics } from '#observability/KBotMetrics';
 import type { APIMessage } from 'discord-api-types/v10';
 import type { ClientConfig } from '#types/Config';
@@ -14,11 +13,17 @@ import type { UtilityModule } from '#modules/UtilityModule';
 import type { WelcomeModule } from '#modules/WelcomeModule';
 import type { YoutubeModule } from '#modules/YoutubeModule';
 import type { Holodex } from '@kbotdev/holodex';
-import type { KBotErrors } from '#types/Enums';
+import type { KBotErrors } from './Enums';
+import type { ChannelPermissionsPayload, UnknownCommandPayload } from '#types/Errors';
 
 export type InteractionResponseUnion = APIMessage | InteractionResponse | Message | void;
 
 declare module 'discord.js' {
+	interface ClientEvents {
+		[KBotErrors.ChannelPermissions]: [payload: ChannelPermissionsPayload];
+		[KBotErrors.UnknownCommand]: [payload: UnknownCommandPayload];
+	}
+
 	interface CommandInteraction {
 		defaultReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
 		successReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
@@ -71,7 +76,8 @@ declare module '@sapphire/pieces' {
 }
 
 declare module '@sapphire/framework' {
-	interface SapphireClient {
-		emit(event: KBotErrors, context: { error?: KBotError; interaction: CommandInteraction }): boolean;
+	interface ILogger {
+		sentryMessage(message: string, context?: NonNullable<unknown>): void;
+		sentryError(error: Error, context?: NonNullable<unknown>): void;
 	}
 }

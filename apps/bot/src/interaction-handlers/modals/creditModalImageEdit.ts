@@ -40,7 +40,11 @@ export class ModalHandler extends InteractionHandler {
 
 	@validCustomId(CreditCustomIds.ImageModalEdit)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
+	public override async parse(modal: ModalSubmitInteraction) {
+		if (!modal.inCachedGuild()) {
+			return this.none();
+		}
+
 		const settings = await this.container.utility.settings.get(modal.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);

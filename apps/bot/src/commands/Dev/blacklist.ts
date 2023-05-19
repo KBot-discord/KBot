@@ -1,11 +1,13 @@
 import { KBotErrors } from '#types/Enums';
+import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
 
 @ApplyOptions<Command.Options>({
 	description: 'Manage the guild blacklist',
-	preconditions: ['BotOwner']
+	preconditions: ['BotOwnerOnly'],
+	runIn: ['GUILD_ANY']
 })
 export class DevCommand extends Command {
 	public constructor(context: Command.Context, options: Command.Options) {
@@ -73,7 +75,10 @@ export class DevCommand extends Command {
 				return this.chatInputIsBlacklisted(interaction);
 			}
 			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
+				return interaction.client.emit(KBotErrors.UnknownCommand, {
+					interaction,
+					error: new UnknownCommandError()
+				});
 			}
 		}
 	}

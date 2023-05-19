@@ -1,4 +1,4 @@
-import { getUserInfo, isWebhookMessage } from '#utils/Discord';
+import { getUserInfo, isWebhookMessage } from '#utils/discord';
 import { EmbedColors } from '#utils/constants';
 import { ActionRowBuilder, EmbedBuilder, InteractionCollector, ButtonBuilder, ComponentType } from 'discord.js';
 import { ButtonStyle, InteractionType, PermissionFlagsBits } from 'discord-api-types/v10';
@@ -46,10 +46,12 @@ export class ReportHandler {
 				return;
 			}
 			await this.toggleButton(true, ReportButtons.Delete);
+
 			const text = 'Would you like to delete the offending message?';
 			await this.confirmationPrompt(interaction, text, ReportButtons.Delete);
 		} else if (interaction.customId === ButtonCustomId.Info) {
 			await this.toggleButton(true, ReportButtons.Info);
+
 			const embed = await getUserInfo(interaction, this.targetMember.id);
 			await interaction.followUp({
 				embeds: [embed]
@@ -97,7 +99,7 @@ export class ReportHandler {
 				componentType: ComponentType.Button,
 				time: 30000
 			})
-			.then(async (i: ButtonInteraction<'cached'>): Promise<void> => {
+			.then(async (i: ButtonInteraction): Promise<void> => {
 				await message.delete();
 				if (i.customId === ButtonCustomId.Cancel) {
 					await this.toggleButton(false, type);

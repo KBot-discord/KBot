@@ -1,7 +1,7 @@
 import { EmbedColors } from '#utils/constants';
 import { CreditCustomIds, CreditFields, parseCustomId, CreditType } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
-import { getResourceFromType } from '#utils/Discord';
+import { getResourceFromType } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
@@ -44,7 +44,11 @@ export class ModalHandler extends InteractionHandler {
 
 	@validCustomId(CreditCustomIds.ResourceModalEdit)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
+	public override async parse(modal: ModalSubmitInteraction) {
+		if (!modal.inCachedGuild()) {
+			return this.none();
+		}
+
 		const settings = await this.container.utility.settings.get(modal.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);

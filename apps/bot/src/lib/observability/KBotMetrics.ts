@@ -29,8 +29,8 @@ export class KBotMetrics {
 		};
 	}
 
-	public incrementCommand({ command, value = 1 }: { command: string; value?: number }): void {
-		this.counters.commands.inc({ command }, value);
+	public incrementCommand({ command, success, value = 1 }: { command: string; success: boolean; value?: number }): void {
+		this.counters.commands.inc({ command, success: `${success}` }, value);
 	}
 
 	public incrementYoutube({ success, value = 1 }: { success: boolean; value?: number }): void {

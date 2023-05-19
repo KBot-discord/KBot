@@ -1,5 +1,6 @@
 import { KBotErrors } from '#types/Enums';
 import { EmbedColors } from '#utils/constants';
+import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
@@ -7,7 +8,8 @@ import { EmbedBuilder } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Manage the Holodex Twitch conflict list',
-	preconditions: ['BotOwner']
+	preconditions: ['BotOwnerOnly'],
+	runIn: ['GUILD_ANY']
 })
 export class DevCommand extends Command {
 	public constructor(context: Command.Context, options: Command.Options) {
@@ -69,7 +71,10 @@ export class DevCommand extends Command {
 				return this.chatInputConflictList(interaction);
 			}
 			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
+				return interaction.client.emit(KBotErrors.UnknownCommand, {
+					interaction,
+					error: new UnknownCommandError()
+				});
 			}
 		}
 	}

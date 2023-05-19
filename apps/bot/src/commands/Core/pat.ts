@@ -1,12 +1,11 @@
 import { imageFolder } from '#utils/constants';
-import { getMemberAvatarUrl } from '#utils/Discord';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { getMemberAvatarUrl } from '#utils/discord';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage } from 'canvas-constructor/cairo';
 import { AttachmentBuilder } from 'discord.js';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import { join } from 'node:path';
 import { readdirSync } from 'fs';
@@ -19,7 +18,7 @@ type PatOptions = {
 	delay?: number;
 };
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -31,11 +30,11 @@ type PatOptions = {
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly pats: Image[] = [];
 
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
+	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
 		super(context, { ...options }, container.core);
 	}
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -50,7 +49,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
+	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 
 		const user = interaction.options.getUser('user', true);

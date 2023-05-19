@@ -5,8 +5,8 @@ import type { UserError, ContextMenuCommandDeniedPayload } from '@sapphire/frame
 @ApplyOptions<Listener.Options>({
 	event: Events.ContextMenuCommandDenied
 })
-export class CommandListener extends Listener {
-	public async run(error: UserError, payload: ContextMenuCommandDeniedPayload): Promise<void> {
-		await payload.interaction.errorReply(error.message, true);
+export class CommandListener extends Listener<typeof Events.ContextMenuCommandDenied> {
+	public async run({ message }: UserError, { interaction }: ContextMenuCommandDeniedPayload): Promise<void> {
+		await interaction.errorReply(message, true);
 	}
 }

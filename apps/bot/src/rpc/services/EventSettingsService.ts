@@ -1,5 +1,5 @@
 import { authenticated } from '#rpc/middlewares';
-import { canManageGuild } from '#utils/Discord';
+import { canManageGuild } from '#utils/discord';
 import {
 	GetEventSettingsResponse,
 	UpdateEventSettingsResponse,

@@ -19,7 +19,11 @@ export function loadConfig(): void {
 			id: envGetString('DISCORD_ID'),
 			secret: envGetString('DISCORD_SECRET'),
 			devServers: ['953375922990506005'],
-			ownerIds: ['137657554200166401']
+			ownerIds: ['137657554200166401'],
+			webhookError: {
+				id: envGetString('WEBHOOK_ERROR_ID'),
+				token: envGetString('WEBHOOK_ERROR_TOKEN')
+			}
 		},
 		web: {
 			url: envGetString('WEB_URL')

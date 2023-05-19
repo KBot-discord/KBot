@@ -1,19 +1,19 @@
-import { container, Events, Listener } from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { DocumentCommand } from '#types/Meili';
-import type { KBotClient } from '#extensions/KBotClient';
+import type { Client } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.ClientReady,
 	once: true
 })
-export class ReadyListener extends Listener {
+export class ClientListener extends Listener<typeof Events.ClientReady> {
 	private readonly commandsToFilter = ['help'];
 	private readonly categoriesToFilter = ['Dev'];
 
-	public async run(client: KBotClient): Promise<void> {
+	public async run(client: Client<true>): Promise<void> {
 		await this.syncMeili();
-		this.container.logger.info(`${client.user!.tag} is online.`);
+		this.container.logger.info(`${client.user.tag} is online.`);
 	}
 
 	private async syncMeili(): Promise<void> {
@@ -30,6 +30,6 @@ export class ReadyListener extends Listener {
 				};
 			});
 
-		await container.meili.resetIndex('commands', documents);
+		await this.container.meili.resetIndex('commands', documents);
 	}
 }

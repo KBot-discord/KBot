@@ -2,6 +2,7 @@ import { EmbedColors } from '#utils/constants';
 import { CreditCustomIds, CreditFields, parseCustomId } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
 import { KBotErrors } from '#types/Enums';
+import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
@@ -31,9 +32,12 @@ export class ModalHandler extends InteractionHandler {
 				return;
 			}
 
-			const { result, error } = await this.container.validator.channels.canSendEmbeds(creditsChannel);
+			const { result } = await this.container.validator.channels.canSendEmbeds(creditsChannel);
 			if (!result) {
-				modal.client.emit(KBotErrors.ChannelPermissions, { interaction: modal, error });
+				modal.client.emit(KBotErrors.ChannelPermissions, {
+					interaction: modal,
+					error: new ChannelPermissionsError()
+				});
 				return;
 			}
 
@@ -63,7 +67,11 @@ export class ModalHandler extends InteractionHandler {
 
 	@validCustomId(CreditCustomIds.ImageModalCreate)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
+	public override async parse(modal: ModalSubmitInteraction) {
+		if (!modal.inCachedGuild()) {
+			return this.none();
+		}
+
 		const settings = await this.container.utility.settings.get(modal.guildId);
 		if (isNullish(settings) || !settings.enabled) {
 			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
