@@ -2,7 +2,7 @@ import type { KBotError } from '#structures/errors/KBotError';
 import type { KBotCommand } from '#extensions/KBotCommand';
 import type { MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import type { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
-import type { UnknownCommandError } from '#structures/errors/UnknownCommandError';
+import type { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
 
 export type ErrorPayload = {
 	error: KBotError;
@@ -18,6 +18,6 @@ export type ChannelPermissionsPayload = {
 };
 
 export type UnknownCommandPayload = {
-	error: UnknownCommandError;
+	error: MissingSubcommandHandlerError;
 	interaction: KBotCommand.ChatInputCommandInteraction;
 };

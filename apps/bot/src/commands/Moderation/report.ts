@@ -1,5 +1,5 @@
 import { getMemberAvatarUrl } from '#utils/discord';
-import { EmbedColors } from '#utils/constants';
+import { EmbedColors, GENERIC_ERROR } from '#utils/constants';
 import { ReportHandler, ReportButtons } from '#structures/handlers/ReportHandler';
 import { KBotErrors } from '#types/Enums';
 import { ReportCustomIds } from '#utils/customIds/report';
@@ -50,13 +50,18 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
+
 		const { validator, client } = this.container;
 		const message = interaction.options.getMessage('message', true);
 
 		const settings = await this.module.settings.get(interaction.guildId);
 		if (isNullish(settings)) {
-			return interaction.errorReply("Something went wrong when fetching this server's settings.");
+			this.container.logger.sentryMessage('Failed to fetch moderation settings', {
+				context: { guildId: interaction.guildId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
+
 		if (isNullish(settings.reportChannelId)) {
 			return interaction.defaultReply('No report channel is set. Please run `/moderation set report_channel`.');
 		}
@@ -88,7 +93,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				return new AttachmentBuilder(e.url, {
 					name: e.name,
 					description: e.description ?? undefined
-				}).setSpoiler();
+				}).setSpoiler(true);
 			});
 
 			const fileFields: APIEmbedField[] = [];
@@ -100,6 +105,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					inline: true
 				};
 				fileFields.push(name);
+
 				const desc = {
 					name: 'File description',
 					value: file.description ?? 'No file description',
@@ -130,8 +136,18 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 	private buildRow(message: Message, member: GuildMember, ownerId: string): ActionRowBuilder<ButtonBuilder> {
 		const row = new ActionRowBuilder<ButtonBuilder>()
-			.addComponents(new ButtonBuilder().setCustomId(ReportCustomIds.Delete).setLabel('Delete').setStyle(ButtonStyle.Primary))
-			.addComponents(new ButtonBuilder().setCustomId(ReportCustomIds.Info).setLabel('User Info').setStyle(ButtonStyle.Primary));
+			.addComponents(
+				new ButtonBuilder() //
+					.setCustomId(ReportCustomIds.Delete)
+					.setLabel('Delete')
+					.setStyle(ButtonStyle.Primary)
+			)
+			.addComponents(
+				new ButtonBuilder() //
+					.setCustomId(ReportCustomIds.Info)
+					.setLabel('User Info')
+					.setStyle(ButtonStyle.Primary)
+			);
 
 		if (message.webhookId) {
 			row.components[ReportButtons.Delete].setDisabled(true);

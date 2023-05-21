@@ -14,18 +14,14 @@ import type { Credit } from '#types/CustomIds';
 })
 export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { resource }: InteractionHandler.ParseResult<this>): Promise<void> {
-		try {
-			const embed = interaction.message.embeds[0];
-			const updatedEmbed: EmbedBuilder = EmbedBuilder.from(embed);
+		const embed = interaction.message.embeds[0];
+		const updatedEmbed: EmbedBuilder = EmbedBuilder.from(embed);
 
-			updatedEmbed.setTitle(resource.name!);
+		updatedEmbed.setTitle(resource.name!);
 
-			await interaction.message.edit({
-				embeds: [updatedEmbed]
-			});
-		} catch (err) {
-			this.container.logger.error(err);
-		}
+		await interaction.message.edit({
+			embeds: [updatedEmbed]
+		});
 	}
 
 	@validCustomId(CreditCustomIds.ResourceRefresh)

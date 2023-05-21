@@ -1,7 +1,6 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotErrors } from '#types/Enums';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
 import { EmbedBuilder } from 'discord.js';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -41,7 +40,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 						option //
 							.setName('channel')
 							.setDescription('The channel to send the message to')
-							.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+							.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.GuildCategory)
 							.setRequired(true)
 					),
 			{
@@ -57,11 +56,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		const { client, validator } = this.container;
 
 		const message = interaction.options.getString('text', true);
-		const channel = interaction.options.getChannel('channel', true);
-
-		if (!channel.isTextBased()) {
-			throw new ChannelPermissionsError('I cannot send messages in that channel.');
-		}
+		const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
 
 		const { result, error } = await validator.channels.canSendEmbeds(channel);
 		if (!result) {

@@ -6,13 +6,13 @@ import type { HandlerContext } from '@bufbuild/connect';
 export const authenticated = (): MethodDecorator => {
 	return createMethodDecorator((_: any, __: any, descriptor: any) => {
 		const method = descriptor.value;
-		if (!method) throw new Error('Function preconditions require a [[value]].');
-		if (typeof method !== 'function') throw new Error('Function preconditions can only be applied to functions.');
+		if (!method || typeof method !== 'function') throw new Error();
 
 		// eslint-disable-next-line func-names
 		descriptor.value = function (this: any, _: any, ctx: HandlerContext) {
 			try {
 				const cookie = ctx.requestHeader.get('cookie');
+
 				if (cookie) {
 					const authData = container.server.auth!.decrypt(cookie);
 					ctx.auth = authData;

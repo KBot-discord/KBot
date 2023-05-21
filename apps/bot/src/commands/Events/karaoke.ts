@@ -1,7 +1,6 @@
-import { EmbedColors } from '#utils/constants';
+import { EmbedColors, GENERIC_ERROR } from '#utils/constants';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { isNullish } from '@sapphire/utilities';
@@ -85,28 +84,20 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
+
 		switch (interaction.options.getSubcommand(true)) {
-			case 'join': {
+			case 'join':
 				return this.chatInputJoin(interaction);
-			}
-			case 'duet': {
+			case 'duet':
 				return this.chatInputDuet(interaction);
-			}
-			case 'leave': {
+			case 'leave':
 				return this.chatInputLeave(interaction);
-			}
-			case 'queue': {
+			case 'queue':
 				return this.chatInputQueue(interaction);
-			}
-			case 'help': {
+			case 'help':
 				return this.chatInputHelp(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, {
-					interaction,
-					error: new UnknownCommandError()
-				});
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
@@ -126,8 +117,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
-			this.container.logger.error('Failed to fetch an event that was active');
-			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
+			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
+				context: { eventId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
 
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
@@ -154,11 +147,8 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const updatedEvent = await karaoke.addUserToQueue(
-			{ eventId },
-			{
-				id: member.id,
-				name: member.displayName
-			}
+			{ eventId }, //
+			{ id: member.id, name: member.displayName }
 		);
 
 		if (updatedEvent.queue.length === 1) {
@@ -195,8 +185,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
-			this.container.logger.error('Failed to fetch an event that was active');
-			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
+			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
+				context: { eventId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
 
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
@@ -224,12 +216,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const response = await this.duetConfirmation(textChannel!, member.id, partner.id);
 		if (isNullish(response)) {
-			return interaction.defaultReply("Your duet partner didn't respond to the confirmation.");
+			return interaction.defaultReply("Your duet partner didn't respond to your join request.");
 		} else if (!response) {
-			return interaction.defaultReply('Your duet partner denied the join request.');
+			return interaction.defaultReply('Your duet partner denied your join request.');
 		}
-
-		await interaction.successReply(`Successfully joined queue as a duet with ${userMention(partner.id)}.`);
 
 		const updatedEvent = await karaoke.addUserToQueue(
 			{ eventId },
@@ -250,7 +240,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			});
 		}
 
-		return interaction.successReply('Successfully joined queue.');
+		return interaction.successReply(`Successfully joined queue as a duet with ${userMention(partner.id)}.`);
 	}
 
 	public async chatInputLeave(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -269,8 +259,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
-			this.container.logger.error('Failed to fetch an event that was active');
-			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
+			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
+				context: { eventId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
 
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
@@ -318,7 +310,6 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const { karaoke } = this.module;
 
 		const eventId = interaction.member.voice.channelId;
-
 		if (isNullish(eventId)) {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
@@ -330,7 +321,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
-			return interaction.defaultReply('There is no event to show.');
+			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
+				context: { eventId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
 
 		return interaction.editReply({
@@ -389,26 +383,30 @@ export class EventsCommand extends KBotCommand<EventModule> {
 	}
 
 	private async duetConfirmation(channel: GuildTextBasedChannel, memberId: string, partnerId: string): Promise<boolean | null> {
+		const PromptButtons = {
+			Yes: '@kbotdev/karaoke.duet.yes',
+			No: '@kbotdev/karaoke.duet.no'
+		};
+
 		const message = await channel.send({
 			content: userMention(partnerId),
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
-					.setDescription(
-						`Would ${userMention(partnerId)} like to the queue as a duet with ${userMention(memberId)}?\n(This will expire in 30 seconds)`
-					)
+					.setDescription(`Would ${userMention(partnerId)} like to the queue as a duet with ${userMention(memberId)}?`)
+					.setFooter({ text: 'This confirmation will timeout in 30 seconds' })
 			],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>()
 					.addComponents(
 						new ButtonBuilder() //
-							.setCustomId('@kbotdev/karaoke.duet.yes')
+							.setCustomId(PromptButtons.Yes)
 							.setLabel('Yes')
 							.setStyle(ButtonStyle.Success)
 					)
 					.addComponents(
 						new ButtonBuilder() //
-							.setCustomId('@kbotdev/karaoke.duet.no')
+							.setCustomId(PromptButtons.No)
 							.setLabel('No')
 							.setStyle(ButtonStyle.Danger)
 					)
@@ -424,7 +422,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			})
 			.then(async (i) => {
 				await message.delete();
-				return i.customId === '@kbotdev/karaoke.duet.yes';
+				return i.customId === PromptButtons.Yes;
 			})
 			.catch(() => null);
 	}

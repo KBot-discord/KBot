@@ -8,6 +8,7 @@ export class KBotClient extends SapphireClient {
 		const { config } = container;
 		super({
 			disableMentionPrefix: true,
+			loadDefaultErrorListeners: false,
 			intents: [
 				IntentsBitField.Flags.Guilds,
 				IntentsBitField.Flags.GuildMembers,

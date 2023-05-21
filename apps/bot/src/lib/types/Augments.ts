@@ -13,7 +13,7 @@ import type { UtilityModule } from '#modules/UtilityModule';
 import type { WelcomeModule } from '#modules/WelcomeModule';
 import type { YoutubeModule } from '#modules/YoutubeModule';
 import type { Holodex } from '@kbotdev/holodex';
-import type { KBotErrors } from './Enums';
+import type { KBotErrors } from '#types/Enums';
 import type { ChannelPermissionsPayload, UnknownCommandPayload } from '#types/Errors';
 
 export type InteractionResponseUnion = APIMessage | InteractionResponse | Message | void;
@@ -21,7 +21,7 @@ export type InteractionResponseUnion = APIMessage | InteractionResponse | Messag
 declare module 'discord.js' {
 	interface ClientEvents {
 		[KBotErrors.ChannelPermissions]: [payload: ChannelPermissionsPayload];
-		[KBotErrors.UnknownCommand]: [payload: UnknownCommandPayload];
+		[KBotErrors.MissingSubcommandHandler]: [payload: UnknownCommandPayload];
 	}
 
 	interface CommandInteraction {
@@ -77,7 +77,7 @@ declare module '@sapphire/pieces' {
 
 declare module '@sapphire/framework' {
 	interface ILogger {
-		sentryMessage(message: string, context?: NonNullable<unknown>): void;
-		sentryError(error: Error, context?: NonNullable<unknown>): void;
+		sentryMessage(message: string, data?: { context?: NonNullable<unknown> }): void;
+		sentryError(error: Error, data?: { message?: string; context?: NonNullable<unknown> }): void;
 	}
 }

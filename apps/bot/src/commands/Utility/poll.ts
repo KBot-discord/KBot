@@ -4,7 +4,6 @@ import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/co
 import { parseTimeString } from '#utils/functions';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
@@ -140,18 +139,12 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
 		switch (interaction.options.getSubcommand(true)) {
-			case 'create': {
+			case 'create':
 				return this.chatInputCreate(interaction);
-			}
-			case 'menu': {
+			case 'menu':
 				return this.chatInputMenu(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, {
-					interaction,
-					error: new UnknownCommandError()
-				});
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
@@ -180,41 +173,29 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 		const expiresIn = parseTimeString(time);
 		if (isNullish(expiresIn)) {
-			return interaction.errorReply('Invalid time format');
+			return interaction.errorReply('Invalid time format. You can find info about time formats here: https://docs.kbot.ca/references/time-format');
 		}
 		if (!isNullish(expiresIn) && expiresIn > Date.now() + POLL_TIME_LIMIT) {
-			return interaction.errorReply('Cannot run a poll for longer than a month');
+			return interaction.errorReply('You cannot run a poll for longer than a month.');
 		}
 
-		const expiresAt = isNullish(expiresIn) ? undefined : expiresIn + Date.now();
+		const expiresAt = expiresIn + Date.now();
 
 		const pollMessage = await interaction.channel!.send({
 			embeds: this.createPollEmbeds(interaction.user.tag, text, options, expiresAt)
 		});
 
-		if (isNullish(expiresAt)) {
-			await polls.create(
-				{ guildId: pollMessage.guildId, pollId: pollMessage.id },
-				{
-					title: text,
-					options,
-					channelId: pollMessage.channelId,
-					creator: interaction.user.tag
-				}
-			);
-		} else {
-			await polls.create(
-				{ guildId: pollMessage.guildId, pollId: pollMessage.id },
-				{
-					title: text,
-					options,
-					time: BigInt(expiresAt),
-					channelId: pollMessage.channelId,
-					creator: interaction.user.tag
-				}
-			);
-			polls.createTask(expiresIn, { guildId: pollMessage.guildId, pollId: pollMessage.id });
-		}
+		await polls.create(
+			{ guildId: pollMessage.guildId, pollId: pollMessage.id },
+			{
+				title: text,
+				options,
+				time: BigInt(expiresAt),
+				channelId: pollMessage.channelId,
+				creator: interaction.user.tag
+			}
+		);
+		await polls.createTask(expiresIn, { guildId: pollMessage.guildId, pollId: pollMessage.id });
 
 		await pollMessage.edit({
 			embeds: pollMessage.embeds,

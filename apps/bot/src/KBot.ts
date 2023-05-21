@@ -1,5 +1,4 @@
 import '@kbotdev/plugin-modules/register';
-import '@sapphire/plugin-logger/register';
 import '@sapphire/plugin-scheduled-tasks/register';
 import '@sapphire/plugin-api/register';
 import '#utils/Augments';
@@ -10,12 +9,11 @@ import { connectServer } from '#rpc/server';
 import { KBotClient } from '#extensions/KBotClient';
 import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';
 
-loadConfig();
-
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
 
 async function main(): Promise<void> {
 	let client: KBotClient | undefined = undefined;
+
 	try {
 		const { discord, api, rpc } = container.config;
 
@@ -28,9 +26,14 @@ async function main(): Promise<void> {
 		});
 	} catch (error) {
 		console.error(error);
+
 		await client?.destroy();
+		connectServer.close();
+
 		process.exit(1);
 	}
 }
+
+void loadConfig();
 
 void main();

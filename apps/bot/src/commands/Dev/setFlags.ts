@@ -3,9 +3,9 @@ import { FlagHandler } from '#structures/handlers/FlagHandler';
 import { FeatureFlags } from '@kbotdev/prisma';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { Command } from '@sapphire/framework';
 import { ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder, ButtonBuilder } from 'discord.js';
+import type { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { APISelectMenuOption } from 'discord-api-types/v10';
 
 @ApplyOptions<Command.Options>({
@@ -14,10 +14,6 @@ import type { APISelectMenuOption } from 'discord-api-types/v10';
 	runIn: ['GUILD_ANY']
 })
 export class DevCommand extends Command {
-	public constructor(context: ModuleCommand.Context, options: Command.Options) {
-		super(context, { ...options });
-	}
-
 	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>

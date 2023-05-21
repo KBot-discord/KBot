@@ -1,8 +1,6 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotErrors } from '#types/Enums';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
@@ -61,19 +59,14 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
+
 		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle': {
+			case 'toggle':
 				return this.chatInputToggle(interaction);
-			}
-			case 'settings': {
+			case 'settings':
 				return this.chatInputSettings(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, {
-					interaction,
-					error: new UnknownCommandError()
-				});
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
@@ -84,12 +77,16 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			enabled: value
 		});
 
+		const description = settings.enabled //
+			? `${KBotEmoji.GreenCheck} module is now enabled`
+			: `${KBotEmoji.RedX} module is now disabled`;
+
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Events module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(description)
 			]
 		});
 	}

@@ -1,5 +1,5 @@
 import { KBotErrors } from '#types/Enums';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
+import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
@@ -10,10 +10,6 @@ import { Command } from '@sapphire/framework';
 	runIn: ['GUILD_ANY']
 })
 export class DevCommand extends Command {
-	public constructor(context: Command.Context, options: Command.Options) {
-		super(context, { ...options });
-	}
-
 	public override registerApplicationCommands(registry: Command.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
@@ -64,22 +60,19 @@ export class DevCommand extends Command {
 
 	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
+
 		switch (interaction.options.getSubcommand(true)) {
-			case 'add': {
+			case 'add':
 				return this.chatInputAdd(interaction);
-			}
-			case 'remove': {
+			case 'remove':
 				return this.chatInputRemove(interaction);
-			}
-			case 'is_blacklisted': {
+			case 'is_blacklisted':
 				return this.chatInputIsBlacklisted(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, {
+			default:
+				return interaction.client.emit(KBotErrors.MissingSubcommandHandler, {
 					interaction,
-					error: new UnknownCommandError()
+					error: new MissingSubcommandHandlerError({ command: this })
 				});
-			}
 		}
 	}
 

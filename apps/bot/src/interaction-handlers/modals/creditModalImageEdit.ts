@@ -16,26 +16,22 @@ export class ModalHandler extends InteractionHandler {
 		modal: ModalSubmitInteraction<'cached'>,
 		{ id, name, link, source, description, artist }: InteractionHandler.ParseResult<this>
 	): Promise<void> {
-		try {
-			const message = await modal.channel!.messages.fetch(id);
+		const message = await modal.channel!.messages.fetch(id);
 
-			const fields: APIEmbedField[] = [];
-			if (description) fields.push({ name: 'Description', value: description });
-			if (artist) fields.push({ name: 'Artist', value: artist });
-			if (source) fields.push({ name: 'Image source', value: source });
+		const fields: APIEmbedField[] = [];
+		if (description) fields.push({ name: 'Description', value: description });
+		if (artist) fields.push({ name: 'Artist', value: artist });
+		if (source) fields.push({ name: 'Image source', value: source });
 
-			await message.edit({
-				embeds: [
-					new EmbedBuilder() //
-						.setColor(EmbedColors.Default)
-						.setTitle(name)
-						.setImage(link)
-						.addFields(fields)
-				]
-			});
-		} catch (err) {
-			this.container.logger.error(err);
-		}
+		await message.edit({
+			embeds: [
+				new EmbedBuilder() //
+					.setColor(EmbedColors.Default)
+					.setTitle(name)
+					.setImage(link)
+					.addFields(fields)
+			]
+		});
 	}
 
 	@validCustomId(CreditCustomIds.ImageModalEdit)

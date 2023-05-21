@@ -1,14 +1,13 @@
 import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
-import { BlankSpace, EmbedColors, KBotEmoji } from '#utils/constants';
+import { BlankSpace, EmbedColors, GENERIC_ERROR, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { isNullish } from '@sapphire/utilities';
 import { channelMention, time, userMention } from '@discordjs/builders';
-import { EmbedBuilder, type VoiceBasedChannel } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { GuildTextBasedChannel, StageChannel, VoiceChannel, GuildScheduledEvent, ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { EventModule } from '#modules/EventModule';
@@ -214,33 +213,24 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
+
 		switch (interaction.options.getSubcommandGroup(true)) {
 			default: {
 				switch (interaction.options.getSubcommand(true)) {
-					case 'start': {
+					case 'start':
 						return this.chatInputKaraokeStart(interaction);
-					}
-					case 'schedule': {
+					case 'schedule':
 						return this.chatInputKaraokeSchedule(interaction);
-					}
-					case 'stop': {
+					case 'stop':
 						return this.chatInputKaraokeStop(interaction);
-					}
-					case 'add': {
+					case 'add':
 						return this.chatInputKaraokeAdd(interaction);
-					}
-					case 'remove': {
+					case 'remove':
 						return this.chatInputKaraokeRemove(interaction);
-					}
-					case 'menu': {
+					case 'menu':
 						return this.chatInputKaraokeMenu(interaction);
-					}
-					default: {
-						return interaction.client.emit(KBotErrors.UnknownCommand, {
-							interaction,
-							error: new UnknownCommandError()
-						});
-					}
+					default:
+						return this.unknownSubcommand(interaction);
 				}
 			}
 		}
@@ -249,8 +239,16 @@ export class EventsCommand extends KBotCommand<EventModule> {
 	public async chatInputKaraokeStart(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { validator } = this.container;
 
-		const voiceChannel = interaction.options.getChannel('voice_channel', true) as VoiceBasedChannel;
-		const textChannel = interaction.options.getChannel('text_channel', true) as GuildTextBasedChannel;
+		const voiceChannel = interaction.options.getChannel('voice_channel', true, [
+			ChannelType.GuildStageVoice, //
+			ChannelType.GuildVoice
+		]);
+		const textChannel = interaction.options.getChannel('text_channel', true, [
+			ChannelType.GuildText,
+			ChannelType.PublicThread,
+			ChannelType.GuildStageVoice,
+			ChannelType.GuildVoice
+		]);
 		const topic = interaction.options.getString('topic');
 		const role = interaction.options.getRole('role');
 
@@ -284,9 +282,15 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const { client, validator } = this.container;
 
 		const discordEventId = interaction.options.getString('discord_event', true);
-		const textChannel = interaction.options.getChannel('text_channel', true);
+		const textChannel = interaction.options.getChannel('text_channel', true, [
+			ChannelType.GuildText,
+			ChannelType.PublicThread,
+			ChannelType.GuildStageVoice,
+			ChannelType.GuildVoice
+		]);
 		const role = interaction.options.getRole('role');
 
+		// TODO: check validation
 		const discordEvent = (await interaction.guild.scheduledEvents.fetch(discordEventId)) as GuildScheduledEvent | undefined;
 		if (isNullish(discordEvent)) {
 			return interaction.errorReply('That is not a valid discord event.');
@@ -296,7 +300,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('There is no channel set for that Discord event.');
 		}
 
-		const voiceChannel = (await client.channels.fetch(discordEvent.channelId)) as StageChannel | VoiceChannel;
+		const voiceChannel = (await client.channels.fetch(discordEvent.channelId)) as StageChannel | VoiceChannel | null;
 		const voiceResult = await validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -360,9 +364,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const event = await this.module.karaoke.getEvent(eventId);
-		// TODO: Better error handling
 		if (!event) {
-			return interaction.errorReply('There was an error when ending the event. The devs will work on a fix soon.');
+			this.container.logger.sentryMessage('Failed to find an event that was trying to be ended', {
+				context: { eventId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
 
 		await this.module.karaoke.endEvent(interaction.guild, event);
@@ -392,8 +398,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
-			this.container.logger.error('Failed to fetch an event that was active');
-			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
+			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
+				context: { eventId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
 
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
@@ -461,8 +469,10 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullish(event)) {
-			this.container.logger.error('Failed to fetch an event that was active');
-			return interaction.errorReply("Something went wrong. The bot's dev had been notified of the error.");
+			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
+				context: { eventId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
 
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;

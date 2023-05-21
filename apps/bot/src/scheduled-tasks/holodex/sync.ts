@@ -21,96 +21,92 @@ export class HolodexTask extends ScheduledTask {
 		let pagesLeft = true;
 		const channels: HolodexChannel[] = [];
 
-		try {
-			const fetchChannels = async (): Promise<void> => {
-				const fetchedChannels = await holodex.channels.getList({
-					offset: page * 100
-				});
+		const fetchChannels = async (): Promise<void> => {
+			const fetchedChannels = await holodex.channels.getList({
+				offset: page * 100
+			});
 
-				channels.push(...fetchedChannels);
+			channels.push(...fetchedChannels);
 
-				page++;
-				pagesLeft = fetchedChannels.length === 100;
-			};
+			page++;
+			pagesLeft = fetchedChannels.length === 100;
+		};
 
-			logger.debug('[HolodexTask] Syncing channels');
+		logger.debug('[HolodexTask] Syncing channels');
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			while (pagesLeft) {
-				await fetchChannels();
-			}
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		while (pagesLeft) {
+			await fetchChannels();
+		}
 
-			metrics.incrementHolodex({ value: page });
+		metrics.incrementHolodex({ value: page });
 
-			logger.debug(`[HolodexTask] Synced ${channels.length} channels (pages: ${page})`);
+		logger.debug(`[HolodexTask] Synced ${channels.length} channels (pages: ${page})`);
 
-			const validTwitchChannels = channels.filter(
-				({ twitch, id }) =>
-					twitch !== null &&
-					!config.holodex.twitchConflicts.some((channelId) => {
-						return id === channelId;
-					})
-			);
+		const validTwitchChannels = channels.filter(
+			({ twitch, id }) =>
+				twitch !== null &&
+				!config.holodex.twitchConflicts.some((channelId) => {
+					return id === channelId;
+				})
+		);
 
-			let shouldContinue = true;
-			const uniqueTwitch = new Set<string>();
-			const checkedIds = new Set<string>();
+		let shouldContinue = true;
+		const uniqueTwitch = new Set<string>();
+		const checkedIds = new Set<string>();
 
-			for (const channel of validTwitchChannels) {
-				if (!uniqueTwitch.has(channel.twitch!)) {
-					uniqueTwitch.add(channel.twitch!);
-				} else if (!checkedIds.has(channel.twitch!)) {
-					checkedIds.add(channel.twitch!);
+		for (const channel of validTwitchChannels) {
+			if (!uniqueTwitch.has(channel.twitch!)) {
+				uniqueTwitch.add(channel.twitch!);
+			} else if (!checkedIds.has(channel.twitch!)) {
+				checkedIds.add(channel.twitch!);
 
-					if (shouldContinue) shouldContinue = false;
+				if (shouldContinue) shouldContinue = false;
 
-					const dupes = channels.filter((ch) => ch.twitch === channel.twitch!);
+				const dupes = channels.filter((ch) => ch.twitch === channel.twitch!);
 
-					logger.error(`New Twitch ID conflict found for: ${channel.twitch!}. Please add an entry to config.holodex.twitchConflicts`);
+				logger.error(`New Twitch ID conflict found for: ${channel.twitch!}. Please add an entry to config.holodex.twitchConflicts`);
 
-					for (const dupe of dupes) {
-						logger.error(`${dupe.name} (ID: ${dupe.id})`);
-					}
+				for (const dupe of dupes) {
+					logger.error(`${dupe.name} (ID: ${dupe.id})`);
 				}
 			}
-
-			if (!shouldContinue) return;
-
-			await meili.upsertMany(
-				MeiliCategories.YoutubeChannels,
-				channels.map(({ id, name, english_name, org, suborg, group }) => {
-					return { id, name, englishName: english_name, org, subOrg: suborg, group };
-				})
-			);
-
-			await meili.upsertMany(
-				MeiliCategories.TwitchChannels,
-				validTwitchChannels.map(({ twitch, name, english_name, org, suborg, group }) => {
-					return { id: twitch!, name, englishName: english_name, org, subOrg: suborg, group };
-				})
-			);
-
-			await prisma.$transaction(
-				channels.map((channel) => {
-					const result = config.holodex.twitchConflicts.some((channelId) => {
-						return channel.id === channelId;
-					});
-					const data = {
-						twitchId: result ? null : channel.twitch,
-						name: channel.name,
-						englishName: channel.english_name,
-						image: channel.photo
-					};
-					return prisma.holodexChannel.upsert({
-						where: { youtubeId: channel.id },
-						update: data,
-						create: { ...data, youtubeId: channel.id }
-					});
-				})
-			);
-		} catch (err: unknown) {
-			logger.error(err);
 		}
+
+		if (!shouldContinue) return;
+
+		await meili.upsertMany(
+			MeiliCategories.YoutubeChannels,
+			channels.map(({ id, name, english_name, org, suborg, group }) => {
+				return { id, name, englishName: english_name, org, subOrg: suborg, group };
+			})
+		);
+
+		await meili.upsertMany(
+			MeiliCategories.TwitchChannels,
+			validTwitchChannels.map(({ twitch, name, english_name, org, suborg, group }) => {
+				return { id: twitch!, name, englishName: english_name, org, subOrg: suborg, group };
+			})
+		);
+
+		await prisma.$transaction(
+			channels.map((channel) => {
+				const result = config.holodex.twitchConflicts.some((channelId) => {
+					return channel.id === channelId;
+				});
+				const data = {
+					twitchId: result ? null : channel.twitch,
+					name: channel.name,
+					englishName: channel.english_name,
+					image: channel.photo
+				};
+				return prisma.holodexChannel.upsert({
+					where: { youtubeId: channel.id },
+					update: data,
+					create: { ...data, youtubeId: channel.id }
+				});
+			})
+		);
 	}
 }
 

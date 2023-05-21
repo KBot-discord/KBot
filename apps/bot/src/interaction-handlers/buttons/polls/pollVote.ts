@@ -15,35 +15,29 @@ export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { option }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const { polls } = this.container.utility;
 
-		try {
-			const active = await polls.isActive({
-				guildId: interaction.guildId,
-				pollId: interaction.message.id
-			});
-			if (!active) {
-				await interaction.defaultReply('That poll is not active.');
-				return;
-			}
-
-			await polls.upsertVote({
-				guildId: interaction.guildId,
-				pollId: interaction.message.id,
-				userId: interaction.user.id,
-				option: Number(option)
-			});
-
-			await interaction.editReply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(EmbedColors.Success)
-						.setDescription(`You have voted for option ${Number(option) + 1}`)
-						.setFooter({ text: 'Only the latest vote counts' })
-				]
-			});
-		} catch (err) {
-			this.container.logger.error(err);
-			await interaction.errorReply('There was an error when trying to save your vote.');
+		const active = await polls.isActive({
+			guildId: interaction.guildId,
+			pollId: interaction.message.id
+		});
+		if (!active) {
+			return void interaction.defaultReply('That poll is not active.');
 		}
+
+		await polls.upsertVote({
+			guildId: interaction.guildId,
+			pollId: interaction.message.id,
+			userId: interaction.user.id,
+			option: Number(option)
+		});
+
+		await interaction.editReply({
+			embeds: [
+				new EmbedBuilder()
+					.setColor(EmbedColors.Success)
+					.setDescription(`You have voted for option ${Number(option) + 1}`)
+					.setFooter({ text: 'Only the latest vote counts' })
+			]
+		});
 	}
 
 	@validCustomId(PollCustomIds.Vote)

@@ -37,10 +37,14 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		return interaction.reply({
 			embeds: [
-				new EmbedBuilder().setColor(EmbedColors.Default)
-					.setDescription(`To edit command permissions go to \`Server Settings -> Integrations -> KBot -> Manage\`
-
-					Info about default permissions can be found at: https://docs.kbot.ca/configuration/permissions`)
+				new EmbedBuilder()
+					.setColor(EmbedColors.Default) //
+					.setDescription(
+						[
+							'To edit command permissions go to `Server Settings -> Integrations -> KBot -> Manage`', //
+							'Info about default permissions can be found at: https://docs.kbot.ca/configuration/permissions'
+						].join('\n')
+					)
 			]
 		});
 	}

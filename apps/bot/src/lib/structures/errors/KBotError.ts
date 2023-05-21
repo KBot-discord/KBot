@@ -3,14 +3,21 @@ import type { KBotErrorCode } from '#types/Enums';
 export type KBotErrorOptions = {
 	name?: string;
 	code: KBotErrorCode;
+	userMessage?: string;
 };
 
 export class KBotError extends Error {
+	public override readonly name: string;
+
 	public readonly code: KBotErrorCode;
 
-	public constructor(message: string, { code, name = 'KBotError' }: KBotErrorOptions) {
+	public readonly userMessage: string | undefined;
+
+	public constructor(message: string, { name, code, userMessage }: KBotErrorOptions) {
 		super(message);
-		this.name = name;
+
+		this.name = name ?? 'KBotError';
 		this.code = code;
+		this.userMessage = userMessage;
 	}
 }

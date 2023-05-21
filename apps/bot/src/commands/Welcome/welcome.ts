@@ -2,9 +2,6 @@ import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { WelcomeModule } from '#modules/WelcomeModule';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotErrors } from '#types/Enums';
-import { KBotError } from '#structures/errors/KBotError';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { channelMention, EmbedBuilder } from 'discord.js';
@@ -163,27 +160,18 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle': {
+			case 'toggle':
 				return this.chatInputToggle(interaction);
-			}
-			case 'set': {
+			case 'set':
 				return this.chatInputSet(interaction);
-			}
-			case 'unset': {
+			case 'unset':
 				return this.chatInputUnset(interaction);
-			}
-			case 'test': {
+			case 'test':
 				return this.chatInputTest(interaction);
-			}
-			case 'settings': {
+			case 'settings':
 				return this.chatInputSettings(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, {
-					interaction,
-					error: new UnknownCommandError()
-				});
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
@@ -194,26 +182,30 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 			enabled: value
 		});
 
+		const description = settings.enabled //
+			? `${KBotEmoji.GreenCheck} module is now enabled`
+			: `${KBotEmoji.RedX} module is now disabled`;
+
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Welcome module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(description)
 			]
 		});
 	}
 
 	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const channel = interaction.options.getChannel('channel');
+		const channel = interaction.options.getChannel('channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
 		const message = interaction.options.getString('message');
 		const title = interaction.options.getString('title');
 		const description = interaction.options.getString('description');
 		const image = interaction.options.getString('image');
 		const color = interaction.options.getString('color');
 
-		if (color && HexColorRegex.test(color)) {
-			throw new KBotError('Please provide a valid Hex color.', { code: 'INVALID_HEX' });
+		if (!isNullish(color) && HexColorRegex.test(color)) {
+			return interaction.errorReply('Please provide a valid Hex color.');
 		}
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {

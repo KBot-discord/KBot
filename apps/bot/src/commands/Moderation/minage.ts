@@ -3,13 +3,10 @@ import { getGuildIcon } from '#utils/discord';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { ModerationModule } from '#modules/ModerationModule';
-import { KBotErrors } from '#types/Enums';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
-import type { InteractionEditReplyOptions } from 'discord.js';
 import type { ModerationSettings } from '@kbotdev/prisma';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -114,27 +111,18 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle': {
+			case 'toggle':
 				return this.chatInputToggle(interaction);
-			}
-			case 'set': {
+			case 'set':
 				return this.chatInputSet(interaction);
-			}
-			case 'unset': {
+			case 'unset':
 				return this.chatInputUnset(interaction);
-			}
-			case 'test': {
+			case 'test':
 				return this.chatInputTest(interaction);
-			}
-			case 'settings': {
+			case 'settings':
 				return this.chatInputSettings(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, {
-					interaction,
-					error: new UnknownCommandError()
-				});
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
@@ -145,12 +133,16 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			minAccountAgeEnabled: value
 		});
 
+		const description = settings.enabled //
+			? `${KBotEmoji.GreenCheck} Minage is now enabled`
+			: `${KBotEmoji.RedX} Minage is now disabled`;
+
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(description)
 			]
 		});
 	}
@@ -181,21 +173,19 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 	public async chatInputTest(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { member } = interaction;
+
 		const settings = await this.module.settings.get(interaction.guildId);
 		if (!settings) {
 			return interaction.defaultReply('There are not settings to test.');
 		}
-
-		const options: InteractionEditReplyOptions = {};
 
 		const req = settings.minAccountAgeReq ?? 0;
 		const creation = member.user.createdTimestamp;
 		const reqDay = Math.floor(86400000 * req);
 		const reqDate = Math.floor(creation + reqDay);
 
-		options.embeds = [ModerationModule.formatMinageEmbed(member, settings?.minAccountAgeMsg, req, reqDate)];
-
-		return interaction.editReply(options);
+		const embed = ModerationModule.formatMinageEmbed(member, settings?.minAccountAgeMsg, req, reqDate);
+		return interaction.editReply({ embeds: [embed] });
 	}
 
 	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -206,6 +196,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {
 		const bot = await interaction.guild.members.fetchMe();
+
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()

@@ -20,54 +20,45 @@ export class ButtonHandler extends InteractionHandler {
 			utility: { polls }
 		} = this.container;
 
-		try {
-			const active = await polls.isActive({
-				guildId: interaction.guildId,
-				pollId
-			});
-			if (!active) {
-				await interaction.defaultFollowup('That poll is not active. Run `/poll menu` to see the updated menu.', true);
-				return;
-			}
-
-			const poll = await polls.get({ pollId });
-			if (isNullish(poll)) {
-				await interaction.errorFollowup('There was an error when trying to show the poll results.', true);
-				return;
-			}
-
-			const channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
-			if (!channel) {
-				await interaction.errorFollowup("The channel that the poll was sent in doesn't exist anymore.", true);
-				return;
-			}
-
-			const message = await channel.messages.fetch(pollId).catch(() => null);
-			if (!message) {
-				await interaction.errorFollowup("The poll doesn't exist anymore.", true);
-				return;
-			}
-
-			const votes = await polls.getVotes({
-				guildId: interaction.guildId,
-				pollId
-			});
-			const results = polls.calculateResults(poll, votes);
-
-			await interaction.channel!.send({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(EmbedColors.Default)
-						.setTitle(`Results: ${message.embeds[0].title}`)
-						.setDescription(results.join('\n'))
-						.setFooter({ text: message.embeds[0].footer!.text })
-						.setTimestamp()
-				]
-			});
-		} catch (err) {
-			this.container.logger.error(err);
-			await interaction.errorFollowup('There was an error when trying to show the poll results.', true);
+		const active = await polls.isActive({
+			guildId: interaction.guildId,
+			pollId
+		});
+		if (!active) {
+			return void interaction.defaultFollowup('That poll is not active. Run `/poll menu` to see the updated menu.', true);
 		}
+
+		const poll = await polls.get({ pollId });
+		if (isNullish(poll)) {
+			return void interaction.errorFollowup('There was an error when trying to show the poll results.', true);
+		}
+
+		const channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
+		if (!channel) {
+			return void interaction.errorFollowup("The channel that the poll was sent in doesn't exist anymore.", true);
+		}
+
+		const message = await channel.messages.fetch(pollId).catch(() => null);
+		if (!message) {
+			return void interaction.errorFollowup("The poll doesn't exist anymore.", true);
+		}
+
+		const votes = await polls.getVotes({
+			guildId: interaction.guildId,
+			pollId
+		});
+		const results = polls.calculateResults(poll, votes);
+
+		await interaction.channel!.send({
+			embeds: [
+				new EmbedBuilder()
+					.setColor(EmbedColors.Default)
+					.setTitle(`Results: ${message.embeds[0].title}`)
+					.setDescription(results.join('\n'))
+					.setFooter({ text: message.embeds[0].footer!.text })
+					.setTimestamp()
+			]
+		});
 	}
 
 	@validCustomId(PollCustomIds.ResultsPublic)

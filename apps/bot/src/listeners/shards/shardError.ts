@@ -6,6 +6,6 @@ import { Listener, Events } from '@sapphire/framework';
 })
 export class ShardListener extends Listener<typeof Events.ShardError> {
 	public override run(error: Error, shardId: number): void {
-		this.container.logger.sentryError(error, { shardId });
+		this.container.logger.sentryError(error, { context: shardId });
 	}
 }

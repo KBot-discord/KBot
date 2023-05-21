@@ -101,7 +101,7 @@ export class PollService {
 	}
 
 	public async deleteTask(pollId: string): Promise<void> {
-		return container.tasks.delete(this.pollJobId(pollId));
+		await container.tasks.delete(this.pollJobId(pollId));
 	}
 
 	public async end({ guildId, pollId }: GuildAndPollId): Promise<boolean> {

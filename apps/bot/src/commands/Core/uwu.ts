@@ -42,15 +42,16 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	}
 
 	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-
 		const message = interaction.options.getMessage('message', true);
 
 		if (!message.content) {
-			return interaction.editReply({
-				content: 'There is no text to uwu-ify'
+			return interaction.reply({
+				content: 'There is no text to uwu-ify',
+				ephemeral: true
 			});
 		}
+
+		await interaction.deferReply();
 
 		const uwuText = this.convertString(message.content);
 		if (uwuText.length > 1999) {
@@ -58,6 +59,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 				content: 'Text is too long (>2000 characters)'
 			});
 		}
+
 		return interaction.editReply({ content: uwuText });
 	}
 

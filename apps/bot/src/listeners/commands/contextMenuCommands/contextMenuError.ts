@@ -12,6 +12,7 @@ const codesToIgnore = [RESTJSONErrorCodes.UnknownChannel, RESTJSONErrorCodes.Unk
 export class CommandListener extends Listener<typeof Events.ContextMenuCommandError> {
 	public async run(error: Error, payload: ContextMenuCommandErrorPayload): Promise<void> {
 		const { command, interaction } = payload;
+		const { name, location } = command;
 
 		if (error instanceof DiscordAPIError || error instanceof HTTPError) {
 			if (codesToIgnore.includes(error.status)) return;
@@ -22,7 +23,10 @@ export class CommandListener extends Listener<typeof Events.ContextMenuCommandEr
 			success: false
 		});
 
-		this.container.logger.sentryError(error, payload);
+		this.container.logger.sentryError(error, {
+			message: `Encountered error on message command "${name}" at path "${location.full}"`,
+			context: payload
+		});
 
 		await interaction.errorReply('There was an error when running your command.', true);
 	}

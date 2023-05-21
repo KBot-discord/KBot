@@ -17,29 +17,25 @@ export class ModalHandler extends InteractionHandler {
 		modal: ModalSubmitInteraction<'cached'>,
 		{ id, resource, type, source, description, artist }: InteractionHandler.ParseResult<this>
 	): Promise<void> {
-		try {
-			const message = await modal.channel!.messages.fetch(id);
+		const message = await modal.channel!.messages.fetch(id);
 
-			const fields: APIEmbedField[] = [];
-			if (description) fields.push({ name: 'Description', value: description });
-			if (artist) fields.push({ name: 'Artist', value: artist });
-			if (source) fields.push({ name: 'Image source', value: source });
+		const fields: APIEmbedField[] = [];
+		if (description) fields.push({ name: 'Description', value: description });
+		if (artist) fields.push({ name: 'Artist', value: artist });
+		if (source) fields.push({ name: 'Image source', value: source });
 
-			await message.edit({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(EmbedColors.Default)
-						.setTitle(resource.name!)
-						.setThumbnail(message.embeds[0].thumbnail!.url)
-						.addFields(fields)
-						.setFooter({
-							text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
-						})
-				]
-			});
-		} catch (err) {
-			this.container.logger.error(err);
-		}
+		await message.edit({
+			embeds: [
+				new EmbedBuilder()
+					.setColor(EmbedColors.Default)
+					.setTitle(resource.name!)
+					.setThumbnail(message.embeds[0].thumbnail!.url)
+					.addFields(fields)
+					.setFooter({
+						text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
+					})
+			]
+		});
 	}
 
 	@validCustomId(CreditCustomIds.ResourceModalEdit)

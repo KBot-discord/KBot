@@ -1,4 +1,6 @@
-import { HelpEmbedBuilder } from '#structures/HelpEmbedBuilder';
+import { HelpEmbedBuilder } from '#structures/builders/HelpEmbedBuilder';
+import { KBotErrors } from '#types/Enums';
+import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EmbedBuilder } from 'discord.js';
 import type { Module } from '@kbotdev/plugin-modules';
@@ -24,6 +26,13 @@ export abstract class KBotCommand<M extends Module> extends ModuleCommand<M> {
 					: 'Slash command'
 			)
 			.build();
+	}
+
+	protected unknownSubcommand(interaction: KBotCommand.ChatInputCommandInteraction): void {
+		interaction.client.emit(KBotErrors.MissingSubcommandHandler, {
+			interaction,
+			error: new MissingSubcommandHandlerError({ command: this })
+		});
 	}
 }
 

@@ -21,7 +21,6 @@ type EmoteCreditEmbed = {
 export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { resource, type }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
-
 		const modal = this.buildModal(interaction.message.id, resource.id!, type, data);
 
 		return interaction.showModal(modal);

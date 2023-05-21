@@ -23,7 +23,6 @@ type CreditEmbed = {
 export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>): Promise<void> {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
-
 		const modal = this.buildModal(interaction.message.id, data);
 
 		return interaction.showModal(modal);

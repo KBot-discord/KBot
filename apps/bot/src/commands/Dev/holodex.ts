@@ -1,6 +1,6 @@
 import { KBotErrors } from '#types/Enums';
 import { EmbedColors } from '#utils/constants';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
+import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
@@ -12,10 +12,6 @@ import { EmbedBuilder } from 'discord.js';
 	runIn: ['GUILD_ANY']
 })
 export class DevCommand extends Command {
-	public constructor(context: Command.Context, options: Command.Options) {
-		super(context, { ...options });
-	}
-
 	public override registerApplicationCommands(registry: Command.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
@@ -60,22 +56,19 @@ export class DevCommand extends Command {
 
 	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply();
+
 		switch (interaction.options.getSubcommand(true)) {
-			case 'add_conflict': {
+			case 'add_conflict':
 				return this.chatInputAddConflict(interaction);
-			}
-			case 'remove_conflict': {
+			case 'remove_conflict':
 				return this.chatInputRemoveConflict(interaction);
-			}
-			case 'conflict_list': {
+			case 'conflict_list':
 				return this.chatInputConflictList(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, {
+			default:
+				return interaction.client.emit(KBotErrors.MissingSubcommandHandler, {
 					interaction,
-					error: new UnknownCommandError()
+					error: new MissingSubcommandHandlerError({ command: this })
 				});
-			}
 		}
 	}
 

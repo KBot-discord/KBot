@@ -444,10 +444,8 @@ KBot needs these permissions for the command to run: `View Channel`, `Send Messa
 
 Create a poll. There must be at least 2 options.
 
-::: info Time formatting
-The `Time` option accepts `d` for days, `h`, for hour, `m` for minutes, and `s` for seconds.
-
-Example: `1 day, 2 hours, 3 minutes, and 4 seconds` would be `1d2h3m4s`.
+::: info Time format
+Click [here](/references/time-format) for info on how to format the time option.
 :::
 
 | Option    | Required | Description                        |

@@ -48,8 +48,8 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
-		const userId = interaction.options.getUser('target', true).id;
 
+		const userId = interaction.options.getUser('target', true).id;
 		const embed = await getUserInfo(interaction, userId);
 
 		return interaction.editReply({ embeds: [embed] });

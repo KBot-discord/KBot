@@ -11,28 +11,23 @@ import type { KaraokeMenuButton } from '#types/CustomIds';
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { menu, eventId }: InteractionHandler.ParseResult<this>): Promise<unknown> {
+	public override async run(interaction: ButtonInteraction<'cached'>, { menu, eventId }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const { events } = this.container;
 
-		try {
-			const exists = await events.karaoke.eventExists(interaction.guildId, eventId);
-			if (!exists) {
-				return interaction.defaultFollowup('There is no event to unschedule. Run `/manage karaoke menu` to see the updated menu.', true);
-			}
-
-			const active = await events.karaoke.eventActive(interaction.guildId, eventId);
-			if (active) {
-				return interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
-			}
-
-			await events.karaoke.deleteScheduledEvent(interaction.guildId, eventId);
-
-			const updatedPage = KaraokeEventMenu.pageUnscheduleEvent(menu);
-			return menu.updatePage(updatedPage);
-		} catch (err) {
-			this.container.logger.error(err);
-			return interaction.errorReply('There was an error when trying to start the event.', true);
+		const exists = await events.karaoke.eventExists(interaction.guildId, eventId);
+		if (!exists) {
+			return void interaction.defaultFollowup('There is no event to unschedule. Run `/manage karaoke menu` to see the updated menu.', true);
 		}
+
+		const active = await events.karaoke.eventActive(interaction.guildId, eventId);
+		if (active) {
+			return void interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
+		}
+
+		await events.karaoke.deleteScheduledEvent(interaction.guildId, eventId);
+
+		const updatedPage = KaraokeEventMenu.pageUnscheduleEvent(menu);
+		await menu.updatePage(updatedPage);
 	}
 
 	@validCustomId(KaraokeCustomIds.Unschedule)

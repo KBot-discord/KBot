@@ -1,5 +1,4 @@
 import { KBotCommand } from '#extensions/KBotCommand';
-import { isMessageInstance } from '@sapphire/discord.js-utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { container } from '@sapphire/framework';
@@ -35,9 +34,6 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const message = await interaction.reply({ content: 'Ping?', fetchReply: true });
-		if (!isMessageInstance(message)) {
-			return interaction.editReply('Failed to retrieve ping :(');
-		}
 
 		const diff = message.createdTimestamp - interaction.createdTimestamp;
 		const ping = Math.round(this.container.client.ws.ping);

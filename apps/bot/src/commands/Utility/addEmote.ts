@@ -58,16 +58,17 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 		const emoji = await this.getEmoji(message);
 		if (isNullish(emoji)) {
-			return interaction.errorReply('There is no emoji or file to add.\n\nSupported file types: `jpeg`/`jpg`, `png`, `gif`');
+			return interaction.errorReply('There is no emoji or file to add.\n\nSupported file types: `jpeg`/`jpg`, `png`, `gif`', true);
 		}
 
 		const { staticSlots, animatedSlots, totalSlots } = this.calculateSlots(interaction);
 
 		if (emoji.animated && animatedSlots === 0) {
-			return interaction.errorReply('No animated emoji slots are left.');
+			return interaction.errorReply('No animated emoji slots are left.', true);
 		}
+
 		if (!emoji.animated && staticSlots === 0) {
-			return interaction.errorReply('No static emoji slots are left.');
+			return interaction.errorReply('No static emoji slots are left.', true);
 		}
 
 		const slotsLeft = emoji.animated
@@ -85,7 +86,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 								.setCustomId(CreditFields.Name)
 								.setLabel('Emote name')
 								.setStyle(TextInputStyle.Short)
-								.setMinLength(1)
+								.setMinLength(2)
 								.setMaxLength(32)
 								.setRequired(true)
 						)
@@ -98,9 +99,9 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					time: 60_000
 				})
 				.then(async (modalInteraction) => this.handleSubmit(modalInteraction, emoji, slotsLeft))
-				.catch(async () => interaction.errorReply('The modal has timed out.'));
+				.catch(async () => interaction.errorReply('The modal has timed out.', true));
 		} catch {
-			return interaction.errorReply('There was an error when trying to add the emoji.');
+			return interaction.errorReply('There was an error when trying to add the emoji.', true);
 		}
 	}
 

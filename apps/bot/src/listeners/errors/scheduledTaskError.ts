@@ -8,6 +8,11 @@ import type { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 })
 export class ErrorListener extends Listener {
 	public async run(error: Error, task: ScheduledTask, payload: unknown): Promise<void> {
-		this.container.logger.sentryError(error, { payload, task });
+		const { name, location } = task;
+
+		this.container.logger.sentryError(error, {
+			message: `Encountered error on scheduled task "${name}" at path "${location.full}"`,
+			context: { task, payload }
+		});
 	}
 }

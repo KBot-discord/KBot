@@ -1011,7 +1011,6 @@ __metadata:
     "@sapphire/fetch": ^2.4.1
     "@sapphire/framework": ^4.4.3
     "@sapphire/plugin-api": ^5.0.4
-    "@sapphire/plugin-logger": ^3.0.4
     "@sapphire/plugin-scheduled-tasks": ^7.0.0
     "@sentry/integrations": ^7.52.1
     "@sentry/node": ^7.52.1
@@ -1022,6 +1021,7 @@ __metadata:
     bullmq: ^3.13.4
     canvas: 2.11.2
     canvas-constructor: ^7.0.0
+    colorette: ^2.0.20
     discord-api-types: ^0.37.42
     discord.js: ^14.11.0
     dotenv: ^16.0.3
@@ -1590,17 +1590,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sapphire/plugin-logger@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "@sapphire/plugin-logger@npm:3.0.4"
-  dependencies:
-    "@sapphire/timestamp": ^1.0.1
-    colorette: ^2.0.20
-    tslib: ^2.5.0
-  checksum: 8863a121bea5a5bd816a7e52b144dedbfb10057e3532209fe50fb0fb210af58f04310f8ecae268e7945410846cf164bba12b9239a36c4db058f2c03d6b1c9128
-  languageName: node
-  linkType: hard
-
 "@sapphire/plugin-scheduled-tasks@npm:^7.0.0":
   version: 7.0.0
   resolution: "@sapphire/plugin-scheduled-tasks@npm:7.0.0"
@@ -1650,13 +1639,6 @@ __metadata:
   dependencies:
     tslib: ^2.4.0
   checksum: 23c013598d87d2fcc797efe5d2409ae6836b9221d79eacc10b7c2a95f9d694b562b7ad027dc49e9e8125095417199385a15317520fec371bdb8cc7622085e3af
-  languageName: node
-  linkType: hard
-
-"@sapphire/timestamp@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@sapphire/timestamp@npm:1.0.1"
-  checksum: 40320946cb8fcbbb610b94019882eb39c900b9af87e4a2d173299efaa062921662d950780c273fd44f4ec9877983d725d28f0b999314f338f3bfc0ab3c45a8cb
   languageName: node
   linkType: hard
 

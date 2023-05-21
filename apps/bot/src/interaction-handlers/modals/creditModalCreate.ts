@@ -26,56 +26,50 @@ export class ModalHandler extends InteractionHandler {
 		if (description) fields.push({ name: 'Description', value: description });
 		if (artist) fields.push({ name: 'Artist', value: artist });
 
-		try {
-			const creditsChannel = (await modal.guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
-			if (isNullish(creditsChannel)) {
-				await modal.errorReply("The current credits channel doesn't exist. Please set a new one with `/credits set`");
-				return;
-			}
-
-			const { result } = await this.container.validator.channels.canSendEmbeds(creditsChannel);
-			if (!result) {
-				modal.client.emit(KBotErrors.ChannelPermissions, {
-					interaction: modal,
-					error: new ChannelPermissionsError()
-				});
-				return;
-			}
-
-			const message = await creditsChannel.send({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(EmbedColors.Default)
-						.setTitle(resource.name!)
-						.setThumbnail(resource.url)
-						.addFields(fields)
-						.setFooter({
-							text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
-						})
-				],
-				components: [
-					new ActionRowBuilder<ButtonBuilder>().addComponents([
-						new ButtonBuilder()
-							.setCustomId(buildCustomId<Credit>(CreditCustomIds.ResourceEdit, { ri: resource.id!, t: type }))
-							.setLabel('Edit info')
-							.setStyle(ButtonStyle.Secondary),
-						new ButtonBuilder()
-							.setCustomId(
-								buildCustomId<Credit>(CreditCustomIds.ResourceRefresh, {
-									ri: resource.id!,
-									t: type
-								})
-							)
-							.setLabel('Refresh name')
-							.setStyle(ButtonStyle.Secondary)
-					])
-				]
-			});
-			await modal.defaultReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
-		} catch (err) {
-			this.container.logger.error(err);
-			await modal.errorReply('There was an error when trying to create the credit.');
+		const creditsChannel = (await modal.guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
+		if (isNullish(creditsChannel)) {
+			return void modal.errorReply("The current credits channel doesn't exist. Please set a new one with `/credits set`");
 		}
+
+		const { result } = await this.container.validator.channels.canSendEmbeds(creditsChannel);
+		if (!result) {
+			return void modal.client.emit(KBotErrors.ChannelPermissions, {
+				interaction: modal,
+				error: new ChannelPermissionsError()
+			});
+		}
+
+		const message = await creditsChannel.send({
+			embeds: [
+				new EmbedBuilder()
+					.setColor(EmbedColors.Default)
+					.setTitle(resource.name!)
+					.setThumbnail(resource.url)
+					.addFields(fields)
+					.setFooter({
+						text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
+					})
+			],
+			components: [
+				new ActionRowBuilder<ButtonBuilder>().addComponents([
+					new ButtonBuilder()
+						.setCustomId(buildCustomId<Credit>(CreditCustomIds.ResourceEdit, { ri: resource.id!, t: type }))
+						.setLabel('Edit info')
+						.setStyle(ButtonStyle.Secondary),
+					new ButtonBuilder()
+						.setCustomId(
+							buildCustomId<Credit>(CreditCustomIds.ResourceRefresh, {
+								ri: resource.id!,
+								t: type
+							})
+						)
+						.setLabel('Refresh name')
+						.setStyle(ButtonStyle.Secondary)
+				])
+			]
+		});
+
+		await modal.defaultReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
 	}
 
 	@validCustomId(CreditCustomIds.ResourceModalCreate)

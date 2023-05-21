@@ -24,55 +24,51 @@ export class UtilityTask extends ScheduledTask {
 	}
 
 	public override async run(): Promise<void> {
-		try {
-			const channelData = await this.container.utility.fetchIncidentChannels();
-			if (channelData.length === 0) return;
+		const channelData = await this.container.utility.fetchIncidentChannels();
+		if (channelData.length === 0) return;
 
-			const response = await fetch<StatusPageResult>(
-				`${DISCORD_STATUS_BASE}/incidents.json`,
-				{
-					method: FetchMethods.Get
-				},
-				FetchResultTypes.JSON
-			).catch(() => null);
-			if (!response) return;
+		const response = await fetch<StatusPageResult>(
+			`${DISCORD_STATUS_BASE}/incidents.json`,
+			{
+				method: FetchMethods.Get
+			},
+			FetchResultTypes.JSON
+		).catch(() => null);
+		if (!response) return;
 
-			const { incidents } = response;
-			this.container.logger.debug(`[DiscordStatus] Fetched ${incidents.length} incidents`);
+		const { incidents } = response;
+		this.container.logger.debug(`[DiscordStatus] Fetched ${incidents.length} incidents`);
 
-			const dbIncidents = await this.container.prisma.discordIncident.findMany({
-				where: { id: { in: incidents.map((incident) => incident.id) } },
-				select: { id: true, updatedAt: true, messages: true }
+		const dbIncidents = await this.container.prisma.discordIncident.findMany({
+			where: { id: { in: incidents.map((incident) => incident.id) } },
+			select: { id: true, updatedAt: true, messages: true }
+		});
+
+		const formattedData: { incident: StatusPageIncident; data: DatabaseIncidentData }[] = incidents.map((incident) => {
+			const entry = dbIncidents.find((dbIncident) => dbIncident.id === incident.id);
+
+			const notifications = channelData.map(({ guildId, channelId }) => {
+				if (!entry) return new IncidentNotification(incident.id, guildId, channelId);
+
+				const message = entry.messages.find((message) => message.channelId === channelId);
+				return new IncidentNotification(incident.id, guildId, channelId, message);
 			});
 
-			const formattedData: { incident: StatusPageIncident; data: DatabaseIncidentData }[] = incidents.map((incident) => {
-				const entry = dbIncidents.find((dbIncident) => dbIncident.id === incident.id);
+			return { incident, data: { notifications, updatedAt: entry?.updatedAt ?? undefined } };
+		});
 
-				const notifications = channelData.map(({ guildId, channelId }) => {
-					if (!entry) return new IncidentNotification(incident.id, guildId, channelId);
+		for (const { incident, data } of formattedData.reverse()) {
+			const embed = this.embedFromIncident(incident);
 
-					const message = entry.messages.find((message) => message.channelId === channelId);
-					return new IncidentNotification(incident.id, guildId, channelId, message);
-				});
-
-				return { incident, data: { notifications, updatedAt: entry?.updatedAt ?? undefined } };
-			});
-
-			for (const { incident, data } of formattedData.reverse()) {
-				const embed = this.embedFromIncident(incident);
-
-				if (!data.updatedAt) {
-					await this.handleNotifications(incident, embed, data.notifications, true);
-					continue;
-				}
-
-				const incidentUpdate = new Date(incident.updated_at ?? incident.created_at);
-				if (new Date(data.updatedAt) < incidentUpdate) {
-					await this.handleNotifications(incident, embed, data.notifications);
-				}
+			if (!data.updatedAt) {
+				await this.handleNotifications(incident, embed, data.notifications, true);
+				continue;
 			}
-		} catch (error) {
-			this.container.logger.error(`Error during discord incident task:\n`, error);
+
+			const incidentUpdate = new Date(incident.updated_at ?? incident.created_at);
+			if (new Date(data.updatedAt) < incidentUpdate) {
+				await this.handleNotifications(incident, embed, data.notifications);
+			}
 		}
 	}
 

@@ -15,31 +15,25 @@ export class ButtonHandler extends InteractionHandler {
 			utility: { polls }
 		} = this.container;
 
-		try {
-			const active = await polls.isActive({
-				guildId: interaction.guildId,
-				pollId
-			});
-			if (!active) {
-				await interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
-				return;
-			}
-
-			const success = await polls.end({
-				guildId: interaction.guildId,
-				pollId
-			});
-
-			if (success) {
-				polls.deleteTask(pollId);
-				await interaction.successReply('Poll ended.');
-				return;
-			}
-
-			await interaction.defaultReply('Poll already ended.');
-		} catch (err) {
-			this.container.logger.error(err);
+		const active = await polls.isActive({
+			guildId: interaction.guildId,
+			pollId
+		});
+		if (!active) {
+			return void interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
 		}
+
+		const success = await polls.end({
+			guildId: interaction.guildId,
+			pollId
+		});
+
+		if (success) {
+			polls.deleteTask(pollId);
+			return void interaction.successReply('Poll ended.');
+		}
+
+		await interaction.defaultReply('Poll already ended.');
 	}
 
 	@validCustomId(PollCustomIds.End)

@@ -15,42 +15,38 @@ export class ButtonHandler extends InteractionHandler {
 	public override async run(
 		interaction: ButtonInteraction<'cached'>,
 		{ menu, eventId, shouldLock }: InteractionHandler.ParseResult<this>
-	): Promise<unknown> {
+	): Promise<void> {
 		const { karaoke } = this.container.events;
 
-		try {
-			const exists = await karaoke.eventExists(interaction.guildId, eventId);
-			if (!exists) {
-				return interaction.defaultFollowup('There is no event to change the lock for. Run `/manage karaoke menu` to see the updated menu.', true);
-			}
-
-			const active = await karaoke.eventActive(interaction.guildId, eventId);
-			if (!active) {
-				return interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
-			}
-
-			const event = await karaoke.getEvent(eventId);
-			// TODO: Better error handling
-			if (!event) {
-				this.container.logger.error('Failed to fetch a Karaoke event');
-				return;
-			}
-
-			if (shouldLock && event.locked) {
-				return interaction.defaultFollowup('Queue is already locked.', true);
-			}
-			if (!shouldLock && !event.locked) {
-				return interaction.defaultFollowup('Queue is already unlocked.', true);
-			}
-
-			const updatedEvent = await karaoke.updateQueueLock(eventId, !event.locked);
-
-			const updatedPage = KaraokeEventMenu.pageUpdateLock(menu, updatedEvent);
-			return menu.updatePage(updatedPage);
-		} catch (err) {
-			this.container.logger.error(err);
-			return interaction.errorFollowup('There was an error when trying to toggle the queue lock.', true);
+		const exists = await karaoke.eventExists(interaction.guildId, eventId);
+		if (!exists) {
+			return void interaction.defaultFollowup('There is no event to change the lock for. Run `/manage karaoke menu` to see the updated menu.', true);
 		}
+
+		const active = await karaoke.eventActive(interaction.guildId, eventId);
+		if (!active) {
+			return void interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
+		}
+
+		const event = await karaoke.getEvent(eventId);
+		if (!event) {
+			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
+				context: { eventId }
+			});
+			return;
+		}
+
+		if (shouldLock && event.locked) {
+			return void interaction.defaultFollowup('Queue is already locked.', true);
+		}
+		if (!shouldLock && !event.locked) {
+			return void interaction.defaultFollowup('Queue is already unlocked.', true);
+		}
+
+		const updatedEvent = await karaoke.updateQueueLock(eventId, !event.locked);
+
+		const updatedPage = KaraokeEventMenu.pageUpdateLock(menu, updatedEvent);
+		await menu.updatePage(updatedPage);
 	}
 
 	@validCustomId(KaraokeCustomIds.Lock, KaraokeCustomIds.Unlock)

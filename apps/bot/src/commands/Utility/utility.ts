@@ -1,8 +1,6 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotErrors } from '#types/Enums';
-import { UnknownCommandError } from '#structures/errors/UnknownCommandError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
@@ -63,24 +61,12 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle': {
+			case 'toggle':
 				return this.chatInputToggle(interaction);
-			}
-			case 'set': {
-				return this.chatInputSet(interaction);
-			}
-			case 'unset': {
-				return this.chatInputUnset(interaction);
-			}
-			case 'settings': {
+			case 'settings':
 				return this.chatInputSettings(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, {
-					interaction,
-					error: new UnknownCommandError()
-				});
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
@@ -91,34 +77,18 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			enabled: value
 		});
 
+		const description = settings.enabled //
+			? `${KBotEmoji.GreenCheck} module is now enabled`
+			: `${KBotEmoji.RedX} module is now disabled`;
+
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Utility module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(description)
 			]
 		});
-	}
-
-	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const creditsChannel = interaction.options.getChannel('emote_credits');
-
-		const settings = await this.module.settings.upsert(interaction.guildId, {
-			creditsChannelId: creditsChannel?.id
-		});
-
-		return this.showSettings(interaction, settings);
-	}
-
-	public async chatInputUnset(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const creditsChannel = interaction.options.getBoolean('emote_credits');
-
-		const settings = await this.module.settings.upsert(interaction.guildId, {
-			creditsChannelId: creditsChannel ? null : undefined
-		});
-
-		return this.showSettings(interaction, settings);
 	}
 
 	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {

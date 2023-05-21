@@ -7,8 +7,11 @@ import type { AutocompleteInteractionPayload } from '@sapphire/framework';
 })
 export class CommandListener extends Listener<typeof Events.CommandAutocompleteInteractionError> {
 	public async run(error: Error, payload: AutocompleteInteractionPayload): Promise<void> {
-		this.container.logger.sentryError(error, payload);
+		const { name, location } = payload.command;
 
-		await payload.interaction.respond([]);
+		this.container.logger.sentryError(error, {
+			message: `Encountered error while handling an autocomplete run method on command "${name}" at path "${location.full}"`,
+			context: payload
+		});
 	}
 }
