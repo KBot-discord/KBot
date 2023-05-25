@@ -22,7 +22,7 @@ export type InteractionResponseUnion = APIMessage | InteractionResponse | Messag
 
 declare module 'discord.js' {
 	interface Client {
-		readonly webhook: WebhookClient;
+		readonly webhook: WebhookClient | null;
 	}
 
 	interface ClientEvents {

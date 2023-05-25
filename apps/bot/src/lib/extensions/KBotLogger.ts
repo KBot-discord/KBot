@@ -47,10 +47,13 @@ export class KBotLogger extends Logger {
 	}
 
 	public async webhookError(builder: (builder: WebhookErrorBuilder) => WebhookErrorBuilder): Promise<void> {
+		const { webhook } = container.client;
+		if (!webhook) return;
+
 		const embed: EmbedBuilder = builder(new WebhookErrorBuilder()).build();
 
 		const result = await Result.fromAsync(async () => {
-			return container.client.webhook.send({ embeds: [embed] });
+			return webhook.send({ embeds: [embed] });
 		});
 
 		if (result.isErr()) {

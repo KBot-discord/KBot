@@ -7,7 +7,7 @@ import { Enumerable } from '@sapphire/decorators';
 
 export class KBotClient extends SapphireClient {
 	@Enumerable(false)
-	public override readonly webhook: WebhookClient;
+	public override readonly webhook: WebhookClient | null;
 
 	public constructor() {
 		const { config } = container;
@@ -60,7 +60,9 @@ export class KBotClient extends SapphireClient {
 			}
 		});
 
-		this.webhook = new WebhookClient({ url: config.discord.webhook });
+		this.webhook = config.isDev //
+			? null
+			: new WebhookClient({ url: config.discord.webhook });
 	}
 
 	public override async login(token: string): Promise<string> {
