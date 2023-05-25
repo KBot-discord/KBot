@@ -1,21 +1,21 @@
 import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '#utils/constants';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
 
 function getRandomInt(max: number): number {
 	return Math.floor(Math.random() * max);
 }
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
+	module: 'CoreModule',
+	description: 'uwu-ify a message.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('uwu')
-			.setDescription('uwu-ify a message.')
 			.setTarget('message');
 	}
 })
@@ -23,11 +23,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly isPrintable = /^[ -~]+$/;
 	private readonly character = /[a-zA-Z]/;
 
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options }, container.core);
-	}
-
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -42,16 +38,17 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
-		await interaction.deferReply();
-
+	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
 		const message = interaction.options.getMessage('message', true);
 
 		if (!message.content) {
-			return interaction.editReply({
-				content: 'There is no text to uwu-ify'
+			return interaction.reply({
+				content: 'There is no text to uwu-ify',
+				ephemeral: true
 			});
 		}
+
+		await interaction.deferReply();
 
 		const uwuText = this.convertString(message.content);
 		if (uwuText.length > 1999) {
@@ -59,6 +56,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 				content: 'Text is too long (>2000 characters)'
 			});
 		}
+
 		return interaction.editReply({ content: uwuText });
 	}
 

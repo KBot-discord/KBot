@@ -1,25 +1,23 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotErrors } from '#types/Enums';
-import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { getGuildIcon } from '#utils/discord';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
-import type { GuildTextBasedChannel } from 'discord.js';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { UtilitySettings } from '@kbotdev/database';
 
-@ApplyOptions<KBotCommandOptions>({
-	description: 'Get updates about Discord outages sent to a channel',
+@ApplyOptions<KBotCommand.Options>({
+	module: 'UtilityModule',
+	description: 'Get updates about Discord outages sent to a channel.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Discord Status')
-			.setDescription('Get updates about Discord outages sent to a channel.')
 			.setSubcommands([
 				{
 					label: '/discordstatus set <channel>',
@@ -31,15 +29,11 @@ import type { UtilitySettings } from '@kbotdev/database';
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options }, container.utility);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -76,27 +70,23 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
-			case 'set': {
+			case 'set':
 				return this.chatInputSet(interaction);
-			}
-			case 'unset': {
+			case 'unset':
 				return this.chatInputUnset(interaction);
-			}
-			case 'settings': {
+			case 'settings':
 				return this.chatInputSettings(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { client, validator } = this.container;
-		const channel = interaction.options.getChannel('channel', true) as GuildTextBasedChannel;
+		const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
 
 		const { result, error } = await validator.channels.canSendEmbeds(channel);
 		if (!result) {
@@ -110,7 +100,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputUnset(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.upsert(interaction.guildId, {
 			incidentChannelId: null
 		});
@@ -118,13 +108,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: UtilitySettings | null): Promise<unknown> {
+	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()

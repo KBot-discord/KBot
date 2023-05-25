@@ -1,11 +1,11 @@
 import { EmbedColors } from '#utils/constants';
-import { CreditCustomIds, CreditFields, parseCustomId, CreditType } from '#utils/customIds';
+import { CreditCustomIds, CreditFields, CreditType } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
-import { getResourceFromType } from '#utils/Discord';
+import { getResourceFromType } from '#utils/discord';
+import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
 import type { CreditEditModal } from '#types/CustomIds';
 import type { APIEmbedField } from 'discord-api-types/v10';
 
@@ -17,36 +17,36 @@ export class ModalHandler extends InteractionHandler {
 		modal: ModalSubmitInteraction<'cached'>,
 		{ id, resource, type, source, description, artist }: InteractionHandler.ParseResult<this>
 	): Promise<void> {
-		try {
-			const message = await modal.channel!.messages.fetch(id);
+		const message = await modal.channel!.messages.fetch(id);
 
-			const fields: APIEmbedField[] = [];
-			if (description) fields.push({ name: 'Description', value: description });
-			if (artist) fields.push({ name: 'Artist', value: artist });
-			if (source) fields.push({ name: 'Image source', value: source });
+		const fields: APIEmbedField[] = [];
+		if (description) fields.push({ name: 'Description', value: description });
+		if (artist) fields.push({ name: 'Artist', value: artist });
+		if (source) fields.push({ name: 'Image source', value: source });
 
-			await message.edit({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(EmbedColors.Default)
-						.setTitle(resource.name!)
-						.setThumbnail(message.embeds[0].thumbnail!.url)
-						.addFields(fields)
-						.setFooter({
-							text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
-						})
-				]
-			});
-		} catch (err) {
-			this.container.logger.error(err);
-		}
+		await message.edit({
+			embeds: [
+				new EmbedBuilder()
+					.setColor(EmbedColors.Default)
+					.setTitle(resource.name!)
+					.setThumbnail(message.embeds[0].thumbnail!.url)
+					.addFields(fields)
+					.setFooter({
+						text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
+					})
+			]
+		});
 	}
 
 	@validCustomId(CreditCustomIds.ResourceModalEdit)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(modal: ModalSubmitInteraction<'cached'>) {
+	public override async parse(modal: ModalSubmitInteraction) {
+		if (!modal.inCachedGuild()) {
+			return this.none();
+		}
+
 		const settings = await this.container.utility.settings.get(modal.guildId);
-		if (isNullish(settings) || !settings.enabled) {
+		if (isNullOrUndefined(settings) || !settings.enabled) {
 			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
 			return this.none();
 		}

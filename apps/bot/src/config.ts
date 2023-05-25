@@ -18,6 +18,7 @@ export function loadConfig(): void {
 			token: envGetString('DISCORD_TOKEN'),
 			id: envGetString('DISCORD_ID'),
 			secret: envGetString('DISCORD_SECRET'),
+			webhook: envGetString('DISCORD_WEBHOOK'),
 			devServers: ['953375922990506005'],
 			ownerIds: ['137657554200166401']
 		},

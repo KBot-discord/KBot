@@ -1,15 +1,14 @@
 import { YoutubeMenu } from '#structures/menus/YoutubeMenu';
 import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/Discord';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { getGuildIcon } from '#utils/discord';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { MeiliCategories } from '#types/Meili';
 import { YoutubeCustomIds } from '#utils/customIds';
 import { KBotErrors } from '#types/Enums';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { isNullish } from '@sapphire/utilities';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, channelMention, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js';
 import type { APISelectMenuOption } from 'discord-api-types/v10';
 import type { YoutubeModule } from '#modules/YoutubeModule';
@@ -17,13 +16,13 @@ import type { DocumentYoutubeChannel } from '#types/Meili';
 import type { ApplicationCommandOptionChoiceData, GuildTextBasedChannel, BaseMessageOptions, Guild } from 'discord.js';
 import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
+	module: 'YoutubeModule',
 	description: 'Add, remove, or edit Youtube subscriptions.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Youtube')
-			.setDescription('Add, remove, or edit Youtube subscriptions.')
 			.setSubcommands([
 				{ label: '/youtube subscribe <account>', description: 'Subscribe to a new channel' }, //
 				{ label: '/youtube unsubscribe <subscription>', description: 'Unsubscribe from a channel' },
@@ -41,15 +40,7 @@ import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
 	}
 })
 export class NotificationsCommand extends KBotCommand<YoutubeModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options }, container.youtube);
-	}
-
-	public override disabledMessage = (moduleFullName: string): string => {
-		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/notifications toggle\` to enable it.`;
-	};
-
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -202,7 +193,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		);
 	}
 
-	public override async autocompleteRun(interaction: ModuleCommand.AutocompleteInteraction<'cached'>): Promise<void> {
+	public override async autocompleteRun(interaction: KBotCommand.AutocompleteInteraction): Promise<void> {
 		const focusedOption = interaction.options.getFocused(true);
 		let options: ApplicationCommandOptionChoiceData[];
 
@@ -217,7 +208,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			const channels = await this.module.subscriptions.getByGuild({
 				guildId: interaction.guildId
 			});
-			if (isNullish(channels)) return interaction.respond([]);
+			if (isNullOrUndefined(channels)) return interaction.respond([]);
 
 			options = channels.map(({ channelId, channel }) => ({
 				name: channel.name,
@@ -230,37 +221,29 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return interaction.respond(options);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
-			case 'subscribe': {
+			case 'subscribe':
 				return this.chatInputSubscribe(interaction);
-			}
-			case 'unsubscribe': {
+			case 'unsubscribe':
 				return this.chatInputUnsubscribe(interaction);
-			}
-			case 'set': {
+			case 'set':
 				return this.chatInputSet(interaction);
-			}
-			case 'unset': {
+			case 'unset':
 				return this.chatInputUnset(interaction);
-			}
-			case 'role_reaction': {
+			case 'role_reaction':
 				return this.chatInputRoleReaction(interaction);
-			}
-			case 'toggle': {
+			case 'toggle':
 				return this.chatInputToggle(interaction);
-			}
-			case 'subscriptions': {
+			case 'subscriptions':
 				return this.chatInputSubscriptions(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
-	public async chatInputSubscribe(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSubscribe(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const accountId = interaction.options.getString('account', true);
 
 		const exists = await this.module.subscriptions.exists({
@@ -281,7 +264,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		const channel = await this.container.prisma.holodexChannel.findUnique({
 			where: { youtubeId: accountId }
 		});
-		if (isNullish(channel)) {
+		if (isNullOrUndefined(channel)) {
 			return interaction.errorReply('An account with that ID was not found');
 		}
 
@@ -293,14 +276,14 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder() //
-					.setColor(EmbedColors.Default)
+					.setColor(EmbedColors.Success)
 					.setThumbnail(channel.image)
 					.setDescription(`Successfully subscribed to [${channel.name}](https://www.youtube.com/channel/${subscription.channel.youtubeId})`)
 			]
 		});
 	}
 
-	public async chatInputUnsubscribe(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputUnsubscribe(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const accountId = interaction.options.getString('subscription', true);
 
 		const subscription = await this.module.subscriptions.delete({
@@ -313,10 +296,10 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 
 		await this.updateReactionRoleMessage(interaction.guild);
 
-		return interaction.defaultReply(`Successfully unsubscribed from ${subscription.channel.name}`);
+		return interaction.successReply(`Successfully unsubscribed from ${subscription.channel.name}`);
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const accountId = interaction.options.getString('subscription', true);
 
 		const exists = await this.module.subscriptions.exists({
@@ -328,9 +311,12 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		}
 
 		const message = interaction.options.getString('message') ?? undefined;
-		const discordChannelId = interaction.options.getChannel('channel')?.id;
+		const discordChannelId = interaction.options.getChannel('channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement])?.id;
 		const roleId = interaction.options.getRole('role')?.id;
-		const memberDiscordChannelId = interaction.options.getChannel('member_channel')?.id;
+		const memberDiscordChannelId = interaction.options.getChannel('member_channel', false, [
+			ChannelType.GuildText,
+			ChannelType.GuildAnnouncement
+		])?.id;
 		const memberRoleId = interaction.options.getRole('member_role')?.id;
 
 		const subscription = await this.module.subscriptions.upsert(
@@ -351,7 +337,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return this.showSettings(interaction, subscription);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputUnset(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const accountId = interaction.options.getString('subscription', true);
 
 		const exists = await this.module.subscriptions.exists({
@@ -368,20 +354,14 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		const memberChannel = interaction.options.getBoolean('member_channel');
 		const memberRole = interaction.options.getBoolean('member_role');
 
-		const newMessage = message ? null : undefined;
-		const newChannel = channel ? null : undefined;
-		const newRole = role ? null : undefined;
-		const newMemberChannel = memberChannel ? null : undefined;
-		const newMemberRole = memberRole ? null : undefined;
-
 		const subscription = await this.module.subscriptions.upsert(
 			{ guildId: interaction.guildId, channelId: accountId },
 			{
-				message: newMessage,
-				discordChannelId: newChannel,
-				roleId: newRole,
-				memberDiscordChannelId: newMemberChannel,
-				memberRoleId: newMemberRole
+				message: message ? null : undefined,
+				discordChannelId: channel ? null : undefined,
+				roleId: role ? null : undefined,
+				memberDiscordChannelId: memberChannel ? null : undefined,
+				memberRoleId: memberRole ? null : undefined
 			}
 		);
 
@@ -392,13 +372,13 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return this.showSettings(interaction, subscription);
 	}
 
-	public async chatInputRoleReaction(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputRoleReaction(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const bot = await interaction.guild.members.fetchMe();
 		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
 			return interaction.defaultReply("I don't have the required permissions for role reactions to work.\n\nMissing permission: `Manage Roles`.");
 		}
 
-		const channel = interaction.options.getChannel('channel', true) as GuildTextBasedChannel;
+		const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
 		const { result, error } = await this.container.validator.channels.canSendEmbeds(channel);
 		if (!result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error });
@@ -409,7 +389,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return interaction.defaultReply(`Role reaction embed sent in ${channelMention(channel.id)}`);
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 
 		const value = interaction.options.getBoolean('value', true);
@@ -418,17 +398,21 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			enabled: value
 		});
 
+		const description = settings.enabled //
+			? `${KBotEmoji.GreenCheck} module is now enabled`
+			: `${KBotEmoji.RedX} module is now disabled`;
+
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Youtube module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(description)
 			]
 		});
 	}
 
-	public async chatInputSubscriptions(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSubscriptions(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const subscriptions = await this.module.subscriptions.getByGuild({
 			guildId: interaction.guildId
 		});
@@ -436,12 +420,11 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return new YoutubeMenu(subscriptions).run(interaction, interaction.user);
 	}
 
-	private async showSettings(
-		interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>,
-		subscription: YoutubeSubscriptionWithChannel
-	): Promise<unknown> {
+	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, subscription: YoutubeSubscriptionWithChannel): Promise<unknown> {
+		const embed = this.module.buildSubscriptionEmbed(subscription);
+
 		return interaction.editReply({
-			embeds: [this.container.youtube.buildSubscriptionEmbed(subscription)]
+			embeds: [embed]
 		});
 	}
 
@@ -481,7 +464,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		const messageOptions = await this.buildRoleReactionMessage(subscriptions);
 		const oldMessage = await channel.messages.fetch(settings.reactionRoleMessageId).catch(() => null);
 
-		// Need to catch the edit since we dont have message intents
+		// Need to catch the edit since we dont have message intents/listeners
 		const editMessage = await oldMessage?.edit(messageOptions).catch(() => null);
 
 		if (!editMessage) {
@@ -495,11 +478,11 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 	}
 
 	private async buildRoleReactionMessage(subscriptions: YoutubeSubscriptionWithChannel[]): Promise<BaseMessageOptions> {
-		const relevantSubscriptions = subscriptions.filter(({ roleId, memberRoleId }) => !isNullish(roleId) || !isNullish(memberRoleId));
+		const relevantSubscriptions = subscriptions.filter(({ roleId, memberRoleId }) => !isNullOrUndefined(roleId) || !isNullOrUndefined(memberRoleId));
 
 		const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [];
-		const subscriptionsWithRoleIds = subscriptions.filter(({ roleId }) => !isNullish(roleId));
-		const subscriptionsWithMemberRoleIds = subscriptions.filter(({ memberRoleId }) => !isNullish(memberRoleId));
+		const subscriptionsWithRoleIds = subscriptions.filter(({ roleId }) => !isNullOrUndefined(roleId));
+		const subscriptionsWithMemberRoleIds = subscriptions.filter(({ memberRoleId }) => !isNullOrUndefined(memberRoleId));
 
 		let roleString = '';
 		if (subscriptionsWithRoleIds.length > 0 && subscriptionsWithMemberRoleIds.length > 0) {

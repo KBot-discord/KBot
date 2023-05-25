@@ -1,29 +1,32 @@
 import { ModerationSettingsService } from '#services';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
-import { getGuildIcon } from '#utils/Discord';
+import { getGuildIcon } from '#utils/discord';
 import { EmbedColors } from '#utils/constants';
-import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
+import { isNullOrUndefined } from '#utils/functions';
 import { Module } from '@kbotdev/plugin-modules';
-import { isNullish } from '@sapphire/utilities';
 import { EmbedBuilder } from 'discord.js';
+import { ApplyOptions } from '@sapphire/decorators';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 
+@ApplyOptions<Module.Options>({
+	fullName: 'Moderation Module'
+})
 export class ModerationModule extends Module {
 	public readonly settings: ModerationSettingsService;
-	public readonly antiHoist: AntiHoistHandler;
 
-	public constructor(options?: Module.Options) {
-		super({ ...options, fullName: 'Moderation Module' });
+	public constructor(context: Module.Context, options: Module.Options) {
+		super(context, options);
 
-		this.antiHoist = new AntiHoistHandler();
 		this.settings = new ModerationSettingsService();
+
+		this.container.moderation = this;
 	}
 
 	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
-		if (isNullish(guild)) return false;
+		if (isNullOrUndefined(guild)) return false;
 		const settings = await this.settings.get(guild.id);
-		return isNullish(settings) ? false : settings.enabled;
+		return isNullOrUndefined(settings) ? false : settings.enabled;
 	}
 
 	public static formatMinageMessage(member: GuildMember, message: string, req: number, reqDate: number): string {
@@ -48,5 +51,12 @@ export class ModerationModule extends Module {
 			.setAuthor({ name: 'You have been kicked due to your account being too new' })
 			.setThumbnail(icon ?? null)
 			.setDescription(formattedMessage);
+	}
+}
+
+declare module '@kbotdev/plugin-modules' {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+	interface Modules {
+		ModerationModule: never;
 	}
 }

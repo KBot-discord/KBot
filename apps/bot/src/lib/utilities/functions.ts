@@ -5,6 +5,14 @@ export function isFunction(object: any): object is Function {
 	return typeof object === 'function';
 }
 
+export function isNullOrUndefined(value: unknown): value is null | undefined {
+	return value === null || value === undefined;
+}
+
+export function isNullOrUndefinedOrEmpty(value: unknown): value is '' | null | undefined {
+	return isNullOrUndefined(value) || (value as unknown[] | string).length === 0;
+}
+
 export function flattenObject(object: Record<any, any>): any {
 	const result: any = {};
 
@@ -32,4 +40,26 @@ export function parseTimeString(input: string | null): number | null {
 	if (!input) return null;
 	const duration = new Duration(input);
 	return isNaN(duration.offset) ? null : duration.offset;
+}
+
+export function buildCustomId<T = unknown>(prefix: string, data?: T): string {
+	if (isNullOrUndefined(data)) return prefix;
+
+	const values = Object.entries(data as Record<string, string>) //
+		.map(([key, val]) => `${key}:${val}`);
+	return `${prefix};${values.toString()}`;
+}
+
+export function parseCustomId<T = unknown>(customId: string): { prefix: string; data: T } {
+	const { 0: prefix, 1: data } = customId.split(';');
+
+	const parsedData = data
+		.split(',') //
+		.reduce<Record<string, string>>((acc, cur) => {
+			const [key, val] = cur.split(':');
+			acc[key] = val;
+			return acc;
+		}, {}) as T;
+
+	return { prefix, data: parsedData };
 }

@@ -1,33 +1,40 @@
-import { container } from '@sapphire/framework';
+import { BadRequestError, UnauthenticatedError } from '#rpc/errors';
+import { Result, container } from '@sapphire/framework';
 import { createMethodDecorator } from '@sapphire/decorators';
-import { Code, ConnectError } from '@bufbuild/connect';
+import { ConnectError } from '@bufbuild/connect';
 import type { HandlerContext } from '@bufbuild/connect';
 
 export const authenticated = (): MethodDecorator => {
 	return createMethodDecorator((_: any, __: any, descriptor: any) => {
 		const method = descriptor.value;
-		if (!method) throw new Error('Function preconditions require a [[value]].');
-		if (typeof method !== 'function') throw new Error('Function preconditions can only be applied to functions.');
+		if (!method || typeof method !== 'function') {
+			throw new Error('This can only be used on class methods');
+		}
 
-		// eslint-disable-next-line func-names
-		descriptor.value = function (this: any, _: any, ctx: HandlerContext) {
-			try {
+		descriptor.value = function value(this: any, _: any, ctx: HandlerContext): any {
+			const result = Result.from(() => {
 				const cookie = ctx.requestHeader.get('cookie');
-				if (cookie) {
-					const authData = container.server.auth!.decrypt(cookie);
-					ctx.auth = authData;
+				if (!cookie) throw new UnauthenticatedError();
 
-					if (authData && Date.now() + 86_400_000 >= authData.expires) {
-						// TODO: refresh token
-					}
-				} else {
-					ctx.auth = null;
-					ctx.error = new ConnectError('Unauthenticated', Code.Unauthenticated);
+				const authData = container.server.auth!.decrypt(cookie);
+				if (!authData) throw new UnauthenticatedError();
+
+				ctx.auth = authData;
+
+				if (Date.now() + 86_400_000 >= authData.expires) {
+					// TODO: refresh token
 				}
-			} catch (err: unknown) {
-				container.logger.error(err);
-				ctx.auth = null;
-				ctx.error = new ConnectError('Bad request', Code.Aborted);
+			});
+
+			if (result.isErr()) {
+				result.inspectErr((error) => {
+					if (error instanceof ConnectError) {
+						throw error;
+					} else {
+						container.logger.sentryError(error);
+						throw new BadRequestError();
+					}
+				});
 			}
 
 			return method.call(this, _, ctx);

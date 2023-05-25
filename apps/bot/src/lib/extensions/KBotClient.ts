@@ -1,12 +1,20 @@
-import { transformLoginData } from '#utils/Discord';
+import { KBotLogger } from './KBotLogger';
+import { transformLoginData } from '#utils/discord';
 import { container, LogLevel, SapphireClient } from '@sapphire/framework';
 import { ActivityType, IntentsBitField, OAuth2Scopes } from 'discord.js';
+import { WebhookClient } from 'discord.js';
+import { Enumerable } from '@sapphire/decorators';
 
 export class KBotClient extends SapphireClient {
+	@Enumerable(false)
+	public override readonly webhook: WebhookClient | null;
+
 	public constructor() {
 		const { config } = container;
+
 		super({
 			disableMentionPrefix: true,
+			loadDefaultErrorListeners: false,
 			intents: [
 				IntentsBitField.Flags.Guilds,
 				IntentsBitField.Flags.GuildMembers,
@@ -20,7 +28,7 @@ export class KBotClient extends SapphireClient {
 				activities: [{ name: '/help', type: ActivityType.Playing }]
 			},
 			logger: {
-				level: config.isDev ? LogLevel.Debug : LogLevel.Info
+				instance: new KBotLogger(config.isDev ? LogLevel.Debug : LogLevel.Info)
 			},
 			api: {
 				origin: config.web.url,
@@ -51,6 +59,10 @@ export class KBotClient extends SapphireClient {
 				loadModuleErrorListeners: true
 			}
 		});
+
+		this.webhook = config.isDev //
+			? null
+			: new WebhookClient({ url: config.discord.webhook });
 	}
 
 	public override async login(token: string): Promise<string> {

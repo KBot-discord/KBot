@@ -1,26 +1,23 @@
 import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/Discord';
+import { getGuildIcon } from '#utils/discord';
 import { WelcomeModule } from '#modules/WelcomeModule';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
-import { KBotErrors } from '#types/Enums';
-import { KBotError } from '#structures/KBotError';
+import { KBotCommand } from '#extensions/KBotCommand';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { channelMention, EmbedBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { InteractionEditReplyOptions, ColorResolvable } from 'discord.js';
 import type { WelcomeSettings } from '@kbotdev/prisma';
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
+	module: 'WelcomeModule',
 	description: 'Edit the settings of the welcome module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Welcome')
-			.setDescription('Edit the settings of the welcome module.')
 			.setSubcommands([
 				{ label: '/welcome toggle <value>', description: 'Enable or disable the welcome module' }, //
 				{
@@ -37,11 +34,7 @@ import type { WelcomeSettings } from '@kbotdev/prisma';
 	}
 })
 export class EventsCommand extends KBotCommand<WelcomeModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options }, container.welcome);
-	}
-
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -160,57 +153,55 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle': {
+			case 'toggle':
 				return this.chatInputToggle(interaction);
-			}
-			case 'set': {
+			case 'set':
 				return this.chatInputSet(interaction);
-			}
-			case 'unset': {
+			case 'unset':
 				return this.chatInputUnset(interaction);
-			}
-			case 'test': {
+			case 'test':
 				return this.chatInputTest(interaction);
-			}
-			case 'settings': {
+			case 'settings':
 				return this.chatInputSettings(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
-	public async chatInputToggle(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
 			enabled: value
 		});
 
+		const description = settings.enabled //
+			? `${KBotEmoji.GreenCheck} module is now enabled`
+			: `${KBotEmoji.RedX} module is now disabled`;
+
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Welcome module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`${settings.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX} module is now ${settings.enabled ? 'enabled' : 'disabled'}`)
+					.setDescription(description)
 			]
 		});
 	}
 
-	public async chatInputSet(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
-		const channel = interaction.options.getChannel('channel');
+	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+		const channel = interaction.options.getChannel('channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
 		const message = interaction.options.getString('message');
 		const title = interaction.options.getString('title');
 		const description = interaction.options.getString('description');
 		const image = interaction.options.getString('image');
 		const color = interaction.options.getString('color');
 
-		if (color && HexColorRegex.test(color)) {
-			throw new KBotError('Please provide a valid Hex color.', 'INVALID_HEX');
+		if (!isNullOrUndefined(color) && HexColorRegex.test(color)) {
+			return interaction.errorReply('Please provide a valid Hex color.');
 		}
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -225,7 +216,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputUnset(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const channel = interaction.options.getBoolean('channel');
 		const message = interaction.options.getBoolean('message');
 		const title = interaction.options.getBoolean('title');
@@ -245,7 +236,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputTest(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputTest(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { member } = interaction;
 		const settings = await this.module.settings.get(interaction.guildId);
 		if (!settings || (!settings.message && !settings.title && !settings.description && !settings.image)) {
@@ -254,7 +245,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 
 		const options: InteractionEditReplyOptions = { allowedMentions: { users: [member.id] } };
 
-		if (!isNullish(settings.message) && settings.message.length > 0) {
+		if (!isNullOrUndefined(settings.message) && settings.message.length > 0) {
 			options.content = WelcomeModule.formatText(settings.message, member);
 		}
 
@@ -279,13 +270,13 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return interaction.editReply(options);
 	}
 
-	public async chatInputSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, settings: WelcomeSettings | null): Promise<unknown> {
+	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: WelcomeSettings | null): Promise<unknown> {
 		const { channels, members } = interaction.guild;
 
 		const bot = await members.fetchMe();
@@ -316,9 +307,9 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 			}
 		];
 
-		if (!isNullish(settings) && !isNullish(settings.channelId)) {
+		if (!isNullOrUndefined(settings) && !isNullOrUndefined(settings.channelId)) {
 			const welcomeChannel = await channels.fetch(settings.channelId);
-			if (!isNullish(welcomeChannel)) {
+			if (!isNullOrUndefined(welcomeChannel)) {
 				const viewChannel = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.ViewChannel);
 				const sendMessage = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.SendMessages);
 				const embedLinks = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.EmbedLinks);

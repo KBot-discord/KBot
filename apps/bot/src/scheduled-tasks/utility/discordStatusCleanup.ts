@@ -16,21 +16,18 @@ export class UtilityTask extends ScheduledTask {
 	}
 
 	public override async run(): Promise<void> {
-		try {
-			const { incidents } = await fetch<StatusPageResult>(
-				`${DISCORD_STATUS_BASE}/incidents.json`,
-				{
-					method: FetchMethods.Get
-				},
-				FetchResultTypes.JSON
-			);
+		const { incidents } = await fetch<StatusPageResult>(
+			`${DISCORD_STATUS_BASE}/incidents.json`,
+			{
+				method: FetchMethods.Get
+			},
+			FetchResultTypes.JSON
+		);
 
-			const result = await this.container.prisma.discordIncident.deleteMany({
-				where: { NOT: { id: { in: incidents.map((incident) => incident.id) } } }
-			});
-			this.container.logger.info(`[DiscordStatusCleanup] Cleaned up ${result.count} incidents`);
-		} catch (error) {
-			this.container.logger.error(`Error during discord incident cleanup task:\n`, error);
-		}
+		const result = await this.container.prisma.discordIncident.deleteMany({
+			where: { NOT: { id: { in: incidents.map((incident) => incident.id) } } }
+		});
+
+		this.container.logger.info(`[DiscordStatusCleanup] Cleaned up ${result.count} incidents`);
 	}
 }

@@ -13,7 +13,7 @@ export class KBotMetrics {
 				name: 'kbot_bot_commands_total',
 				help: 'Counter for total amount of command uses.',
 				registers: [register],
-				labelNames: ['command'] as const
+				labelNames: ['command', 'success'] as const
 			}),
 			youtube: new Counter({
 				name: 'kbot_bot_youtube_notifications_total',
@@ -29,12 +29,12 @@ export class KBotMetrics {
 		};
 	}
 
-	public incrementCommand({ command, value = 1 }: { command: string; value?: number }): void {
-		this.counters.commands.inc({ command }, value);
+	public incrementCommand({ command, success, value = 1 }: { command: string; success: boolean; value?: number }): void {
+		this.counters.commands.inc({ command, success: String(success) }, value);
 	}
 
 	public incrementYoutube({ success, value = 1 }: { success: boolean; value?: number }): void {
-		this.counters.youtube.inc({ success: `${success}` }, value);
+		this.counters.youtube.inc({ success: String(success) }, value);
 	}
 
 	public incrementHolodex({ value = 1 }: { value?: number }): void {

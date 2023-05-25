@@ -1,21 +1,24 @@
+import { KBotCommand } from '#extensions/KBotCommand';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { Command } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
+import type { DevModule } from '#modules/DevModule';
 
-@ApplyOptions<Command.Options>({
+@ApplyOptions<KBotCommand.Options>({
+	module: 'DevModule',
 	description: 'Sync the channels from Holodex',
-	preconditions: ['BotOwner'],
+	preconditions: ['BotOwnerOnly'],
+	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	cooldownDelay: Time.Minute * 5,
-	cooldownLimit: 1
-})
-export class DevCommand extends Command {
-	public constructor(context: ModuleCommand.Context, options: Command.Options) {
-		super(context, { ...options });
+	cooldownLimit: 1,
+	helpEmbed: (builder) => {
+		return builder //
+			.setName('dev_setflags');
 	}
-
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+})
+export class DevCommand extends KBotCommand<DevModule> {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -30,7 +33,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await this.container.tasks.create('holodexSync', {}, { repeated: false, delay: 0 });
 		return interaction.reply(`Holodex sync started.`);
 	}

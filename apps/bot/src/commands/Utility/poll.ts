@@ -1,19 +1,19 @@
 import { PollMenu } from '#structures/menus/PollMenu';
-import { buildCustomId, PollCustomIds } from '#utils/customIds';
+import { PollCustomIds } from '#utils/customIds';
 import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
-import { parseTimeString } from '#utils/functions';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { isNullOrUndefined, parseTimeString } from '#utils/functions';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
+import { buildCustomId } from '#utils/functions';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { PollOption } from '#types/CustomIds';
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Create, end, or manage polls.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
@@ -21,7 +21,6 @@ import type { PollOption } from '#types/CustomIds';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Poll')
-			.setDescription('Create, end, or manage polls.')
 			.setSubcommands([
 				{
 					label: '/poll create <channel> <time> <option1> <option2> [option3 - option10]',
@@ -32,15 +31,11 @@ import type { PollOption } from '#types/CustomIds';
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options }, container.utility);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -137,22 +132,19 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
 		switch (interaction.options.getSubcommand(true)) {
-			case 'create': {
+			case 'create':
 				return this.chatInputCreate(interaction);
-			}
-			case 'menu': {
+			case 'menu':
 				return this.chatInputMenu(interaction);
-			}
-			default: {
-				return interaction.client.emit(KBotErrors.UnknownCommand, { interaction });
-			}
+			default:
+				return this.unknownSubcommand(interaction);
 		}
 	}
 
-	public async chatInputCreate(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputCreate(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { polls } = this.module;
 
 		const { result, error } = await this.container.validator.channels.canSendEmbeds(interaction.channel);
@@ -176,42 +168,30 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 
 		const expiresIn = parseTimeString(time);
-		if (isNullish(expiresIn)) {
-			return interaction.errorReply('Invalid time format');
+		if (isNullOrUndefined(expiresIn)) {
+			return interaction.errorReply('Invalid time format. You can find info about time formats here: https://docs.kbot.ca/references/time-format');
 		}
-		if (!isNullish(expiresIn) && expiresIn > Date.now() + POLL_TIME_LIMIT) {
-			return interaction.errorReply('Cannot run a poll for longer than a month');
+		if (!isNullOrUndefined(expiresIn) && expiresIn > Date.now() + POLL_TIME_LIMIT) {
+			return interaction.errorReply('You cannot run a poll for longer than a month.');
 		}
 
-		const expiresAt = isNullish(expiresIn) ? undefined : expiresIn + Date.now();
+		const expiresAt = expiresIn + Date.now();
 
 		const pollMessage = await interaction.channel!.send({
 			embeds: this.createPollEmbeds(interaction.user.tag, text, options, expiresAt)
 		});
 
-		if (isNullish(expiresAt)) {
-			await polls.create(
-				{ guildId: pollMessage.guildId, pollId: pollMessage.id },
-				{
-					title: text,
-					options,
-					channelId: pollMessage.channelId,
-					creator: interaction.user.tag
-				}
-			);
-		} else {
-			await polls.create(
-				{ guildId: pollMessage.guildId, pollId: pollMessage.id },
-				{
-					title: text,
-					options,
-					time: BigInt(expiresAt),
-					channelId: pollMessage.channelId,
-					creator: interaction.user.tag
-				}
-			);
-			polls.createTask(expiresIn, { guildId: pollMessage.guildId, pollId: pollMessage.id });
-		}
+		await polls.create(
+			{ guildId: pollMessage.guildId, pollId: pollMessage.id },
+			{
+				title: text,
+				options,
+				time: BigInt(expiresAt),
+				channelId: pollMessage.channelId,
+				creator: interaction.user.tag
+			}
+		);
+		await polls.createTask(expiresIn, { guildId: pollMessage.guildId, pollId: pollMessage.id });
 
 		await pollMessage.edit({
 			embeds: pollMessage.embeds,
@@ -221,16 +201,16 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return interaction.successReply(`${KBotEmoji.GreenCheck} Poll created`);
 	}
 
-	public async chatInputMenu(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputMenu(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		return new PollMenu(interaction.guild).run(interaction);
 	}
 
-	private formatOptions(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): string[] {
+	private formatOptions(interaction: KBotCommand.ChatInputCommandInteraction): string[] {
 		const options: string[] = [];
 
 		for (let i = 0, j = 0; i < 10; i++) {
 			const option = interaction.options.getString(`option${i + 1}`);
-			if (!isNullish(option)) {
+			if (!isNullOrUndefined(option)) {
 				options.push(`${POLL_NUMBERS[j]} ${option}`);
 				j++;
 			}
@@ -249,7 +229,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				.setTimestamp()
 		];
 
-		if (!isNullish(expiresAt)) {
+		if (!isNullOrUndefined(expiresAt)) {
 			embeds.push(
 				new EmbedBuilder()
 					.setColor(EmbedColors.Success)

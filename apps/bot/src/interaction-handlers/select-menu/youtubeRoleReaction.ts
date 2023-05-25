@@ -1,8 +1,8 @@
 import { YoutubeCustomIds } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits, roleMention, StringSelectMenuInteraction } from 'discord.js';
 import type { HolodexChannel } from '@kbotdev/database';
 
@@ -26,7 +26,7 @@ export class ButtonHandler extends InteractionHandler {
 			channel: HolodexChannel;
 			roleId: string;
 		}[] = subscriptions //
-			.filter(({ roleId, memberRoleId }) => (member ? !isNullish(memberRoleId) : !isNullish(roleId)))
+			.filter(({ roleId, memberRoleId }) => (member ? !isNullOrUndefined(memberRoleId) : !isNullOrUndefined(roleId)))
 			.map(({ channel, roleId, memberRoleId }) => ({
 				channel,
 				roleId: (member ? memberRoleId : roleId)!
@@ -78,7 +78,11 @@ export class ButtonHandler extends InteractionHandler {
 
 	@validCustomId(YoutubeCustomIds.RoleReaction, YoutubeCustomIds.RoleReactionMember)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: StringSelectMenuInteraction<'cached'>) {
+	public override async parse(interaction: StringSelectMenuInteraction) {
+		if (!interaction.inCachedGuild()) {
+			return this.none();
+		}
+
 		const bot = await interaction.guild.members.fetchMe();
 		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
 			await interaction.defaultReply("I don't have the required permissions to edit your roles.", true);

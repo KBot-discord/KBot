@@ -13,8 +13,8 @@ export class ApiRoute extends Route {
 		try {
 			response.setContentType(register.contentType as MimeTypes);
 			response.end(await register.metrics());
-		} catch (err: unknown) {
-			container.logger.error(err);
+		} catch (error: unknown) {
+			container.logger.sentryError(error);
 			response.status(500).end();
 		}
 	}

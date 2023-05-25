@@ -1,22 +1,23 @@
-import type { CommandInteraction } from 'discord.js';
-import type { ModuleCommand } from '@kbotdev/plugin-modules';
-import type { KBotErrors } from '#types/Enums';
-import type { KBotError } from '#structures/KBotError';
+import type { KBotError } from '#structures/errors/KBotError';
+import type { KBotCommand } from '#extensions/KBotCommand';
+import type { MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
+import type { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
+import type { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
 
 export type ErrorPayload = {
 	error: KBotError;
 };
 
-export type ChannelPermissionsPayload = ErrorPayload & {
-	interaction: CommandInteraction;
+export type ChannelPermissionsPayload = {
+	error: ChannelPermissionsError;
+	interaction:
+		| KBotCommand.ChatInputCommandInteraction //
+		| KBotCommand.ContextMenuCommandInteraction
+		| MessageComponentInteraction
+		| ModalSubmitInteraction;
 };
 
-export type UnknownCommandPayload = ErrorPayload & {
-	interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>;
+export type UnknownCommandPayload = {
+	error: MissingSubcommandHandlerError;
+	interaction: KBotCommand.ChatInputCommandInteraction;
 };
-
-export type Payload<T extends KBotErrors> = T extends KBotErrors.ChannelPermissions
-	? ChannelPermissionsPayload
-	: T extends KBotErrors.UnknownCommand
-	? UnknownCommandPayload
-	: never;

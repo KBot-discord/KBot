@@ -73,3 +73,10 @@ export const GuildSoundboardSlots = [8, 24, 36, 48];
 export const FooterIcon = 'https://cdn.discordapp.com/avatars/918237593789947925/85a70e5d476e32cfdcccbe51f2279e17.png';
 
 export const HexColorRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
+
+export const GENERIC_ERROR = 'Woops, something went wrong. The devs have been made aware of the error and are looking into it.';
+
+export function generateGenericError(message?: string): string {
+	if (!message) return GENERIC_ERROR;
+	return `${message}. The devs have been made aware of the error and are looking into it.`;
+}

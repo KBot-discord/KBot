@@ -37,29 +37,14 @@ export default defineConfig({
 		],
 
 		sidebar: [
-			{
-				text: 'Home',
-				link: '/'
-			},
-			{
-				text: 'Commands',
-				link: '/commands'
-			},
-			{
-				text: 'FAQ',
-				link: '/faq'
-			},
+			{ text: 'Home', link: '/' },
+			{ text: 'Commands', link: '/commands' },
+			{ text: 'FAQ', link: '/faq' },
 			{
 				text: 'Configuration',
 				items: [
-					{
-						text: 'Getting Started',
-						link: '/configuration/getting-started'
-					},
-					{
-						text: 'Permissions',
-						link: '/configuration/permissions'
-					}
+					{ text: 'Getting Started', link: '/configuration/getting-started' },
+					{ text: 'Permissions', link: '/configuration/permissions' }
 				]
 			},
 			{
@@ -72,10 +57,7 @@ export default defineConfig({
 					{
 						text: 'Moderation',
 						items: [
-							{
-								text: 'Anti-Hoist',
-								link: '/moderation/anti-hoist'
-							},
+							{ text: 'Anti-Hoist', link: '/moderation/anti-hoist' },
 							{ text: 'Minage', link: '/moderation/minage' },
 							{ text: 'Report', link: '/moderation/report' }
 						]
@@ -87,39 +69,23 @@ export default defineConfig({
 					{
 						text: 'Utility',
 						items: [
-							{
-								text: 'Discord Status',
-								link: '/utility/discord-status'
-							},
-							{
-								text: 'Credits',
-								link: '/utility/credits'
-							},
-							{
-								text: 'Polls',
-								link: '/utility/polls'
-							}
+							{ text: 'Discord Status', link: '/utility/discord-status' },
+							{ text: 'Credits', link: '/utility/credits' },
+							{ text: 'Polls', link: '/utility/polls' }
 						]
 					},
 					{
 						text: 'Welcome',
-						items: [
-							{
-								text: 'Overview',
-								link: '/welcome/overview'
-							}
-						]
+						items: [{ text: 'Overview', link: '/welcome/overview' }]
 					}
 				]
 			},
 			{
-				text: 'Terms of Use',
-				link: 'https://kbot.ca/terms'
+				text: 'References',
+				items: [{ text: 'Time format', link: '/references/time-format' }]
 			},
-			{
-				text: 'Privacy Policy',
-				link: 'https://kbot.ca/privacy'
-			}
+			{ text: 'Terms of Use', link: 'https://kbot.ca/terms' },
+			{ text: 'Privacy Policy', link: 'https://kbot.ca/privacy' }
 		]
 	},
 

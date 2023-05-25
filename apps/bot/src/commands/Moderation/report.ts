@@ -1,40 +1,36 @@
-import { getMemberAvatarUrl } from '#utils/Discord';
-import { EmbedColors } from '#utils/constants';
+import { getMemberAvatarUrl } from '#utils/discord';
+import { EmbedColors, GENERIC_ERROR } from '#utils/constants';
 import { ReportHandler, ReportButtons } from '#structures/handlers/ReportHandler';
 import { KBotErrors } from '#types/Enums';
-import { ReportCustomIds } from '#utils/customIds/report';
-import { KBotCommand, type KBotCommandOptions } from '#extensions/KBotCommand';
+import { KBotCommand } from '#extensions/KBotCommand';
+import { ReportCustomIds } from '#utils/customIds';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplicationCommandType, ButtonStyle, MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
 import { channelMention, userMention } from '@discordjs/builders';
-import { isNullish } from '@sapphire/utilities';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { GuildMember, GuildTextBasedChannel, Message, MessageCreateOptions } from 'discord.js';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { ModerationModule } from '#modules/ModerationModule';
 
-@ApplyOptions<KBotCommandOptions>({
+@ApplyOptions<KBotCommand.Options>({
+	module: 'ModerationModule',
+	description: 'Send the reported message to the set moderator channel.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Report')
-			.setDescription('Send the reported message to the set moderator channel.')
 			.setTarget('message');
 	}
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommandOptions) {
-		super(context, { ...options }, container.moderation);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerContextMenuCommand(
 			(builder) =>
 				builder //
@@ -49,21 +45,26 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public override async contextMenuRun(interaction: ModuleCommand.ContextMenuCommandInteraction<'cached'>): Promise<unknown> {
+	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
+
 		const { validator, client } = this.container;
 		const message = interaction.options.getMessage('message', true);
 
 		const settings = await this.module.settings.get(interaction.guildId);
-		if (isNullish(settings)) {
-			return interaction.errorReply("Something went wrong when fetching this server's settings.");
+		if (isNullOrUndefined(settings)) {
+			this.container.logger.sentryMessage('Failed to fetch moderation settings', {
+				context: { guildId: interaction.guildId }
+			});
+			return interaction.errorReply(GENERIC_ERROR);
 		}
-		if (isNullish(settings.reportChannelId)) {
+
+		if (isNullOrUndefined(settings.reportChannelId)) {
 			return interaction.defaultReply('No report channel is set. Please run `/moderation set report_channel`.');
 		}
 
 		const reportChannel = (await interaction.guild.channels.fetch(settings.reportChannelId)) as GuildTextBasedChannel | null;
-		if (isNullish(reportChannel)) {
+		if (isNullOrUndefined(reportChannel)) {
 			return interaction.errorReply("The current report channel doesn't exist. Please set a new one with `/moderation set report_channel`.");
 		}
 
@@ -89,7 +90,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				return new AttachmentBuilder(e.url, {
 					name: e.name,
 					description: e.description ?? undefined
-				}).setSpoiler();
+				}).setSpoiler(true);
 			});
 
 			const fileFields: APIEmbedField[] = [];
@@ -101,6 +102,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					inline: true
 				};
 				fileFields.push(name);
+
 				const desc = {
 					name: 'File description',
 					value: file.description ?? 'No file description',
@@ -131,8 +133,18 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 	private buildRow(message: Message, member: GuildMember, ownerId: string): ActionRowBuilder<ButtonBuilder> {
 		const row = new ActionRowBuilder<ButtonBuilder>()
-			.addComponents(new ButtonBuilder().setCustomId(ReportCustomIds.Delete).setLabel('Delete').setStyle(ButtonStyle.Primary))
-			.addComponents(new ButtonBuilder().setCustomId(ReportCustomIds.Info).setLabel('User Info').setStyle(ButtonStyle.Primary));
+			.addComponents(
+				new ButtonBuilder() //
+					.setCustomId(ReportCustomIds.Delete)
+					.setLabel('Delete')
+					.setStyle(ButtonStyle.Primary)
+			)
+			.addComponents(
+				new ButtonBuilder() //
+					.setCustomId(ReportCustomIds.Info)
+					.setLabel('User Info')
+					.setStyle(ButtonStyle.Primary)
+			);
 
 		if (message.webhookId) {
 			row.components[ReportButtons.Delete].setDisabled(true);

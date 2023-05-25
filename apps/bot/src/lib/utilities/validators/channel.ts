@@ -1,16 +1,19 @@
-import { KBotError } from '#structures/KBotError';
+import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
+import { isNullOrUndefined } from '#utils/functions';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { isNullish } from '@sapphire/utilities';
 import type { Channel, GuildChannel, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 export class ChannelValidator {
 	public async canSendEmbeds(
 		channel: Channel | GuildChannel | GuildTextBasedChannel | null
-	): Promise<{ result: false; error?: KBotError } | { result: true; error?: undefined }> {
-		if (isNullish(channel) || !channel.isTextBased() || channel.isDMBased()) {
-			return { result: false };
+	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {
+		if (isNullOrUndefined(channel) || !channel.isTextBased() || channel.isDMBased()) {
+			return {
+				result: false,
+				error: new ChannelPermissionsError({ channel: undefined })
+			};
 		}
 
 		const bot = await channel.guild.members.fetchMe();
@@ -40,20 +43,23 @@ export class ChannelValidator {
 
 		return {
 			result: false,
-			error: new KBotError(
-				`I don't have the required permission(s) to send messages in ${channelMention(
+			error: new ChannelPermissionsError({
+				userMessage: `I don't have the required permission(s) to send messages in ${channelMention(
 					channel.id //
 				)}\nRequired permission(s):${errors}`,
-				'CHANNEL_PERMISSIONS'
-			)
+				channel
+			})
 		};
 	}
 
 	public async canModerateVoice(
 		channel: StageChannel | VoiceChannel | null
-	): Promise<{ result: false; error?: KBotError } | { result: true; error?: undefined }> {
-		if (isNullish(channel)) {
-			return { result: false };
+	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {
+		if (isNullOrUndefined(channel) || !channel.isVoiceBased()) {
+			return {
+				result: false,
+				error: new ChannelPermissionsError({ channel: undefined })
+			};
 		}
 
 		const bot = await channel.guild.members.fetchMe();
@@ -80,12 +86,12 @@ export class ChannelValidator {
 
 		return {
 			result: false,
-			error: new KBotError(
-				`I don't have the required permission(s) to manage the karaoke events in ${channelMention(
+			error: new ChannelPermissionsError({
+				userMessage: `I don't have the required permission(s) to manage the karaoke events in ${channelMention(
 					channel.id //
 				)}\nRequired permission(s):${errors}`,
-				'CHANNEL_PERMISSIONS'
-			)
+				channel
+			})
 		};
 	}
 }

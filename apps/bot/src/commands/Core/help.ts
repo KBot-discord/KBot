@@ -1,24 +1,24 @@
 import { EmbedColors } from '#utils/constants';
-import { getUserAvatarUrl } from '#utils/Discord';
+import { getUserAvatarUrl } from '#utils/discord';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
-import { container } from '@sapphire/framework';
 import type { ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
-import type { KBotCommand } from '#extensions/KBotCommand';
 import type { DocumentCommand } from '#types/Meili';
 
-@ApplyOptions<ModuleCommand.Options>({
-	description: "Get info about the bot and all of it's commands."
-})
-export class CoreCommand extends ModuleCommand<CoreModule> {
-	public constructor(context: ModuleCommand.Context, options: ModuleCommand.Options) {
-		super(context, { ...options }, container.core);
+@ApplyOptions<KBotCommand.Options>({
+	module: 'CoreModule',
+	description: "Get info about the bot and all of it's commands.",
+	helpEmbed: (builder) => {
+		return builder //
+			.setName('help')
+			.setOptions({ label: '/help [command]' });
 	}
-
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+})
+export class CoreCommand extends KBotCommand<CoreModule> {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -40,7 +40,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		);
 	}
 
-	public override async autocompleteRun(interaction: ModuleCommand.AutocompleteInteraction<'cached'>): Promise<void> {
+	public override async autocompleteRun(interaction: KBotCommand.AutocompleteInteraction): Promise<void> {
 		const search = interaction.options.getString('command', true);
 		const result = await this.container.meili.get<DocumentCommand>('commands', search);
 
@@ -52,7 +52,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		return interaction.respond(options);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		const option = interaction.options.getString('command');
 
@@ -63,7 +63,7 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		return this.chatInputInfo(interaction);
 	}
 
-	public async chatInputInfo(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputInfo(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
@@ -80,8 +80,8 @@ export class CoreCommand extends ModuleCommand<CoreModule> {
 		});
 	}
 
-	public async chatInputCommand(interaction: ModuleCommand.ChatInputCommandInteraction<'cached'>, option: string): Promise<unknown> {
-		const command = this.container.stores.get('commands').get(option) as KBotCommand | undefined;
+	public async chatInputCommand(interaction: KBotCommand.ChatInputCommandInteraction, option: string): Promise<unknown> {
+		const command = this.container.stores.get('commands').get(option) as KBotCommand<any> | undefined;
 		if (!command) {
 			return interaction.errorReply('That command does not exist.');
 		}

@@ -6,6 +6,7 @@ export type ClientConfig = {
 		token: string;
 		id: string;
 		secret: string;
+		webhook: string;
 		devServers: Array<string>;
 		ownerIds: Array<string>;
 	};

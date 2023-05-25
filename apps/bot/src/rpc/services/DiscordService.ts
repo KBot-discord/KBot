@@ -1,5 +1,8 @@
-import { authenticated } from '#rpc/middlewares';
-import { canManageGuild, getGuildIcon, getUserAvatarUrl } from '#utils/Discord';
+import { authenticated, catchServerError } from '#rpc/middlewares';
+import { canManageGuild, getGuildIcon, getUserAvatarUrl } from '#utils/discord';
+import { UnauthenticatedError } from '#rpc/errors';
+import { assertManagePermissions } from '#rpc/utils';
+import { isNullOrUndefined } from '#utils/functions';
 import {
 	DiscordGuild,
 	DiscordChannel,
@@ -18,9 +21,8 @@ import {
 	GetDiscordUserRequest
 } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import { ChannelType } from 'discord.js';
-import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
+import * as connect from '@bufbuild/connect';
 import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 
 export function registerDiscordService(router: ConnectRouter): void {
@@ -29,59 +31,46 @@ export function registerDiscordService(router: ConnectRouter): void {
 
 class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 	@authenticated()
-	public async getDiscordGuilds(_req: GetDiscordGuildsRequest, { auth, error }: HandlerContext): Promise<GetDiscordGuildsResponse> {
-		const { logger, client } = container;
-		if (error) throw error;
-		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
+	@catchServerError()
+	public async getDiscordGuilds(_req: GetDiscordGuildsRequest, { auth }: connect.HandlerContext): Promise<GetDiscordGuildsResponse> {
+		const { client } = container;
 
-		try {
-			const guilds: DiscordGuild[] = [];
+		const guilds: DiscordGuild[] = [];
 
-			for (const guild of client.guilds.cache.values()) {
-				const member = await guild.members.fetch(auth.id).catch(() => null);
-				if (member) {
-					const canManage = await canManageGuild(guild, member);
-					if (canManage) {
-						guilds.push(
-							new DiscordGuild({
-								id: guild.id,
-								name: guild.name,
-								icon: getGuildIcon(guild),
-								canManage
-							})
-						);
-					}
+		for (const guild of client.guilds.cache.values()) {
+			const member = await guild.members.fetch(auth.id).catch(() => null);
+
+			if (member) {
+				const canManage = await canManageGuild(guild, member);
+
+				if (canManage) {
+					guilds.push(
+						new DiscordGuild({
+							id: guild.id,
+							name: guild.name,
+							icon: getGuildIcon(guild),
+							canManage
+						})
+					);
 				}
 			}
-
-			return new GetDiscordGuildsResponse({ guilds });
-		} catch (err: unknown) {
-			logger.error(err);
-			throw new ConnectError('Internal server error.', Code.Internal);
 		}
+
+		return new GetDiscordGuildsResponse({ guilds });
 	}
 
 	@authenticated()
+	@catchServerError()
 	public async getDiscordTextChannels(
 		{ guildId }: GetDiscordTextChannelsRequest,
-		{ auth, error }: HandlerContext
+		{ auth }: connect.HandlerContext
 	): Promise<GetDiscordTextChannelsResponse> {
-		const { logger, client } = container;
-		if (error) throw error;
-		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
-
-		const guild = client.guilds.cache.get(guildId);
-		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
-
-		const canManage = await canManageGuild(guild, member);
-		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
-
-		try {
+		return assertManagePermissions(guildId, auth, async ({ guild }) => {
 			const fetchedChannels = await guild.channels.fetch();
+
 			const channels = fetchedChannels
 				.filter((channel) => {
-					return !isNullish(channel) && (channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildAnnouncement);
+					return !isNullOrUndefined(channel) && (channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildAnnouncement);
 				})
 				.map(
 					(channel) =>
@@ -93,33 +82,20 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 				);
 
 			return new GetDiscordTextChannelsResponse({ channels });
-		} catch (err: unknown) {
-			logger.error(err);
-			throw new ConnectError('Internal server error.', Code.Internal);
-		}
+		});
 	}
 
 	@authenticated()
+	@catchServerError()
 	public async getDiscordVoiceChannels(
 		{ guildId }: GetDiscordVoiceChannelsRequest,
-		{ auth, error }: HandlerContext
+		{ auth }: connect.HandlerContext
 	): Promise<GetDiscordVoiceChannelsResponse> {
-		const { logger, client } = container;
-		if (error) throw error;
-		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
-
-		const guild = client.guilds.cache.get(guildId);
-		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
-
-		const canManage = await canManageGuild(guild, member);
-		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
-
-		try {
+		return assertManagePermissions(guildId, auth, async ({ guild }) => {
 			const channelCollection = await guild.channels.fetch();
 			const channels = channelCollection
 				.filter((channel) => {
-					return !isNullish(channel) && (channel.type === ChannelType.GuildVoice || channel.type === ChannelType.GuildStageVoice);
+					return !isNullOrUndefined(channel) && (channel.type === ChannelType.GuildVoice || channel.type === ChannelType.GuildStageVoice);
 				})
 				.map(
 					(channel) =>
@@ -131,26 +107,13 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 				);
 
 			return new GetDiscordVoiceChannelsResponse({ channels });
-		} catch (err: unknown) {
-			logger.error(err);
-			throw new ConnectError('Internal server error', Code.Internal);
-		}
+		});
 	}
 
 	@authenticated()
-	public async getDiscordRoles({ guildId }: GetDiscordRolesRequest, { auth, error }: HandlerContext): Promise<GetDiscordRolesResponse> {
-		const { logger, client } = container;
-		if (error) throw error;
-		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
-
-		const guild = client.guilds.cache.get(guildId);
-		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
-
-		const canManage = await canManageGuild(guild, member);
-		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
-
-		try {
+	@catchServerError()
+	public async getDiscordRoles({ guildId }: GetDiscordRolesRequest, { auth }: connect.HandlerContext): Promise<GetDiscordRolesResponse> {
+		return assertManagePermissions(guildId, auth, async ({ guild }) => {
 			const fetchedRoles = await guild.roles.fetch();
 			const roles = fetchedRoles //
 				.map(({ id, name, position, color }) => {
@@ -158,34 +121,25 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 				});
 
 			return new GetDiscordRolesResponse({ roles });
-		} catch (err: unknown) {
-			logger.error(err);
-			throw new ConnectError('Internal server error', Code.Internal);
-		}
+		});
 	}
 
 	@authenticated()
-	public async getDiscordUser(_req: GetDiscordUserRequest, { auth, error }: HandlerContext): Promise<GetDiscordUserResponse> {
-		const { logger, client } = container;
-		if (error) throw error;
-		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
+	@catchServerError()
+	public async getDiscordUser(_req: GetDiscordUserRequest, { auth }: connect.HandlerContext): Promise<GetDiscordUserResponse> {
+		const { client } = container;
 
 		const user = await client.users.fetch(auth.id).catch(() => null);
-		if (!user) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
+		if (!user) throw new UnauthenticatedError();
 
-		try {
-			const avatar = getUserAvatarUrl(user);
+		const avatar = getUserAvatarUrl(user);
 
-			const discordUser = new DiscordUser({
-				id: user.id,
-				username: user.username,
-				avatar
-			});
+		const discordUser = new DiscordUser({
+			id: user.id,
+			username: user.username,
+			avatar
+		});
 
-			return new GetDiscordUserResponse({ user: discordUser });
-		} catch (err: unknown) {
-			logger.error(err);
-			throw new ConnectError('Internal server error', Code.Internal);
-		}
+		return new GetDiscordUserResponse({ user: discordUser });
 	}
 }

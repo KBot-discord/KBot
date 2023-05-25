@@ -60,7 +60,8 @@
 	<AppRail selected={activeModule} border="border-r border-surface-500/30">
 		<svelte:fragment slot="lead">
 			<AppRailTile
-				label="Guilds"
+				name="Guilds"
+				group="modules"
 				tag="a"
 				href="/guilds"
 				value={'list'}
@@ -70,7 +71,8 @@
 			</AppRailTile>
 			{#each modules as module}
 				<AppRailTile
-					label={module.name}
+					name={module.name}
+					group="modules"
 					href={`/guilds/${$currentGuild?.guild.id}${module.link}`}
 					data-sveltekit-preload-data="hover"
 					value={module.name}
@@ -113,3 +115,10 @@
 		</section>
 	{/if}
 </div>
+
+<!--
+Type
+	'{ label: string; href: string; "data-sveltekit-preload-data": string; value: string; disabled: boolean; tag: string; }'
+is missing the following properties from type
+	'{ [x: string]: any; group: any; name: string; value: any; regionLead?: string | undefined; regionLabel?: string | undefined; hover?: string | undefined; active?: string | undefined; spacing?: string | undefined; }': group, name
+-->

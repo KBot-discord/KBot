@@ -1,9 +1,9 @@
-import { CreditCustomIds, parseCustomId, CreditType } from '#utils/customIds';
+import { CreditCustomIds, CreditType } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { getResourceFromType } from '#utils/Discord';
+import { getResourceFromType } from '#utils/discord';
+import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder, ButtonInteraction } from 'discord.js';
 import { Time } from '@sapphire/duration';
@@ -14,31 +14,31 @@ import type { Credit } from '#types/CustomIds';
 })
 export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { resource }: InteractionHandler.ParseResult<this>): Promise<void> {
-		try {
-			const embed = interaction.message.embeds[0];
-			const updatedEmbed: EmbedBuilder = EmbedBuilder.from(embed);
+		const embed = interaction.message.embeds[0];
+		const updatedEmbed: EmbedBuilder = EmbedBuilder.from(embed);
 
-			updatedEmbed.setTitle(resource.name!);
+		updatedEmbed.setTitle(resource.name!);
 
-			await interaction.message.edit({
-				embeds: [updatedEmbed]
-			});
-		} catch (err) {
-			this.container.logger.error(err);
-		}
+		await interaction.message.edit({
+			embeds: [updatedEmbed]
+		});
 	}
 
 	@validCustomId(CreditCustomIds.ResourceRefresh)
 	@interactionRatelimit(Time.Second * 10, 1)
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction<'cached'>) {
+	public override async parse(interaction: ButtonInteraction) {
+		if (!interaction.inCachedGuild()) {
+			return this.none();
+		}
+
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
 			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', true);
 			return this.none();
 		}
 
 		const settings = await this.container.utility.settings.get(interaction.guildId);
-		if (isNullish(settings) || !settings.enabled) {
+		if (isNullOrUndefined(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();
 		}
