@@ -8,11 +8,12 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { channelMention, time, userMention } from '@discordjs/builders';
 import { EmbedBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { GuildTextBasedChannel, StageChannel, VoiceChannel, GuildScheduledEvent, ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { EventModule } from '#modules/EventModule';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'EventModule',
 	description: 'Create, end, or manage events.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
@@ -20,7 +21,6 @@ import type { EventModule } from '#modules/EventModule';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Manage')
-			.setDescription('Create, end, or manage events.')
 			.setSubcommands([
 				{
 					label: '/manage karaoke start <voice_channel> <text_channel> [topic] [role]',
@@ -44,10 +44,6 @@ import type { EventModule } from '#modules/EventModule';
 	}
 })
 export class EventsCommand extends KBotCommand<EventModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.events);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/events toggle\` to enable it.`;
 	};

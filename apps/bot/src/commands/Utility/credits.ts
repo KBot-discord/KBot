@@ -8,20 +8,20 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import fuzzysort from 'fuzzysort';
 import type { GuildEmoji, Sticker, ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { UtilitySettings } from '@kbotdev/prisma';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Send credits to a channel.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Credits')
-			.setDescription('Send credits to a channel.')
 			.setSubcommands([
 				{ label: '/credits emote <name>', description: 'Add a new emote credit entry' }, //
 				{ label: '/credits sticker <name>', description: 'Add a new sticker credit entry' },
@@ -33,10 +33,6 @@ import type { UtilitySettings } from '@kbotdev/prisma';
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.utility);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};

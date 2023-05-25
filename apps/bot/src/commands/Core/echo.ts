@@ -4,24 +4,20 @@ import { KBotCommand } from '#extensions/KBotCommand';
 import { EmbedBuilder } from 'discord.js';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'CoreModule',
 	description: 'Sends the provided text to the selected channel.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Echo')
-			.setDescription('Sends the provided text to the selected channel.')
 			.setOptions({ label: '/echo <text> <channel>' });
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.core);
-	}
-
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>

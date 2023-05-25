@@ -7,7 +7,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilde
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { Credit } from '#types/CustomIds';
 import type { Message, ModalSubmitInteraction } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
@@ -19,21 +19,18 @@ type EmojiData = {
 };
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'UtilityModule',
+	description: 'Adds the image attachment, link, or emoji that is in the message. Priority is `emoji > attachment > link`.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Add Emote')
-			.setDescription('Adds the image attachment, link, or emoji that is in the message. Priority is `emoji > attachment > link`.')
 			.setTarget('message');
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.utility);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};

@@ -6,10 +6,11 @@ import { ModerationModule } from '#modules/ModerationModule';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { ModerationSettings } from '@kbotdev/prisma';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'ModerationModule',
 	description: 'Set a minimum required account age for users to join the server.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.KickMembers],
@@ -17,7 +18,6 @@ import type { ModerationSettings } from '@kbotdev/prisma';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Minage')
-			.setDescription('Set a minimum required account age for users to join the server.')
 			.setSubcommands([
 				{ label: '/minage toggle <value>', description: 'Enable or disable minage' }, //
 				{
@@ -30,10 +30,6 @@ import type { ModerationSettings } from '@kbotdev/prisma';
 	}
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.moderation);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};

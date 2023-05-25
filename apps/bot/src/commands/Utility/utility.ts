@@ -5,17 +5,17 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilitySettings } from '@kbotdev/database';
 import type { UtilityModule } from '#modules/UtilityModule';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Edit the settings of the utility module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Utility')
-			.setDescription('Edit the settings of the utility module.')
 			.setSubcommands([
 				{ label: '/utility toggle <value>', description: 'Enable or disable the utility module' }, //
 				{ label: '/utility settings', description: 'Show the current settings' }
@@ -23,10 +23,6 @@ import type { UtilityModule } from '#modules/UtilityModule';
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.utility);
-	}
-
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>

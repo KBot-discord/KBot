@@ -5,11 +5,12 @@ import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention, userMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { EventModule } from '#modules/EventModule';
 import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'EventModule',
 	description: 'Join or leave the karaoke queue.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
@@ -17,7 +18,6 @@ import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChann
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Karaoke')
-			.setDescription('Join or leave the karaoke queue.')
 			.setSubcommands([
 				{ label: '/karaoke join', description: 'Join the queue' }, //
 				{ label: '/karaoke duet <partner>', description: 'Join the queue as a duet' },
@@ -28,10 +28,6 @@ import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChann
 	}
 })
 export class EventsCommand extends KBotCommand<EventModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.events);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou, or a moderator, can run \`/events toggle\` to enable it.`;
 	};

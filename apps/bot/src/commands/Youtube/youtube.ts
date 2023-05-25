@@ -8,7 +8,7 @@ import { KBotErrors } from '#types/Enums';
 import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, channelMention, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js';
 import type { APISelectMenuOption } from 'discord-api-types/v10';
 import type { YoutubeModule } from '#modules/YoutubeModule';
@@ -17,12 +17,12 @@ import type { ApplicationCommandOptionChoiceData, GuildTextBasedChannel, BaseMes
 import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'YoutubeModule',
 	description: 'Add, remove, or edit Youtube subscriptions.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Youtube')
-			.setDescription('Add, remove, or edit Youtube subscriptions.')
 			.setSubcommands([
 				{ label: '/youtube subscribe <account>', description: 'Subscribe to a new channel' }, //
 				{ label: '/youtube unsubscribe <subscription>', description: 'Unsubscribe from a channel' },
@@ -40,14 +40,6 @@ import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
 	}
 })
 export class NotificationsCommand extends KBotCommand<YoutubeModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.youtube);
-	}
-
-	public override disabledMessage = (moduleFullName: string): string => {
-		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/notifications toggle\` to enable it.`;
-	};
-
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>

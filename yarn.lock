@@ -1003,7 +1003,7 @@ __metadata:
     "@kbotdev/eslint-config": "workspace:^"
     "@kbotdev/holodex": "workspace:^"
     "@kbotdev/menus": ^1.0.3
-    "@kbotdev/plugin-modules": ^2.0.0-alpha.2
+    "@kbotdev/plugin-modules": ^2.0.0
     "@kbotdev/proto": "workspace:^"
     "@kbotdev/redis": "workspace:^"
     "@sapphire/decorators": ^6.0.1
@@ -1101,7 +1101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kbotdev/plugin-modules@npm:^2.0.0-alpha.2":
+"@kbotdev/plugin-modules@npm:^2.0.0":
   version: 2.0.0
   resolution: "@kbotdev/plugin-modules@npm:2.0.0"
   dependencies:

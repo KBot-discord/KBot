@@ -1,16 +1,23 @@
 import { KBotErrors } from '#types/Enums';
 import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
+import { KBotCommand } from '#extensions/KBotCommand';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Command } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { DevModule } from '#modules/DevModule';
 
-@ApplyOptions<Command.Options>({
+@ApplyOptions<KBotCommand.Options>({
+	module: 'DevModule',
 	description: 'Manage the guild blacklist',
 	preconditions: ['BotOwnerOnly'],
-	runIn: ['GUILD_ANY']
+	runIn: [CommandOptionsRunTypeEnum.GuildAny],
+	helpEmbed: (builder) => {
+		return builder //
+			.setName('dev_blacklist');
+	}
 })
-export class DevCommand extends Command {
-	public override registerApplicationCommands(registry: Command.Registry): void {
+export class DevCommand extends KBotCommand<DevModule> {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -58,7 +65,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 
 		switch (interaction.options.getSubcommand(true)) {
@@ -76,7 +83,7 @@ export class DevCommand extends Command {
 		}
 	}
 
-	public async chatInputAdd(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputAdd(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		await this.container.prisma.blacklist.upsert({
@@ -93,7 +100,7 @@ export class DevCommand extends Command {
 		return interaction.defaultReply(`${guildId} added to the blacklist.`);
 	}
 
-	public async chatInputRemove(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputRemove(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		await this.container.prisma.blacklist
@@ -105,7 +112,7 @@ export class DevCommand extends Command {
 		return interaction.defaultReply(`${guildId} added to the blacklist.`);
 	}
 
-	public async chatInputIsBlacklisted(interaction: Command.ChatInputCommandInteraction<'cached'>): Promise<unknown> {
+	public async chatInputIsBlacklisted(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		const result = await this.container.prisma.blacklist.count({

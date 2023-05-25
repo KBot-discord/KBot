@@ -5,16 +5,22 @@ import { EmbedColors } from '#utils/constants';
 import { isNullOrUndefined } from '#utils/functions';
 import { Module } from '@kbotdev/plugin-modules';
 import { EmbedBuilder } from 'discord.js';
+import { ApplyOptions } from '@sapphire/decorators';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 
+@ApplyOptions<Module.Options>({
+	fullName: 'Moderation Module'
+})
 export class ModerationModule extends Module {
 	public readonly settings: ModerationSettingsService;
 
-	public constructor(options?: Module.Options) {
-		super({ ...options, fullName: 'Moderation Module' });
+	public constructor(context: Module.Context, options: Module.Options) {
+		super(context, options);
 
 		this.settings = new ModerationSettingsService();
+
+		this.container.moderation = this;
 	}
 
 	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
@@ -45,5 +51,12 @@ export class ModerationModule extends Module {
 			.setAuthor({ name: 'You have been kicked due to your account being too new' })
 			.setThumbnail(icon ?? null)
 			.setDescription(formattedMessage);
+	}
+}
+
+declare module '@kbotdev/plugin-modules' {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+	interface Modules {
+		ModerationModule: never;
 	}
 }

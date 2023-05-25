@@ -6,18 +6,18 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { ModerationSettings } from '@kbotdev/prisma';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'ModerationModule',
 	description: 'Edit the settings of the moderation module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Moderation')
-			.setDescription('Edit the settings of the moderation module.')
 			.setSubcommands([
 				{
 					label: '/moderation toggle <value>',
@@ -40,10 +40,6 @@ import type { ModerationModule } from '#modules/ModerationModule';
 	}
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.moderation);
-	}
-
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>

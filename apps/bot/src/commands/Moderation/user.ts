@@ -2,25 +2,21 @@ import { KBotCommand } from '#extensions/KBotCommand';
 import { getUserInfo } from '#utils/discord';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'ModerationModule',
 	description: 'Get info on a user.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('User')
-			.setDescription('Get info on a user.')
 			.setOptions({ label: '/user <target>' });
 	}
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.moderation);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};

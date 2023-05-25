@@ -3,22 +3,17 @@ import { KBotCommand } from '#extensions/KBotCommand';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
-import { container } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	description: 'Info on how to change command permissions and the defaults that are set on the bot',
+	module: 'CoreModule',
+	description: 'Info on how to change command permissions and the defaults that are set on the bot.',
 	helpEmbed: (builder) => {
 		return builder //
-			.setName('Permissions')
-			.setDescription('Info on how to change command permissions and the defaults that are set on the bot.');
+			.setName('Permissions');
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.core);
-	}
-
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>

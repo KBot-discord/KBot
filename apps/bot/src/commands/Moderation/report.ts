@@ -9,26 +9,23 @@ import { ApplicationCommandType, ButtonStyle, MessageType, PermissionFlagsBits }
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
 import { channelMention, userMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { GuildMember, GuildTextBasedChannel, Message, MessageCreateOptions } from 'discord.js';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'ModerationModule',
+	description: 'Send the reported message to the set moderator channel.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Report')
-			.setDescription('Send the reported message to the set moderator channel.')
 			.setTarget('message');
 	}
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.moderation);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};

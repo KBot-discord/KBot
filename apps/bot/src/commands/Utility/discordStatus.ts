@@ -6,18 +6,18 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { UtilitySettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommand.Options>({
-	description: 'Get updates about Discord outages sent to a channel',
+	module: 'UtilityModule',
+	description: 'Get updates about Discord outages sent to a channel.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Discord Status')
-			.setDescription('Get updates about Discord outages sent to a channel.')
 			.setSubcommands([
 				{
 					label: '/discordstatus set <channel>',
@@ -29,10 +29,6 @@ import type { UtilitySettings } from '@kbotdev/database';
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.utility);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};

@@ -3,18 +3,18 @@ import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import { EmbedBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EventModule } from '#modules/EventModule';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'EventModule',
 	description: 'Edit the settings of the events module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Events')
-			.setDescription('Edit the settings of the events module.')
 			.setSubcommands([
 				{ label: '/events toggle <value>', description: 'Enable or disable the events module' }, //
 				{ label: '/events settings', description: 'Show the current settings' }
@@ -22,10 +22,6 @@ import type { EventModule } from '#modules/EventModule';
 	}
 })
 export class EventsCommand extends KBotCommand<EventModule> {
-	public constructor(context: ModuleCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.events);
-	}
-
 	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>

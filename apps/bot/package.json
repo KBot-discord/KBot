@@ -34,7 +34,7 @@
 		"@kbotdev/database": "workspace:^",
 		"@kbotdev/holodex": "workspace:^",
 		"@kbotdev/menus": "^1.0.3",
-		"@kbotdev/plugin-modules": "^2.0.0-alpha.2",
+		"@kbotdev/plugin-modules": "^2.0.0",
 		"@kbotdev/proto": "workspace:^",
 		"@kbotdev/redis": "workspace:^",
 		"@sapphire/decorators": "^6.0.1",

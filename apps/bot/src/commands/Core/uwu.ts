@@ -2,7 +2,7 @@ import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } f
 import { KBotCommand } from '#extensions/KBotCommand';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
 
 function getRandomInt(max: number): number {
@@ -10,21 +10,18 @@ function getRandomInt(max: number): number {
 }
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'CoreModule',
+	description: 'uwu-ify a message.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('uwu')
-			.setDescription('uwu-ify a message.')
 			.setTarget('message');
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly isPrintable = /^[ -~]+$/;
 	private readonly character = /[a-zA-Z]/;
-
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.core);
-	}
 
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerContextMenuCommand(

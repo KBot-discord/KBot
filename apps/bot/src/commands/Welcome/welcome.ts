@@ -6,18 +6,18 @@ import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { channelMention, EmbedBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { InteractionEditReplyOptions, ColorResolvable } from 'discord.js';
 import type { WelcomeSettings } from '@kbotdev/prisma';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'WelcomeModule',
 	description: 'Edit the settings of the welcome module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Welcome')
-			.setDescription('Edit the settings of the welcome module.')
 			.setSubcommands([
 				{ label: '/welcome toggle <value>', description: 'Enable or disable the welcome module' }, //
 				{
@@ -34,10 +34,6 @@ import type { WelcomeSettings } from '@kbotdev/prisma';
 	}
 })
 export class EventsCommand extends KBotCommand<WelcomeModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.welcome);
-	}
-
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>

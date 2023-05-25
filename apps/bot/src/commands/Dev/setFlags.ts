@@ -1,20 +1,26 @@
 import { EmbedColors } from '#utils/constants';
 import { FlagHandler } from '#structures/handlers/FlagHandler';
+import { KBotCommand } from '#extensions/KBotCommand';
+import { ApplyOptions } from '@sapphire/decorators';
 import { FeatureFlags } from '@kbotdev/prisma';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
-import { ApplyOptions } from '@sapphire/decorators';
-import { Command } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder, ButtonBuilder } from 'discord.js';
-import type { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { APISelectMenuOption } from 'discord-api-types/v10';
+import type { DevModule } from '#modules/DevModule';
 
-@ApplyOptions<Command.Options>({
+@ApplyOptions<KBotCommand.Options>({
+	module: 'DevModule',
 	description: 'Set the feature flags for a guild',
 	preconditions: ['BotOwnerOnly'],
-	runIn: ['GUILD_ANY']
+	runIn: [CommandOptionsRunTypeEnum.GuildAny],
+	helpEmbed(builder) {
+		return builder //
+			.setName('dev_setflags');
+	}
 })
-export class DevCommand extends Command {
-	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
+export class DevCommand extends KBotCommand<DevModule> {
+	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -35,7 +41,7 @@ export class DevCommand extends Command {
 		);
 	}
 
-	public override async chatInputRun(interaction: ModuleCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 		const guildId = interaction.options.getString('guild', true);
 

@@ -4,11 +4,12 @@ import { KBotCommand } from '#extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { ModerationSettings } from '@kbotdev/database';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'ModerationModule',
 	description: 'Prevent usernames that place the user to the top of the member list.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageNicknames],
@@ -16,7 +17,6 @@ import type { ModerationModule } from '#modules/ModerationModule';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Anti-Hoist')
-			.setDescription('Prevent usernames that place the user to the top of the member list.')
 			.setSubcommands([
 				{ label: '/antihoist toggle <value>', description: 'Enable or disable anti-hoist' }, //
 				{ label: '/antihoist settings', description: 'Show the current settings' }
@@ -24,10 +24,6 @@ import type { ModerationModule } from '#modules/ModerationModule';
 	}
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.moderation);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};

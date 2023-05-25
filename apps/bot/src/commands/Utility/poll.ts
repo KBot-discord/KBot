@@ -8,11 +8,12 @@ import { buildCustomId } from '#utils/functions';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { PollOption } from '#types/CustomIds';
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'UtilityModule',
 	description: 'Create, end, or manage polls.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
@@ -20,7 +21,6 @@ import type { PollOption } from '#types/CustomIds';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Poll')
-			.setDescription('Create, end, or manage polls.')
 			.setSubcommands([
 				{
 					label: '/poll create <channel> <time> <option1> <option2> [option3 - option10]',
@@ -31,10 +31,6 @@ import type { PollOption } from '#types/CustomIds';
 	}
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.utility);
-	}
-
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};

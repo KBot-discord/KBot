@@ -6,7 +6,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage } from 'canvas-constructor/cairo';
 import { AttachmentBuilder } from 'discord.js';
-import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { join } from 'node:path';
 import { readdirSync } from 'fs';
 import { buffer } from 'node:stream/consumers';
@@ -19,20 +19,17 @@ type PatOptions = {
 };
 
 @ApplyOptions<KBotCommand.Options>({
+	module: 'CoreModule',
+	description: 'Creates a pat gif of the member.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Pat')
-			.setDescription('Creates a pat gif of the member.')
 			.setTarget('user');
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly pats: Image[] = [];
-
-	public constructor(context: KBotCommand.Context, options: KBotCommand.Options) {
-		super(context, { ...options }, container.core);
-	}
 
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerContextMenuCommand(
