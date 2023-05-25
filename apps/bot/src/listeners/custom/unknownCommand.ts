@@ -6,7 +6,7 @@ import type { UnknownCommandPayload } from '#types/Errors';
 @ApplyOptions<Listener.Options>({
 	event: KBotErrors.MissingSubcommandHandler
 })
-export class CommandListener extends Listener<typeof KBotErrors.MissingSubcommandHandler> {
+export class CustomListener extends Listener<typeof KBotErrors.MissingSubcommandHandler> {
 	public async run(payload: UnknownCommandPayload): Promise<void> {
 		const { interaction, error } = payload;
 		const { command } = error;

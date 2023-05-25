@@ -1,5 +1,5 @@
+import { isNullOrUndefined } from '#utils/functions';
 import { container } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import type { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
 import type { IncidentMessage } from '@kbotdev/database';
 
@@ -25,15 +25,15 @@ export class IncidentNotification {
 	}
 
 	public async validateChannel(): Promise<boolean | undefined> {
-		if (isNullish(this.channel)) return undefined;
+		if (isNullOrUndefined(this.channel)) return undefined;
 		const { result } = await container.validator.channels.canSendEmbeds(this.channel);
 		return result;
 	}
 
 	public async sendMessage(embed: EmbedBuilder): Promise<this> {
-		if (isNullish(this.channel)) return this;
+		if (isNullOrUndefined(this.channel)) return this;
 
-		if (isNullish(this.incidentMessage)) {
+		if (isNullOrUndefined(this.incidentMessage)) {
 			const message = await this.channel.send({ embeds: [embed] });
 			this.messageId = message.id;
 		} else {

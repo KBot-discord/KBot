@@ -1,8 +1,8 @@
-import { parseCustomId, PollCustomIds } from '#utils/customIds';
+import { PollCustomIds } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
+import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import { ButtonInteraction } from 'discord.js';
 import type { PollMenuButton } from '#types/CustomIds';
 
@@ -44,7 +44,7 @@ export class ButtonHandler extends InteractionHandler {
 		}
 
 		const settings = await this.container.utility.settings.get(interaction.guildId);
-		if (isNullish(settings) || !settings.enabled) {
+		if (isNullOrUndefined(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();
 		}

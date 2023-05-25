@@ -3,12 +3,12 @@ import { KBotErrors } from '#types/Enums';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { CreditType } from '#utils/customIds';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import fuzzysort from 'fuzzysort';
 import type { GuildEmoji, Sticker, ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
@@ -121,7 +121,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 		const result = fuzzysort.go(
 			search,
-			cachedData.filter(({ name }) => !isNullish(name)),
+			cachedData.filter(({ name }) => !isNullOrUndefined(name)),
 			{
 				limit: 25,
 				all: true,

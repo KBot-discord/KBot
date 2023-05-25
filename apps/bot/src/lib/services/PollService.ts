@@ -1,17 +1,9 @@
 import { CustomEmotes, EmbedColors } from '#utils/constants';
+import { isNullOrUndefined } from '#utils/functions';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
-import {
-	type PrismaClient,
-	type Poll,
-	type PollId,
-	type CreatePollData,
-	type GuildAndPollId,
-	type GuildId,
-	type UpsertPollUserData,
-	pollCacheKey
-} from '@kbotdev/database';
+import { pollCacheKey } from '@kbotdev/database';
+import type { PrismaClient, Poll, PollId, CreatePollData, GuildAndPollId, GuildId, UpsertPollUserData } from '@kbotdev/database';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
 import type { RedisClient } from '@kbotdev/redis';
 import type { PollResultPayload } from '#types/Tasks';
@@ -115,15 +107,20 @@ export class PollService {
 
 		try {
 			poll = await this.get({ pollId });
-			if (isNullish(poll)) return false;
+			if (isNullOrUndefined(poll)) {
+				logger.sentryMessage('Failed to find a poll while attempting to end it', {
+					context: { pollId }
+				});
+				return false;
+			}
 
 			channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
 			const { result } = await validator.channels.canSendEmbeds(channel);
 			if (!result || !channel || !channel.isTextBased() || channel.isDMBased()) return false;
 
 			message = await channel.messages.fetch(pollId).catch(() => null);
-		} catch (err: unknown) {
-			logger.error(err);
+		} catch (error: unknown) {
+			logger.sentryError(error);
 			await this.delete({ guildId, pollId });
 			return false;
 		}
@@ -175,8 +172,8 @@ export class PollService {
 			await this.delete({ guildId, pollId });
 
 			return true;
-		} catch (error: any) {
-			container.logger.error(error);
+		} catch (error: unknown) {
+			logger.sentryError(error);
 			return false;
 		}
 	}

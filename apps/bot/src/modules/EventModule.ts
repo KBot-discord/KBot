@@ -1,6 +1,6 @@
 import { EventSettingsService, KaraokeService } from '#services';
+import { isNullOrUndefined } from '#utils/functions';
 import { Module } from '@kbotdev/plugin-modules';
-import { isNullish } from '@sapphire/utilities';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 
 export class EventModule extends Module {
@@ -15,8 +15,8 @@ export class EventModule extends Module {
 	}
 
 	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
-		if (isNullish(guild)) return false;
+		if (isNullOrUndefined(guild)) return false;
 		const settings = await this.settings.get(guild.id);
-		return isNullish(settings) ? false : settings.enabled;
+		return isNullOrUndefined(settings) ? false : settings.enabled;
 	}
 }

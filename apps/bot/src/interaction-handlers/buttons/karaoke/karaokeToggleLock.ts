@@ -1,9 +1,9 @@
 import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
-import { KaraokeCustomIds, parseCustomId } from '#utils/customIds';
+import { KaraokeCustomIds } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
+import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import { Time } from '@sapphire/duration';
 import { ButtonInteraction } from 'discord.js';
 import type { KaraokeMenuButton } from '#types/CustomIds';
@@ -58,13 +58,13 @@ export class ButtonHandler extends InteractionHandler {
 		}
 
 		const menu = KaraokeEventMenu.handlers.get(interaction.user.id);
-		if (isNullish(menu)) {
+		if (isNullOrUndefined(menu)) {
 			await interaction.defaultReply('Please run `/manage karaoke menu` again.', true);
 			return this.none();
 		}
 
 		const settings = await this.container.events.settings.get(interaction.guildId);
-		if (isNullish(settings) || !settings.enabled) {
+		if (isNullOrUndefined(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, true);
 			return this.none();
 		}

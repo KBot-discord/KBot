@@ -1,7 +1,7 @@
 import { WelcomeModule } from '#modules/WelcomeModule';
+import { isNullOrUndefined } from '#utils/functions';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
 import type { GuildMember, GuildTextBasedChannel, HexColorString, Message } from 'discord.js';
 import type { WelcomeSettings } from '@kbotdev/database';
 
@@ -12,12 +12,12 @@ export class WelcomeHandler {
 		const { client, welcome, validator } = container;
 
 		const settings = await welcome.settings.get(this.member.guild.id);
-		if (isNullish(settings) || !settings.enabled || isNullish(settings.channelId)) return;
+		if (isNullOrUndefined(settings) || !settings.enabled || isNullOrUndefined(settings.channelId)) return;
 		if (!settings.message && !settings.title && !settings.description) return;
 
 		const channel = (await client.channels.fetch(settings.channelId)) as GuildTextBasedChannel | null;
 		const { result } = await validator.channels.canSendEmbeds(channel);
-		if (isNullish(channel) || !result) return;
+		if (isNullOrUndefined(channel) || !result) return;
 
 		if (!settings.message) {
 			await this.withEmbed(channel, settings);

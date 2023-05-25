@@ -2,11 +2,11 @@ import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { WelcomeModule } from '#modules/WelcomeModule';
 import { KBotCommand } from '#extensions/KBotCommand';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { channelMention, EmbedBuilder } from 'discord.js';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { InteractionEditReplyOptions, ColorResolvable } from 'discord.js';
 import type { WelcomeSettings } from '@kbotdev/prisma';
@@ -204,7 +204,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		const image = interaction.options.getString('image');
 		const color = interaction.options.getString('color');
 
-		if (!isNullish(color) && HexColorRegex.test(color)) {
+		if (!isNullOrUndefined(color) && HexColorRegex.test(color)) {
 			return interaction.errorReply('Please provide a valid Hex color.');
 		}
 
@@ -249,7 +249,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 
 		const options: InteractionEditReplyOptions = { allowedMentions: { users: [member.id] } };
 
-		if (!isNullish(settings.message) && settings.message.length > 0) {
+		if (!isNullOrUndefined(settings.message) && settings.message.length > 0) {
 			options.content = WelcomeModule.formatText(settings.message, member);
 		}
 
@@ -311,9 +311,9 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 			}
 		];
 
-		if (!isNullish(settings) && !isNullish(settings.channelId)) {
+		if (!isNullOrUndefined(settings) && !isNullOrUndefined(settings.channelId)) {
 			const welcomeChannel = await channels.fetch(settings.channelId);
-			if (!isNullish(welcomeChannel)) {
+			if (!isNullOrUndefined(welcomeChannel)) {
 				const viewChannel = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.ViewChannel);
 				const sendMessage = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.SendMessages);
 				const embedLinks = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.EmbedLinks);

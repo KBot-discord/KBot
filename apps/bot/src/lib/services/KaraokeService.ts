@@ -1,5 +1,5 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { isNullish } from '@sapphire/utilities';
+import { isNullOrUndefined } from '#utils/functions';
 import { ChannelType, EmbedBuilder, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { roleMention, userMention } from '@discordjs/builders';
@@ -32,12 +32,7 @@ export class KaraokeService {
 		return this.repository.getEvent({ eventId });
 	}
 
-	public async getEventWithQueue(eventId: string): Promise<
-		| (KaraokeEvent & {
-				queue: KaraokeUser[];
-		  })
-		| null
-	> {
+	public async getEventWithQueue(eventId: string): Promise<(KaraokeEvent & { queue: KaraokeUser[] }) | null> {
 		return this.repository.getEventWithQueue({ eventId });
 	}
 
@@ -82,28 +77,20 @@ export class KaraokeService {
 	}
 
 	public async addUserToQueue(
-		{ eventId }: KaraokeEventId,
+		{ eventId }: KaraokeEventId, //
 		data: AddToQueueData
-	): Promise<
-		KaraokeEvent & {
-			queue: KaraokeUser[];
-		}
-	> {
+	): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
 		return this.repository.addUserToQueue({ eventId }, data);
 	}
 
 	public async removeUserFromQueue(
-		{ eventId }: KaraokeEventId,
+		{ eventId }: KaraokeEventId, //
 		data: RemoveFromQueueData
-	): Promise<
-		KaraokeEvent & {
-			queue: KaraokeUser[];
-		}
-	> {
+	): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
 		return this.repository.removeUserFromQueue({ eventId }, data);
 	}
 
-	public async setUserToSinger(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<boolean | null> {
+	public async setUserToSinger(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<void> {
 		const member = await memberManager.fetch(eventUser.id);
 		if (member.voice.channelId && member.manageable) {
 			if (member.voice.channel!.type === ChannelType.GuildStageVoice) {
@@ -124,20 +111,18 @@ export class KaraokeService {
 				}
 			}
 		}
-
-		return true;
 	}
 
-	public async setUserToAudience(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<boolean | null> {
+	public async setUserToAudience(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<void> {
 		const member = await memberManager.fetch(eventUser.id);
 		if (member.voice.channel && member.manageable) {
 			if (member.voice.channel.type === ChannelType.GuildStageVoice) {
-				await member.voice.setSuppressed(true).catch((err) => {
-					container.logger.error(err);
+				await member.voice.setSuppressed(true).catch((error) => {
+					container.logger.sentryError(error, { context: member });
 				});
 			} else {
-				await member.voice.setMute(true).catch((err) => {
-					container.logger.error(err);
+				await member.voice.setMute(true).catch((error) => {
+					container.logger.sentryError(error, { context: member });
 				});
 			}
 		}
@@ -147,18 +132,16 @@ export class KaraokeService {
 
 			if (partner.voice.channel) {
 				if (partner.voice.channel.type === ChannelType.GuildStageVoice) {
-					await partner.voice.setSuppressed(true).catch((err) => {
-						container.logger.error(err);
+					await partner.voice.setSuppressed(true).catch((error) => {
+						container.logger.sentryError(error, { context: partner });
 					});
 				} else {
-					await partner.voice.setMute(true).catch((err) => {
-						container.logger.error(err);
+					await partner.voice.setMute(true).catch((error) => {
+						container.logger.sentryError(error, { context: partner });
 					});
 				}
 			}
 		}
-
-		return true;
 	}
 
 	public async rotateQueue(
@@ -174,7 +157,7 @@ export class KaraokeService {
 		const updatedEvent = await this.rotate(memberManager, event);
 
 		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
-		if (isNullish(textChannel) || !result) return;
+		if (isNullOrUndefined(textChannel) || !result) return;
 
 		let done = userMention(previousSinger.id);
 		let next = queue.length > 1 ? `${userMention(nextSinger.id)} is` : '';
@@ -211,7 +194,7 @@ export class KaraokeService {
 		const updatedEvent = await this.rotate(memberManager, event);
 
 		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
-		if (isNullish(textChannel) || !result) return;
+		if (isNullOrUndefined(textChannel) || !result) return;
 
 		let done = `${userMention(previousSinger.id)} has been skipped by ${userMention(moderatorId)}`;
 		let next = queue.length > 1 ? `${userMention(nextSinger.id)} is` : '';
@@ -316,29 +299,27 @@ export class KaraokeService {
 		stageTopic?: string | null,
 		pingRole?: string | null
 	): Promise<KaraokeEvent | null> {
-		try {
-			const exists = await this.eventExists(guild.id, voiceChannel.id);
-			if (exists) {
-				return null;
-			}
-
-			const eventName = stageTopic ? `${stageTopic}` : 'Karaoke Event';
-			const embed = await this.buildStartEventEmbed(voiceChannel, eventName);
-
-			const announcement = await this.postEventInstructions(voiceChannel, textChannel, embed, pingRole);
-
-			await this.setEventExists(guild.id, voiceChannel.id, true);
-			await this.setEventActive(guild.id, voiceChannel.id, true);
-			return this.createEvent({
-				id: voiceChannel.id,
-				guildId: voiceChannel.guildId,
-				textChannelId: textChannel.id,
-				pinMessageId: announcement?.id
+		const exists = await this.eventExists(guild.id, voiceChannel.id);
+		if (exists) {
+			container.logger.sentryMessage('Failed to start an event that does not exist', {
+				context: { eventId: voiceChannel.id }
 			});
-		} catch (err: unknown) {
-			container.logger.error(err);
 			return null;
 		}
+
+		const eventName = stageTopic ? `${stageTopic}` : 'Karaoke Event';
+		const embed = await this.buildStartEventEmbed(voiceChannel, eventName);
+
+		const announcement = await this.postEventInstructions(voiceChannel, textChannel, embed, pingRole);
+
+		await this.setEventExists(guild.id, voiceChannel.id, true);
+		await this.setEventActive(guild.id, voiceChannel.id, true);
+		return this.createEvent({
+			id: voiceChannel.id,
+			guildId: voiceChannel.guildId,
+			textChannelId: textChannel.id,
+			pinMessageId: announcement?.id
+		});
 	}
 
 	public async endEvent(guild: Guild, event: KaraokeEvent): Promise<void> {
@@ -374,42 +355,40 @@ export class KaraokeService {
 	}
 
 	public async startScheduledEvent(guild: Guild, event: KaraokeEvent, eventName: string): Promise<KaraokeEvent | null> {
-		try {
-			const exists = await this.eventExists(guild.id, event.id);
-			if (!exists) {
-				return null;
-			}
-
-			const [voiceChannel, textChannel] = await Promise.all([
-				guild.channels.fetch(event.id) as Promise<StageChannel | VoiceChannel>, //
-				guild.channels.fetch(event.textChannelId) as Promise<GuildTextBasedChannel>
-			]);
-
-			const embed = await this.buildStartEventEmbed(voiceChannel, eventName);
-
-			if (!isNullish(event.discordEventId)) {
-				const discordEvent = await guild.scheduledEvents.fetch(event.discordEventId);
-				if (!isNullish(discordEvent) && discordEvent.status === GuildScheduledEventStatus.Scheduled) {
-					await discordEvent.setStatus(GuildScheduledEventStatus.Active);
-				}
-			}
-
-			const announcement = await this.postEventInstructions(voiceChannel, textChannel, embed, event.roleId);
-
-			await this.setEventActive(guild.id, event.id, true);
-			return this.updateEvent({
-				id: voiceChannel.id,
-				textChannelId: textChannel.id,
-				isActive: true,
-				locked: false,
-				discordEventId: null,
-				roleId: null,
-				pinMessageId: announcement?.id
+		const exists = await this.eventExists(guild.id, event.id);
+		if (!exists) {
+			container.logger.sentryMessage('Failed to start a scheduled event that does not exist', {
+				context: { eventId: event.id }
 			});
-		} catch (err: unknown) {
-			container.logger.error(err);
 			return null;
 		}
+
+		const [voiceChannel, textChannel] = await Promise.all([
+			guild.channels.fetch(event.id) as Promise<StageChannel | VoiceChannel>, //
+			guild.channels.fetch(event.textChannelId) as Promise<GuildTextBasedChannel>
+		]);
+
+		const embed = await this.buildStartEventEmbed(voiceChannel, eventName);
+
+		if (!isNullOrUndefined(event.discordEventId)) {
+			const discordEvent = await guild.scheduledEvents.fetch(event.discordEventId);
+			if (!isNullOrUndefined(discordEvent) && discordEvent.status === GuildScheduledEventStatus.Scheduled) {
+				await discordEvent.setStatus(GuildScheduledEventStatus.Active);
+			}
+		}
+
+		const announcement = await this.postEventInstructions(voiceChannel, textChannel, embed, event.roleId);
+
+		await this.setEventActive(guild.id, event.id, true);
+		return this.updateEvent({
+			id: voiceChannel.id,
+			textChannelId: textChannel.id,
+			isActive: true,
+			locked: false,
+			discordEventId: null,
+			roleId: null,
+			pinMessageId: announcement?.id
+		});
 	}
 
 	public buildQueueEmbed(event: KaraokeEventWithUsers): EmbedBuilder {
@@ -467,7 +446,7 @@ export class KaraokeService {
 	private async buildStartEventEmbed(voiceChannel: StageChannel | VoiceChannel, eventName: string): Promise<EmbedBuilder> {
 		const embed = new EmbedBuilder();
 		if (voiceChannel.type === ChannelType.GuildStageVoice) {
-			if (isNullish(voiceChannel.stageInstance)) {
+			if (isNullOrUndefined(voiceChannel.stageInstance)) {
 				embed.setTitle(`Event: ${eventName}`);
 				await voiceChannel.createStageInstance({ topic: eventName });
 			} else {

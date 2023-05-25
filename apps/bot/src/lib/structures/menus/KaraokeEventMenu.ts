@@ -1,9 +1,9 @@
 import { BlankSpace, EmbedColors, KBotEmoji } from '#utils/constants';
-import { buildCustomId, KaraokeCustomIds } from '#utils/customIds';
+import { KaraokeCustomIds } from '#utils/customIds';
 import { getGuildIcon } from '#utils/discord';
+import { buildCustomId, isNullOrUndefined } from '#utils/functions';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
-import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
 import type { Guild, GuildChannel, Message, User } from 'discord.js';
@@ -69,7 +69,7 @@ export class KaraokeEventMenu extends Menu {
 			return new MenuPageBuilder() //
 				.setEmbeds([embed])
 				.setComponentRows((row1) => {
-					if (!isNullish(event.discordEventId)) {
+					if (!isNullOrUndefined(event.discordEventId)) {
 						return [
 							row1.addComponents([
 								new ButtonBuilder()

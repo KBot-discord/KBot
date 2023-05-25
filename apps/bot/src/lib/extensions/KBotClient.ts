@@ -2,10 +2,16 @@ import { KBotLogger } from './KBotLogger';
 import { transformLoginData } from '#utils/discord';
 import { container, LogLevel, SapphireClient } from '@sapphire/framework';
 import { ActivityType, IntentsBitField, OAuth2Scopes } from 'discord.js';
+import { WebhookClient } from 'discord.js';
+import { Enumerable } from '@sapphire/decorators';
 
 export class KBotClient extends SapphireClient {
+	@Enumerable(false)
+	public override readonly webhook: WebhookClient;
+
 	public constructor() {
 		const { config } = container;
+
 		super({
 			disableMentionPrefix: true,
 			loadDefaultErrorListeners: false,
@@ -53,6 +59,8 @@ export class KBotClient extends SapphireClient {
 				loadModuleErrorListeners: true
 			}
 		});
+
+		this.webhook = new WebhookClient({ url: config.discord.webhook });
 	}
 
 	public override async login(token: string): Promise<string> {

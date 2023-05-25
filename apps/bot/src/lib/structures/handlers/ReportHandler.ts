@@ -124,15 +124,10 @@ export class ReportHandler {
 
 				return i.memberPermissions.has(PermissionFlagsBits.ManageMessages);
 			},
-
 			time: 1000 * 60 * 14.5,
-
 			message: this.reportMessage,
-
 			guild: this.targetMessage.guild,
-
 			channel: this.targetMessage.channel,
-
 			interactionType: InteractionType.MessageComponent
 		})
 			.on('collect', this.handleCollect.bind(this))

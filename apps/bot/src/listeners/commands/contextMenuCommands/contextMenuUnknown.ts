@@ -5,7 +5,7 @@ import type { UnknownContextMenuCommandPayload } from '@sapphire/framework';
 @ApplyOptions<Listener.Options>({
 	event: Events.UnknownContextMenuCommand
 })
-export class UnknownChatInputCommandEvent extends Listener<typeof Events.UnknownContextMenuCommand> {
+export class CommandListener extends Listener<typeof Events.UnknownContextMenuCommand> {
 	public async run(payload: UnknownContextMenuCommandPayload): Promise<void> {
 		this.container.logger.sentryMessage('Unknown context menu command', payload);
 

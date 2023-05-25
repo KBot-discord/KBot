@@ -1,7 +1,7 @@
+import { isNullOrUndefined } from '#utils/functions';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, GuildScheduledEventEntityType, GuildScheduledEventStatus } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildScheduledEvent } from 'discord.js';
 
@@ -12,7 +12,7 @@ export class GuildListener extends Listener {
 	public async run(oldGuildScheduledEvent: GuildScheduledEvent, newGuildScheduledEvent: GuildScheduledEvent): Promise<void> {
 		const { events, validator } = this.container;
 
-		if (isNullish(oldGuildScheduledEvent.channel) || isNullish(oldGuildScheduledEvent.guild)) return;
+		if (isNullOrUndefined(oldGuildScheduledEvent.channel) || isNullOrUndefined(oldGuildScheduledEvent.guild)) return;
 
 		if (
 			oldGuildScheduledEvent.entityType !== GuildScheduledEventEntityType.External &&
@@ -23,7 +23,7 @@ export class GuildListener extends Listener {
 				channel: { id: eventId }
 			} = oldGuildScheduledEvent;
 			const settings = await events.settings.get(newGuildScheduledEvent.guildId);
-			if (isNullish(settings) || !settings.enabled) return;
+			if (isNullOrUndefined(settings) || !settings.enabled) return;
 
 			const exists = await events.karaoke.eventExists(guildId, eventId);
 			if (!exists) return;
@@ -52,7 +52,7 @@ export class GuildListener extends Listener {
 			if (!result) return;
 
 			const settings = await events.settings.get(newGuildScheduledEvent.guildId);
-			if (isNullish(settings) || !settings.enabled) return;
+			if (isNullOrUndefined(settings) || !settings.enabled) return;
 
 			const exists = await events.karaoke.eventExists(guildId, eventId);
 			if (!exists) return;
@@ -61,7 +61,7 @@ export class GuildListener extends Listener {
 			if (active) return;
 
 			const event = await events.karaoke.getEvent(oldGuildScheduledEvent.channel.id);
-			if (isNullish(event)) return;
+			if (isNullOrUndefined(event)) return;
 
 			await events.karaoke.startScheduledEvent(oldGuildScheduledEvent.guild, event, oldGuildScheduledEvent.name);
 		}

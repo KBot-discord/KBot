@@ -1,13 +1,13 @@
 import { PollMenu } from '#structures/menus/PollMenu';
-import { buildCustomId, PollCustomIds } from '#utils/customIds';
+import { PollCustomIds } from '#utils/customIds';
 import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
-import { parseTimeString } from '#utils/functions';
+import { isNullOrUndefined, parseTimeString } from '#utils/functions';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
+import { buildCustomId } from '#utils/functions';
 import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { PollOption } from '#types/CustomIds';
@@ -172,10 +172,10 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 
 		const expiresIn = parseTimeString(time);
-		if (isNullish(expiresIn)) {
+		if (isNullOrUndefined(expiresIn)) {
 			return interaction.errorReply('Invalid time format. You can find info about time formats here: https://docs.kbot.ca/references/time-format');
 		}
-		if (!isNullish(expiresIn) && expiresIn > Date.now() + POLL_TIME_LIMIT) {
+		if (!isNullOrUndefined(expiresIn) && expiresIn > Date.now() + POLL_TIME_LIMIT) {
 			return interaction.errorReply('You cannot run a poll for longer than a month.');
 		}
 
@@ -214,7 +214,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 		for (let i = 0, j = 0; i < 10; i++) {
 			const option = interaction.options.getString(`option${i + 1}`);
-			if (!isNullish(option)) {
+			if (!isNullOrUndefined(option)) {
 				options.push(`${POLL_NUMBERS[j]} ${option}`);
 				j++;
 			}
@@ -233,7 +233,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 				.setTimestamp()
 		];
 
-		if (!isNullish(expiresAt)) {
+		if (!isNullOrUndefined(expiresAt)) {
 			embeds.push(
 				new EmbedBuilder()
 					.setColor(EmbedColors.Success)

@@ -1,7 +1,7 @@
 import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
+import { isNullOrUndefined } from '#utils/functions';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { isNullish } from '@sapphire/utilities';
 import type { GuildMember } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
@@ -16,7 +16,7 @@ export class GuildListener extends Listener {
 			(oldMember.nickname !== newMember.nickname || oldMember.user.username !== newMember.user.username)
 		) {
 			const settings = await moderation.settings.get(newMember.guild.id);
-			if (isNullish(settings) || !settings.enabled) return;
+			if (isNullOrUndefined(settings) || !settings.enabled) return;
 
 			await new AntiHoistHandler().parseMember(newMember, settings);
 		}

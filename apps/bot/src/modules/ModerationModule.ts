@@ -2,8 +2,8 @@ import { ModerationSettingsService } from '#services';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { getGuildIcon } from '#utils/discord';
 import { EmbedColors } from '#utils/constants';
+import { isNullOrUndefined } from '#utils/functions';
 import { Module } from '@kbotdev/plugin-modules';
-import { isNullish } from '@sapphire/utilities';
 import { EmbedBuilder } from 'discord.js';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
@@ -18,9 +18,9 @@ export class ModerationModule extends Module {
 	}
 
 	public override async isEnabled({ guild }: IsEnabledContext): Promise<boolean> {
-		if (isNullish(guild)) return false;
+		if (isNullOrUndefined(guild)) return false;
 		const settings = await this.settings.get(guild.id);
-		return isNullish(settings) ? false : settings.enabled;
+		return isNullOrUndefined(settings) ? false : settings.enabled;
 	}
 
 	public static formatMinageMessage(member: GuildMember, message: string, req: number, reqDate: number): string {

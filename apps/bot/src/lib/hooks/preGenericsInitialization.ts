@@ -58,8 +58,8 @@ export class PreGenericsInitializationHook extends Plugin {
 			container.utility = new UtilityModule();
 			container.welcome = new WelcomeModule();
 			container.youtube = new YoutubeModule();
-		} catch (err: unknown) {
-			container.logger.fatal(err);
+		} catch (error: unknown) {
+			container.logger.sentryError(error);
 			this.destroy();
 			process.exit(1);
 		}

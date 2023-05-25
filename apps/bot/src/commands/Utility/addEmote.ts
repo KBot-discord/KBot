@@ -1,11 +1,11 @@
 import { EmbedColors } from '#utils/constants';
-import { AddEmoteCustomIds, CreditCustomIds, CreditFields, CreditType, buildCustomId } from '#utils/customIds';
+import { AddEmoteCustomIds, CreditCustomIds, CreditFields, CreditType } from '#utils/customIds';
 import { getGuildEmoteSlots } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
+import { buildCustomId, isNullOrUndefined } from '#utils/functions';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { isNullish } from '@sapphire/utilities';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { Credit } from '#types/CustomIds';
@@ -57,7 +57,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		const message = interaction.options.getMessage('message', true);
 
 		const emoji = await this.getEmoji(message);
-		if (isNullish(emoji)) {
+		if (isNullOrUndefined(emoji)) {
 			return interaction.errorReply('There is no emoji or file to add.\n\nSupported file types: `jpeg`/`jpg`, `png`, `gif`', true);
 		}
 
@@ -159,7 +159,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		const emojiEmbed = message.content.match(/https\S*?([a-zA-Z0-9]+)(?:\.\w+)?(?:\s|$)/);
 
 		// Priority: emoji -> attachment -> links
-		if (!isNullish(emojiData)) {
+		if (!isNullOrUndefined(emojiData)) {
 			return {
 				url: `https://cdn.discordapp.com/emojis/${emojiData[3]}.${emojiData[1] === 'a' ? 'gif' : 'png'}`,
 				animated: emojiData[1] === 'a'
@@ -169,7 +169,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		if (message.attachments.size > 0) {
 			const attachmentUrl = message.attachments.at(0)!.url;
 			const parsedUrl = attachmentUrl.match(/([a-zA-Z0-9]+)(.png|.jpg|.gif)$/);
-			if (isNullish(parsedUrl)) return null;
+			if (isNullOrUndefined(parsedUrl)) return null;
 
 			return {
 				url: attachmentUrl,

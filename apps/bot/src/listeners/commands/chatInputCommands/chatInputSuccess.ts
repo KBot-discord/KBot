@@ -5,7 +5,7 @@ import type { ChatInputCommandSuccessPayload } from '@sapphire/framework';
 @ApplyOptions<Listener.Options>({
 	event: Events.ChatInputCommandSuccess
 })
-export class MetricsListener extends Listener<typeof Events.ChatInputCommandSuccess> {
+export class CommandListener extends Listener<typeof Events.ChatInputCommandSuccess> {
 	public async run({ command }: ChatInputCommandSuccessPayload): Promise<void> {
 		this.container.metrics.incrementCommand({
 			command: command.name,

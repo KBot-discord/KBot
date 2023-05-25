@@ -15,11 +15,18 @@ import type { YoutubeModule } from '#modules/YoutubeModule';
 import type { Holodex } from '@kbotdev/holodex';
 import type { KBotErrors } from '#types/Enums';
 import type { ChannelPermissionsPayload, UnknownCommandPayload } from '#types/Errors';
+import type { AuthData } from '@sapphire/plugin-api';
+import type { WebhookErrorBuilder } from '#structures/builders/WebhookErrorBuilder';
 
 export type InteractionResponseUnion = APIMessage | InteractionResponse | Message | void;
 
 declare module 'discord.js' {
+	interface Client {
+		readonly webhook: WebhookClient;
+	}
+
 	interface ClientEvents {
+		[KBotErrors.WebhookError]: [error: unknown];
 		[KBotErrors.ChannelPermissions]: [payload: ChannelPermissionsPayload];
 		[KBotErrors.MissingSubcommandHandler]: [payload: UnknownCommandPayload];
 	}
@@ -78,6 +85,13 @@ declare module '@sapphire/pieces' {
 declare module '@sapphire/framework' {
 	interface ILogger {
 		sentryMessage(message: string, data?: { context?: NonNullable<unknown> }): void;
-		sentryError(error: Error, data?: { message?: string; context?: NonNullable<unknown> }): void;
+		sentryError(error: unknown, data?: { message?: string; context?: NonNullable<unknown> }): void;
+		webhookError(builder: (builder: WebhookErrorBuilder) => WebhookErrorBuilder): Promise<void>;
+	}
+}
+
+declare module '@bufbuild/connect' {
+	interface HandlerContext {
+		auth: AuthData;
 	}
 }

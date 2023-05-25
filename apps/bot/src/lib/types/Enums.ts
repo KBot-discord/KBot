@@ -1,7 +1,8 @@
 export const KBotErrors = {
-	ChannelPermissions: 'channelPermissions',
-	MissingSubcommandHandler: 'missingSubcommandHandler'
-} as const;
+	WebhookError: 'webhookError' as const,
+	ChannelPermissions: 'channelPermissions' as const,
+	MissingSubcommandHandler: 'missingSubcommandHandler' as const
+};
 
 export const KBOT_ERRORS = [
 	'CHANNEL_PERMISSIONS', //

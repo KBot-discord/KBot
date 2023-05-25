@@ -24,8 +24,8 @@ async function main(): Promise<void> {
 		connectServer.listen(rpc.server.port, api.host, () => {
 			container.logger.info(`Connect server started on ${api.host}:${rpc.server.port}`);
 		});
-	} catch (error) {
-		console.error(error);
+	} catch (error: unknown) {
+		container.logger.sentryError(error);
 
 		await client?.destroy();
 		connectServer.close();

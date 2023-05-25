@@ -1,6 +1,6 @@
+import { isNullOrUndefined } from '#utils/functions';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { isNullish } from '@sapphire/utilities';
 import { ChannelType } from 'discord.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
@@ -26,13 +26,13 @@ export class VoiceListener extends Listener {
 		if (oldState.id === client.id) return;
 
 		const eventId = oldState.channelId ?? newState.channelId;
-		if (isNullish(eventId)) return;
+		if (isNullOrUndefined(eventId)) return;
 
 		// Filter mutes and deafens
 		if (oldState.channel?.id === newState.channel?.id) return;
 
 		const settings = await events.settings.get(newState.guild.id);
-		if (isNullish(settings) || !settings.enabled) return;
+		if (isNullOrUndefined(settings) || !settings.enabled) return;
 
 		// Check if the event exists
 		const exists = await events.karaoke.eventExists(oldState.guild.id, eventId);
@@ -44,14 +44,14 @@ export class VoiceListener extends Listener {
 
 		// Get the event from the database
 		const event = await events.karaoke.getEventWithQueue(eventId);
-		if (isNullish(event)) return;
+		if (isNullOrUndefined(event)) return;
 
 		// Mute new joins
 		if (
 			newState.channel?.type === ChannelType.GuildVoice && //
 			!newState.serverMute &&
 			newState.channelId === eventId &&
-			isNullish(oldState.channel)
+			isNullOrUndefined(oldState.channel)
 		) {
 			await newState.setMute(true);
 			return;
@@ -78,7 +78,7 @@ export class VoiceListener extends Listener {
 			if (queue.length === 0) return;
 
 			const textChannel = (await newState.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
-			if (isNullish(textChannel)) return;
+			if (isNullOrUndefined(textChannel)) return;
 
 			// Rotate queue if the person to leave was speaking
 			if (queue[0].id === newState.id || queue[0].partnerId === newState.id) {
@@ -88,7 +88,7 @@ export class VoiceListener extends Listener {
 
 			// Remove user from queue
 			const user = queue.find(({ id, partnerId, eventId }) => eventId === oldState.channelId && (id === oldState.id || partnerId === oldState.id));
-			if (isNullish(user)) return;
+			if (isNullOrUndefined(user)) return;
 
 			await events.karaoke.removeUserFromQueue({ eventId }, { id: user.id, partnerId: user.partnerId ?? undefined });
 
@@ -104,7 +104,7 @@ export class VoiceListener extends Listener {
 		}
 
 		// User joins channel
-		if (!newState.serverMute && newState.channelId === eventId && isNullish(oldState.channel)) {
+		if (!newState.serverMute && newState.channelId === eventId && isNullOrUndefined(oldState.channel)) {
 			await newState.setMute(true);
 		}
 	}

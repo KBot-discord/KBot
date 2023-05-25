@@ -1,9 +1,9 @@
 import { EmbedColors, GENERIC_ERROR } from '#utils/constants';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
 import { channelMention, userMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { EventModule } from '#modules/EventModule';
@@ -106,7 +106,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const { guildId, member } = interaction;
 
 		const eventId = member.voice.channelId;
-		if (isNullish(eventId)) {
+		if (isNullOrUndefined(eventId)) {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
@@ -116,7 +116,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
-		if (isNullish(event)) {
+		if (isNullOrUndefined(event)) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
@@ -169,7 +169,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const { guildId, member } = interaction;
 
 		const eventId = member.voice.channelId;
-		if (isNullish(eventId)) {
+		if (isNullOrUndefined(eventId)) {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
@@ -179,12 +179,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const partner = interaction.options.getMember('partner');
-		if (isNullish(partner)) {
+		if (isNullOrUndefined(partner)) {
 			return interaction.defaultReply('That user is not in this server.');
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
-		if (isNullish(event)) {
+		if (isNullOrUndefined(event)) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
@@ -215,7 +215,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const response = await this.duetConfirmation(textChannel!, member.id, partner.id);
-		if (isNullish(response)) {
+		if (isNullOrUndefined(response)) {
 			return interaction.defaultReply("Your duet partner didn't respond to your join request.");
 		} else if (!response) {
 			return interaction.defaultReply('Your duet partner denied your join request.');
@@ -248,7 +248,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const { member } = interaction;
 
 		const eventId = member.voice.channelId;
-		if (isNullish(eventId)) {
+		if (isNullOrUndefined(eventId)) {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
@@ -258,7 +258,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
-		if (isNullish(event)) {
+		if (isNullOrUndefined(event)) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
@@ -284,7 +284,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const userEntry = event.queue.find((entry) => entry.id === member.id || entry.partnerId === member.id);
-		if (isNullish(userEntry)) {
+		if (isNullOrUndefined(userEntry)) {
 			return interaction.defaultReply('You are not in the queue.');
 		}
 
@@ -310,7 +310,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const { karaoke } = this.module;
 
 		const eventId = interaction.member.voice.channelId;
-		if (isNullish(eventId)) {
+		if (isNullOrUndefined(eventId)) {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
@@ -320,7 +320,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
-		if (isNullish(event)) {
+		if (isNullOrUndefined(event)) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});

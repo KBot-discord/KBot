@@ -1,18 +1,17 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
 import { ScheduledTaskEvents } from '@sapphire/plugin-scheduled-tasks';
-import type { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 
 @ApplyOptions<Listener.Options>({
 	event: ScheduledTaskEvents.ScheduledTaskError
 })
-export class ErrorListener extends Listener {
-	public async run(error: Error, task: ScheduledTask, payload: unknown): Promise<void> {
-		const { name, location } = task;
+export class ErrorListener extends Listener<typeof ScheduledTaskEvents.ScheduledTaskError> {
+	public async run(error: unknown, task: string, payload: unknown): Promise<void> {
+		const taskPiece = this.container.stores.get('scheduled-tasks').get('task');
 
-		this.container.logger.sentryError(error, {
-			message: `Encountered error on scheduled task "${name}" at path "${location.full}"`,
-			context: { task, payload }
-		});
+		let message = `Encountered error on scheduled task "${task}"`;
+		if (taskPiece) message += ` at path "${taskPiece.location.full}"`;
+
+		this.container.logger.sentryError(error, { message, context: { task, payload } });
 	}
 }

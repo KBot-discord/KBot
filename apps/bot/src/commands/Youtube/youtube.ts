@@ -5,9 +5,9 @@ import { KBotCommand } from '#extensions/KBotCommand';
 import { MeiliCategories } from '#types/Meili';
 import { YoutubeCustomIds } from '#utils/customIds';
 import { KBotErrors } from '#types/Enums';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { isNullish } from '@sapphire/utilities';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import { ActionRowBuilder, channelMention, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js';
 import type { APISelectMenuOption } from 'discord-api-types/v10';
@@ -216,7 +216,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			const channels = await this.module.subscriptions.getByGuild({
 				guildId: interaction.guildId
 			});
-			if (isNullish(channels)) return interaction.respond([]);
+			if (isNullOrUndefined(channels)) return interaction.respond([]);
 
 			options = channels.map(({ channelId, channel }) => ({
 				name: channel.name,
@@ -272,7 +272,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		const channel = await this.container.prisma.holodexChannel.findUnique({
 			where: { youtubeId: accountId }
 		});
-		if (isNullish(channel)) {
+		if (isNullOrUndefined(channel)) {
 			return interaction.errorReply('An account with that ID was not found');
 		}
 
@@ -486,11 +486,11 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 	}
 
 	private async buildRoleReactionMessage(subscriptions: YoutubeSubscriptionWithChannel[]): Promise<BaseMessageOptions> {
-		const relevantSubscriptions = subscriptions.filter(({ roleId, memberRoleId }) => !isNullish(roleId) || !isNullish(memberRoleId));
+		const relevantSubscriptions = subscriptions.filter(({ roleId, memberRoleId }) => !isNullOrUndefined(roleId) || !isNullOrUndefined(memberRoleId));
 
 		const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [];
-		const subscriptionsWithRoleIds = subscriptions.filter(({ roleId }) => !isNullish(roleId));
-		const subscriptionsWithMemberRoleIds = subscriptions.filter(({ memberRoleId }) => !isNullish(memberRoleId));
+		const subscriptionsWithRoleIds = subscriptions.filter(({ roleId }) => !isNullOrUndefined(roleId));
+		const subscriptionsWithMemberRoleIds = subscriptions.filter(({ memberRoleId }) => !isNullOrUndefined(memberRoleId));
 
 		let roleString = '';
 		if (subscriptionsWithRoleIds.length > 0 && subscriptionsWithMemberRoleIds.length > 0) {

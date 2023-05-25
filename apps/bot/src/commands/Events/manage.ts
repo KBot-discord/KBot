@@ -3,9 +3,9 @@ import { BlankSpace, EmbedColors, GENERIC_ERROR, KBotEmoji } from '#utils/consta
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors } from '#types/Enums';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { isNullish } from '@sapphire/utilities';
 import { channelMention, time, userMention } from '@discordjs/builders';
 import { EmbedBuilder } from 'discord.js';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
@@ -193,7 +193,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			const channelData = await Promise.all(events.map(async ({ id }) => interaction.guild.channels.fetch(id)));
 
 			const eventOptions: ApplicationCommandOptionChoiceData[] = channelData //
-				.filter((e) => !isNullish(e))
+				.filter((e) => !isNullOrUndefined(e))
 				.map((channel) => ({ name: channel!.name, value: channel!.id }));
 
 			return interaction.respond(eventOptions);
@@ -205,7 +205,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const discordEventOptions: ApplicationCommandOptionChoiceData[] = discordEvents
-			.filter((event) => !isNullish(event.channelId))
+			.filter((event) => !isNullOrUndefined(event.channelId))
 			.map((event) => ({ name: event.name, value: event.id }));
 
 		return interaction.respond(discordEventOptions);
@@ -292,11 +292,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		// TODO: check validation
 		const discordEvent = (await interaction.guild.scheduledEvents.fetch(discordEventId)) as GuildScheduledEvent | undefined;
-		if (isNullish(discordEvent)) {
+		if (isNullOrUndefined(discordEvent)) {
 			return interaction.errorReply('That is not a valid discord event.');
 		}
 
-		if (isNullish(discordEvent.channelId) || isNullish(discordEvent.channel)) {
+		if (isNullOrUndefined(discordEvent.channelId) || isNullOrUndefined(discordEvent.channel)) {
 			return interaction.defaultReply('There is no channel set for that Discord event.');
 		}
 
@@ -383,7 +383,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const eventId = interaction.options.getString('event', true);
 		const member = interaction.options.getMember('user');
 
-		if (isNullish(member)) {
+		if (isNullOrUndefined(member)) {
 			return interaction.errorReply('That user is not in this server.');
 		}
 
@@ -392,12 +392,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.errorReply('There is no karaoke event to add a user to.');
 		}
 
-		if (isNullish(member.voice.channel) || member.voice.channelId !== eventId) {
+		if (isNullOrUndefined(member.voice.channel) || member.voice.channelId !== eventId) {
 			return interaction.errorReply('That user is not in the event channel.');
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
-		if (isNullish(event)) {
+		if (isNullOrUndefined(event)) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
@@ -454,7 +454,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		const eventId = interaction.options.getString('event', true);
 		const member = interaction.options.getMember('user');
 
-		if (isNullish(member)) {
+		if (isNullOrUndefined(member)) {
 			return interaction.errorReply('That user is not in this server.');
 		}
 
@@ -463,12 +463,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.errorReply('There is no karaoke event to remove a user from.');
 		}
 
-		if (isNullish(member.voice.channel) || member.voice.channelId !== eventId) {
+		if (isNullOrUndefined(member.voice.channel) || member.voice.channelId !== eventId) {
 			return interaction.errorReply('That user is not in the event channel.');
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
-		if (isNullish(event)) {
+		if (isNullOrUndefined(event)) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
@@ -494,7 +494,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const userEntry = event.queue.find((e) => e.id === member.id);
-		if (isNullish(userEntry)) {
+		if (isNullOrUndefined(userEntry)) {
 			return interaction.defaultReply('That user is not in the queue.');
 		}
 

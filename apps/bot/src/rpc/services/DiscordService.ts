@@ -2,6 +2,7 @@ import { authenticated, catchServerError } from '#rpc/middlewares';
 import { canManageGuild, getGuildIcon, getUserAvatarUrl } from '#utils/discord';
 import { UnauthenticatedError } from '#rpc/errors';
 import { assertManagePermissions } from '#rpc/utils';
+import { isNullOrUndefined } from '#utils/functions';
 import {
 	DiscordGuild,
 	DiscordChannel,
@@ -20,7 +21,6 @@ import {
 	GetDiscordUserRequest
 } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import { ChannelType } from 'discord.js';
 import * as connect from '@bufbuild/connect';
 import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
@@ -70,7 +70,7 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 
 			const channels = fetchedChannels
 				.filter((channel) => {
-					return !isNullish(channel) && (channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildAnnouncement);
+					return !isNullOrUndefined(channel) && (channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildAnnouncement);
 				})
 				.map(
 					(channel) =>
@@ -95,7 +95,7 @@ class DiscordServiceImpl implements ServiceImpl<typeof DiscordService> {
 			const channelCollection = await guild.channels.fetch();
 			const channels = channelCollection
 				.filter((channel) => {
-					return !isNullish(channel) && (channel.type === ChannelType.GuildVoice || channel.type === ChannelType.GuildStageVoice);
+					return !isNullOrUndefined(channel) && (channel.type === ChannelType.GuildVoice || channel.type === ChannelType.GuildStageVoice);
 				})
 				.map(
 					(channel) =>

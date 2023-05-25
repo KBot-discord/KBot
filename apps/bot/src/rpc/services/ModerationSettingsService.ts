@@ -1,5 +1,6 @@
 import { authenticated, catchServerError } from '#rpc/middlewares';
 import { assertManagePermissions } from '#rpc/utils';
+import { isNullOrUndefined } from '#utils/functions';
 import {
 	GetModerationSettingsResponse,
 	UpdateModerationSettingsResponse,
@@ -10,7 +11,6 @@ import {
 	fromOptional
 } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
@@ -30,7 +30,7 @@ class ModerationSettingsServiceImpl implements ServiceImpl<typeof ModerationSett
 
 		return assertManagePermissions(guildId, auth, async ({ guild }) => {
 			const settings = await moderation.settings.get(guild.id);
-			if (isNullish(settings)) {
+			if (isNullOrUndefined(settings)) {
 				return new GetModerationSettingsResponse({ settings: undefined });
 			}
 

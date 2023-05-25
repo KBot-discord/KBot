@@ -1,5 +1,6 @@
 import { authenticated, catchServerError } from '#rpc/middlewares';
 import { assertManagePermissions } from '#rpc/utils';
+import { isNullOrUndefined } from '#utils/functions';
 import {
 	GetUtilitySettingsResponse,
 	UpdateUtilitySettingsResponse,
@@ -10,7 +11,6 @@ import {
 	fromOptional
 } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
@@ -27,7 +27,7 @@ class UtilitySettingsServiceImpl implements ServiceImpl<typeof UtilitySettingsSe
 
 		return assertManagePermissions(guildId, auth, async ({ guild }) => {
 			const settings = await utility.settings.get(guild.id);
-			if (isNullish(settings)) {
+			if (isNullOrUndefined(settings)) {
 				return new GetUtilitySettingsResponse({ settings: undefined });
 			}
 

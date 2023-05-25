@@ -1,6 +1,5 @@
 import { ModerationModule } from '#modules/ModerationModule';
-import { isNullish } from '@sapphire/utilities';
-import { container } from '@sapphire/framework';
+import { isNullOrUndefined } from '#utils/functions';
 import type { GuildMember } from 'discord.js';
 import type { ModerationSettings } from '@kbotdev/database';
 
@@ -11,7 +10,7 @@ export class MinageHandler {
 		if (
 			!this.settings.enabled || //
 			!this.member.kickable ||
-			isNullish(this.settings.minAccountAgeReq) ||
+			isNullOrUndefined(this.settings.minAccountAgeReq) ||
 			this.settings.minAccountAgeReq === 0
 		) {
 			return false;
@@ -23,14 +22,10 @@ export class MinageHandler {
 		const { reqAge, reqDate } = this.calculateAge(req);
 		if (createdAt <= reqAge) return false;
 
-		try {
-			await this.member.send({ embeds: [ModerationModule.formatMinageEmbed(this.member, msg, req, reqDate)] }).catch(() => null);
-			await this.member.kick(`Account too new. Required age: ${req}, Account age: ${Math.floor((Date.now() - createdAt) / 86400000)}`);
-			return true;
-		} catch (err: unknown) {
-			container.logger.error(err);
-			return false;
-		}
+		await this.member.send({ embeds: [ModerationModule.formatMinageEmbed(this.member, msg, req, reqDate)] }).catch(() => null);
+		await this.member.kick(`Account too new. Required age: ${req}, Account age: ${Math.floor((Date.now() - createdAt) / 86400000)}`);
+
+		return true;
 	}
 
 	private calculateAge(req: number): {

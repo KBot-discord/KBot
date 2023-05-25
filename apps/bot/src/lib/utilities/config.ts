@@ -1,5 +1,4 @@
-import { flattenObject } from '#utils/functions';
-import { isNullOrUndefinedOrEmpty } from '@sapphire/utilities';
+import { flattenObject, isNullOrUndefinedOrEmpty } from '#utils/functions';
 import type { ClientConfig } from '#types/Config';
 
 export function validateConfig(config: ClientConfig): boolean {

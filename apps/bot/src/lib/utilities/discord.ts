@@ -1,7 +1,7 @@
+import { isNullOrUndefined } from '#utils/functions';
 import { CreditType } from '#utils/customIds';
 import { EmbedColors, GuildEmoteSlots, KBotEmoji } from '#utils/constants';
 import { EmbedBuilder, MessageType, User, isJSONEncodable } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
 import { roleMention, time, userMention } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
@@ -89,14 +89,14 @@ export async function canManageGuild(guild: Guild, member: GuildMember | null): 
 		if (!settings) return false;
 
 		return member.permissions.has(PermissionFlagsBits.ManageGuild);
-	} catch (err: unknown) {
-		container.logger.error(err);
+	} catch (error: unknown) {
+		container.logger.sentryError(error);
 		return false;
 	}
 }
 
 export function isWebhookMessage(message: Message): boolean {
-	if (isNullish(message.webhookId)) return false;
+	if (isNullOrUndefined(message.webhookId)) return false;
 	return message.type === MessageType.Default;
 }
 

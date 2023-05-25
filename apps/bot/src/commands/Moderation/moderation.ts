@@ -1,11 +1,11 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { isNullish } from '@sapphire/utilities';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { APIEmbedField } from 'discord-api-types/v10';
 import type { ModerationSettings } from '@kbotdev/prisma';
@@ -173,10 +173,10 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		const bot = await members.fetchMe();
 		const fields: APIEmbedField[] = [];
 
-		if (!isNullish(settings)) {
-			if (!isNullish(settings.reportChannelId)) {
+		if (!isNullOrUndefined(settings)) {
+			if (!isNullOrUndefined(settings.reportChannelId)) {
 				const report = await channels.fetch(settings.reportChannelId);
-				if (!isNullish(report)) {
+				if (!isNullOrUndefined(report)) {
 					const reportViewChannel = bot.permissionsIn(report).has(PermissionFlagsBits.ViewChannel);
 					const reportSendMessage = bot.permissionsIn(report).has(PermissionFlagsBits.SendMessages);
 					const reportEmbedLinks = bot.permissionsIn(report).has(PermissionFlagsBits.EmbedLinks);

@@ -1,15 +1,15 @@
 import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
+import { isNullOrUndefined } from '#utils/functions';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
 import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { isNullish } from '@sapphire/utilities';
 import type { Channel, GuildChannel, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 export class ChannelValidator {
 	public async canSendEmbeds(
 		channel: Channel | GuildChannel | GuildTextBasedChannel | null
 	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {
-		if (isNullish(channel) || !channel.isTextBased() || channel.isDMBased()) {
+		if (isNullOrUndefined(channel) || !channel.isTextBased() || channel.isDMBased()) {
 			return {
 				result: false,
 				error: new ChannelPermissionsError({ channel: undefined })
@@ -55,7 +55,7 @@ export class ChannelValidator {
 	public async canModerateVoice(
 		channel: StageChannel | VoiceChannel | null
 	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {
-		if (isNullish(channel) || !channel.isVoiceBased()) {
+		if (isNullOrUndefined(channel) || !channel.isVoiceBased()) {
 			return {
 				result: false,
 				error: new ChannelPermissionsError({ channel: undefined })

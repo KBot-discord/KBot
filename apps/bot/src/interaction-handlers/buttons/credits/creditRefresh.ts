@@ -1,9 +1,9 @@
-import { CreditCustomIds, parseCustomId, CreditType } from '#utils/customIds';
+import { CreditCustomIds, CreditType } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { getResourceFromType } from '#utils/discord';
+import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { isNullish } from '@sapphire/utilities';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { EmbedBuilder, ButtonInteraction } from 'discord.js';
 import { Time } from '@sapphire/duration';
@@ -38,7 +38,7 @@ export class ButtonHandler extends InteractionHandler {
 		}
 
 		const settings = await this.container.utility.settings.get(interaction.guildId);
-		if (isNullish(settings) || !settings.enabled) {
+		if (isNullOrUndefined(settings) || !settings.enabled) {
 			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
 			return this.none();
 		}

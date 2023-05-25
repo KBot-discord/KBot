@@ -1,10 +1,10 @@
 import { EmbedColors } from '#utils/constants';
-import { CreditCustomIds, CreditFields, parseCustomId } from '#utils/customIds';
+import { CreditCustomIds, CreditFields } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
+import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
-import { isNullish } from '@sapphire/utilities';
 import type { CreditImageEditModal } from '#types/CustomIds';
 import type { APIEmbedField } from 'discord-api-types/v10';
 
@@ -42,7 +42,7 @@ export class ModalHandler extends InteractionHandler {
 		}
 
 		const settings = await this.container.utility.settings.get(modal.guildId);
-		if (isNullish(settings) || !settings.enabled) {
+		if (isNullOrUndefined(settings) || !settings.enabled) {
 			await modal.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
 			return this.none();
 		}

@@ -65,11 +65,12 @@ export class HolodexTask extends ScheduledTask {
 
 				const dupes = channels.filter((ch) => ch.twitch === channel.twitch!);
 
-				logger.error(`New Twitch ID conflict found for: ${channel.twitch!}. Please add an entry to config.holodex.twitchConflicts`);
-
-				for (const dupe of dupes) {
-					logger.error(`${dupe.name} (ID: ${dupe.id})`);
-				}
+				await logger.webhookError((builder) =>
+					builder
+						.setAuthor('Holodex Twitch conflict error')
+						.setTitle('Please add an entry to config.holodex.twitchConflicts')
+						.setDescription(dupes.map((entry) => `${entry.name} (ID: ${entry.id})`).join('\n'))
+				);
 			}
 		}
 

@@ -2,13 +2,13 @@ import { getMemberAvatarUrl } from '#utils/discord';
 import { EmbedColors, GENERIC_ERROR } from '#utils/constants';
 import { ReportHandler, ReportButtons } from '#structures/handlers/ReportHandler';
 import { KBotErrors } from '#types/Enums';
-import { ReportCustomIds } from '#utils/customIds/report';
 import { KBotCommand } from '#extensions/KBotCommand';
+import { ReportCustomIds } from '#utils/customIds';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplicationCommandType, ButtonStyle, MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
 import { channelMention, userMention } from '@discordjs/builders';
-import { isNullish } from '@sapphire/utilities';
 import { CommandOptionsRunTypeEnum, container } from '@sapphire/framework';
 import type { GuildMember, GuildTextBasedChannel, Message, MessageCreateOptions } from 'discord.js';
 import type { APIEmbedField } from 'discord-api-types/v10';
@@ -55,19 +55,19 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		const message = interaction.options.getMessage('message', true);
 
 		const settings = await this.module.settings.get(interaction.guildId);
-		if (isNullish(settings)) {
+		if (isNullOrUndefined(settings)) {
 			this.container.logger.sentryMessage('Failed to fetch moderation settings', {
 				context: { guildId: interaction.guildId }
 			});
 			return interaction.errorReply(GENERIC_ERROR);
 		}
 
-		if (isNullish(settings.reportChannelId)) {
+		if (isNullOrUndefined(settings.reportChannelId)) {
 			return interaction.defaultReply('No report channel is set. Please run `/moderation set report_channel`.');
 		}
 
 		const reportChannel = (await interaction.guild.channels.fetch(settings.reportChannelId)) as GuildTextBasedChannel | null;
-		if (isNullish(reportChannel)) {
+		if (isNullOrUndefined(reportChannel)) {
 			return interaction.errorReply("The current report channel doesn't exist. Please set a new one with `/moderation set report_channel`.");
 		}
 

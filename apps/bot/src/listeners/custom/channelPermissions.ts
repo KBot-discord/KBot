@@ -7,7 +7,7 @@ import type { InteractionResponseUnion } from '#types/Augments';
 @ApplyOptions<Listener.Options>({
 	event: KBotErrors.ChannelPermissions
 })
-export class ErrorListener extends Listener<typeof KBotErrors.ChannelPermissions> {
+export class CustomListener extends Listener<typeof KBotErrors.ChannelPermissions> {
 	public async run({ interaction, error }: ChannelPermissionsPayload): Promise<InteractionResponseUnion> {
 		return interaction.errorReply(error.userMessage, true);
 	}
