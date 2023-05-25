@@ -1011,7 +1011,7 @@ __metadata:
     "@sapphire/fetch": ^2.4.1
     "@sapphire/framework": ^4.4.3
     "@sapphire/plugin-api": ^5.0.4
-    "@sapphire/plugin-scheduled-tasks": ^7.0.0
+    "@sapphire/plugin-scheduled-tasks": ^7.1.0
     "@sentry/integrations": ^7.52.1
     "@sentry/node": ^7.52.1
     "@sentry/types": ^7.52.1
@@ -1590,15 +1590,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sapphire/plugin-scheduled-tasks@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@sapphire/plugin-scheduled-tasks@npm:7.0.0"
+"@sapphire/plugin-scheduled-tasks@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@sapphire/plugin-scheduled-tasks@npm:7.1.0"
   dependencies:
     "@sapphire/stopwatch": ^1.5.0
-    "@sapphire/utilities": ^3.11.1
-    bullmq: ^3.12.0
-    tslib: ^2.5.0
-  checksum: 3f0b94c7ef78831219a9c1a2d28ac1cbe0a503cb870ae0db7088a9e9090dd7ff54bee5bfbee39d834438f993e9d1fb04536223342d1fd0e12db416edd6432af5
+    "@sapphire/utilities": ^3.11.2
+    bullmq: 3.14.0
+    tslib: ^2.5.2
+  checksum: 008ca8ed5d4d68ed9e89e5df02f43b6a7cea8703480a6d68e2d933eb8aa156c42fbbad6a84eb9883973c25f893d41f90f550626bf7f82ed91353310c1b35b03a
   languageName: node
   linkType: hard
 
@@ -2903,7 +2903,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:^3.12.0, bullmq@npm:^3.13.4":
+"bullmq@npm:3.14.0":
+  version: 3.14.0
+  resolution: "bullmq@npm:3.14.0"
+  dependencies:
+    cron-parser: ^4.6.0
+    glob: ^8.0.3
+    ioredis: ^5.3.2
+    lodash: ^4.17.21
+    msgpackr: ^1.6.2
+    semver: ^7.3.7
+    tslib: ^2.0.0
+    uuid: ^9.0.0
+  checksum: ca388f9e062c374df22b2e06ffdcef4b0fcd6ddbd92af49aa5cde35eed7599698b096d00f4059f24a52802e3e5901d52bdcf00ae63ac27f857c2d4fb9d2da69f
+  languageName: node
+  linkType: hard
+
+"bullmq@npm:^3.13.4":
   version: 3.13.4
   resolution: "bullmq@npm:3.13.4"
   dependencies:
@@ -8212,6 +8228,13 @@ __metadata:
   version: 2.5.1
   resolution: "tslib@npm:2.5.1"
   checksum: 535e41e956b32d21aeff007a2c74989d1a6bf3fecb2b0141d80e5b9920bf90e23b4f0cd3772704bc03637c762dbdc1a314d75a407dd7189afbe3e83d80df9392
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "tslib@npm:2.5.2"
+  checksum: 4d3c1e238b94127ed0e88aa0380db3c2ddae581dc0f4bae5a982345e9f50ee5eda90835b8bfba99b02df10a5734470be197158c36f9129ac49fdc14a6a9da222
   languageName: node
   linkType: hard
 
