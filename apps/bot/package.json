@@ -82,13 +82,15 @@
 		"#structures/*": "./dist/lib/structures/*.js",
 		"#types/*": "./dist/lib/types/*.js",
 		"#utils/*": "./dist/lib/utilities/*.js",
-		"#utils/customIds": "./dist/lib/utilities/customIds/index.js",
 		"#utils/validators": "./dist/lib/utilities/validators/index.js",
 		"#modules/*": "./dist/modules/*.js",
+		"#rpc/errors": "./dist/rpc/errors/index.js",
+		"#rpc/errors/*": "./dist/rpc/errors/*.js",
 		"#rpc/middlewares": "./dist/rpc/middlewares/index.js",
 		"#rpc/middlewares/*": "./dist/rpc/middlewares/*.js",
 		"#rpc/services": "./dist/rpc/services/index.js",
 		"#rpc/services/*": "./dist/rpc/services/*.js",
-		"#rpc/server": "./dist/rpc/server.js"
+		"#rpc/server": "./dist/rpc/server.js",
+		"#rpc/utils": "./dist/rpc/utils.js"
 	}
 }

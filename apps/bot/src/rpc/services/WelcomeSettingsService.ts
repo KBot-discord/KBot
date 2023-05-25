@@ -1,5 +1,5 @@
-import { authenticated } from '#rpc/middlewares';
-import { canManageGuild } from '#utils/discord';
+import { authenticated, catchServerError } from '#rpc/middlewares';
+import { assertManagePermissions } from '#rpc/utils';
 import {
 	GetWelcomeSettingsResponse,
 	UpdateWelcomeSettingsResponse,
@@ -11,7 +11,7 @@ import {
 } from '@kbotdev/proto';
 import { container } from '@sapphire/framework';
 import { isNullish } from '@sapphire/utilities';
-import { Code, ConnectError, type HandlerContext } from '@bufbuild/connect';
+import * as connect from '@bufbuild/connect';
 import type { ServiceImpl, ConnectRouter } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
@@ -21,20 +21,12 @@ export function registerWelcomeSettingsService(router: ConnectRouter): void {
 
 class WelcomeSettingsServiceImpl implements ServiceImpl<typeof WelcomeSettingsService> {
 	@authenticated()
-	public async getWelcomeSettings({ guildId }: GetWelcomeSettingsRequest, { auth, error }: HandlerContext): Promise<GetWelcomeSettingsResponse> {
-		const { logger, client, welcome } = container;
-		if (error) throw error;
-		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
+	@catchServerError()
+	public async getWelcomeSettings({ guildId }: GetWelcomeSettingsRequest, { auth }: connect.HandlerContext): Promise<GetWelcomeSettingsResponse> {
+		const { welcome } = container;
 
-		const guild = client.guilds.cache.get(guildId);
-		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
-
-		const canManage = await canManageGuild(guild, member);
-		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
-
-		try {
-			const settings = await welcome.settings.get(guildId);
+		return assertManagePermissions(guildId, auth, async ({ guild }) => {
+			const settings = await welcome.settings.get(guild.id);
 			if (isNullish(settings)) {
 				return new GetWelcomeSettingsResponse({ settings: undefined });
 			}
@@ -52,30 +44,19 @@ class WelcomeSettingsServiceImpl implements ServiceImpl<typeof WelcomeSettingsSe
 			};
 
 			return new GetWelcomeSettingsResponse(data);
-		} catch (err: unknown) {
-			logger.error(err);
-			throw new ConnectError('Internal server error', Code.Internal);
-		}
+		});
 	}
 
 	@authenticated()
+	@catchServerError()
 	public async updateWelcomeSettings(
 		{ guildId, enabled, channelId, message, title, description, image, color }: UpdateWelcomeSettingsRequest,
-		{ auth, error }: HandlerContext
+		{ auth }: connect.HandlerContext
 	): Promise<UpdateWelcomeSettingsResponse> {
-		const { logger, client, welcome } = container;
-		if (error) throw error;
-		if (!auth) throw new ConnectError('Unauthenticated', Code.Unauthenticated);
+		const { welcome } = container;
 
-		const guild = client.guilds.cache.get(guildId);
-		const member = await guild?.members.fetch(auth.id).catch(() => null);
-		if (!guild || !member) throw new ConnectError('Bad request', Code.Aborted);
-
-		const canManage = await canManageGuild(guild, member);
-		if (!canManage) throw new ConnectError('Unauthorized', Code.PermissionDenied);
-
-		try {
-			const settings = await welcome.settings.upsert(guildId, {
+		return assertManagePermissions(guildId, auth, async ({ guild }) => {
+			const settings = await welcome.settings.upsert(guild.id, {
 				enabled: fromRequired(enabled),
 				channelId: fromOptional(channelId),
 				message: fromOptional(message),
@@ -98,9 +79,6 @@ class WelcomeSettingsServiceImpl implements ServiceImpl<typeof WelcomeSettingsSe
 			};
 
 			return new UpdateWelcomeSettingsResponse(data);
-		} catch (err: unknown) {
-			logger.error(err);
-			throw new ConnectError('Internal server error', Code.Internal);
-		}
+		});
 	}
 }
