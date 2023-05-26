@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  bot:
+    image: kbot/bot:latest
+    container_name: kbot
+    env_file:
+      - .env

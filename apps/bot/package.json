@@ -21,7 +21,6 @@
 		"check": "tsc",
 		"dev": "tsup --watch --onSuccess \"yarn start\"",
 		"start": "node --preserve-symlinks --enable-source-maps ./dist/KBot.js",
-		"start:migrate": "yarn db:deploy && yarn start",
 		"lint": "eslint --ext ts src tests && yarn check",
 		"lint:fix": "eslint --fix --ext ts src tests",
 		"format": "prettier --write --loglevel=warn \"{src,tests}/**/*.{js,ts,json}\"",

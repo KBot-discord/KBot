@@ -4,7 +4,7 @@ import type { PreconditionOptions, PreconditionResult } from '@sapphire/framewor
 import type { CommandInteraction, ContextMenuCommandInteraction, Message } from 'discord.js';
 
 @ApplyOptions<PreconditionOptions>({
-	name: 'BotOwner'
+	name: 'BotOwnerOnly'
 })
 export class BotOwnerPrecondition extends Precondition {
 	public override chatInputRun(interaction: CommandInteraction): PreconditionResult {

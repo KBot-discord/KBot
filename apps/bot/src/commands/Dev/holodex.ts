@@ -106,10 +106,15 @@ export class DevCommand extends KBotCommand<DevModule> {
 	public async chatInputConflictList(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const result = await this.container.prisma.twitchConflict.findMany();
 
+		const description: string =
+			result.length > 0 //
+				? result.map(({ channelId }) => channelId).toString()
+				: 'No entries to list';
+
 		const embed = new EmbedBuilder() //
 			.setColor(EmbedColors.Default)
-			.setTitle('The following channels are filtered out')
-			.setDescription(result.map(({ channelId }) => channelId).toString());
+			.setTitle('The following channels are filtered out:')
+			.setDescription(description);
 
 		return interaction.editReply({ embeds: [embed] });
 	}
