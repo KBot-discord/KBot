@@ -589,14 +589,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docsearch/css@npm:3.4.0, @docsearch/css@npm:^3.3.4":
+"@docsearch/css@npm:3.4.0, @docsearch/css@npm:^3.3.5":
   version: 3.4.0
   resolution: "@docsearch/css@npm:3.4.0"
   checksum: 25984a01ef9d68ab04ce9639e96d3bb3065f360334290be60986fa92414bfa4ac5474503bd6d4c543d5c46b67a4cba1cb9a0a950c13689a773c865160c91ba3f
   languageName: node
   linkType: hard
 
-"@docsearch/js@npm:^3.3.4":
+"@docsearch/js@npm:^3.3.5":
   version: 3.4.0
   resolution: "@docsearch/js@npm:3.4.0"
   dependencies:
@@ -980,12 +980,12 @@ __metadata:
     "@kbotdev/eslint-config": "workspace:^"
     "@kbotdev/prettier-config": "workspace:^"
     "@kbotdev/ts-config": "workspace:^"
-    "@types/node": ^20.1.7
-    eslint: ^8.40.0
+    "@types/node": ^20.2.4
+    eslint: ^8.41.0
     husky: ^8.0.3
     lint-staged: ^13.2.2
     prettier: ^2.8.8
-    schemix: ^1.12.0
+    schemix: ^1.13.0
     turbo: 1.9.9
     typescript: ^5.0.4
     vitest: ^0.31.1
@@ -1009,26 +1009,26 @@ __metadata:
     "@sapphire/decorators": ^6.0.1
     "@sapphire/discord.js-utilities": ^6.1.0
     "@sapphire/fetch": ^2.4.1
-    "@sapphire/framework": ^4.4.3
+    "@sapphire/framework": ^4.4.4
     "@sapphire/plugin-api": ^5.0.4
     "@sapphire/plugin-scheduled-tasks": ^7.1.0
-    "@sentry/integrations": ^7.52.1
-    "@sentry/node": ^7.52.1
-    "@sentry/types": ^7.52.1
+    "@sentry/integrations": ^7.53.1
+    "@sentry/node": ^7.53.1
+    "@sentry/types": ^7.53.1
     "@skyra/gifenc": ^1.0.1
-    "@swc/core": ^1.3.58
+    "@swc/core": ^1.3.60
     "@types/humanize-duration": ^3.27.1
-    bullmq: ^3.13.4
+    bullmq: ^3.14.0
     canvas: 2.11.2
-    canvas-constructor: ^7.0.0
+    canvas-constructor: ^7.0.1
     colorette: ^2.0.20
     discord-api-types: ^0.37.42
     discord.js: ^14.11.0
     dotenv: ^16.0.3
-    eslint: ^8.40.0
+    eslint: ^8.41.0
     fuzzysort: ^2.0.4
     humanize-duration: ^3.28.0
-    meilisearch: ^0.32.3
+    meilisearch: ^0.32.4
     prettier: ^2.8.8
     prisma: ^4.14.1
     prom-client: ^14.2.0
@@ -1046,7 +1046,7 @@ __metadata:
     "@kbotdev/prisma": "workspace:^"
     "@kbotdev/redis": "workspace:^"
     "@sapphire/utilities": ^3.11.2
-    eslint: ^8.40.0
+    eslint: ^8.41.0
     prettier: ^2.8.8
     typescript: ^5.0.4
   languageName: unknown
@@ -1057,7 +1057,7 @@ __metadata:
   resolution: "@kbotdev/docs@workspace:apps/docs"
   dependencies:
     sitemap: ^7.1.1
-    vitepress: 1.0.0-alpha.75
+    vitepress: 1.0.0-beta.1
   languageName: unknown
   linkType: soft
 
@@ -1065,12 +1065,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/eslint-config@workspace:packages/eslint-config"
   dependencies:
-    "@types/node": ^20.1.7
-    "@typescript-eslint/eslint-plugin": ^5.59.6
-    "@typescript-eslint/parser": ^5.59.6
-    eslint: ^8.40.0
+    "@types/node": ^20.2.4
+    "@typescript-eslint/eslint-plugin": ^5.59.7
+    "@typescript-eslint/parser": ^5.59.7
+    eslint: ^8.41.0
     eslint-config-prettier: ^8.8.0
-    eslint-config-turbo: ^1.9.7
+    eslint-config-turbo: ^1.9.9
     eslint-import-resolver-typescript: ^3.5.5
     eslint-plugin-import: ^2.27.5
     eslint-plugin-prettier: ^4.2.1
@@ -1086,7 +1086,7 @@ __metadata:
   resolution: "@kbotdev/holodex@workspace:packages/holodex"
   dependencies:
     "@sapphire/fetch": ^2.4.1
-    eslint: ^8.40.0
+    eslint: ^8.41.0
     prettier: ^2.8.8
     tsup: ^6.7.0
   languageName: unknown
@@ -1114,7 +1114,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/prettier-config@workspace:packages/prettier-config"
   dependencies:
-    eslint: ^8.40.0
+    eslint: ^8.41.0
     prettier: ^2.8.8
     tsup: ^6.7.0
   languageName: unknown
@@ -1125,11 +1125,11 @@ __metadata:
   resolution: "@kbotdev/prisma@workspace:packages/prisma"
   dependencies:
     "@prisma/client": ^4.14.1
-    "@types/node": ^20.1.7
-    eslint: ^8.40.0
+    "@types/node": ^20.2.4
+    eslint: ^8.41.0
     prettier: ^2.8.8
     prisma: ^4.14.1
-    schemix: ^1.12.0
+    schemix: ^1.13.0
     ts-node: ^10.9.1
     typescript: ^5.0.4
   languageName: unknown
@@ -1141,8 +1141,8 @@ __metadata:
   dependencies:
     "@bufbuild/protoc-gen-connect-es": ^0.9.0
     "@bufbuild/protoc-gen-es": ^1.2.0
-    "@swc/core": ^1.3.58
-    eslint: ^8.40.0
+    "@swc/core": ^1.3.60
+    eslint: ^8.41.0
     prettier: ^2.8.8
     tsup: ^6.7.0
   languageName: unknown
@@ -1164,7 +1164,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/redis@workspace:packages/redis"
   dependencies:
-    eslint: ^8.40.0
+    eslint: ^8.41.0
     ioredis: ^5.3.2
     prettier: ^2.8.8
     tsup: ^6.7.0
@@ -1190,15 +1190,15 @@ __metadata:
     "@kbotdev/eslint-config": "workspace:^"
     "@kbotdev/proto": "workspace:^"
     "@sapphire/plugin-api": ^5.0.4
-    "@skeletonlabs/skeleton": ^1.5.1
+    "@skeletonlabs/skeleton": ^1.6.2
     "@sveltejs/adapter-node": ^1.2.4
     "@sveltejs/kit": ^1.18.0
-    "@sveltejs/vite-plugin-svelte": ^2.2.0
+    "@sveltejs/vite-plugin-svelte": ^2.3.0
     "@tailwindcss/forms": ^0.5.3
     autoprefixer: ^10.4.14
     discord-api-types: ^0.37.42
     discord.js: ^14.11.0
-    eslint: ^8.40.0
+    eslint: ^8.41.0
     eslint-plugin-svelte3: ^4.0.0
     postcss: ^8.4.23
     prettier: ^2.8.8
@@ -1209,7 +1209,7 @@ __metadata:
     svelte-meta-tags: ^2.7.2
     svelte-sitemap: ^2.6.0
     tailwindcss: ^3.3.2
-    vite: ^4.3.7
+    vite: ^4.3.8
     vitest: ^0.31.1
   languageName: unknown
   linkType: soft
@@ -1529,7 +1529,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sapphire/framework@npm:^4.4.3":
+"@sapphire/framework@npm:^4.4.4":
   version: 4.4.4
   resolution: "@sapphire/framework@npm:4.4.4"
   dependencies:
@@ -1660,7 +1660,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/integrations@npm:^7.52.1":
+"@sentry/integrations@npm:^7.53.1":
   version: 7.53.1
   resolution: "@sentry/integrations@npm:7.53.1"
   dependencies:
@@ -1672,7 +1672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:^7.52.1":
+"@sentry/node@npm:^7.53.1":
   version: 7.53.1
   resolution: "@sentry/node@npm:7.53.1"
   dependencies:
@@ -1688,7 +1688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.53.1, @sentry/types@npm:^7.52.1":
+"@sentry/types@npm:7.53.1, @sentry/types@npm:^7.53.1":
   version: 7.53.1
   resolution: "@sentry/types@npm:7.53.1"
   checksum: 5f76d7d66d5df5d48f66a755e18ae133ea02a9405093b652eb4921ca62c3114343561a2d8067f2be6d9df8dd32d10e30d3ce58150f795600680e6230fb136681
@@ -1705,7 +1705,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@skeletonlabs/skeleton@npm:^1.5.1":
+"@skeletonlabs/skeleton@npm:^1.6.2":
   version: 1.6.2
   resolution: "@skeletonlabs/skeleton@npm:1.6.2"
   dependencies:
@@ -1777,7 +1777,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/vite-plugin-svelte@npm:^2.1.1, @sveltejs/vite-plugin-svelte@npm:^2.2.0":
+"@sveltejs/vite-plugin-svelte@npm:^2.1.1, @sveltejs/vite-plugin-svelte@npm:^2.3.0":
   version: 2.3.0
   resolution: "@sveltejs/vite-plugin-svelte@npm:2.3.0"
   dependencies:
@@ -1865,7 +1865,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.3.58":
+"@swc/core@npm:^1.3.60":
   version: 1.3.60
   resolution: "@swc/core@npm:1.3.60"
   dependencies:
@@ -2020,7 +2020,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.1.7":
+"@types/node@npm:*":
   version: 20.2.3
   resolution: "@types/node@npm:20.2.3"
   checksum: 576065e8fc1fa45798c8f59a6bf809169582d04abc2e25fab1a048ffc734975b9992ae31be0d960cf705a21fb37112f7fcde11aa322beddf7491e73d5a5a988c
@@ -2031,6 +2031,13 @@ __metadata:
   version: 17.0.45
   resolution: "@types/node@npm:17.0.45"
   checksum: aa04366b9103b7d6cfd6b2ef64182e0eaa7d4462c3f817618486ea0422984c51fc69fd0d436eae6c9e696ddfdbec9ccaa27a917f7c2e8c75c5d57827fe3d95e8
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.2.4":
+  version: 20.2.4
+  resolution: "@types/node@npm:20.2.4"
+  checksum: 6bc45fdc1c1c0c0e03ca9aded926a5ce0f5e8154ae476a996f22832c530a8c909cfa2979b0b08c506477e836910f8b888bbe6eb9ebb698c4cd6f1f602456a9d4
   languageName: node
   linkType: hard
 
@@ -2087,7 +2094,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.59.6":
+"@typescript-eslint/eslint-plugin@npm:^5.59.7":
   version: 5.59.7
   resolution: "@typescript-eslint/eslint-plugin@npm:5.59.7"
   dependencies:
@@ -2111,7 +2118,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.59.6":
+"@typescript-eslint/parser@npm:^5.59.7":
   version: 5.59.7
   resolution: "@typescript-eslint/parser@npm:5.59.7"
   dependencies:
@@ -2217,7 +2224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^4.2.1":
+"@vitejs/plugin-vue@npm:^4.2.3":
   version: 4.2.3
   resolution: "@vitejs/plugin-vue@npm:4.2.3"
   peerDependencies:
@@ -2407,7 +2414,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:^10.1.0":
+"@vueuse/core@npm:10.1.2, @vueuse/core@npm:^10.1.2":
   version: 10.1.2
   resolution: "@vueuse/core@npm:10.1.2"
   dependencies:
@@ -2416,6 +2423,55 @@ __metadata:
     "@vueuse/shared": 10.1.2
     vue-demi: ">=0.14.0"
   checksum: a18286495f4dc0783c3251455a1636d4913381204059e72e8d8ed02c63d4f911ebe2cbb1e9526fdca73640bb5b47bd6bd9b5842a501614f0aeab4bc721fc92a4
+  languageName: node
+  linkType: hard
+
+"@vueuse/integrations@npm:^10.1.2":
+  version: 10.1.2
+  resolution: "@vueuse/integrations@npm:10.1.2"
+  dependencies:
+    "@vueuse/core": 10.1.2
+    "@vueuse/shared": 10.1.2
+    vue-demi: ">=0.14.0"
+  peerDependencies:
+    async-validator: "*"
+    axios: "*"
+    change-case: "*"
+    drauu: "*"
+    focus-trap: "*"
+    fuse.js: "*"
+    idb-keyval: "*"
+    jwt-decode: "*"
+    nprogress: "*"
+    qrcode: "*"
+    sortablejs: "*"
+    universal-cookie: "*"
+  peerDependenciesMeta:
+    async-validator:
+      optional: true
+    axios:
+      optional: true
+    change-case:
+      optional: true
+    drauu:
+      optional: true
+    focus-trap:
+      optional: true
+    fuse.js:
+      optional: true
+    idb-keyval:
+      optional: true
+    jwt-decode:
+      optional: true
+    nprogress:
+      optional: true
+    qrcode:
+      optional: true
+    sortablejs:
+      optional: true
+    universal-cookie:
+      optional: true
+  checksum: 6f4a1f5edaf213b2cc494fabb56ffbdee67a302b5c1062d8121e9454666f5bc8d8d7b68ccea8ad8721d6c45dfd43954a88d5633bece0d90be3938f449b8c2171
   languageName: node
   linkType: hard
 
@@ -2905,7 +2961,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:3.14.0, bullmq@npm:^3.13.4":
+"bullmq@npm:3.14.0, bullmq@npm:^3.14.0":
   version: 3.14.0
   resolution: "bullmq@npm:3.14.0"
   dependencies:
@@ -3032,7 +3088,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"canvas-constructor@npm:^7.0.0":
+"canvas-constructor@npm:^7.0.1":
   version: 7.0.1
   resolution: "canvas-constructor@npm:7.0.1"
   dependencies:
@@ -3945,7 +4001,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-turbo@npm:^1.9.7":
+"eslint-config-turbo@npm:^1.9.9":
   version: 1.9.9
   resolution: "eslint-config-turbo@npm:1.9.9"
   dependencies:
@@ -4084,7 +4140,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.40.0":
+"eslint@npm:^8.41.0":
   version: 8.41.0
   resolution: "eslint@npm:8.41.0"
   dependencies:
@@ -4369,6 +4425,15 @@ __metadata:
   version: 3.2.7
   resolution: "flatted@npm:3.2.7"
   checksum: 427633049d55bdb80201c68f7eb1cbd533e03eac541f97d3aecab8c5526f12a20ccecaeede08b57503e772c769e7f8680b37e8d482d1e5f8d7e2194687f9ea35
+  languageName: node
+  linkType: hard
+
+"focus-trap@npm:^7.4.2":
+  version: 7.4.3
+  resolution: "focus-trap@npm:7.4.3"
+  dependencies:
+    tabbable: ^6.1.2
+  checksum: 3426a46b6e3c487e4fc6d6ddfd53b1cb2f9ec4e64857bb502a9661bb765276b4be89172477177a1569812e2b733e541f6780da72cdead2f7f0961a6a5c430a85
   languageName: node
   linkType: hard
 
@@ -5814,7 +5879,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"meilisearch@npm:^0.32.3":
+"meilisearch@npm:^0.32.4":
   version: 0.32.4
   resolution: "meilisearch@npm:0.32.4"
   dependencies:
@@ -6015,7 +6080,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minisearch@npm:^6.0.1":
+"minisearch@npm:^6.1.0":
   version: 6.1.0
   resolution: "minisearch@npm:6.1.0"
   checksum: c169e9d917afc2812c2302d2291e6b12f3c6fcd8fbbbaa11ac524a0fd220a0e8e0c5fc82845a6b9e13a14de0908d9810f3c0affca200a02bf4abfa485241940f
@@ -7205,10 +7270,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"schemix@npm:^1.12.0":
-  version: 1.12.0
-  resolution: "schemix@npm:1.12.0"
-  checksum: 3b7cfc81979538b267789552e77d5a58c89c777c2d419168de11bc7284977317c656d5b5fa6c4d7efe21ae95437573c98d41155fb45713e90ea774ded0fdfc95
+"schemix@npm:^1.13.0":
+  version: 1.13.0
+  resolution: "schemix@npm:1.13.0"
+  checksum: e909d124794b1b9ed7ff4e7c9c242fcab740483968fb4ec72225e7c84e9e88ee628f89bffdaf4f316d4618da149ca56948dfa7a86825b16ed16f2e7c60dbe62a
   languageName: node
   linkType: hard
 
@@ -7886,6 +7951,13 @@ __metadata:
     "@pkgr/utils": ^2.3.1
     tslib: ^2.5.0
   checksum: 8a9560e5d8f3d94dc3cf5f7b9c83490ffa30d320093560a37b88f59483040771fd1750e76b9939abfbb1b5a23fd6dfbae77f6b338abffe7cae7329cd9b9bb86b
+  languageName: node
+  linkType: hard
+
+"tabbable@npm:^6.1.2":
+  version: 6.1.2
+  resolution: "tabbable@npm:6.1.2"
+  checksum: 1e2d9af4f172a3793f491bab10263c26903c2be6a5c4ab723d69d1ba2054828d22a50add9ba7fc42735468871d40054d906fa4f0a9dc2fbd4feff875e84c1a89
   languageName: node
   linkType: hard
 
@@ -8575,7 +8647,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.0.0 || ^4.0.0, vite@npm:^4.3.3, vite@npm:^4.3.7":
+"vite@npm:^3.0.0 || ^4.0.0, vite@npm:^4.3.8":
   version: 4.3.8
   resolution: "vite@npm:4.3.8"
   dependencies:
@@ -8624,24 +8696,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:1.0.0-alpha.75":
-  version: 1.0.0-alpha.75
-  resolution: "vitepress@npm:1.0.0-alpha.75"
+"vitepress@npm:1.0.0-beta.1":
+  version: 1.0.0-beta.1
+  resolution: "vitepress@npm:1.0.0-beta.1"
   dependencies:
-    "@docsearch/css": ^3.3.4
-    "@docsearch/js": ^3.3.4
-    "@vitejs/plugin-vue": ^4.2.1
+    "@docsearch/css": ^3.3.5
+    "@docsearch/js": ^3.3.5
+    "@vitejs/plugin-vue": ^4.2.3
     "@vue/devtools-api": ^6.5.0
-    "@vueuse/core": ^10.1.0
+    "@vueuse/core": ^10.1.2
+    "@vueuse/integrations": ^10.1.2
     body-scroll-lock: 4.0.0-beta.0
+    focus-trap: ^7.4.2
     mark.js: 8.11.1
-    minisearch: ^6.0.1
+    minisearch: ^6.1.0
     shiki: ^0.14.2
-    vite: ^4.3.3
-    vue: ^3.2.47
+    vite: ^4.3.8
+    vue: ^3.3.4
   bin:
     vitepress: bin/vitepress.js
-  checksum: eb146a65477ed90033ee9dd04ef18bb2188178a7f44a22b00715f325508ec78ec1cb771ca87cd2d1a05ed156b8dd214800c3b24567a9054ca2ad84b1d76d5b55
+  checksum: bbb2c666cf7640662e6d565d51175140a87681015c7cf49954f2f9fead5e56c16490c39baac0e46211253ea175c1b6f5bd6be092bf254a3d06a643b37b9b533e
   languageName: node
   linkType: hard
 
@@ -8736,7 +8810,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.2.47":
+"vue@npm:^3.3.4":
   version: 3.3.4
   resolution: "vue@npm:3.3.4"
   dependencies:
