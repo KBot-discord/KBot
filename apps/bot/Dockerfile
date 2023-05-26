@@ -43,18 +43,17 @@ WORKDIR /app
 
 ## Canvas dependencies
 RUN apk add -q --update cairo jpeg pango giflib && \
-    yarn global add prisma && \
+	yarn global add prisma && \
 	addgroup --system --gid 1001 kbot && \
 	adduser --system --uid 1001 kbot
 
 USER kbot
 
 COPY --from=deps /temp/node_modules node_modules/
-COPY --from=deps /temp/packages packages/
 COPY --from=deps /temp/apps/bot/assets assets/
 COPY --from=deps /temp/packages/prisma/prisma/migrations prisma/migrations/
 COPY --from=deps /temp/packages/prisma/prisma/schema.prisma prisma/schema.prisma
 COPY --from=deps /temp/apps/bot/dist dist/
 COPY --from=deps /temp/apps/bot/package.json ./
 
-CMD ["yarn", "run", "start:migrate"]
+CMD yarn prisma migrate deploy && yarn run start
