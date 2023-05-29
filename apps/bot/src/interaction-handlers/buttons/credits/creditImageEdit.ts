@@ -3,8 +3,7 @@ import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { buildCustomId, isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonInteraction } from 'discord.js';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ActionRowBuilder, ButtonInteraction, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { Time } from '@sapphire/duration';
 import type { Embed } from 'discord.js';
 import type { CreditImageEditModal } from '#types/CustomIds';
@@ -30,20 +29,19 @@ export class ButtonHandler extends InteractionHandler {
 
 	@validCustomId(CreditCustomIds.ImageEdit)
 	@interactionRatelimit(Time.Second * 30, 5)
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.inCachedGuild()) {
-			return this.none();
-		}
-
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
-			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', true);
+			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 

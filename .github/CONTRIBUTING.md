@@ -35,6 +35,22 @@ $ yarn build
 
 ---
 
+## Using devcontainers (VSCode)
+
+Using devcontainers allows you to quickly setup a dev environment and you dont need to manually start the required services. PostgreSQL, Redis, and Meilisearch will be started automatically.
+
+### 1. Customizing the environment
+
+If you wish to customize your devcontainers environment with your dotfiles,
+you can set the `DOTFILES_REPO` environment variable with your dotfiles reportsitory URL. This will run any install script in your dotfiles repo and apply it to the container.
+
+### 2. Build the environment
+
+Open the command palette and select `Dev Containers: Rebuild and Reopen in Container`.
+This will build the `Dockerfile` in `.devcontainer/` along with the settings in `devcontainer.json` and `docker-compose.workspace.yml`.
+
+---
+
 ## Using Docker
 
 For quickly spinning up a development environment, you can run the `docker-compose.dev.yml` file after creating the network.

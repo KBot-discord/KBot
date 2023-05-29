@@ -1,16 +1,16 @@
 import { EmbedColors } from '#utils/constants';
 import { FlagHandler } from '#structures/handlers/FlagHandler';
 import { KBotCommand } from '#extensions/KBotCommand';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { FeatureFlags } from '@kbotdev/prisma';
-import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
+import { FeatureFlags } from '@kbotdev/database';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder, ButtonBuilder } from 'discord.js';
-import type { APISelectMenuOption } from 'discord-api-types/v10';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits, StringSelectMenuBuilder } from 'discord.js';
+import type { APISelectMenuOption } from 'discord.js';
 import type { DevModule } from '#modules/DevModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'DevModule',
+	module: KBotModules.Dev,
 	description: 'Set the feature flags for a guild',
 	preconditions: ['BotOwnerOnly'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],

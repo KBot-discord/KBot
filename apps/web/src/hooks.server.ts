@@ -1,5 +1,4 @@
 import { handleGuildsRoute } from './hooks/guilds';
-// import { handleBlock } from './hooks/block';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/public';
@@ -34,7 +33,8 @@ export const handleAll: Handle = async ({ event, resolve }) => {
 		if (event.url.pathname.startsWith('/guilds')) {
 			return handleGuildsRoute({ event, resolve });
 		}
-	} catch (_err: unknown) {
+	} catch (err: unknown) {
+		console.log(err);
 		event.locals.user = undefined;
 		event.locals.guilds = undefined;
 		event.locals.guild = undefined;

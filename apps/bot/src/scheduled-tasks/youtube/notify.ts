@@ -5,9 +5,9 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, roleMention
 import humanizeDuration from 'humanize-duration';
 import { Time } from '@sapphire/duration';
 import { container } from '@sapphire/framework';
-import type { Channel, APIEmbedField } from 'discord.js';
+import type { APIEmbedField, Channel } from 'discord.js';
 import type { HolodexVideoWithChannel } from '@kbotdev/holodex';
-import type { Key } from '#types/Generic';
+import type { Key } from '@kbotdev/redis';
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'youtubeNotify',
@@ -16,10 +16,6 @@ import type { Key } from '#types/Generic';
 })
 export class YoutubeTask extends ScheduledTask {
 	private readonly streamsKey = 'youtube:streams:list' as Key;
-
-	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
-		super(context, { ...options });
-	}
 
 	public override async run(): Promise<void> {
 		const { prisma, holodex, logger, redis, metrics } = this.container;
@@ -117,9 +113,7 @@ export class YoutubeTask extends ScheduledTask {
 		logger.debug(`[YoutubeTask] Sending notification for ${stream.title}`);
 
 		const membersOnly = stream.topic_id === 'membersonly';
-		const subscriptions = await youtube.subscriptions.getValid({
-			channelId: stream.channel.id
-		});
+		const subscriptions = await youtube.subscriptions.getValid(stream.channel.id);
 
 		const embed = new EmbedBuilder() //
 			.setColor(BrandColors.Youtube)

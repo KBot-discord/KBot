@@ -1,9 +1,8 @@
 import { KBotErrors } from '#types/Enums';
 import { WebhookErrorBuilder } from '#structures/builders/WebhookErrorBuilder';
-import { Logger, Result, container } from '@sapphire/framework';
+import { LogLevel, Logger, Result, container } from '@sapphire/framework';
 import { captureException, captureMessage } from '@sentry/node';
-import { isColorSupported, bgRed, cyan, gray, magenta, red, white, yellow } from 'colorette';
-import { LogLevel } from '@sapphire/framework';
+import { bgRed, cyan, gray, isColorSupported, magenta, red, redBright, white, yellow } from 'colorette';
 import { inspect } from 'util';
 import type { EmbedBuilder } from 'discord.js';
 import type { Color } from 'colorette';
@@ -19,6 +18,10 @@ export class KBotLogger extends Logger {
 		[LogLevel.Fatal, (content: string): string => this.stylize(content, bgRed, 'FATAL')],
 		[LogLevel.None, (content: string): string => this.stylize(content, white, '')]
 	]);
+
+	public infoTag(tag: string, value: string): void {
+		super.info(`[${redBright(tag)}] ${value}`);
+	}
 
 	public sentryMessage(message: string, { context }: { context?: NonNullable<unknown> } = {}): void {
 		super.error(message);
@@ -56,11 +59,9 @@ export class KBotLogger extends Logger {
 			return webhook.send({ embeds: [embed] });
 		});
 
-		if (result.isErr()) {
-			result.inspectErr((error) => {
-				container.client.emit(KBotErrors.WebhookError, error);
-			});
-		}
+		result.inspectErr((error) => {
+			container.client.emit(KBotErrors.WebhookError, error);
+		});
 	}
 
 	public override write(level: LogLevel, ...values: readonly unknown[]): void {

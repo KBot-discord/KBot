@@ -1,5 +1,5 @@
 import { envGetNumber, envGetString, validateConfig } from '#utils/config';
-import { NodeEnvironments } from '#utils/constants';
+import { NodeEnvironments, mainFolder } from '#utils/constants';
 import { container } from '@sapphire/framework';
 import dotenv from 'dotenv';
 import { resolve } from 'path';
@@ -8,11 +8,10 @@ import type { ClientConfig } from '#types/Config';
 export function loadConfig(): void {
 	process.env.NODE_ENV ??= NodeEnvironments.Dev;
 
-	const dirname = new URL('.', import.meta.url).pathname;
-	dotenv.config({ path: resolve(dirname, '../.env') });
+	dotenv.config({ path: resolve(mainFolder, '../.env') });
 	const isDev = envGetString('NODE_ENV') !== NodeEnvironments.Production;
 
-	const clientConfig: ClientConfig = {
+	const config: ClientConfig = {
 		isDev,
 		discord: {
 			token: envGetString('DISCORD_TOKEN'),
@@ -53,16 +52,7 @@ export function loadConfig(): void {
 			apiKey: envGetString('MEILI_APIKEY')
 		},
 		holodex: {
-			apiKey: envGetString('HOLODEX_KEY'),
-			twitchConflicts: [
-				'UCKQi12nOGZsJ5nOuCTHErmA', //
-				'UCkDfBt3R64R2rRIrAQwldeQ',
-				'UCMDaLlGAjEZze-AsGywXJtg',
-				'UCo59TbTB8i1Xt41rE71ll4g',
-				'UC3-Rfh_Ek-s6EUWS4fT5VPw',
-				'UCSaZUKRGXwKLXTAl2_LMALQ',
-				'UC2c8dQYdDadn7tmK_d7o-HQ'
-			]
+			apiKey: envGetString('HOLODEX_KEY')
 		},
 		sentry: {
 			dsn: envGetString('SENTRY_DSN')
@@ -72,10 +62,10 @@ export function loadConfig(): void {
 		}
 	};
 
-	const valid = validateConfig(clientConfig);
+	const valid = validateConfig(config);
 	if (!valid) {
 		throw new Error('Invalid config. Exiting.');
 	}
 
-	container.config = clientConfig;
+	container.config = config;
 }

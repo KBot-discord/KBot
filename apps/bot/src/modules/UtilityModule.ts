@@ -1,24 +1,27 @@
-import { PollService, UtilitySettingsService } from '#services';
+import { DiscordIncidentService, PollService, UtilitySettingsService } from '#services';
 import { CreditCustomIds, CreditFields } from '#utils/customIds';
 import { buildCustomId, isNullOrUndefined } from '#utils/functions';
 import { Module } from '@kbotdev/plugin-modules';
-import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { CreditType } from '#utils/customIds';
 import type { CreditImageModal, CreditModal } from '#types/CustomIds';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import type { KBotModules } from '#types/Enums';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Utility Module'
 })
 export class UtilityModule extends Module {
 	public readonly settings: UtilitySettingsService;
+	public readonly incidents: DiscordIncidentService;
 	public readonly polls: PollService;
 
 	public constructor(context: Module.Context, options: Module.Options) {
 		super(context, options);
 
 		this.settings = new UtilitySettingsService();
+		this.incidents = new DiscordIncidentService();
 		this.polls = new PollService();
 
 		this.container.utility = this;
@@ -28,10 +31,6 @@ export class UtilityModule extends Module {
 		if (isNullOrUndefined(guild)) return false;
 		const settings = await this.settings.get(guild.id).catch(() => null);
 		return isNullOrUndefined(settings) ? false : settings.enabled;
-	}
-
-	public async fetchIncidentChannels(): Promise<{ guildId: string; channelId: string }[]> {
-		return this.settings.getIncidentChannels();
 	}
 
 	public buildCreditModal(channelId: string, resourceId?: string, type?: CreditType): ModalBuilder {
@@ -109,6 +108,6 @@ export class UtilityModule extends Module {
 declare module '@kbotdev/plugin-modules' {
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
-		UtilityModule: never;
+		[KBotModules.Utility]: never;
 	}
 }

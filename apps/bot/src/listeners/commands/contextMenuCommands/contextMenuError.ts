@@ -1,6 +1,5 @@
 import { Events, Listener } from '@sapphire/framework';
-import { RESTJSONErrorCodes } from 'discord-api-types/v10';
-import { DiscordAPIError, HTTPError } from 'discord.js';
+import { DiscordAPIError, HTTPError, RESTJSONErrorCodes } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { ContextMenuCommandErrorPayload } from '@sapphire/framework';
 
@@ -28,6 +27,8 @@ export class CommandListener extends Listener<typeof Events.ContextMenuCommandEr
 			context: payload
 		});
 
-		await interaction.errorReply('There was an error when running your command.', true);
+		await interaction.errorReply('There was an error when running your command.', {
+			tryEphemeral: true
+		});
 	}
 }

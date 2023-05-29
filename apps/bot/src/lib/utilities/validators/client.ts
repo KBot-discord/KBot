@@ -1,4 +1,4 @@
-import type { Channel, PermissionResolvable, Guild } from 'discord.js';
+import type { Channel, Guild, PermissionResolvable } from 'discord.js';
 
 export class ClientValidator {
 	public async hasGuildPermissions(guild: Guild, permissions: PermissionResolvable[]): Promise<boolean> {

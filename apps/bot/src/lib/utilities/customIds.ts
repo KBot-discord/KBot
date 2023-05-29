@@ -1,9 +1,24 @@
 /**
- * Add emote
+ * Eval
  */
-export const AddEmoteCustomIds = {
-	Name: 'addemote-name' as const
+export const EvalCustomIds = {
+	Eval: 'eval-code' as const
 };
+
+export const EvalFields = {
+	Code: 'code-to-eval'
+} as const;
+
+/**
+ * Resources - Add emote/sticker
+ */
+export const ResourceCustomIds = {
+	Name: 'resource-name' as const
+};
+
+export const ResourceFields = {
+	Name: 'resourceName'
+} as const;
 
 /**
  * Credits
@@ -15,15 +30,11 @@ export const enum CreditType {
 
 export const CreditCustomIds = {
 	Create: 'credit-create',
-
 	ResourceRefresh: 'credit-resource-refresh',
-
 	ResourceEdit: 'credit-resource-edit',
 	ImageEdit: 'credit-image-edit',
-
 	ResourceModalCreate: 'credit-resource-mcreate',
 	ImageModalCreate: 'credit-image-mcreate',
-
 	ResourceModalEdit: 'credit-resource-medit',
 	ImageModalEdit: 'credit-image-medit'
 } as const;

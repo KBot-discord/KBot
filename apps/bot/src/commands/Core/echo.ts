@@ -1,14 +1,13 @@
 import { EmbedColors } from '#utils/constants';
-import { KBotErrors } from '#types/Enums';
+import { KBotErrors, KBotModules } from '#types/Enums';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { EmbedBuilder } from 'discord.js';
-import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'CoreModule',
+	module: KBotModules.Core,
 	description: 'Sends the provided text to the selected channel.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {

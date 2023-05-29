@@ -10,15 +10,15 @@
 		"paths": {
 			"#config": ["config.ts"],
 			"#extensions/*": ["lib/extensions/*"],
-			"#hooks/*": ["lib/hooks/*"],
 			"#observability/*": ["lib/observability/*"],
+			"#grpc/*": ["lib/grpc/*"],
 			"#services/*": ["lib/services/*"],
 			"#services": ["lib/services/index.ts"],
 			"#structures/*": ["lib/structures/*"],
 			"#types/*": ["lib/types/*"],
 			"#utils/*": ["lib/utilities/*"],
 			"#modules/*": ["modules/*"],
-			"#rpc/*": ["rpc/*"]
+			"#plugins/*": ["plugins/*"]
 		}
 	},
 	"include": ["src"],

@@ -1,8 +1,7 @@
 import { isNullOrUndefined } from '#utils/functions';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType } from 'discord.js';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ChannelType, PermissionFlagsBits } from 'discord.js';
 import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
 import type { KaraokeUser } from '@kbotdev/database';
 
@@ -34,17 +33,9 @@ export class VoiceListener extends Listener {
 		const settings = await events.settings.get(newState.guild.id);
 		if (isNullOrUndefined(settings) || !settings.enabled) return;
 
-		// Check if the event exists
-		const exists = await events.karaoke.eventExists(oldState.guild.id, eventId);
-		if (!exists) return;
-
-		// Check if the event is active
-		const eventActive = await events.karaoke.eventActive(oldState.guild.id, eventId);
-		if (!eventActive) return;
-
 		// Get the event from the database
 		const event = await events.karaoke.getEventWithQueue(eventId);
-		if (isNullOrUndefined(event)) return;
+		if (isNullOrUndefined(event) || !event.isActive) return;
 
 		// Mute new joins
 		if (

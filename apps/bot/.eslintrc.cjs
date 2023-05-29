@@ -7,6 +7,13 @@ module.exports = {
 	},
 	overrides: [
 		{
+			files: ['./src/interaction-handlers/**/*.ts'],
+			rules: {
+				'@typescript-eslint/explicit-function-return-type': 'off',
+				'@typescript-eslint/explicit-module-boundary-types': 'off'
+			}
+		},
+		{
 			files: ['Augments.ts'],
 			rules: {
 				'no-multi-assign': 'off',

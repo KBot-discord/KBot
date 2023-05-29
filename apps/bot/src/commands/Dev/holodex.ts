@@ -1,15 +1,14 @@
-import { KBotErrors } from '#types/Enums';
+import { KBotErrors, KBotModules } from '#types/Enums';
 import { EmbedColors } from '#utils/constants';
 import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { DevModule } from '#modules/DevModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'DevModule',
+	module: KBotModules.Dev,
 	description: 'Manage the Holodex Twitch conflict list',
 	preconditions: ['BotOwnerOnly'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],

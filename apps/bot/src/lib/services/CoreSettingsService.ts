@@ -1,7 +1,6 @@
 import { container } from '@sapphire/framework';
 import { CoreSettingsRepository } from '@kbotdev/database';
-import type { UpsertCoreSettingsData } from '@kbotdev/database';
-import type { CoreSettings } from '@kbotdev/prisma';
+import type { CoreSettings, UpsertCoreSettingsData } from '@kbotdev/database';
 
 export class CoreSettingsService {
 	private readonly repository: CoreSettingsRepository;

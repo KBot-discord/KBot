@@ -1,25 +1,30 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { isNullOrUndefined } from '#utils/functions';
-import { ChannelType, EmbedBuilder, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
-import { container } from '@sapphire/framework';
+import { DiscordFetchError } from '#structures/errors';
+import { ResultClass } from '#structures/ResultClass';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import { Result, container } from '@sapphire/framework';
 import { roleMention, userMention } from '@discordjs/builders';
 import { KaraokeRepository } from '@kbotdev/database';
 import type {
 	AddToQueueData,
-	RemoveFromQueueData,
 	CreateEventData,
 	CreateScheduledEventData,
+	KaraokeEvent,
 	KaraokeEventId,
-	UpdateEventData,
-	KaraokeEventWithUsers
+	KaraokeEventWithUsers,
+	KaraokeUser,
+	RemoveFromQueueData,
+	UpdateEventData
 } from '@kbotdev/database';
-import type { KaraokeEvent, KaraokeUser } from '@kbotdev/prisma';
-import type { VoiceChannel, StageChannel, Guild, GuildTextBasedChannel, Message, TextChannel, GuildMember, GuildMemberManager } from 'discord.js';
+import type { Guild, GuildMember, GuildMemberManager, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
 
-export class KaraokeService {
+export class KaraokeService extends ResultClass {
 	private readonly repository: KaraokeRepository;
 
 	public constructor() {
+		super();
+
 		this.repository = new KaraokeRepository({
 			database: container.prisma,
 			cache: {
@@ -44,10 +49,6 @@ export class KaraokeService {
 		return this.repository.deleteEvent({ eventId });
 	}
 
-	public async deleteScheduledEvent(guildId: string, eventId: string): Promise<KaraokeEvent | null> {
-		return this.repository.deleteScheduledEvent({ guildId, eventId });
-	}
-
 	public async updateQueueLock(eventId: string, isLocked: boolean): Promise<KaraokeEvent> {
 		return this.repository.updateQueueLock({ eventId }, isLocked);
 	}
@@ -64,16 +65,12 @@ export class KaraokeService {
 		return this.repository.updateEvent(data);
 	}
 
-	public async countEvents(guildId: string): Promise<number> {
-		return this.repository.countEvents({ guildId });
+	public async countEvents(): Promise<number> {
+		return this.repository.countEvents();
 	}
 
-	public async eventExists(guildId: string, eventId: string): Promise<boolean> {
-		return this.repository.eventExists({ guildId, eventId });
-	}
-
-	public async eventActive(guildId: string, eventId: string): Promise<boolean> {
-		return this.repository.eventActive({ guildId, eventId });
+	public async countEventsByGuild(guildId: string): Promise<number> {
+		return this.repository.countEventsByGuild({ guildId });
 	}
 
 	public async addUserToQueue(
@@ -294,100 +291,94 @@ export class KaraokeService {
 
 	public async startEvent(
 		guild: Guild,
-		voiceChannel: StageChannel | VoiceChannel,
+		eventChannel: VoiceBasedChannel,
 		textChannel: GuildTextBasedChannel,
-		stageTopic?: string | null,
-		pingRole?: string | null
-	): Promise<KaraokeEvent | null> {
-		const exists = await this.eventExists(guild.id, voiceChannel.id);
-		if (exists) {
-			container.logger.sentryMessage('Failed to start an event that does not exist', {
-				context: { eventId: voiceChannel.id }
-			});
-			return null;
+		data: {
+			stageTopic?: string | null;
+			roleId?: string | null;
 		}
+	): Promise<Result<KaraokeEvent, Error>> {
+		const { events, validator } = container;
 
-		const eventName = stageTopic ? `${stageTopic}` : 'Karaoke Event';
-		const embed = await this.buildStartEventEmbed(voiceChannel, eventName);
+		return Result.fromAsync(async () => {
+			const eventName = data.stageTopic ?? 'Karaoke Event';
+			const baseEmbed = events.karaokeInstructionsEmbed(eventChannel.id);
+			const embed = await this.setupVoiceChannel(baseEmbed, eventChannel, eventName);
 
-		const announcement = await this.postEventInstructions(voiceChannel, textChannel, embed, pingRole);
+			const message = await this.sendAnnouncement(embed, textChannel, data.roleId);
 
-		await this.setEventExists(guild.id, voiceChannel.id, true);
-		await this.setEventActive(guild.id, voiceChannel.id, true);
-		return this.createEvent({
-			id: voiceChannel.id,
-			guildId: voiceChannel.guildId,
-			textChannelId: textChannel.id,
-			pinMessageId: announcement?.id
+			if (message && !textChannel.isVoiceBased()) {
+				const canPin = await validator.client.hasChannelPermissions(textChannel, [PermissionFlagsBits.ManageMessages]);
+				if (canPin) await message.pin();
+			}
+
+			return this.createEvent({
+				id: eventChannel.id,
+				guildId: guild.id,
+				textChannelId: textChannel.id,
+				pinMessageId: textChannel.isVoiceBased() ? undefined : message?.id
+			});
 		});
 	}
 
-	public async endEvent(guild: Guild, event: KaraokeEvent): Promise<void> {
-		const bot = await guild.members.fetchMe();
-		const voiceChannel = (await guild.channels.fetch(event.id)) as StageChannel | VoiceChannel;
+	public async startScheduledEvent(guild: Guild, event: KaraokeEvent, stageTopic: string): Promise<Result<KaraokeEvent, Error>> {
+		const { events, validator } = container;
 
-		await this.setEventExists(event.guildId, event.id, false);
-		await this.setEventActive(event.guildId, event.id, false);
-		await this.deleteEvent(event.id);
+		return Result.fromAsync(async () => {
+			const [eventChannel, textChannel] = await this.fetchEventChannels(guild, event.id, event.textChannelId);
 
-		if (voiceChannel.type === ChannelType.GuildStageVoice && voiceChannel.stageInstance) {
-			await voiceChannel.stageInstance.delete();
-		} else {
-			const result = voiceChannel.permissionsFor(bot).has(PermissionFlagsBits.MuteMembers);
-			if (result) {
-				await Promise.all(
-					voiceChannel.members //
-						.filter((member) => member.voice.serverMute)
-						.map(async (member) => member.voice.setMute(false))
-				);
+			const baseEmbed = events.karaokeInstructionsEmbed(event.id);
+			const embed = await this.setupVoiceChannel(baseEmbed, eventChannel, stageTopic);
+
+			const message = await this.sendAnnouncement(embed, textChannel, event.roleId);
+
+			if (message && !textChannel.isVoiceBased()) {
+				const canPin = await validator.client.hasChannelPermissions(textChannel, [PermissionFlagsBits.ManageMessages]);
+				if (canPin) await message.pin();
 			}
-		}
 
-		if (event.pinMessageId) {
-			const channel = (await voiceChannel.client.channels.fetch(event.textChannelId)) as TextChannel;
-			const canUnpin: boolean = !channel.isVoiceBased() && channel.permissionsFor(bot).has(PermissionFlagsBits.ManageMessages);
-
-			if (canUnpin) {
-				const message = await channel.messages.fetch(event.pinMessageId);
-				await message.unpin().catch(() => null);
-			}
-		}
+			return this.updateEvent({
+				id: event.id,
+				textChannelId: textChannel.id,
+				isActive: true,
+				locked: false,
+				discordEventId: null,
+				roleId: null,
+				pinMessageId: message?.id
+			});
+		});
 	}
 
-	public async startScheduledEvent(guild: Guild, event: KaraokeEvent, eventName: string): Promise<KaraokeEvent | null> {
-		const exists = await this.eventExists(guild.id, event.id);
-		if (!exists) {
-			container.logger.sentryMessage('Failed to start a scheduled event that does not exist', {
-				context: { eventId: event.id }
-			});
-			return null;
-		}
+	public async endEvent(guild: Guild, event: KaraokeEvent): Promise<Result<undefined, Error>> {
+		const { validator } = container;
 
-		const [voiceChannel, textChannel] = await Promise.all([
-			guild.channels.fetch(event.id) as Promise<StageChannel | VoiceChannel>, //
-			guild.channels.fetch(event.textChannelId) as Promise<GuildTextBasedChannel>
-		]);
+		return Result.fromAsync(async () => {
+			const [eventChannel, textChannel] = await this.fetchEventChannels(guild, event.id, event.textChannelId);
 
-		const embed = await this.buildStartEventEmbed(voiceChannel, eventName);
-
-		if (!isNullOrUndefined(event.discordEventId)) {
-			const discordEvent = await guild.scheduledEvents.fetch(event.discordEventId);
-			if (!isNullOrUndefined(discordEvent) && discordEvent.status === GuildScheduledEventStatus.Scheduled) {
-				await discordEvent.setStatus(GuildScheduledEventStatus.Active);
+			if (eventChannel.type === ChannelType.GuildStageVoice && eventChannel.stageInstance) {
+				await eventChannel.stageInstance.delete();
+			} else {
+				const canMute = await validator.client.hasChannelPermissions(eventChannel, [PermissionFlagsBits.MuteMembers]);
+				if (canMute) {
+					await Promise.allSettled(
+						eventChannel.members //
+							.filter((member) => member.voice.serverMute)
+							.map(async (member) => member.voice.setMute(false))
+					);
+				}
 			}
-		}
 
-		const announcement = await this.postEventInstructions(voiceChannel, textChannel, embed, event.roleId);
+			if (event.pinMessageId && !textChannel.isVoiceBased()) {
+				const canUnpin = await validator.client.hasChannelPermissions(textChannel, [PermissionFlagsBits.ManageMessages]);
+				if (canUnpin) {
+					const message = await textChannel.messages.fetch(event.pinMessageId);
+					await message.unpin().catch(() => null);
+				}
+			}
 
-		await this.setEventActive(guild.id, event.id, true);
-		return this.updateEvent({
-			id: voiceChannel.id,
-			textChannelId: textChannel.id,
-			isActive: true,
-			locked: false,
-			discordEventId: null,
-			roleId: null,
-			pinMessageId: announcement?.id
+			await this.deleteEvent(event.id);
+
+			return this.ok();
 		});
 	}
 
@@ -415,14 +406,6 @@ export class KaraokeService {
 		return embed;
 	}
 
-	private async setEventExists(guildId: string, eventId: string, exists: boolean): Promise<void> {
-		return this.repository.setEventExists({ guildId, eventId }, exists);
-	}
-
-	private async setEventActive(guildId: string, eventId: string, active: boolean): Promise<void> {
-		return this.repository.setEventActive({ guildId, eventId }, active);
-	}
-
 	private async rotate(memberManager: GuildMemberManager, event: KaraokeEventWithUsers): Promise<KaraokeEventWithUsers> {
 		const { queue } = event;
 
@@ -443,60 +426,6 @@ export class KaraokeService {
 		return event;
 	}
 
-	private async buildStartEventEmbed(voiceChannel: StageChannel | VoiceChannel, eventName: string): Promise<EmbedBuilder> {
-		const embed = new EmbedBuilder();
-		if (voiceChannel.type === ChannelType.GuildStageVoice) {
-			if (isNullOrUndefined(voiceChannel.stageInstance)) {
-				embed.setTitle(`Event: ${eventName}`);
-				await voiceChannel.createStageInstance({ topic: eventName });
-			} else {
-				embed.setTitle(`Event: ${voiceChannel.stageInstance.topic}`);
-			}
-		} else {
-			embed.setTitle('Event: Karaoke Event');
-
-			if (voiceChannel.members.size > 0)
-				await Promise.all(
-					voiceChannel.members.map(async (member) => {
-						await member.voice.setMute(true);
-					})
-				);
-		}
-		return embed;
-	}
-
-	private async postEventInstructions(
-		voiceChannel: StageChannel | VoiceChannel,
-		textChannel: GuildTextBasedChannel,
-		embed: EmbedBuilder,
-		roleId?: string | null
-	): Promise<Message | undefined> {
-		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
-		if (!result) return undefined;
-
-		const announcement = await textChannel.send({
-			content: `${roleId ? roleMention(roleId) : ''} A karaoke event has started!`,
-			embeds: [
-				embed.setColor(EmbedColors.Default).addFields(
-					{ name: '**Voice channel:** ', value: `<#${voiceChannel.id}>` },
-					{ name: '**Text channel:** ', value: `<#${textChannel.id}>`, inline: true },
-					{
-						name: '**Instructions:**',
-						value: `**1.** Join the karaoke queue by running the \`\`/karaoke join\`\` slash command. The updated queue list will be shown in <#${textChannel.id}>
-								**2.** Once your turn comes up, you will be invited to become a speaker on the stage.
-								**3.** After singing, you can either leave the stage by muting your mic, clicking the "Move to audience" button, leaving the stage, or running the \`\`/karaoke leave\`\` slash command.`
-					}
-				)
-			],
-			allowedMentions: { roles: roleId ? [roleId] : [] }
-		});
-
-		const bot = await textChannel.guild.members.fetchMe();
-		const canPin: boolean = !textChannel.isVoiceBased() && textChannel.permissionsFor(bot).has(PermissionFlagsBits.ManageMessages);
-
-		return canPin ? announcement.pin() : undefined;
-	}
-
 	private async sendEmbed(textChannel: GuildTextBasedChannel, event: KaraokeEventWithUsers, content: string, mentions: string[]): Promise<void> {
 		await textChannel.send({
 			content,
@@ -507,5 +436,56 @@ export class KaraokeService {
 		await textChannel.send({
 			embeds: [embed]
 		});
+	}
+
+	private async sendAnnouncement(embed: EmbedBuilder, textChannel: GuildTextBasedChannel, roleId?: string | null): Promise<Message | null> {
+		return textChannel
+			.send({
+				content: `${roleId ? roleMention(roleId) : ''} A karaoke event has started!`,
+				embeds: [embed],
+				allowedMentions: { roles: roleId ? [roleId] : [] }
+			})
+			.catch(() => null);
+	}
+
+	private async setupVoiceChannel(embed: EmbedBuilder, eventChannel: VoiceBasedChannel, eventName: string): Promise<EmbedBuilder> {
+		if (eventChannel.type === ChannelType.GuildStageVoice) {
+			if (isNullOrUndefined(eventChannel.stageInstance)) {
+				embed.setTitle(`Event: ${eventName}`);
+				await eventChannel.createStageInstance({ topic: eventName });
+			} else {
+				embed.setTitle(`Event: ${eventChannel.stageInstance.topic}`);
+			}
+		} else {
+			embed.setTitle('Event: Karaoke Event');
+
+			if (eventChannel.members.size > 0) {
+				await Promise.allSettled(
+					eventChannel.members.map(async (member) => member.voice.setMute(true)) //
+				);
+			}
+		}
+
+		return embed;
+	}
+
+	private async fetchEventChannels(guild: Guild, eventId: string, textChannelId: string): Promise<[VoiceBasedChannel, GuildTextBasedChannel]> {
+		const eventChannel = (await guild.channels.fetch(eventId)) as VoiceBasedChannel | null;
+		if (!eventChannel) {
+			throw new DiscordFetchError({
+				message: 'Failed to fetch event voice channel',
+				resourceId: eventId
+			});
+		}
+
+		const textChannel = (await guild.channels.fetch(textChannelId)) as GuildTextBasedChannel | null;
+		if (!textChannel) {
+			throw new DiscordFetchError({
+				message: 'Failed to fetch event text channel',
+				resourceId: textChannelId
+			});
+		}
+
+		return [eventChannel, textChannel];
 	}
 }

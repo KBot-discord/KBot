@@ -1,17 +1,16 @@
-import type { MeilisearchClient } from '#extensions/MeiliClient';
-import type { Message, InteractionResponse } from 'discord.js';
+import type { MeilisearchClient } from '@kbotdev/meili';
+import type { APIMessage, InteractionResponse, Message } from 'discord.js';
 import type { KBotMetrics } from '#observability/KBotMetrics';
-import type { APIMessage } from 'discord-api-types/v10';
 import type { ClientConfig } from '#types/Config';
 import type { RedisClient } from '@kbotdev/redis';
-import type { PrismaClient } from '@kbotdev/prisma';
+import type { PrismaClient } from '@kbotdev/database';
 import type { Validator } from '#utils/validators';
 import type { CoreModule } from '#modules/CoreModule';
 import type { EventModule } from '#modules/EventModule';
 import type { ModerationModule } from '#modules/ModerationModule';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { WelcomeModule } from '#modules/WelcomeModule';
-import type { YoutubeModule } from '#modules/YoutubeModule';
+import type { YoutubeModule } from '#modules/YouTubeModule';
 import type { Holodex } from '@kbotdev/holodex';
 import type { KBotErrors } from '#types/Enums';
 import type { ChannelPermissionsPayload, UnknownCommandPayload } from '#types/Errors';
@@ -19,6 +18,10 @@ import type { AuthData } from '@sapphire/plugin-api';
 import type { WebhookErrorBuilder } from '#structures/builders/WebhookErrorBuilder';
 
 export type InteractionResponseUnion = APIMessage | InteractionResponse | Message | void;
+
+export type ReplyArgs = [text: string, options?: { tryEphemeral?: boolean }];
+
+export type FollowupArgs = [text: string, options?: { ephemeral?: boolean }];
 
 declare module 'discord.js' {
 	interface Client {
@@ -32,33 +35,33 @@ declare module 'discord.js' {
 	}
 
 	interface CommandInteraction {
-		defaultReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
-		successReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
-		errorReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
+		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
-		defaultFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
-		successFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
-		errorFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
+		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 
 	interface MessageComponentInteraction {
-		defaultReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
-		successReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
-		errorReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
+		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
-		defaultFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
-		successFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
-		errorFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
+		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 
 	interface ModalSubmitInteraction {
-		defaultReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
-		successReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
-		errorReply(text: string, tryEphemeral?: boolean): Promise<InteractionResponseUnion>;
+		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
-		defaultFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
-		successFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
-		errorFollowup(text: string, ephemeral?: boolean): Promise<InteractionResponseUnion>;
+		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 }
 
@@ -84,6 +87,7 @@ declare module '@sapphire/pieces' {
 
 declare module '@sapphire/framework' {
 	interface ILogger {
+		infoTag(tag: string, value: string): void;
 		sentryMessage(message: string, data?: { context?: NonNullable<unknown> }): void;
 		sentryError(error: unknown, data?: { message?: string; context?: NonNullable<unknown> }): void;
 		webhookError(builder: (builder: WebhookErrorBuilder) => WebhookErrorBuilder): Promise<void>;

@@ -1,11 +1,11 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Listener, Events } from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.ShardReady
 })
 export class ShardListener extends Listener<typeof Events.ShardReady> {
 	public override run(shardId: number): void {
-		this.container.logger.info(`[Shard ${shardId}] ready.`);
+		this.container.logger.infoTag(`Shard ${shardId}`, 'Ready.');
 	}
 }

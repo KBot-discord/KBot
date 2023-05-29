@@ -1,11 +1,11 @@
 import { imageFolder } from '#utils/constants';
 import { getMemberAvatarUrl } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage } from 'canvas-constructor/cairo';
-import { AttachmentBuilder } from 'discord.js';
+import { ApplicationCommandType, AttachmentBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { join } from 'node:path';
 import { readdirSync } from 'fs';
@@ -19,7 +19,7 @@ type PatOptions = {
 };
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'CoreModule',
+	module: KBotModules.Core,
 	description: 'Creates a pat gif of the member.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {

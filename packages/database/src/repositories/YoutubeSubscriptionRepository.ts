@@ -11,7 +11,7 @@ import type {
 export class YoutubeSubscriptionRepository {
 	private readonly database: PrismaClient;
 
-	public constructor({ database }: ServiceOptions) {
+	public constructor({ database }: Omit<ServiceOptions, 'cache'>) {
 		this.database = database;
 	}
 

@@ -2,6 +2,7 @@ import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { KaraokeCustomIds } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { isNullOrUndefined, parseCustomId } from '#utils/functions';
+import { KBotEmoji } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
@@ -18,16 +19,6 @@ export class ButtonHandler extends InteractionHandler {
 	): Promise<void> {
 		const { karaoke } = this.container.events;
 
-		const exists = await karaoke.eventExists(interaction.guildId, eventId);
-		if (!exists) {
-			return void interaction.defaultFollowup('There is no event to change the lock for. Run `/manage karaoke menu` to see the updated menu.', true);
-		}
-
-		const active = await karaoke.eventActive(interaction.guildId, eventId);
-		if (!active) {
-			return void interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
-		}
-
 		const event = await karaoke.getEvent(eventId);
 		if (!event) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
@@ -36,36 +27,61 @@ export class ButtonHandler extends InteractionHandler {
 			return;
 		}
 
+		if (!event.isActive) {
+			return void interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', {
+				ephemeral: true
+			});
+		}
+
 		if (shouldLock && event.locked) {
-			return void interaction.defaultFollowup('Queue is already locked.', true);
+			return void interaction.defaultFollowup('Queue is already locked.', {
+				ephemeral: true
+			});
 		}
 		if (!shouldLock && !event.locked) {
-			return void interaction.defaultFollowup('Queue is already unlocked.', true);
+			return void interaction.defaultFollowup('Queue is already unlocked.', {
+				ephemeral: true
+			});
 		}
 
 		const updatedEvent = await karaoke.updateQueueLock(eventId, !event.locked);
+		const lockString = updatedEvent.locked //
+			? `${KBotEmoji.Locked} locked`
+			: `${KBotEmoji.Unlocked} unlocked`;
 
-		const updatedPage = KaraokeEventMenu.pageUpdateLock(menu, updatedEvent);
-		await menu.updatePage(updatedPage);
+		await menu.updateMenuPage(interaction, (builder) => {
+			return builder.editEmbed(0, (embed) => {
+				const index = embed.data.fields!.indexOf({
+					name: 'Queue lock:',
+					value: String(!updatedEvent.locked),
+					inline: true
+				});
+
+				return embed.spliceFields(index, 1, {
+					name: 'Queue lock:',
+					value: lockString,
+					inline: true
+				});
+			});
+		});
 	}
 
 	@validCustomId(KaraokeCustomIds.Lock, KaraokeCustomIds.Unlock)
 	@interactionRatelimit(Time.Second * 5, 1)
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.inCachedGuild()) {
-			return this.none();
-		}
-
-		const menu = KaraokeEventMenu.handlers.get(interaction.user.id);
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
+		const menu = KaraokeEventMenu.getInstance(interaction.user.id);
 		if (isNullOrUndefined(menu)) {
-			await interaction.defaultReply('Please run `/manage karaoke menu` again.', true);
+			await interaction.defaultReply('Please run `/manage karaoke menu` again.', {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 
 		const settings = await this.container.events.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, true);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 

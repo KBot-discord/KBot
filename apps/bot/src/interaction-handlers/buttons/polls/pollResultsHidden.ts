@@ -4,7 +4,7 @@ import { validCustomId } from '#utils/decorators';
 import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { EmbedBuilder, ButtonInteraction } from 'discord.js';
+import { ButtonInteraction, EmbedBuilder } from 'discord.js';
 import type { GuildTextBasedChannel } from 'discord.js';
 import type { PollMenuButton } from '#types/CustomIds';
 
@@ -18,15 +18,12 @@ export class ButtonHandler extends InteractionHandler {
 			utility: { polls }
 		} = this.container;
 
-		const active = await polls.isActive({
-			guildId: interaction.guildId,
-			pollId
-		});
+		const active = await polls.isActive(interaction.guildId, pollId);
 		if (!active) {
 			return void interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
 		}
 
-		const poll = await polls.get({ pollId });
+		const poll = await polls.get(pollId);
 		if (isNullOrUndefined(poll)) {
 			return void interaction.errorReply('There was an error when trying to show the poll results.');
 		}
@@ -41,10 +38,7 @@ export class ButtonHandler extends InteractionHandler {
 			return void interaction.errorReply("The poll doesn't exist anymore.");
 		}
 
-		const votes = await polls.getVotes({
-			guildId: interaction.guildId,
-			pollId
-		});
+		const votes = await polls.getVotes(interaction.guildId, pollId);
 		const results = polls.calculateResults(poll, votes);
 
 		await interaction.editReply({
@@ -60,15 +54,12 @@ export class ButtonHandler extends InteractionHandler {
 	}
 
 	@validCustomId(PollCustomIds.ResultsHidden)
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.inCachedGuild()) {
-			return this.none();
-		}
-
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 

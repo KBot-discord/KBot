@@ -3,16 +3,15 @@ import { getGuildIcon } from '#utils/discord';
 import { WelcomeModule } from '#modules/WelcomeModule';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { isNullOrUndefined } from '#utils/functions';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { channelMention, EmbedBuilder } from 'discord.js';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits, channelMention } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { APIEmbedField } from 'discord-api-types/v10';
-import type { InteractionEditReplyOptions, ColorResolvable } from 'discord.js';
-import type { WelcomeSettings } from '@kbotdev/prisma';
+import type { APIEmbedField, ColorResolvable, InteractionEditReplyOptions } from 'discord.js';
+import type { WelcomeSettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'WelcomeModule',
+	module: KBotModules.Welcome,
 	description: 'Edit the settings of the welcome module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {

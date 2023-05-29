@@ -3,7 +3,7 @@ import { validCustomId } from '#utils/decorators';
 import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { PermissionFlagsBits, roleMention, StringSelectMenuInteraction } from 'discord.js';
+import { PermissionFlagsBits, StringSelectMenuInteraction, roleMention } from 'discord.js';
 import type { HolodexChannel } from '@kbotdev/database';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -14,9 +14,7 @@ export class ButtonHandler extends InteractionHandler {
 		interaction: StringSelectMenuInteraction<'cached'>,
 		{ selectedChannels, member }: InteractionHandler.ParseResult<this>
 	): Promise<void> {
-		const subscriptions = await this.container.youtube.subscriptions.getByGuild({
-			guildId: interaction.guildId
-		});
+		const subscriptions = await this.container.youtube.subscriptions.getByGuild(interaction.guildId);
 
 		const invalidRoleIds: Set<string> = new Set();
 		const userRoles = interaction.member.roles.cache;
@@ -68,7 +66,7 @@ export class ButtonHandler extends InteractionHandler {
 				`I was not able to add/remove the following roles due to them being higher than my highest role:\n\n${[...invalidRoleIds.values()]
 					.map((roleId) => roleMention(roleId))
 					.join(' ')}`,
-				true
+				{ ephemeral: true }
 			);
 		}
 
@@ -77,15 +75,12 @@ export class ButtonHandler extends InteractionHandler {
 	}
 
 	@validCustomId(YoutubeCustomIds.RoleReaction, YoutubeCustomIds.RoleReactionMember)
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: StringSelectMenuInteraction) {
-		if (!interaction.inCachedGuild()) {
-			return this.none();
-		}
-
+	public override async parse(interaction: StringSelectMenuInteraction<'cached'>) {
 		const bot = await interaction.guild.members.fetchMe();
 		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
-			await interaction.defaultReply("I don't have the required permissions to edit your roles.", true);
+			await interaction.defaultReply("I don't have the required permissions to edit your roles.", {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 

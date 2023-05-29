@@ -1,6 +1,6 @@
 import { pollCacheKey } from '../keys';
 import type { Key, RedisClient } from '@kbotdev/redis';
-import type { ServiceOptions, PollId, GuildId, GuildAndPollId, CreatePollData, UpsertPollUserData } from '../lib/types';
+import type { CreatePollData, GuildAndPollId, GuildId, PollId, ServiceOptions, UpsertPollUserData } from '../lib/types';
 import type { Poll, PrismaClient } from '@kbotdev/prisma';
 
 export class PollRepository {
@@ -42,6 +42,7 @@ export class PollRepository {
 
 	public async delete({ guildId, pollId }: GuildAndPollId): Promise<Poll | null> {
 		const pollKey = this.pollKey(guildId, pollId);
+
 		await this.cache.del(pollKey);
 		return this.database.poll
 			.delete({
@@ -63,11 +64,13 @@ export class PollRepository {
 	public async upsertVote({ guildId, pollId, userId, option }: UpsertPollUserData): Promise<void> {
 		const pollKey = this.pollKey(guildId, pollId);
 		const userKey = this.pollUserKey(userId);
+
 		await this.cache.hSet<number>(pollKey, userKey, option);
 	}
 
 	public async getVotes({ guildId, pollId }: GuildAndPollId): Promise<Map<string, number>> {
 		const pollKey = this.pollKey(guildId, pollId);
+
 		return this.cache.hGetAll<number>(pollKey);
 	}
 

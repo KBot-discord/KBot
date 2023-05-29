@@ -378,7 +378,7 @@ module.exports = {
 		'require-await': 'off',
 		'require-jsdoc': 'off',
 		'require-yield': 'warn',
-		'sort-imports': 'off',
+		'sort-imports': ['error', { ignoreDeclarationSort: true }],
 		'sort-keys': 'off',
 		'sort-vars': 'off',
 		'spaced-comment': ['error', 'always'],
@@ -395,8 +395,8 @@ module.exports = {
 				printWidth: 150
 			}
 		],
-		'import/consistent-type-specifier-style': 'off',
-		'import/no-duplicates': 'off',
+		'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
+		'import/no-duplicates': 'error',
 		'import/no-unresolved': 'error',
 		'import/no-named-as-default': 'off',
 		'import/order': [

@@ -4,7 +4,7 @@ import type { CreditType } from '#utils/customIds';
  * Credits
  */
 export type Credit = {
-	/** Emote/Sticker ID (ri = resource ID)*/
+	/** Emote/Sticker ID (ri = resource ID) */
 	ri: string;
 
 	/** If it's an emote or sticker */
@@ -15,7 +15,7 @@ export type CreditModal = {
 	/** Channel ID */
 	c: string;
 
-	/** Emote/Sticker ID (ri = resource ID)*/
+	/** Emote/Sticker ID (ri = resource ID) */
 	ri: string;
 
 	/** If it's an emote or sticker */
@@ -28,7 +28,7 @@ export type CreditImageModal = {
 };
 
 export type CreditEditModal = {
-	/** Emote/Sticker ID (ri = resource ID)*/
+	/** Emote/Sticker ID (ri = resource ID) */
 	ri: string;
 
 	/** Message ID */

@@ -4,10 +4,11 @@ import { getGuildIcon } from '#utils/discord';
 import { EmbedColors } from '#utils/constants';
 import { isNullOrUndefined } from '#utils/functions';
 import { Module } from '@kbotdev/plugin-modules';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, bold, time } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import type { KBotModules } from '#types/Enums';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Moderation Module'
@@ -30,14 +31,15 @@ export class ModerationModule extends Module {
 	}
 
 	public static formatMinageMessage(member: GuildMember, message: string, req: number, reqDate: number): string {
-		const stampDays = `<t:${Math.floor(reqDate / 1000)}:R>`;
-		const stampDate = `<t:${Math.floor(reqDate / 1000)}:D>`;
+		const seconds = Math.floor(reqDate / 1000);
+		const stampDays = time(seconds, 'R');
+		const stampDate = time(seconds, 'D');
 
 		return message
-			.replaceAll('{server}', `**${member.guild.name}**`)
-			.replaceAll('{req}', `**${req}**`)
-			.replaceAll('{days}', `${stampDays}`)
-			.replaceAll('{date}', `${stampDate}`);
+			.replaceAll('{server}', bold(member.guild.name))
+			.replaceAll('{req}', bold(String(req)))
+			.replaceAll('{days}', stampDays)
+			.replaceAll('{date}', stampDate);
 	}
 
 	public static formatMinageEmbed(member: GuildMember, msg: string | null | undefined, req: number, reqDate: number): EmbedBuilder {
@@ -57,6 +59,6 @@ export class ModerationModule extends Module {
 declare module '@kbotdev/plugin-modules' {
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
-		ModerationModule: never;
+		[KBotModules.Moderation]: never;
 	}
 }

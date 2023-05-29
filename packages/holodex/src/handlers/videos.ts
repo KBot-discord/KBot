@@ -1,5 +1,5 @@
 import { BASE_URL, ContentType } from '../lib/utilities/constants';
-import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
+import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 import type { HolodexOptions } from '../lib/structures/Holodex';
 import type { HolodexVideoWithChannel } from '../lib/types/videos';
 import type { PaginatedResponse } from '../lib/types/api';

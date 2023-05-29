@@ -1,4 +1,5 @@
-import { Duration, Time } from '@sapphire/duration';
+import { Duration } from '@sapphire/duration';
+import { FetchResultTypes, fetch } from '@sapphire/fetch';
 
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/explicit-module-boundary-types
 export function isFunction(object: any): object is Function {
@@ -32,10 +33,6 @@ export function flattenObject(object: Record<any, any>): any {
 	return result;
 }
 
-export function minutesFromNow(minutes: number, time?: number): number {
-	return Math.floor(((time ?? Date.now()) + minutes * Time.Minute) / 1000);
-}
-
 export function parseTimeString(input: string | null): number | null {
 	if (!input) return null;
 	const duration = new Duration(input);
@@ -62,4 +59,20 @@ export function parseCustomId<T = unknown>(customId: string): { prefix: string; 
 		}, {}) as T;
 
 	return { prefix, data: parsedData };
+}
+
+export async function fetchBase64Image(url: string): Promise<{ url: string; fileType: string } | null> {
+	const response = await fetch(url, FetchResultTypes.Result).catch(() => null);
+	const contentType = response?.headers.get('content-type');
+	if (!response || !contentType) return null;
+
+	const resType = contentType.match(/\/\S*(png|jpg|gif)/);
+	if (!resType) return null;
+
+	const buffer = Buffer.from(await response.arrayBuffer()).toString('base64');
+
+	return {
+		url: `data:${contentType};base64,${buffer}`,
+		fileType: resType[1]
+	};
 }

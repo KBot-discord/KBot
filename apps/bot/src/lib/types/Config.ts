@@ -1,3 +1,4 @@
+import type { MeiliClientOptions } from '@kbotdev/meili';
 import type { RedisClientOptions } from '@kbotdev/redis';
 
 export type ClientConfig = {
@@ -7,8 +8,8 @@ export type ClientConfig = {
 		id: string;
 		secret: string;
 		webhook: string;
-		devServers: Array<string>;
-		ownerIds: Array<string>;
+		devServers: string[];
+		ownerIds: string[];
 	};
 	web: {
 		url: string;
@@ -31,14 +32,9 @@ export type ClientConfig = {
 		cacheExpiry: number;
 	};
 	redis: RedisClientOptions;
-	meili: {
-		host: string;
-		port: number;
-		apiKey: string;
-	};
+	meili: MeiliClientOptions;
 	holodex: {
 		apiKey: string;
-		twitchConflicts: Array<string>;
 	};
 	sentry: {
 		dsn: string;

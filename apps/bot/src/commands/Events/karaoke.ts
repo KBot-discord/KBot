@@ -1,6 +1,6 @@
-import { EmbedColors, GENERIC_ERROR } from '#utils/constants';
+import { EmbedColors, formGenericError } from '#utils/constants';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotErrors } from '#types/Enums';
+import { KBotErrors, KBotModules } from '#types/Enums';
 import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
@@ -10,7 +10,7 @@ import type { EventModule } from '#modules/EventModule';
 import type { ButtonInteraction, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'EventModule',
+	module: KBotModules.Events,
 	description: 'Join or leave the karaoke queue.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
@@ -99,16 +99,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 	public async chatInputJoin(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { karaoke } = this.module;
-		const { guildId, member } = interaction;
+		const { member } = interaction;
 
 		const eventId = member.voice.channelId;
 		if (isNullOrUndefined(eventId)) {
 			return interaction.defaultReply('You are not in a voice channel.');
-		}
-
-		const active = await karaoke.eventActive(guildId, eventId);
-		if (!active) {
-			return interaction.defaultReply('There is no karaoke event to join.');
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
@@ -116,7 +111,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
-			return interaction.errorReply(GENERIC_ERROR);
+			return interaction.errorReply(formGenericError());
+		}
+
+		if (!event.isActive) {
+			return interaction.defaultReply('There is no karaoke event to join.');
 		}
 
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
@@ -162,16 +161,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 	public async chatInputDuet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { karaoke } = this.module;
-		const { guildId, member } = interaction;
+		const { member } = interaction;
 
 		const eventId = member.voice.channelId;
 		if (isNullOrUndefined(eventId)) {
 			return interaction.defaultReply('You are not in a voice channel.');
-		}
-
-		const active = await karaoke.eventActive(guildId, eventId);
-		if (!active) {
-			return interaction.defaultReply('There is no karaoke event to join.');
 		}
 
 		const partner = interaction.options.getMember('partner');
@@ -184,7 +178,11 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
-			return interaction.errorReply(GENERIC_ERROR);
+			return interaction.errorReply(formGenericError());
+		}
+
+		if (!event.isActive) {
+			return interaction.defaultReply('There is no karaoke event to join.');
 		}
 
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
@@ -248,17 +246,16 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.eventActive(interaction.guildId, eventId);
-		if (!active) {
-			return interaction.defaultReply('There is no karaoke event to leave from.');
-		}
-
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullOrUndefined(event)) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
-			return interaction.errorReply(GENERIC_ERROR);
+			return interaction.errorReply(formGenericError());
+		}
+
+		if (!event.isActive) {
+			return interaction.defaultReply('There is no karaoke event to leave from.');
 		}
 
 		const voiceChannel = (await interaction.guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
@@ -302,7 +299,6 @@ export class EventsCommand extends KBotCommand<EventModule> {
 	}
 
 	public async chatInputQueue(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const { guildId } = interaction;
 		const { karaoke } = this.module;
 
 		const eventId = interaction.member.voice.channelId;
@@ -310,17 +306,16 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('You are not in a voice channel.');
 		}
 
-		const active = await karaoke.eventActive(guildId, eventId);
-		if (!active) {
-			return interaction.defaultReply('There is no karaoke event to show the queue for.');
-		}
-
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (isNullOrUndefined(event)) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
-			return interaction.errorReply(GENERIC_ERROR);
+			return interaction.errorReply(formGenericError());
+		}
+
+		if (!event.isActive) {
+			return interaction.defaultReply('There is no karaoke event to show the queue for.');
 		}
 
 		return interaction.editReply({

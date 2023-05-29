@@ -15,10 +15,10 @@ export class GuildListener extends Listener {
 			const settings = await events.settings.get(guildScheduledEvent.guildId);
 			if (isNullOrUndefined(settings) || !settings.enabled) return;
 
-			const exists = await events.karaoke.eventExists(guildScheduledEvent.guildId, guildScheduledEvent.channelId);
-			if (!exists) return;
+			const event = await events.karaoke.getEvent(guildScheduledEvent.channelId);
+			if (isNullOrUndefined(event) || event.isActive) return;
 
-			await events.karaoke.deleteScheduledEvent(guildScheduledEvent.guildId, guildScheduledEvent.channelId);
+			await events.karaoke.deleteEvent(guildScheduledEvent.channelId);
 		}
 	}
 }

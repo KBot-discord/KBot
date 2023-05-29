@@ -9,6 +9,8 @@ export class CommandListener extends Listener<typeof Events.UnknownChatInputComm
 	public async run(payload: UnknownChatInputCommandPayload): Promise<void> {
 		this.container.logger.sentryMessage('Unknown chat input command', payload);
 
-		await payload.interaction.errorReply('I was not able to find the command you were trying to run.', true);
+		await payload.interaction.errorReply('I was not able to find the command you were trying to run.', {
+			tryEphemeral: true
+		});
 	}
 }

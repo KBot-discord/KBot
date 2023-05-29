@@ -1,21 +1,20 @@
 import { EmbedColors } from '#utils/constants';
-import { KBotErrors } from '#types/Enums';
+import { KBotErrors, KBotModules } from '#types/Enums';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { CreditType } from '#utils/customIds';
 import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { EmbedBuilder } from 'discord.js';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import fuzzysort from 'fuzzysort';
-import type { GuildEmoji, Sticker, ApplicationCommandOptionChoiceData } from 'discord.js';
+import type { ApplicationCommandOptionChoiceData, GuildEmoji, Sticker } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { UtilitySettings } from '@kbotdev/prisma';
+import type { UtilitySettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'UtilityModule',
+	module: KBotModules.Utility,
 	description: 'Send credits to a channel.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
@@ -164,7 +163,9 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 		const emoji = interaction.guild.emojis.cache.get(emoteId);
 		if (!emoji) {
-			return interaction.defaultReply('An emote with that ID does not exist.', true);
+			return interaction.defaultReply('An emote with that ID does not exist.', {
+				tryEphemeral: true
+			});
 		}
 
 		const modal = this.module.buildCreditModal(settings.creditsChannelId, emoji.id, CreditType.Emote);
@@ -181,7 +182,9 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 		const sticker = interaction.guild.stickers.cache.get(emoteId);
 		if (!sticker) {
-			return interaction.defaultReply('A sticker with that ID does not exist.', true);
+			return interaction.defaultReply('A sticker with that ID does not exist.', {
+				tryEphemeral: true
+			});
 		}
 
 		const modal = this.module.buildCreditModal(settings.creditsChannelId, sticker.id, CreditType.Sticker);

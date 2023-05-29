@@ -2,8 +2,10 @@ import { WelcomeSettingsService } from '#services';
 import { isNullOrUndefined } from '#utils/functions';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
+import { userMention } from 'discord.js';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import type { KBotModules } from '#types/Enums';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Welcome Module'
@@ -28,15 +30,15 @@ export class WelcomeModule extends Module {
 	public static formatText(text: string, member: GuildMember): string {
 		return text
 			.replaceAll('{nl}', '\n')
-			.replaceAll('{@member}', `<@${member.id}>`)
-			.replaceAll('{membertag}', `${member.user.tag}`)
-			.replaceAll('{server}', `${member.guild.name}`);
+			.replaceAll('{@member}', userMention(member.id))
+			.replaceAll('{membertag}', member.user.tag)
+			.replaceAll('{server}', member.guild.name);
 	}
 }
 
 declare module '@kbotdev/plugin-modules' {
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
-		WelcomeModule: never;
+		[KBotModules.Welcome]: never;
 	}
 }

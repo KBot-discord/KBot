@@ -1,7 +1,6 @@
 import { container } from '@sapphire/framework';
 import { EventSettingsRepository } from '@kbotdev/database';
-import type { UpsertEventSettingsData } from '@kbotdev/database';
-import type { EventSettings } from '@kbotdev/prisma';
+import type { EventSettings, UpsertEventSettingsData } from '@kbotdev/database';
 
 export class EventSettingsService {
 	private readonly repository: EventSettingsRepository;
