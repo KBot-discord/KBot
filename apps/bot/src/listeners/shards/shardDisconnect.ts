@@ -1,5 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Listener, Events } from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
+import { redBright } from 'colorette';
 import type { CloseEvent } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
@@ -7,6 +8,6 @@ import type { CloseEvent } from 'discord.js';
 })
 export class ShardListener extends Listener<typeof Events.ShardDisconnect> {
 	public override run(event: CloseEvent, shardId: number): void {
-		this.container.logger.info(`[Shard ${shardId}] disconnected. code: ${event.code}`);
+		this.container.logger.info(`[${redBright(`Shard ${shardId}`)}] disconnected. code: ${event.code}`);
 	}
 }

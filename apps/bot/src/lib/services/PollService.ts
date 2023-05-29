@@ -2,80 +2,56 @@ import { CustomEmotes, EmbedColors } from '#utils/constants';
 import { isNullOrUndefined } from '#utils/functions';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { pollCacheKey } from '@kbotdev/database';
-import type { PrismaClient, Poll, PollId, CreatePollData, GuildAndPollId, GuildId, UpsertPollUserData } from '@kbotdev/database';
+import { PollRepository } from '@kbotdev/database';
+import type { CreatePollData, GuildAndPollId, Poll, UpsertPollUserData } from '@kbotdev/database';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
-import type { RedisClient } from '@kbotdev/redis';
 import type { PollResultPayload } from '#types/Tasks';
-import type { Key } from '#types/Generic';
+import type { Key } from '@kbotdev/redis';
 
 const BAR_LENGTH = 10;
 
 export class PollService {
-	private readonly database: PrismaClient;
-	private readonly cache: RedisClient;
+	private readonly repository: PollRepository;
 
 	public constructor() {
-		this.database = container.prisma;
-		this.cache = container.redis;
-	}
-
-	public async get({ pollId }: PollId): Promise<Poll | null> {
-		return this.database.poll.findUnique({
-			where: { id: pollId }
-		});
-	}
-
-	public async getByGuild({ guildId }: GuildId): Promise<Poll[]> {
-		return this.database.poll.findMany({
-			where: { guildId }
-		});
-	}
-
-	public async create({ guildId, pollId }: GuildAndPollId, { title, channelId, time, options, creator }: CreatePollData): Promise<Poll> {
-		await this.addActive({ guildId, pollId });
-		return this.database.poll.create({
-			data: {
-				id: pollId,
-				title,
-				channelId,
-				time,
-				options,
-				creator,
-				utilitySettings: { connect: { guildId } }
+		this.repository = new PollRepository({
+			database: container.prisma,
+			cache: {
+				client: container.redis
 			}
 		});
 	}
 
-	public async delete({ guildId, pollId }: GuildAndPollId): Promise<Poll | null> {
-		const pollKey = this.pollKey(guildId, pollId);
-		await this.cache.del(pollKey);
-		return this.database.poll
-			.delete({
-				where: { id: pollId }
-			})
-			.catch(() => null);
+	public async get(pollId: string): Promise<Poll | null> {
+		return this.repository.get({ pollId });
 	}
 
-	public async count({ guildId }: GuildId): Promise<number> {
-		return this.database.poll.count({
-			where: { guildId }
-		});
+	public async getByGuild(guildId: string): Promise<Poll[]> {
+		return this.repository.getByGuild({ guildId });
 	}
 
-	public async isActive({ guildId, pollId }: GuildAndPollId): Promise<boolean> {
-		return this.cache.sIsMember(this.setKey(guildId), this.memberKey(pollId));
+	public async create(guildId: string, pollId: string, data: CreatePollData): Promise<Poll> {
+		return this.repository.create({ guildId, pollId }, data);
 	}
 
-	public async upsertVote({ guildId, pollId, userId, option }: UpsertPollUserData): Promise<void> {
-		const pollKey = this.pollKey(guildId, pollId);
-		const userKey = this.pollUserKey(userId);
-		await this.cache.hSet<number>(pollKey, userKey, option);
+	public async delete(guildId: string, pollId: string): Promise<Poll | null> {
+		return this.repository.delete({ guildId, pollId });
 	}
 
-	public async getVotes({ guildId, pollId }: GuildAndPollId): Promise<Map<string, number>> {
-		const pollKey = this.pollKey(guildId, pollId);
-		return this.cache.hGetAll<number>(pollKey);
+	public async count(guildId: string): Promise<number> {
+		return this.repository.count({ guildId });
+	}
+
+	public async isActive(guildId: string, pollId: string): Promise<boolean> {
+		return this.repository.isActive({ guildId, pollId });
+	}
+
+	public async upsertVote(data: UpsertPollUserData): Promise<void> {
+		return this.repository.upsertVote(data);
+	}
+
+	public async getVotes(guildId: string, pollId: string): Promise<Map<string, number>> {
+		return this.repository.getVotes({ guildId, pollId });
 	}
 
 	public async createTask(expiresIn: number, { guildId, pollId }: PollResultPayload): Promise<void> {
@@ -106,7 +82,7 @@ export class PollService {
 		let message: Message | null;
 
 		try {
-			poll = await this.get({ pollId });
+			poll = await this.get(pollId);
 			if (isNullOrUndefined(poll)) {
 				logger.sentryMessage('Failed to find a poll while attempting to end it', {
 					context: { pollId }
@@ -121,15 +97,15 @@ export class PollService {
 			message = await channel.messages.fetch(pollId).catch(() => null);
 		} catch (error: unknown) {
 			logger.sentryError(error);
-			await this.delete({ guildId, pollId });
+			await this.delete(guildId, pollId);
 			return false;
 		}
 
 		try {
-			await this.removeActive({ guildId, pollId });
+			await this.repository.removeActive({ guildId, pollId });
 
 			let shouldSend = false;
-			const votes = await this.getVotes({ guildId, pollId });
+			const votes = await this.getVotes(guildId, pollId);
 			const results = this.calculateResults(poll, votes);
 
 			if (message && channel.permissionsFor(bot).has(PermissionFlagsBits.ReadMessageHistory)) {
@@ -169,7 +145,7 @@ export class PollService {
 				});
 			}
 
-			await this.delete({ guildId, pollId });
+			await this.delete(guildId, pollId);
 
 			return true;
 		} catch (error: unknown) {
@@ -192,24 +168,12 @@ export class PollService {
 			const percent: string = votes.size === 0 ? '0' : Math.fround(scaledValue * 100).toFixed(2);
 			const bar =
 				votes.size === 0 //
-					? `${CustomEmotes.Blank}`.repeat(BAR_LENGTH)
-					: `${CustomEmotes.BlueSquare}`.repeat(amount) + `${CustomEmotes.Blank}`.repeat(BAR_LENGTH - amount);
+					? CustomEmotes.Blank.repeat(BAR_LENGTH)
+					: CustomEmotes.BlueSquare.repeat(amount) + CustomEmotes.Blank.repeat(BAR_LENGTH - amount);
 
 			return `**${option.name}**\n${bar} ${percent}% (${option.value} ${option.value === 1 ? 'vote' : 'votes'})`;
 		});
 	}
 
-	private async addActive({ guildId, pollId }: GuildAndPollId): Promise<boolean> {
-		return this.cache.sAdd(this.setKey(guildId), this.memberKey(pollId));
-	}
-
-	private async removeActive({ guildId, pollId }: GuildAndPollId): Promise<boolean> {
-		return this.cache.sRem(this.setKey(guildId), this.memberKey(pollId));
-	}
-
-	private readonly pollKey = (guildId: string, pollId: string): Key => `${pollCacheKey(guildId)}:${pollId}` as Key;
-	private readonly pollUserKey = (userId: string): Key => `user:${userId}` as Key;
-	private readonly setKey = (guildId: string): Key => `${pollCacheKey(guildId)}:active` as Key;
-	private readonly memberKey = (pollId: string): Key => `polls:${pollId}:active` as Key;
 	private readonly pollJobId = (pollId: string): Key => `poll:${pollId}` as Key;
 }

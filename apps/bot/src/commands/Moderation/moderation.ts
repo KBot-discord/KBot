@@ -2,17 +2,17 @@ import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { isNullOrUndefined } from '#utils/functions';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder } from 'discord.js';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
-import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { APIEmbedField } from 'discord-api-types/v10';
-import type { ModerationSettings } from '@kbotdev/prisma';
+import type { APIEmbedField } from 'discord.js';
+import type { ModerationSettings } from '@kbotdev/database';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'ModerationModule',
+	module: KBotModules.Moderation,
 	description: 'Edit the settings of the moderation module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -22,7 +22,7 @@ import type { ModerationModule } from '#modules/ModerationModule';
 				{
 					label: '/moderation toggle <value>',
 					description: 'Enable or disable the moderation module'
-				}, //
+				},
 				{
 					label: '/moderation set <report_channel>',
 					description: 'Set new moderation module settings'

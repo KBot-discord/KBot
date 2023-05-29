@@ -1,12 +1,13 @@
 import { KBotCommand } from '#extensions/KBotCommand';
 import { getUserInfo } from '#utils/discord';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { PermissionFlagsBits } from 'discord.js';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'ModerationModule',
+	module: KBotModules.Moderation,
 	description: 'Get info on a user.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],

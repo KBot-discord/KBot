@@ -1,17 +1,16 @@
 import { EmbedColors } from '#utils/constants';
-import { KBotErrors } from '#types/Enums';
+import { KBotErrors, KBotModules } from '#types/Enums';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { EmbedBuilder } from 'discord.js';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { UtilitySettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'UtilityModule',
+	module: KBotModules.Utility,
 	description: 'Get updates about Discord outages sent to a channel.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],

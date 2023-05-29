@@ -1,12 +1,13 @@
 import { KBotCommand } from '#extensions/KBotCommand';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
+import { PermissionFlagsBits } from 'discord.js';
 import type { DevModule } from '#modules/DevModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'DevModule',
+	module: KBotModules.Dev,
 	description: 'Sync the channels from Holodex',
 	preconditions: ['BotOwnerOnly'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],

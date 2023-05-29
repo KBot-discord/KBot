@@ -1,9 +1,16 @@
 import { getUserInfo, isWebhookMessage } from '#utils/discord';
 import { EmbedColors } from '#utils/constants';
-import { ActionRowBuilder, EmbedBuilder, InteractionCollector, ButtonBuilder, ComponentType } from 'discord.js';
-import { ButtonStyle, InteractionType, PermissionFlagsBits } from 'discord-api-types/v10';
-import type { APIActionRowComponent, APIButtonComponent } from 'discord-api-types/v10';
-import type { ButtonInteraction, GuildMember, Message } from 'discord.js';
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	ComponentType,
+	EmbedBuilder,
+	InteractionCollector,
+	InteractionType,
+	PermissionFlagsBits
+} from 'discord.js';
+import type { APIActionRowComponent, APIButtonComponent, ButtonInteraction, GuildMember, Message } from 'discord.js';
 
 export enum ReportButtons {
 	Delete,
@@ -42,7 +49,9 @@ export class ReportHandler {
 
 		if (interaction.customId === ButtonCustomId.Delete) {
 			if (!channel.permissionsFor(await interaction.guild.members.fetchMe()).has(PermissionFlagsBits.ManageMessages)) {
-				await interaction.errorFollowup("I don't have the required permission to delete that message.\n\nRequired permission: Manage Messages", true);
+				await interaction.errorFollowup("I don't have the required permission to delete that message.\n\nRequired permission: Manage Messages", {
+					ephemeral: true
+				});
 				return;
 			}
 			await this.toggleButton(true, ReportButtons.Delete);

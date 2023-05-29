@@ -1,4 +1,4 @@
-import { MeiliCategories } from '#types/Meili';
+import { MeiliCategories } from '@kbotdev/meili';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { container } from '@sapphire/framework';
@@ -10,12 +10,8 @@ import type { HolodexChannel } from '@kbotdev/holodex';
 	enabled: !container.config.isDev
 })
 export class HolodexTask extends ScheduledTask {
-	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
-		super(context, { ...options });
-	}
-
 	public override async run(): Promise<void> {
-		const { prisma, holodex, meili, logger, config, metrics } = this.container;
+		const { prisma, holodex, meili, logger, metrics } = this.container;
 
 		let page = 0;
 		let pagesLeft = true;
@@ -43,10 +39,14 @@ export class HolodexTask extends ScheduledTask {
 
 		logger.debug(`[HolodexTask] Synced ${channels.length} channels (pages: ${page})`);
 
+		const twitchFilter = await prisma.twitchConflict.groupBy({
+			by: ['channelId']
+		});
+
 		const validTwitchChannels = channels.filter(
 			({ twitch, id }) =>
 				twitch !== null &&
-				!config.holodex.twitchConflicts.some((channelId) => {
+				!twitchFilter.some(({ channelId }) => {
 					return id === channelId;
 				})
 		);
@@ -65,12 +65,16 @@ export class HolodexTask extends ScheduledTask {
 
 				const dupes = channels.filter((ch) => ch.twitch === channel.twitch!);
 
-				await logger.webhookError((builder) =>
-					builder
-						.setAuthor('Holodex Twitch conflict error')
-						.setTitle('Please add an entry to config.holodex.twitchConflicts')
-						.setDescription(dupes.map((entry) => `${entry.name} (ID: ${entry.id})`).join('\n'))
-				);
+				await logger
+					.webhookError((builder) =>
+						builder
+							.setAuthor('Holodex Twitch conflict error')
+							.setTitle('Please add an entry to config.holodex.twitchConflicts')
+							.setDescription(dupes.map((entry) => `${entry.name} (ID: ${entry.id})`).join('\n'))
+					)
+					.catch((error) => {
+						logger.sentryError(error);
+					});
 			}
 		}
 
@@ -83,16 +87,9 @@ export class HolodexTask extends ScheduledTask {
 			})
 		);
 
-		await meili.upsertMany(
-			MeiliCategories.TwitchChannels,
-			validTwitchChannels.map(({ twitch, name, english_name, org, suborg, group }) => {
-				return { id: twitch!, name, englishName: english_name, org, subOrg: suborg, group };
-			})
-		);
-
 		await prisma.$transaction(
 			channels.map((channel) => {
-				const result = config.holodex.twitchConflicts.some((channelId) => {
+				const result = twitchFilter.some(({ channelId }) => {
 					return channel.id === channelId;
 				});
 				const data = {

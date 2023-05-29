@@ -1,13 +1,23 @@
-import { EmbedColors } from '#utils/constants';
-import { AddEmoteCustomIds, CreditCustomIds, CreditFields, CreditType } from '#utils/customIds';
-import { getGuildEmoteSlots } from '#utils/discord';
+import { EmbedColors, EmojiRegex, UrlRegex } from '#utils/constants';
+import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '#utils/customIds';
+import { attachmentFromMessage, getGuildEmoteSlots } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { buildCustomId, isNullOrUndefined } from '#utils/functions';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
-import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { buildCustomId, fetchBase64Image, isNullOrUndefined } from '#utils/functions';
+import { KBotModules } from '#types/Enums';
+import {
+	ActionRowBuilder,
+	ApplicationCommandType,
+	ButtonBuilder,
+	ButtonStyle,
+	EmbedBuilder,
+	ModalBuilder,
+	PermissionFlagsBits,
+	TextInputBuilder,
+	TextInputStyle
+} from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
-import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { Time } from '@sapphire/duration';
 import type { Credit } from '#types/CustomIds';
 import type { Message, ModalSubmitInteraction } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
@@ -19,8 +29,8 @@ type EmojiData = {
 };
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'UtilityModule',
-	description: 'Adds the image attachment, link, or emoji that is in the message. Priority is `emoji > attachment > link`.',
+	module: KBotModules.Utility,
+	description: 'Adds the image attachment, link, or emoji that is in the message as an emoji. Priority is `emoji > attachment > link`.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
@@ -55,17 +65,24 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 		const emoji = await this.getEmoji(message);
 		if (isNullOrUndefined(emoji)) {
-			return interaction.errorReply('There is no emoji or file to add.\n\nSupported file types: `jpeg`/`jpg`, `png`, `gif`', true);
+			return interaction.errorReply(
+				'There is no emoji or file to add.\n\nSupported file types: `jpeg`/`jpg`, `png`, `gif`\nSupported file size: less than 256KB',
+				{ tryEphemeral: true }
+			);
 		}
 
 		const { staticSlots, animatedSlots, totalSlots } = this.calculateSlots(interaction);
 
 		if (emoji.animated && animatedSlots === 0) {
-			return interaction.errorReply('No animated emoji slots are left.', true);
+			return interaction.errorReply('No animated emoji slots are left.', {
+				tryEphemeral: true
+			});
 		}
 
 		if (!emoji.animated && staticSlots === 0) {
-			return interaction.errorReply('No static emoji slots are left.', true);
+			return interaction.errorReply('No static emoji slots are left.', {
+				tryEphemeral: true
+			});
 		}
 
 		const slotsLeft = emoji.animated
@@ -75,12 +92,12 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		try {
 			await interaction.showModal(
 				new ModalBuilder()
-					.setCustomId(AddEmoteCustomIds.Name)
+					.setCustomId(ResourceCustomIds.Name)
 					.setTitle('Emote name')
 					.addComponents(
 						new ActionRowBuilder<TextInputBuilder>().addComponents(
 							new TextInputBuilder()
-								.setCustomId(CreditFields.Name)
+								.setCustomId(ResourceFields.Name)
 								.setLabel('Emote name')
 								.setStyle(TextInputStyle.Short)
 								.setMinLength(2)
@@ -92,13 +109,19 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 			return interaction //
 				.awaitModalSubmit({
-					filter: (i: ModalSubmitInteraction) => i.customId === AddEmoteCustomIds.Name,
-					time: 60_000
+					filter: (i: ModalSubmitInteraction) => i.customId === ResourceCustomIds.Name,
+					time: Time.Minute * 14.5
 				})
 				.then(async (modalInteraction) => this.handleSubmit(modalInteraction, emoji, slotsLeft))
-				.catch(async () => interaction.errorReply('The modal has timed out.', true));
+				.catch(async () =>
+					interaction.errorReply('The modal has timed out.', {
+						tryEphemeral: true
+					})
+				);
 		} catch {
-			return interaction.errorReply('There was an error when trying to add the emoji.', true);
+			return interaction.errorReply('There was an error when trying to add the emoji.', {
+				tryEphemeral: true
+			});
 		}
 	}
 
@@ -106,9 +129,11 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		const embed = new EmbedBuilder();
 		const { url } = emojiData;
 
-		const emoteName = modal.fields.getTextInputValue(CreditFields.Name);
+		const emoteName = modal.fields.getTextInputValue(ResourceFields.Name);
 		if (!/^\w+$/.test(emoteName)) {
-			return modal.errorReply('That is not a valid emote name.', true);
+			return modal.errorReply('That is not a valid emote name.', {
+				tryEphemeral: true
+			});
 		}
 
 		const newEmoji = await modal.guild.emojis.create({ attachment: url, name: emoteName });
@@ -118,7 +143,11 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 
 		return modal.reply({
-			embeds: [embed.setColor(EmbedColors.Success).setDescription(`**${emoteName}** has been added\n\n${slotsLeft}`)],
+			embeds: [
+				embed
+					.setColor(EmbedColors.Success) //
+					.setDescription(`**${emoteName}** has been added\n\n${slotsLeft}`)
+			],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>().addComponents([
 					new ButtonBuilder()
@@ -152,8 +181,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 	}
 
 	private async getEmoji(message: Message): Promise<EmojiData | null> {
-		const emojiData = message.content.match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/);
-		const emojiEmbed = message.content.match(/https\S*?([a-zA-Z0-9]+)(?:\.\w+)?(?:\s|$)/);
+		const emojiData = message.content.match(EmojiRegex);
 
 		// Priority: emoji -> attachment -> links
 		if (!isNullOrUndefined(emojiData)) {
@@ -164,29 +192,23 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 
 		if (message.attachments.size > 0) {
-			const attachmentUrl = message.attachments.at(0)!.url;
-			const parsedUrl = attachmentUrl.match(/([a-zA-Z0-9]+)(.png|.jpg|.gif)$/);
-			if (isNullOrUndefined(parsedUrl)) return null;
+			const attachmentData = attachmentFromMessage(message);
+			if (isNullOrUndefined(attachmentData)) return null;
 
 			return {
-				url: attachmentUrl,
-				animated: parsedUrl[2] === '.gif'
+				url: attachmentData.url,
+				animated: attachmentData.fileType === '.gif'
 			};
 		}
 
-		if (emojiEmbed) {
-			const response = await fetch(emojiEmbed[0], FetchResultTypes.Result).catch(() => null);
-			const contentType = response?.headers.get('content-type');
-			if (!response || !contentType) return null;
-
-			const resType = contentType.match(/\/\S*(png|jpg|gif)/);
-			if (!resType) return null;
-
-			const buffer = Buffer.from(await response.arrayBuffer()).toString('base64');
+		const fileUrl = message.content.match(UrlRegex);
+		if (fileUrl) {
+			const imageData = await fetchBase64Image(fileUrl[0]);
+			if (isNullOrUndefined(imageData)) return null;
 
 			return {
-				url: `data:${contentType};base64,${buffer}`,
-				animated: resType[1] === '.gif'
+				url: imageData.url,
+				animated: imageData.fileType === '.gif'
 			};
 		}
 

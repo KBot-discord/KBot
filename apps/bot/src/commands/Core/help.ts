@@ -1,15 +1,15 @@
 import { EmbedColors } from '#utils/constants';
 import { getUserAvatarUrl } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { EmbedBuilder } from 'discord.js';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotModules } from '#types/Enums';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
-import type { DocumentCommand } from '#types/Meili';
+import type { DocumentCommand } from '@kbotdev/meili';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'CoreModule',
+	module: KBotModules.Core,
 	description: "Get info about the bot and all of it's commands.",
 	helpEmbed: (builder) => {
 		return builder //

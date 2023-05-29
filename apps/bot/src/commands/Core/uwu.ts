@@ -1,8 +1,9 @@
 import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '#utils/constants';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { ApplicationCommandType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { ApplicationCommandType, PermissionFlagsBits } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
 
 function getRandomInt(max: number): number {
@@ -10,7 +11,7 @@ function getRandomInt(max: number): number {
 }
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'CoreModule',
+	module: KBotModules.Core,
 	description: 'uwu-ify a message.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {

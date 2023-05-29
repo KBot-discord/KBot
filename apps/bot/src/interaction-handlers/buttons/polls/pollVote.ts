@@ -4,8 +4,7 @@ import { validCustomId } from '#utils/decorators';
 import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { EmbedBuilder } from 'discord.js';
-import { ButtonInteraction } from 'discord.js';
+import { ButtonInteraction, EmbedBuilder } from 'discord.js';
 import type { PollOption } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -15,10 +14,7 @@ export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { option }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const { polls } = this.container.utility;
 
-		const active = await polls.isActive({
-			guildId: interaction.guildId,
-			pollId: interaction.message.id
-		});
+		const active = await polls.isActive(interaction.guildId, interaction.message.id);
 		if (!active) {
 			return void interaction.defaultReply('That poll is not active.');
 		}
@@ -41,15 +37,12 @@ export class ButtonHandler extends InteractionHandler {
 	}
 
 	@validCustomId(PollCustomIds.Vote)
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.inCachedGuild()) {
-			return this.none();
-		}
-
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 

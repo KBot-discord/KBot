@@ -7,8 +7,9 @@ import type { ButtonInteraction, ModalSubmitInteraction, StringSelectMenuInterac
 export function validCustomId(...customIds: string[]): MethodDecorator {
 	return createMethodDecorator((_t: any, _p: any, descriptor: any) => {
 		const method = descriptor.value;
-		if (!method) throw new Error('Function preconditions require a value.');
-		if (typeof method !== 'function') throw new Error('Function preconditions can only be applied to functions.');
+		if (!method || typeof method !== 'function') {
+			throw new Error('This can only be used on class methods');
+		}
 
 		descriptor.value = async function setValue(
 			this: (...args: any[]) => any,
@@ -28,21 +29,22 @@ export function interactionRatelimit(time: number, limit: number): MethodDecorat
 
 	return createMethodDecorator((_t: any, _p: any, descriptor: any) => {
 		const method = descriptor.value;
-		if (!method) throw new Error('Function preconditions require a value.');
-		if (typeof method !== 'function') throw new Error('Function preconditions can only be applied to functions.');
+		if (!method || typeof method !== 'function') {
+			throw new Error('This can only be used on class methods');
+		}
 
 		descriptor.value = async function setValue(
 			this: (...args: any[]) => any,
 			interaction: ButtonInteraction | ModalSubmitInteraction | StringSelectMenuInteraction
 		) {
-			const bucket = manager.acquire(`${interaction.customId}${interaction.user.id}`);
+			const bucket = manager.acquire(`${interaction.customId}:${interaction.user.id}`);
 
 			if (bucket.limited) {
 				await interaction.errorReply(
 					`You are using that too fast. Try again in ${humanizeDuration(bucket.remainingTime, {
 						maxDecimalPoints: 0
 					})}`,
-					true
+					{ tryEphemeral: true }
 				);
 				return Option.none;
 			}

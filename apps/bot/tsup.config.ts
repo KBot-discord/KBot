@@ -11,6 +11,7 @@ export default defineTsupConfig({
 	noExternal: [
 		'@kbotdev/database', //
 		'@kbotdev/holodex',
+		'@kbotdev/meili',
 		'@kbotdev/prisma',
 		'@kbotdev/proto',
 		'@kbotdev/redis'

@@ -12,8 +12,6 @@
 		"format": "prettier --write --loglevel=warn \"src/**/*.js\""
 	},
 	"devDependencies": {
-		"eslint": "^8.41.0",
-		"prettier": "^2.8.8",
-		"tsup": "^6.7.0"
+		"prettier": "^2.8.8"
 	}
 }

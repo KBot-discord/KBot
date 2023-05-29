@@ -1,15 +1,15 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EventModule } from '#modules/EventModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'EventModule',
+	module: KBotModules.Events,
 	description: 'Edit the settings of the events module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {

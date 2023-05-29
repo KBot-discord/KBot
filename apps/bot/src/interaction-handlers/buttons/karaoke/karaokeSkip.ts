@@ -15,22 +15,18 @@ export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { eventId }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const { karaoke } = this.container.events;
 
-		const exists = await karaoke.eventExists(interaction.guildId, eventId);
-		if (!exists) {
-			return void interaction.defaultReply('There is no event to skip. Run `/manage karaoke menu` to see the updated menu.');
-		}
-
-		const active = await karaoke.eventActive(interaction.guildId, eventId);
-		if (!active) {
-			return void interaction.defaultReply('That event is not active. Run `/manage karaoke menu` to see the updated menu.');
-		}
-
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (!event) {
 			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
 				context: { eventId }
 			});
 			return;
+		}
+
+		if (!event.isActive) {
+			return void interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', {
+				ephemeral: true
+			});
 		}
 
 		if (event.queue.length === 0) {
@@ -46,15 +42,12 @@ export class ButtonHandler extends InteractionHandler {
 
 	@validCustomId(KaraokeCustomIds.Skip)
 	@interactionRatelimit(Time.Second * 5, 1)
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.inCachedGuild()) {
-			return this.none();
-		}
-
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		const settings = await this.container.events.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, true);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 

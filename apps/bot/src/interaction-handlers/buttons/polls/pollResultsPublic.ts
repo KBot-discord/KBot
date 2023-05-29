@@ -6,7 +6,7 @@ import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsEr
 import { isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { EmbedBuilder, ButtonInteraction } from 'discord.js';
+import { ButtonInteraction, EmbedBuilder } from 'discord.js';
 import type { GuildTextBasedChannel } from 'discord.js';
 import type { PollMenuButton } from '#types/CustomIds';
 
@@ -20,33 +20,35 @@ export class ButtonHandler extends InteractionHandler {
 			utility: { polls }
 		} = this.container;
 
-		const active = await polls.isActive({
-			guildId: interaction.guildId,
-			pollId
-		});
+		const active = await polls.isActive(interaction.guildId, pollId);
 		if (!active) {
-			return void interaction.defaultFollowup('That poll is not active. Run `/poll menu` to see the updated menu.', true);
+			return void interaction.defaultFollowup('That poll is not active. Run `/poll menu` to see the updated menu.', {
+				ephemeral: true
+			});
 		}
 
-		const poll = await polls.get({ pollId });
+		const poll = await polls.get(pollId);
 		if (isNullOrUndefined(poll)) {
-			return void interaction.errorFollowup('There was an error when trying to show the poll results.', true);
+			return void interaction.errorFollowup('There was an error when trying to show the poll results.', {
+				ephemeral: true
+			});
 		}
 
 		const channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
 		if (!channel) {
-			return void interaction.errorFollowup("The channel that the poll was sent in doesn't exist anymore.", true);
+			return void interaction.errorFollowup("The channel that the poll was sent in doesn't exist anymore.", {
+				ephemeral: true
+			});
 		}
 
 		const message = await channel.messages.fetch(pollId).catch(() => null);
 		if (!message) {
-			return void interaction.errorFollowup("The poll doesn't exist anymore.", true);
+			return void interaction.errorFollowup("The poll doesn't exist anymore.", {
+				ephemeral: true
+			});
 		}
 
-		const votes = await polls.getVotes({
-			guildId: interaction.guildId,
-			pollId
-		});
+		const votes = await polls.getVotes(interaction.guildId, pollId);
 		const results = polls.calculateResults(poll, votes);
 
 		await interaction.channel!.send({
@@ -62,15 +64,12 @@ export class ButtonHandler extends InteractionHandler {
 	}
 
 	@validCustomId(PollCustomIds.ResultsPublic)
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.inCachedGuild()) {
-			return this.none();
-		}
-
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, true);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 

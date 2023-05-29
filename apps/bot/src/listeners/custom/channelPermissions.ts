@@ -9,6 +9,8 @@ import type { InteractionResponseUnion } from '#types/Augments';
 })
 export class CustomListener extends Listener<typeof KBotErrors.ChannelPermissions> {
 	public async run({ interaction, error }: ChannelPermissionsPayload): Promise<InteractionResponseUnion> {
-		return interaction.errorReply(error.userMessage, true);
+		return interaction.errorReply(error.userMessage, {
+			tryEphemeral: true
+		});
 	}
 }

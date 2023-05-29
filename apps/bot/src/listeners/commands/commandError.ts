@@ -1,7 +1,7 @@
-import { generateGenericError } from '#utils/constants';
+import { formGenericError } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Listener, Events, container } from '@sapphire/framework';
-import { RESTJSONErrorCodes, DiscordAPIError, HTTPError } from 'discord.js';
+import { Events, Listener, container } from '@sapphire/framework';
+import { DiscordAPIError, HTTPError, RESTJSONErrorCodes } from 'discord.js';
 import type { ChatInputCommandErrorPayload, ContextMenuCommandErrorPayload } from '@sapphire/framework';
 
 const codesToIgnore = [RESTJSONErrorCodes.UnknownChannel, RESTJSONErrorCodes.UnknownMessage];
@@ -25,7 +25,9 @@ async function handleError(options: {
 
 	container.logger.sentryError(error, { message, context: payload });
 
-	await interaction.errorReply(generateGenericError('There was an error when running your command.'), true);
+	await interaction.errorReply(formGenericError('There was an error when running your command.'), {
+		tryEphemeral: true
+	});
 }
 
 @ApplyOptions<Listener.Options>({

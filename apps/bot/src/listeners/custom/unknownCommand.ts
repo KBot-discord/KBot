@@ -19,6 +19,8 @@ export class CustomListener extends Listener<typeof KBotErrors.MissingSubcommand
 			context: payload
 		});
 
-		await interaction.errorReply('I was not able to find the command you were trying to run.', true);
+		await interaction.errorReply('I was not able to find the command you were trying to run.', {
+			tryEphemeral: true
+		});
 	}
 }

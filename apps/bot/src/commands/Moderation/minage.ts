@@ -3,14 +3,14 @@ import { getGuildIcon } from '#utils/discord';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { ModerationModule } from '#modules/ModerationModule';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder } from 'discord.js';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { ModerationSettings } from '@kbotdev/prisma';
+import type { ModerationSettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'ModerationModule',
+	module: KBotModules.Moderation,
 	description: 'Set a minimum required account age for users to join the server.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.KickMembers],

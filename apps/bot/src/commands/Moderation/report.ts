@@ -1,21 +1,28 @@
 import { getMemberAvatarUrl } from '#utils/discord';
-import { EmbedColors, GENERIC_ERROR } from '#utils/constants';
-import { ReportHandler, ReportButtons } from '#structures/handlers/ReportHandler';
-import { KBotErrors } from '#types/Enums';
+import { EmbedColors, formGenericError } from '#utils/constants';
+import { ReportButtons, ReportHandler } from '#structures/handlers/ReportHandler';
+import { KBotErrors, KBotModules } from '#types/Enums';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { ReportCustomIds } from '#utils/customIds';
 import { isNullOrUndefined } from '#utils/functions';
-import { ApplicationCommandType, ButtonStyle, MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
+import {
+	ActionRowBuilder,
+	ApplicationCommandType,
+	AttachmentBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	EmbedBuilder,
+	MessageType,
+	PermissionFlagsBits
+} from 'discord.js';
 import { channelMention, userMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { GuildMember, GuildTextBasedChannel, Message, MessageCreateOptions } from 'discord.js';
-import type { APIEmbedField } from 'discord-api-types/v10';
+import type { APIEmbedField, GuildMember, GuildTextBasedChannel, Message, MessageCreateOptions } from 'discord.js';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'ModerationModule',
+	module: KBotModules.Moderation,
 	description: 'Send the reported message to the set moderator channel.',
 	preconditions: ['ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
@@ -56,7 +63,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			this.container.logger.sentryMessage('Failed to fetch moderation settings', {
 				context: { guildId: interaction.guildId }
 			});
-			return interaction.errorReply(GENERIC_ERROR);
+			return interaction.errorReply(formGenericError());
 		}
 
 		if (isNullOrUndefined(settings.reportChannelId)) {

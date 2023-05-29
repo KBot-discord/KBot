@@ -1,16 +1,16 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilitySettings } from '@kbotdev/database';
 import type { UtilityModule } from '#modules/UtilityModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'UtilityModule',
+	module: KBotModules.Utility,
 	description: 'Edit the settings of the utility module.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {

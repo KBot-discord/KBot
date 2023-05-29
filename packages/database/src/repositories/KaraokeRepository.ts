@@ -1,4 +1,4 @@
-import { karaokeEventExistsCacheKey, karaokeEventActiveCacheKey } from '../keys';
+import { karaokeEventActiveCacheKey, karaokeEventExistsCacheKey } from '../keys';
 import { CacheValues } from '../lib/utilities';
 import type { KaraokeEvent, KaraokeUser, PrismaClient } from '@kbotdev/prisma';
 import type { RedisClient } from '@kbotdev/redis';
@@ -59,11 +59,6 @@ export class KaraokeRepository {
 			.catch(() => null);
 	}
 
-	public async deleteScheduledEvent({ guildId, eventId }: GuildAndKaraokeEventId): Promise<KaraokeEvent | null> {
-		await this.setEventExists({ eventId, guildId }, false);
-		return this.deleteEvent({ eventId });
-	}
-
 	public async updateQueueLock({ eventId }: KaraokeEventId, isLocked: boolean): Promise<KaraokeEvent> {
 		return this.database.karaokeEvent.update({
 			where: { id: eventId },
@@ -72,7 +67,6 @@ export class KaraokeRepository {
 	}
 
 	public async createEvent({ id, guildId, textChannelId, pinMessageId }: CreateEventData): Promise<KaraokeEvent> {
-		await this.setEventExists({ eventId: id, guildId }, true);
 		return this.database.karaokeEvent.create({
 			data: {
 				id,
@@ -86,7 +80,6 @@ export class KaraokeRepository {
 	}
 
 	public async createScheduledEvent({ id, guildId, textChannelId, discordEventId, roleId }: CreateScheduledEventData): Promise<KaraokeEvent> {
-		await this.setEventExists({ eventId: id, guildId }, true);
 		return this.database.karaokeEvent.create({
 			data: {
 				id,
@@ -107,7 +100,11 @@ export class KaraokeRepository {
 		});
 	}
 
-	public async countEvents({ guildId }: GuildId): Promise<number> {
+	public async countEvents(): Promise<number> {
+		return this.database.karaokeEvent.count();
+	}
+
+	public async countEventsByGuild({ guildId }: GuildId): Promise<number> {
 		return this.database.karaokeEvent.count({
 			where: { guildId }
 		});
@@ -167,21 +164,5 @@ export class KaraokeRepository {
 		});
 
 		return data.karaokeEvent;
-	}
-
-	public async setEventExists({ guildId, eventId }: GuildAndKaraokeEventId, exists: boolean): Promise<void> {
-		const key = this.existsKey(guildId, eventId);
-
-		const value = exists ? CacheValues.Exists : CacheValues.DoesNotExist;
-
-		await this.cache.set(key, value);
-	}
-
-	public async setEventActive({ guildId, eventId }: GuildAndKaraokeEventId, active: boolean): Promise<void> {
-		const key = this.isActiveKey(guildId, eventId);
-
-		const value = active ? CacheValues.Active : CacheValues.Inactive;
-
-		await this.cache.set(key, value);
 	}
 }

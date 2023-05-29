@@ -2,8 +2,8 @@ import { DISCORD_STATUS_BASE, StatusEmbed } from '#utils/constants';
 import { IncidentNotification } from '#structures/IncidentNotification';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, time, TimestampStyles } from 'discord.js';
-import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
+import { EmbedBuilder, TimestampStyles, time } from 'discord.js';
+import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 import { container } from '@sapphire/framework';
 import type { StatusPageIncident, StatusPageResult } from '#types/DiscordStatus';
 import type { IncidentMessage, Prisma } from '@kbotdev/database';
@@ -19,12 +19,10 @@ type DatabaseIncidentData = {
 	enabled: !container.config.isDev
 })
 export class UtilityTask extends ScheduledTask {
-	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
-		super(context, { ...options });
-	}
-
 	public override async run(): Promise<void> {
-		const channelData = await this.container.utility.fetchIncidentChannels();
+		const { logger, utility } = this.container;
+
+		const channelData = await utility.settings.getIncidentChannels();
 		if (channelData.length === 0) return;
 
 		const response = await fetch<StatusPageResult>(
@@ -37,12 +35,9 @@ export class UtilityTask extends ScheduledTask {
 		if (!response) return;
 
 		const { incidents } = response;
-		this.container.logger.debug(`[DiscordStatus] Fetched ${incidents.length} incidents`);
+		logger.debug(`[DiscordStatus] Fetched ${incidents.length} incidents`);
 
-		const dbIncidents = await this.container.prisma.discordIncident.findMany({
-			where: { id: { in: incidents.map((incident) => incident.id) } },
-			select: { id: true, updatedAt: true, messages: true }
-		});
+		const dbIncidents = await utility.incidents.getIncidents(incidents.map((incident) => incident.id));
 
 		const formattedData: { incident: StatusPageIncident; data: DatabaseIncidentData }[] = incidents.map((incident) => {
 			const entry = dbIncidents.find((dbIncident) => dbIncident.id === incident.id);

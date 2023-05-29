@@ -12,6 +12,7 @@ export const mainFolder = getRootData().root;
 export const rootFolder = join(mainFolder, '..');
 export const assetsFolder = join(rootFolder, 'assets');
 export const imageFolder = join(assetsFolder, 'images');
+export const pluginsFolder = join(assetsFolder, 'plugins');
 
 export const DISCORD_STATUS_BASE = 'https://srhpyqt94yxb.statuspage.io/api/v2/';
 
@@ -36,10 +37,6 @@ export const enum BrandColors {
 	Twitch = '#9146FF ',
 	Twitter = '#1DA1F2',
 	Youtube = '#FF0000'
-}
-
-export const enum MimeTypes {
-	ApplicationJson = 'application/json'
 }
 
 export const POLL_NUMBERS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
@@ -74,9 +71,13 @@ export const FooterIcon = 'https://cdn.discordapp.com/avatars/918237593789947925
 
 export const HexColorRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
 
-export const GENERIC_ERROR = 'Woops, something went wrong. The devs have been made aware of the error and are looking into it.';
+export const UrlRegex = /https\S*?([a-zA-Z0-9]+)(?:\.\w+)?(?:\s|$)/;
 
-export function generateGenericError(message?: string): string {
+export const EmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/;
+
+const GENERIC_ERROR = 'Woops, something went wrong. The devs have been made aware of the error and are looking into it.';
+
+export function formGenericError(message?: string): string {
 	if (!message) return GENERIC_ERROR;
-	return `${message}. The devs have been made aware of the error and are looking into it.`;
+	return `${message} The devs have been made aware of the error and are looking into it.`;
 }

@@ -1,8 +1,7 @@
-import { KBotLogger } from './KBotLogger';
+import { KBotLogger } from '#extensions/KBotLogger';
 import { transformLoginData } from '#utils/discord';
-import { container, LogLevel, SapphireClient } from '@sapphire/framework';
-import { ActivityType, IntentsBitField, OAuth2Scopes } from 'discord.js';
-import { WebhookClient } from 'discord.js';
+import { LogLevel, SapphireClient, container } from '@sapphire/framework';
+import { ActivityType, IntentsBitField, OAuth2Scopes, WebhookClient } from 'discord.js';
 import { Enumerable } from '@sapphire/decorators';
 
 export class KBotClient extends SapphireClient {
@@ -15,6 +14,7 @@ export class KBotClient extends SapphireClient {
 		super({
 			disableMentionPrefix: true,
 			loadDefaultErrorListeners: false,
+			loadApplicationCommandRegistriesStatusListeners: false,
 			intents: [
 				IntentsBitField.Flags.Guilds,
 				IntentsBitField.Flags.GuildMembers,
@@ -28,7 +28,7 @@ export class KBotClient extends SapphireClient {
 				activities: [{ name: '/help', type: ActivityType.Playing }]
 			},
 			logger: {
-				instance: new KBotLogger(config.isDev ? LogLevel.Debug : LogLevel.Info)
+				instance: new KBotLogger(LogLevel.Info)
 			},
 			api: {
 				origin: config.web.url,
@@ -42,6 +42,15 @@ export class KBotClient extends SapphireClient {
 					scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
 					domainOverwrite: config.api.auth.domain,
 					transformers: [transformLoginData]
+				}
+			},
+			grpc: {
+				host: config.api.host,
+				port: config.rpc.server.port,
+				options: {
+					connect: true,
+					grpc: false,
+					grpcWeb: false
 				}
 			},
 			tasks: {
@@ -72,7 +81,8 @@ export class KBotClient extends SapphireClient {
 	public override async destroy(): Promise<void> {
 		await Promise.allSettled([
 			container.prisma.$disconnect(), //
-			container.redis.quit()
+			container.redis.quit(),
+			this.grpc.close()
 		]);
 
 		super.destroy();

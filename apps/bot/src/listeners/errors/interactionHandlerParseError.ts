@@ -1,5 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Listener, Events } from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import type { InteractionHandlerParseError } from '@sapphire/framework';
 
 @ApplyOptions<Listener.Options>({

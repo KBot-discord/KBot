@@ -1,7 +1,7 @@
 import { DISCORD_STATUS_BASE } from '#utils/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
-import { fetch, FetchMethods, FetchResultTypes } from '@sapphire/fetch';
+import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 import { container } from '@sapphire/framework';
 import type { StatusPageResult } from '#types/DiscordStatus';
 
@@ -11,11 +11,9 @@ import type { StatusPageResult } from '#types/DiscordStatus';
 	enabled: !container.config.isDev
 })
 export class UtilityTask extends ScheduledTask {
-	public constructor(context: ScheduledTask.Context, options: ScheduledTask.Options) {
-		super(context, { ...options });
-	}
-
 	public override async run(): Promise<void> {
+		const { utility } = this.container;
+
 		const { incidents } = await fetch<StatusPageResult>(
 			`${DISCORD_STATUS_BASE}/incidents.json`,
 			{
@@ -24,10 +22,8 @@ export class UtilityTask extends ScheduledTask {
 			FetchResultTypes.JSON
 		);
 
-		const result = await this.container.prisma.discordIncident.deleteMany({
-			where: { NOT: { id: { in: incidents.map((incident) => incident.id) } } }
-		});
+		const count = await utility.incidents.cleanupIncidents(incidents.map((incident) => incident.id));
 
-		this.container.logger.info(`[DiscordStatusCleanup] Cleaned up ${result.count} incidents`);
+		this.container.logger.info(`[DiscordStatusCleanup] Cleaned up ${count} incidents`);
 	}
 }

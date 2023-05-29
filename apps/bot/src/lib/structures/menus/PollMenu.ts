@@ -2,11 +2,12 @@ import { EmbedColors } from '#utils/constants';
 import { PollCustomIds } from '#utils/customIds';
 import { getGuildIcon } from '#utils/discord';
 import { buildCustomId } from '#utils/functions';
-import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
-import { ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
+import { Menu } from '#structures/menus/Menu';
+import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
+import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
-import type { Guild, Message, User, APIEmbedField } from 'discord.js';
+import type { APIEmbedField, Guild, Message, User } from 'discord.js';
 import type { Poll } from '@kbotdev/database';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 import type { PollMenuButton } from '#types/CustomIds';
@@ -17,6 +18,7 @@ export class PollMenu extends Menu {
 
 	public constructor(guild: Guild) {
 		super();
+
 		this.guild = guild;
 	}
 
@@ -30,7 +32,7 @@ export class PollMenu extends Menu {
 			return { label: `Poll #${pageIndex - 1}` };
 		});
 
-		this.setPages(pages);
+		this.setMenuPages(pages);
 		this.setHomePage((builder) =>
 			builder.setEmbeds((embed) => {
 				return [
@@ -45,30 +47,38 @@ export class PollMenu extends Menu {
 		return super.run(messageOrInteraction, target);
 	}
 
-	private buildPages(embeds: EmbedBuilder[]): MenuPagesBuilder {
-		return new MenuPagesBuilder().setPages(
-			embeds.map((embed, index) => {
-				const poll = this.polls[index];
-				return new MenuPageBuilder() //
-					.setEmbeds([embed])
-					.setComponentRows((row) => {
-						return [
-							row.addComponents(
-								[
-									{ id: PollCustomIds.ResultsHidden, text: 'Show current votes (hidden)' },
-									{ id: PollCustomIds.ResultsPublic, text: 'Show current votes (public)' },
-									{ id: PollCustomIds.End, text: 'End poll' }
-								].map(({ id, text }) =>
-									new ButtonBuilder()
-										.setCustomId(buildCustomId<PollMenuButton>(id, { pollId: poll.id }))
-										.setStyle(ButtonStyle.Primary)
-										.setLabel(text)
-								)
-							)
-						];
-					});
-			})
-		);
+	private buildPages(embeds: EmbedBuilder[]): MenuPageBuilder[] {
+		return embeds.map((embed, index) => {
+			const poll = this.polls[index];
+			return new MenuPageBuilder() //
+				.setEmbeds([embed])
+				.setActions([
+					{
+						type: ComponentType.Button,
+						style: ButtonStyle.Primary,
+						customId: buildCustomId<PollMenuButton>(PollCustomIds.ResultsHidden, {
+							pollId: poll.id
+						}),
+						label: 'Show current votes (hidden)'
+					},
+					{
+						type: ComponentType.Button,
+						style: ButtonStyle.Primary,
+						customId: buildCustomId<PollMenuButton>(PollCustomIds.ResultsPublic, {
+							pollId: poll.id
+						}),
+						label: 'Show current votes (public)'
+					},
+					{
+						type: ComponentType.Button,
+						style: ButtonStyle.Primary,
+						customId: buildCustomId<PollMenuButton>(PollCustomIds.End, {
+							pollId: poll.id
+						}),
+						label: 'End poll'
+					}
+				]);
+		});
 	}
 
 	private async buildEmbeds(): Promise<EmbedBuilder[]> {
@@ -77,7 +87,7 @@ export class PollMenu extends Menu {
 		} = container;
 		const { guild } = this;
 
-		const fetchedPolls = await polls.getByGuild({ guildId: guild.id });
+		const fetchedPolls = await polls.getByGuild(guild.id);
 		this.polls = fetchedPolls ?? [];
 
 		return this.polls.map((poll, index) => {

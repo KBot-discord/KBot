@@ -1,11 +1,9 @@
 import { isNullOrUndefined } from '#utils/functions';
 import { CreditType } from '#utils/customIds';
-import { EmbedColors, GuildEmoteSlots, KBotEmoji } from '#utils/constants';
-import { EmbedBuilder, MessageType, User, isJSONEncodable } from 'discord.js';
+import { BlankSpace, EmbedColors, GuildEmoteSlots, GuildSoundboardSlots, GuildStickerSlots, KBotEmoji } from '#utils/constants';
+import { EmbedBuilder, MessageType, PermissionFlagsBits, User, isJSONEncodable } from 'discord.js';
 import { roleMention, time, userMention } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { JSONEncodable } from 'discord.js';
 import type {
 	APIUser,
 	ButtonInteraction,
@@ -15,12 +13,13 @@ import type {
 	Guild,
 	GuildMember,
 	GuildPremiumTier,
+	JSONEncodable,
 	Message,
+	RESTAPIPartialCurrentUserGuild,
 	Role,
 	Snowflake,
 	Sticker
 } from 'discord.js';
-import type { RESTAPIPartialCurrentUserGuild } from 'discord-api-types/v10';
 import type { ImageURLOptions } from '@discordjs/rest';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { FormattedGuild, TransformedLoginData } from '#types/Api';
@@ -45,6 +44,23 @@ export function getResourceFromType(guildId: string, resourceId: string, type: C
 }
 
 export const getGuildEmoteSlots = (tier: GuildPremiumTier): number => GuildEmoteSlots[tier];
+
+export const getGuildStickerSlots = (tier: GuildPremiumTier): number => GuildStickerSlots[tier];
+
+export const getGuildSoundboardSlots = (tier: GuildPremiumTier): number => GuildSoundboardSlots[tier];
+
+export function attachmentFromMessage(message: Message): { url: string; fileType: string } | null {
+	const attachmentUrl = message.attachments.at(0)?.url;
+	if (isNullOrUndefined(attachmentUrl)) return null;
+
+	const parsedUrl = attachmentUrl.match(/([a-zA-Z0-9]+)(.png|.jpg|.gif)$/);
+	if (isNullOrUndefined(parsedUrl)) return null;
+
+	return {
+		url: attachmentUrl,
+		fileType: parsedUrl[2]
+	};
+}
 
 export async function transformLoginData({ user, guilds }: LoginData): Promise<TransformedLoginData> {
 	if (!user) return { user, guilds: [] };
@@ -102,7 +118,7 @@ export function isWebhookMessage(message: Message): boolean {
 
 export function rolesToString(roles: Collection<Snowflake, Role>): string {
 	return roles.size <= 1
-		? '\u200B'
+		? BlankSpace
 		: roles
 				.sort((a, b) => b.position - a.position)
 				.map((role) => ` ${roleMention(role.id)}`)
@@ -148,7 +164,7 @@ export async function getUserInfo(interaction: ButtonInteraction | CommandIntera
 
 	if (banned) {
 		embed.addFields(
-			{ name: '\u200B', value: '\u200B' }, //
+			{ name: BlankSpace, value: BlankSpace }, //
 			{ name: 'Ban status:', value: banned, inline: true }
 		);
 	}

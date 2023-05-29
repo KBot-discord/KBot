@@ -1,12 +1,12 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'CoreModule',
+	module: KBotModules.Core,
 	description: 'Info on how to change command permissions and the defaults that are set on the bot.',
 	helpEmbed: (builder) => {
 		return builder //

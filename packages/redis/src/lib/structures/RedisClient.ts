@@ -1,5 +1,7 @@
-import { Redis, type RedisKey } from 'ioredis';
-import type { Key, RedisClientOptions } from '../types/RedisTypes';
+import { Redis } from 'ioredis';
+import type { RedisKey } from 'ioredis';
+import type { Key } from '../types/RedisTypes';
+import type { RedisClientOptions } from '../types/RedisClientOptions';
 
 export class RedisClient extends Redis {
 	public constructor(options: RedisClientOptions) {

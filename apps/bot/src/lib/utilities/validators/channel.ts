@@ -2,7 +2,7 @@ import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsEr
 import { isNullOrUndefined } from '#utils/functions';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
-import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { ChannelType, PermissionFlagsBits } from 'discord.js';
 import type { Channel, GuildChannel, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 export class ChannelValidator {

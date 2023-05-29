@@ -1,6 +1,11 @@
 import { container } from '@sapphire/framework';
 import { Counter, Gauge, register } from 'prom-client';
-import type { KBotCounters } from '#types/Metrics';
+
+type KBotCounters = {
+	commands: Counter;
+	youtube: Counter;
+	holodex: Counter;
+};
 
 export class KBotMetrics {
 	private readonly counters: KBotCounters;
@@ -70,7 +75,7 @@ export class KBotMetrics {
 			registers: [register],
 			async collect(): Promise<void> {
 				if (container.client.isReady()) {
-					this.set(await container.prisma.karaokeEvent.count());
+					this.set(await container.events.karaoke.countEvents());
 				}
 			}
 		});
@@ -81,7 +86,7 @@ export class KBotMetrics {
 			registers: [register],
 			async collect(): Promise<void> {
 				if (container.client.isReady()) {
-					this.set(await container.prisma.holodexChannel.count());
+					this.set(await container.youtube.channels.count());
 				}
 			}
 		});

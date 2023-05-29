@@ -1,13 +1,13 @@
-import { KBotErrors } from '#types/Enums';
+import { KBotErrors, KBotModules } from '#types/Enums';
 import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { PermissionFlagsBits } from 'discord.js';
 import type { DevModule } from '#modules/DevModule';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'DevModule',
+	module: KBotModules.Dev,
 	description: 'Manage the guild blacklist',
 	preconditions: ['BotOwnerOnly'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],

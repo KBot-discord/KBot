@@ -14,38 +14,28 @@ export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { menu, eventId }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const { events } = this.container;
 
-		const exists = await events.karaoke.eventExists(interaction.guildId, eventId);
-		if (!exists) {
-			return void interaction.defaultFollowup('There is no event to unschedule. Run `/manage karaoke menu` to see the updated menu.', true);
-		}
+		await events.karaoke.deleteEvent(eventId);
 
-		const active = await events.karaoke.eventActive(interaction.guildId, eventId);
-		if (active) {
-			return void interaction.defaultFollowup('That event is not active. Run `/manage karaoke menu` to see the updated menu.', true);
-		}
-
-		await events.karaoke.deleteScheduledEvent(interaction.guildId, eventId);
-
-		const updatedPage = KaraokeEventMenu.pageUnscheduleEvent(menu);
-		await menu.updatePage(updatedPage);
+		await menu.updateMenuPage(interaction, (builder) => {
+			return builder.editEmbed(0, (embed) => embed.setDescription('Event has been unscheduled.'));
+		});
 	}
 
 	@validCustomId(KaraokeCustomIds.Unschedule)
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	public override async parse(interaction: ButtonInteraction) {
-		if (!interaction.inCachedGuild()) {
-			return this.none();
-		}
-
-		const menu = KaraokeEventMenu.handlers.get(interaction.user.id);
+	public override async parse(interaction: ButtonInteraction<'cached'>) {
+		const menu = KaraokeEventMenu.getInstance(interaction.user.id);
 		if (isNullOrUndefined(menu)) {
-			await interaction.defaultReply('Please run `/manage karaoke menu` again.', true);
+			await interaction.defaultReply('Please run `/manage karaoke menu` again.', {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 
 		const settings = await this.container.events.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, true);
+			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/events toggle\` to enable it.`, {
+				tryEphemeral: true
+			});
 			return this.none();
 		}
 

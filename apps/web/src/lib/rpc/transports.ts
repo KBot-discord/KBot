@@ -7,10 +7,11 @@ let transport: Transport | null = null;
 export function getServerTransport(): Transport {
 	if (transport) return transport;
 
-	transport = connectNode({
+	const newTransport = connectNode({
 		httpVersion: '2',
 		baseUrl: env.BASE_RPC_URL!
 	});
 
-	return transport;
+	transport = newTransport;
+	return newTransport;
 }

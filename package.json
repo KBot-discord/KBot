@@ -7,6 +7,7 @@
 		"packages": [
 			"apps/**",
 			"packages/**",
+			"plugins/**",
 			"protos/**"
 		]
 	},
@@ -38,7 +39,7 @@
 		"@kbotdev/eslint-config": "workspace:^",
 		"@kbotdev/prettier-config": "workspace:^",
 		"@kbotdev/ts-config": "workspace:^",
-		"@types/node": "^20.2.4",
+		"@types/node": "^20.2.5",
 		"eslint": "^8.41.0",
 		"husky": "^8.0.3",
 		"lint-staged": "^13.2.2",

@@ -1,19 +1,17 @@
 import { PollMenu } from '#structures/menus/PollMenu';
 import { PollCustomIds } from '#utils/customIds';
 import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
-import { isNullOrUndefined, parseTimeString } from '#utils/functions';
+import { buildCustomId, isNullOrUndefined, parseTimeString } from '#utils/functions';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotErrors } from '#types/Enums';
-import { buildCustomId } from '#utils/functions';
-import { ButtonStyle, PermissionFlagsBits } from 'discord-api-types/v10';
+import { KBotErrors, KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { PollOption } from '#types/CustomIds';
 
 @ApplyOptions<KBotCommand.Options>({
-	module: 'UtilityModule',
+	module: KBotModules.Utility,
 	description: 'Create, end, or manage polls.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
@@ -152,9 +150,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error });
 		}
 
-		const count = await this.module.polls.count({
-			guildId: interaction.guildId
-		});
+		const count = await this.module.polls.count(interaction.guildId);
 		if (count >= 10) {
 			return interaction.errorReply('There can only be a maximum of 10 active polls.');
 		}
@@ -181,16 +177,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			embeds: this.createPollEmbeds(interaction.user.tag, text, options, expiresAt)
 		});
 
-		await polls.create(
-			{ guildId: pollMessage.guildId, pollId: pollMessage.id },
-			{
-				title: text,
-				options,
-				time: BigInt(expiresAt),
-				channelId: pollMessage.channelId,
-				creator: interaction.user.tag
-			}
-		);
+		await polls.create(pollMessage.guildId, pollMessage.id, {
+			title: text,
+			options,
+			time: BigInt(expiresAt),
+			channelId: pollMessage.channelId,
+			creator: interaction.user.tag
+		});
 		await polls.createTask(expiresIn, { guildId: pollMessage.guildId, pollId: pollMessage.id });
 
 		await pollMessage.edit({
@@ -252,7 +245,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 				if (options[iteration]) {
 					const key = buildCustomId<PollOption>(PollCustomIds.Vote, {
-						option: `${iteration}`
+						option: String(iteration)
 					});
 					components.push(new ButtonBuilder().setCustomId(key).setEmoji(POLL_NUMBERS[iteration]).setStyle(ButtonStyle.Primary));
 				} else {

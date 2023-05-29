@@ -1,11 +1,12 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Listener, Events } from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
+import { redBright } from 'colorette';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.ShardReconnecting
 })
 export class ShardListener extends Listener<typeof Events.ShardReconnecting> {
 	public override run(shardId: number): void {
-		this.container.logger.info(`[Shard ${shardId}] reconnecting`);
+		this.container.logger.info(`[${redBright(`Shard ${shardId}`)}] reconnecting`);
 	}
 }

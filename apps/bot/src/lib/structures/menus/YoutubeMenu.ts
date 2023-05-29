@@ -1,5 +1,6 @@
 import { EmbedColors } from '#utils/constants';
-import { Menu, MenuPageBuilder, MenuPagesBuilder } from '@kbotdev/menus';
+import { Menu } from '#structures/menus/Menu';
+import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
 import { container } from '@sapphire/framework';
 import type { EmbedBuilder, Message, User } from 'discord.js';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
@@ -10,6 +11,7 @@ export class YoutubeMenu extends Menu {
 
 	public constructor(subscriptions: YoutubeSubscriptionWithChannel[]) {
 		super();
+
 		this.subscriptions = subscriptions;
 	}
 
@@ -25,7 +27,7 @@ export class YoutubeMenu extends Menu {
 		});
 
 		if (embeds.length > 0) {
-			this.setPages(pages);
+			this.setMenuPages(pages);
 		} else {
 			this.setHomePage((builder) =>
 				builder.setEmbeds((embed) => {
@@ -41,13 +43,11 @@ export class YoutubeMenu extends Menu {
 		return super.run(messageOrInteraction, target);
 	}
 
-	private buildPages(embeds: EmbedBuilder[]): MenuPagesBuilder {
-		return new MenuPagesBuilder().setPages(
-			embeds.map((embed) => {
-				return new MenuPageBuilder() //
-					.setEmbeds([embed]);
-			})
-		);
+	private buildPages(embeds: EmbedBuilder[]): MenuPageBuilder[] {
+		return embeds.map((embed) => {
+			return new MenuPageBuilder() //
+				.setEmbeds([embed]);
+		});
 	}
 
 	private buildEmbeds(): EmbedBuilder[] {
