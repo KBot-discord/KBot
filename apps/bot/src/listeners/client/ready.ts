@@ -2,7 +2,7 @@ import { isNullOrUndefined } from '#utils/functions';
 import { KBotModules } from '#types/Enums';
 import { Events, Listener, Result } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { green, red, redBright, yellowBright } from 'colorette';
+import { green, red, yellowBright } from 'colorette';
 import type { DocumentCommand } from '@kbotdev/meili';
 import type { Modules } from '@kbotdev/plugin-modules';
 
@@ -138,6 +138,6 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 
 		await this.container.meili.resetIndex('commands', documents);
 
-		logger.info(`[${redBright('Meilisearch')}] Commands synced.`);
+		logger.infoTag('Meilisearch', 'Commands synced.');
 	}
 }

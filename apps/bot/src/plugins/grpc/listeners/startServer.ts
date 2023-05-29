@@ -1,7 +1,6 @@
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { connectNodeAdapter } from '@bufbuild/connect-node';
-import { redBright } from 'colorette';
 import { createServer } from 'http2';
 import type { Client } from 'discord.js';
 import type { ConnectRouter } from '@bufbuild/connect';
@@ -32,7 +31,7 @@ export class gRPCListener extends Listener<typeof Events.ClientReady> {
 			client.grpc = createServer(adapter);
 
 			client.grpc.listen(grpc.port, grpc.host, () => {
-				logger.info(`[${redBright('gRPC Plugin')}] Server started on ${grpc.host}:${grpc.port}`);
+				logger.infoTag('gRPC Plugin', `Server started on ${grpc.host}:${grpc.port}`);
 			});
 		}
 	}

@@ -1,6 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
-import { redBright } from 'colorette';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.ApplicationCommandRegistriesInitialising,
@@ -8,6 +7,6 @@ import { redBright } from 'colorette';
 })
 export class CommandListener extends Listener<typeof Events.ApplicationCommandRegistriesInitialising> {
 	public run(): void {
-		this.container.logger.info(`[${redBright('Command Registry')}] Initiailizing...`);
+		this.container.logger.infoTag('Command Registry', 'Initiailizing...');
 	}
 }

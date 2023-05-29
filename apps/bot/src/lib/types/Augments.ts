@@ -87,6 +87,7 @@ declare module '@sapphire/pieces' {
 
 declare module '@sapphire/framework' {
 	interface ILogger {
+		infoTag(tag: string, value: string): void;
 		sentryMessage(message: string, data?: { context?: NonNullable<unknown> }): void;
 		sentryError(error: unknown, data?: { message?: string; context?: NonNullable<unknown> }): void;
 		webhookError(builder: (builder: WebhookErrorBuilder) => WebhookErrorBuilder): Promise<void>;

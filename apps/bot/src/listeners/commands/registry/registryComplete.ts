@@ -1,6 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
-import { redBright } from 'colorette';
 import type { ApplicationCommandRegistry } from '@sapphire/framework';
 
 @ApplyOptions<Listener.Options>({
@@ -9,6 +8,6 @@ import type { ApplicationCommandRegistry } from '@sapphire/framework';
 })
 export class CommandListener extends Listener<typeof Events.ApplicationCommandRegistriesRegistered> {
 	public run(registries: Map<string, ApplicationCommandRegistry>, duration: number): void {
-		this.container.logger.info(`[${redBright('Command Registry')}] Took ${duration}ms to initialize ${registries.size} commands.`);
+		this.container.logger.infoTag('Command Registry', `Took ${duration}ms to initialize ${registries.size} commands.`);
 	}
 }
