@@ -1,9 +1,12 @@
-import { BASE_URL, ContentType } from '../lib/utilities/constants';
-import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
+import { BASE_URL } from '../lib/utilities/constants';
+import { fetchApi } from '../lib/utilities/fetch';
 import type { HolodexOptions } from '../lib/structures/Holodex';
 import type { HolodexVideoWithChannel } from '../lib/types/videos';
 import type { PaginatedResponse } from '../lib/types/api';
 
+/**
+ * Handler for any methods relating to videos.
+ */
 export class VideoHandler {
 	private readonly apiKey: string;
 
@@ -11,32 +14,26 @@ export class VideoHandler {
 		this.apiKey = options.apiKey;
 	}
 
-	public async getLive({ channels }: { channels: string[] }): Promise<HolodexVideoWithChannel[]> {
+	/**
+	 * Get the current live channels.
+	 * @param query - The query options
+	 * @returns The result of the query
+	 */
+	public async getLive(query: { channels: string[] }): Promise<HolodexVideoWithChannel[] | null> {
 		const url = new URL(`${BASE_URL}/users/live`);
-		url.searchParams.append('channels', channels.toString());
+		url.searchParams.append('channels', query.channels.toString());
 
-		return fetch<HolodexVideoWithChannel[]>(
-			url.href,
-			{
-				method: FetchMethods.Get,
-				headers: {
-					'Content-Type': ContentType.ApplicationJson,
-					'X-APIKEY': this.apiKey
-				}
-			},
-			FetchResultTypes.JSON
-		);
+		return fetchApi<HolodexVideoWithChannel[]>(url, this.apiKey);
 	}
 
-	public async getPastPaginated({
-		from,
-		to,
-		offset
-	}: {
-		from: number;
-		to: number;
-		offset: number;
-	}): Promise<PaginatedResponse<HolodexVideoWithChannel>> {
+	/**
+	 * Get the streams in a paginated format.
+	 * @param query - The query options
+	 * @returns The paginated result of the query
+	 */
+	public async getPastPaginated(query: { from: number; to: number; offset: number }): Promise<PaginatedResponse<HolodexVideoWithChannel> | null> {
+		const { from, to, offset } = query;
+
 		const url = new URL(`${BASE_URL}/videos`);
 		url.searchParams.append('paginated', 'true');
 		url.searchParams.append('status', 'past');
@@ -47,16 +44,6 @@ export class VideoHandler {
 		url.searchParams.append('to', new Date(to).toISOString());
 		url.searchParams.append('offset', `${offset}`);
 
-		return fetch<PaginatedResponse<HolodexVideoWithChannel>>(
-			url.href,
-			{
-				method: FetchMethods.Get,
-				headers: {
-					'Content-Type': ContentType.ApplicationJson,
-					'X-APIKEY': this.apiKey
-				}
-			},
-			FetchResultTypes.JSON
-		);
+		return fetchApi<PaginatedResponse<HolodexVideoWithChannel>>(url, this.apiKey);
 	}
 }
