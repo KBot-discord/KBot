@@ -27,10 +27,10 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@bufbuild/connect": "^0.9.0",
-		"@bufbuild/connect-node": "^0.9.0",
-		"@bufbuild/connect-web": "^0.9.0",
-		"@bufbuild/protobuf": "^1.2.0",
+		"@bufbuild/connect": "^0.9.1",
+		"@bufbuild/connect-node": "^0.9.1",
+		"@bufbuild/connect-web": "^0.9.1",
+		"@bufbuild/protobuf": "^1.2.1",
 		"@kbotdev/database": "workspace:^",
 		"@kbotdev/holodex": "workspace:^",
 		"@kbotdev/meili": "workspace:^",
@@ -52,7 +52,7 @@
 		"canvas-constructor": "^7.0.1",
 		"colorette": "^2.0.20",
 		"discord.js": "^14.11.0",
-		"dotenv": "^16.0.3",
+		"dotenv": "^16.1.0",
 		"fuzzysort": "^2.0.4",
 		"humanize-duration": "^3.28.0",
 		"prom-client": "^14.2.0"
@@ -60,13 +60,13 @@
 	"devDependencies": {
 		"@kbotdev/eslint-config": "workspace:^",
 		"@sentry/types": "^7.53.1",
-		"@swc/core": "^1.3.60",
+		"@swc/core": "^1.3.61",
 		"@types/humanize-duration": "^3.27.1",
 		"eslint": "^8.41.0",
 		"prettier": "^2.8.8",
 		"tsup": "^6.7.0",
 		"typescript": "^5.0.4",
-		"vitest": "^0.31.1"
+		"vitest": "^0.31.2"
 	},
 	"imports": {
 		"#prisma": "./prisma/generated/index.js",

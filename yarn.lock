@@ -226,7 +226,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bufbuild/connect-node@npm:^0.9.0":
+"@bufbuild/connect-node@npm:^0.9.1":
   version: 0.9.1
   resolution: "@bufbuild/connect-node@npm:0.9.1"
   dependencies:
@@ -238,7 +238,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bufbuild/connect-web@npm:^0.9.0":
+"@bufbuild/connect-web@npm:^0.9.1":
   version: 0.9.1
   resolution: "@bufbuild/connect-web@npm:0.9.1"
   dependencies:
@@ -249,7 +249,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bufbuild/connect@npm:0.9.1, @bufbuild/connect@npm:^0.9.0":
+"@bufbuild/connect@npm:0.9.1, @bufbuild/connect@npm:^0.9.1":
   version: 0.9.1
   resolution: "@bufbuild/connect@npm:0.9.1"
   peerDependencies:
@@ -265,14 +265,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bufbuild/protobuf@npm:1.2.1, @bufbuild/protobuf@npm:^1.2.0":
+"@bufbuild/protobuf@npm:1.2.1, @bufbuild/protobuf@npm:^1.2.0, @bufbuild/protobuf@npm:^1.2.1":
   version: 1.2.1
   resolution: "@bufbuild/protobuf@npm:1.2.1"
   checksum: c1258de903b04b38e151fa3ce4b7e9b81875a561f413b16646ffc11dd1d5b1daf367538e7163e0c888ec2fc79b71692b9c02314509bf7bbe278a9238ce1f2dcd
   languageName: node
   linkType: hard
 
-"@bufbuild/protoc-gen-connect-es@npm:^0.9.0":
+"@bufbuild/protoc-gen-connect-es@npm:^0.9.1":
   version: 0.9.1
   resolution: "@bufbuild/protoc-gen-connect-es@npm:0.9.1"
   dependencies:
@@ -292,7 +292,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bufbuild/protoc-gen-es@npm:^1.2.0":
+"@bufbuild/protoc-gen-es@npm:^1.2.1":
   version: 1.2.1
   resolution: "@bufbuild/protoc-gen-es@npm:1.2.1"
   dependencies:
@@ -330,7 +330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/cli@npm:^17.6.3":
+"@commitlint/cli@npm:^17.6.5":
   version: 17.6.5
   resolution: "@commitlint/cli@npm:17.6.5"
   dependencies:
@@ -350,7 +350,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/config-conventional@npm:^17.6.3":
+"@commitlint/config-conventional@npm:^17.6.5":
   version: 17.6.5
   resolution: "@commitlint/config-conventional@npm:17.6.5"
   dependencies:
@@ -993,8 +993,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/apps@workspace:."
   dependencies:
-    "@commitlint/cli": ^17.6.3
-    "@commitlint/config-conventional": ^17.6.3
+    "@commitlint/cli": ^17.6.5
+    "@commitlint/config-conventional": ^17.6.5
     "@kbotdev/eslint-config": "workspace:^"
     "@kbotdev/prettier-config": "workspace:^"
     "@kbotdev/ts-config": "workspace:^"
@@ -1006,7 +1006,7 @@ __metadata:
     schemix: ^1.13.0
     turbo: 1.10.0
     typescript: ^5.0.4
-    vitest: ^0.31.1
+    vitest: ^0.31.2
   languageName: unknown
   linkType: soft
 
@@ -1014,10 +1014,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/bot@workspace:apps/bot"
   dependencies:
-    "@bufbuild/connect": ^0.9.0
-    "@bufbuild/connect-node": ^0.9.0
-    "@bufbuild/connect-web": ^0.9.0
-    "@bufbuild/protobuf": ^1.2.0
+    "@bufbuild/connect": ^0.9.1
+    "@bufbuild/connect-node": ^0.9.1
+    "@bufbuild/connect-web": ^0.9.1
+    "@bufbuild/protobuf": ^1.2.1
     "@kbotdev/database": "workspace:^"
     "@kbotdev/eslint-config": "workspace:^"
     "@kbotdev/holodex": "workspace:^"
@@ -1036,14 +1036,14 @@ __metadata:
     "@sentry/node": ^7.53.1
     "@sentry/types": ^7.53.1
     "@skyra/gifenc": ^1.0.1
-    "@swc/core": ^1.3.60
+    "@swc/core": ^1.3.61
     "@types/humanize-duration": ^3.27.1
     bullmq: ^3.14.1
     canvas: 2.11.2
     canvas-constructor: ^7.0.1
     colorette: ^2.0.20
     discord.js: ^14.11.0
-    dotenv: ^16.0.3
+    dotenv: ^16.1.0
     eslint: ^8.41.0
     fuzzysort: ^2.0.4
     humanize-duration: ^3.28.0
@@ -1051,7 +1051,7 @@ __metadata:
     prom-client: ^14.2.0
     tsup: ^6.7.0
     typescript: ^5.0.4
-    vitest: ^0.31.1
+    vitest: ^0.31.2
   languageName: unknown
   linkType: soft
 
@@ -1086,7 +1086,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.59.8
     eslint: ^8.41.0
     eslint-config-prettier: ^8.8.0
-    eslint-config-turbo: ^1.9.9
+    eslint-config-turbo: ^1.10.0
     eslint-import-resolver-typescript: ^3.5.5
     eslint-plugin-import: ^2.27.5
     eslint-plugin-prettier: ^4.2.1
@@ -1137,11 +1137,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/prisma@workspace:packages/prisma"
   dependencies:
-    "@prisma/client": ^4.14.1
+    "@prisma/client": ^4.15.0
     "@types/node": ^20.2.5
     eslint: ^8.41.0
     prettier: ^2.8.8
-    prisma: ^4.14.1
+    prisma: ^4.15.0
     schemix: ^1.13.0
     ts-node: ^10.9.1
     typescript: ^5.0.4
@@ -1152,9 +1152,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/proto@workspace:packages/proto"
   dependencies:
-    "@bufbuild/protoc-gen-connect-es": ^0.9.0
-    "@bufbuild/protoc-gen-es": ^1.2.0
-    "@swc/core": ^1.3.60
+    "@bufbuild/protoc-gen-connect-es": ^0.9.1
+    "@bufbuild/protoc-gen-es": ^1.2.1
+    "@swc/core": ^1.3.61
     eslint: ^8.41.0
     prettier: ^2.8.8
     tsup: ^6.7.0
@@ -1193,9 +1193,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/web@workspace:apps/web"
   dependencies:
-    "@bufbuild/connect": ^0.9.0
-    "@bufbuild/connect-node": ^0.9.0
-    "@bufbuild/protobuf": ^1.2.0
+    "@bufbuild/connect": ^0.9.1
+    "@bufbuild/connect-node": ^0.9.1
+    "@bufbuild/protobuf": ^1.2.1
     "@floating-ui/dom": ^1.2.9
     "@fortawesome/free-brands-svg-icons": ^6.4.0
     "@fortawesome/free-solid-svg-icons": ^6.4.0
@@ -1222,7 +1222,7 @@ __metadata:
     svelte-sitemap: ^2.6.0
     tailwindcss: ^3.3.2
     vite: ^4.3.9
-    vitest: ^0.31.1
+    vitest: ^0.31.2
   languageName: unknown
   linkType: soft
 
@@ -1411,7 +1411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:^4.14.1":
+"@prisma/client@npm:^4.15.0":
   version: 4.15.0
   resolution: "@prisma/client@npm:4.15.0"
   dependencies:
@@ -1908,7 +1908,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.3.60":
+"@swc/core@npm:^1.3.61":
   version: 1.3.61
   resolution: "@swc/core@npm:1.3.61"
   dependencies:
@@ -3794,7 +3794,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.3":
+"dotenv@npm:^16.1.0":
   version: 16.1.0
   resolution: "dotenv@npm:16.1.0"
   checksum: 5c193d6405663faefbacd58bc9cadc4a6af02317a0fa67dd1555cf909388f0f498f69d441eebd1e2ed4d3599d19f8e2036428154d6f84f7b43f5996179a6f500
@@ -4060,7 +4060,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-turbo@npm:^1.9.9":
+"eslint-config-turbo@npm:^1.10.0":
   version: 1.10.0
   resolution: "eslint-config-turbo@npm:1.10.0"
   dependencies:
@@ -6911,7 +6911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prisma@npm:^4.14.1":
+"prisma@npm:^4.15.0":
   version: 4.15.0
   resolution: "prisma@npm:4.15.0"
   dependencies:
@@ -8773,7 +8773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.31.1":
+"vitest@npm:^0.31.2":
   version: 0.31.2
   resolution: "vitest@npm:0.31.2"
   dependencies:
