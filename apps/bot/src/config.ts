@@ -1,17 +1,17 @@
 import { envGetNumber, envGetString, validateConfig } from '#utils/config';
 import { NodeEnvironments, mainFolder } from '#utils/constants';
 import { container } from '@sapphire/framework';
-import dotenv from 'dotenv';
+import { config } from 'dotenv';
 import { resolve } from 'path';
 import type { ClientConfig } from '#types/Config';
 
 export function loadConfig(): void {
 	process.env.NODE_ENV ??= NodeEnvironments.Dev;
 
-	dotenv.config({ path: resolve(mainFolder, '../.env') });
+	config({ path: resolve(mainFolder, '../.env') });
 	const isDev = envGetString('NODE_ENV') !== NodeEnvironments.Production;
 
-	const config: ClientConfig = {
+	const clientConfig: ClientConfig = {
 		isDev,
 		discord: {
 			token: envGetString('DISCORD_TOKEN'),
@@ -62,10 +62,10 @@ export function loadConfig(): void {
 		}
 	};
 
-	const valid = validateConfig(config);
+	const valid = validateConfig(clientConfig);
 	if (!valid) {
 		throw new Error('Invalid config. Exiting.');
 	}
 
-	container.config = config;
+	container.config = clientConfig;
 }
