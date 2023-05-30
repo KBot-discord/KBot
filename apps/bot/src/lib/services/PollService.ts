@@ -3,7 +3,7 @@ import { isNullOrUndefined } from '#utils/functions';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { PollRepository } from '@kbotdev/database';
-import type { CreatePollData, GuildAndPollId, Poll, UpsertPollUserData } from '@kbotdev/database';
+import type { CreatePollData, Poll, UpsertPollUserData } from '@kbotdev/database';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
 import type { PollResultPayload } from '#types/Tasks';
 import type { Key } from '@kbotdev/redis';
@@ -22,39 +22,83 @@ export class PollService {
 		});
 	}
 
+	/**
+	 * Gets a poll.
+	 * @param pollId - The ID of the poll.
+	 */
 	public async get(pollId: string): Promise<Poll | null> {
 		return this.repository.get({ pollId });
 	}
 
+	/**
+	 * Get the polls of a guild.
+	 * @param guildId - The ID of the guild
+	 */
 	public async getByGuild(guildId: string): Promise<Poll[]> {
 		return this.repository.getByGuild({ guildId });
 	}
 
+	/**
+	 * Create a poll.
+	 * @param guildId - The ID of the guild
+	 * @param pollId - The ID of the poll
+	 * @param data - The data to create the poll
+	 */
 	public async create(guildId: string, pollId: string, data: CreatePollData): Promise<Poll> {
 		return this.repository.create({ guildId, pollId }, data);
 	}
 
+	/**
+	 * Delete a poll.
+	 * @param guildId - The ID of the guild
+	 * @param pollId - The ID of the poll
+	 */
 	public async delete(guildId: string, pollId: string): Promise<Poll | null> {
 		return this.repository.delete({ guildId, pollId });
 	}
 
+	/**
+	 * Get the count of polls for a guild.
+	 * @param guildId - The ID of the guild
+	 */
 	public async count(guildId: string): Promise<number> {
 		return this.repository.count({ guildId });
 	}
 
+	/**
+	 * Check if a poll is active.
+	 * @param guildId - The ID of the guild
+	 * @param pollId - The ID of the poll
+	 */
 	public async isActive(guildId: string, pollId: string): Promise<boolean> {
 		return this.repository.isActive({ guildId, pollId });
 	}
 
+	/**
+	 * Add a vote, or update an existing one.
+	 * @param data - The data to upsert the vote
+	 */
 	public async upsertVote(data: UpsertPollUserData): Promise<void> {
 		return this.repository.upsertVote(data);
 	}
 
+	/**
+	 * Get the votes of a poll.
+	 * @param guildId - The ID of the guild
+	 * @param pollId - The ID of the poll
+	 */
 	public async getVotes(guildId: string, pollId: string): Promise<Map<string, number>> {
 		return this.repository.getVotes({ guildId, pollId });
 	}
 
-	public async createTask(expiresIn: number, { guildId, pollId }: PollResultPayload): Promise<void> {
+	/**
+	 * Create a task for the ending of a poll.
+	 * @param expiresIn - How long until the task should expire
+	 * @param data - The data to create the task
+	 */
+	public async createTask(expiresIn: number, data: PollResultPayload): Promise<void> {
+		const { guildId, pollId } = data;
+
 		await container.tasks.create(
 			'pollResults',
 			{ guildId, pollId },
@@ -68,11 +112,20 @@ export class PollService {
 		);
 	}
 
+	/**
+	 * Delete a poll task.
+	 * @param pollId - The ID of the poll
+	 */
 	public async deleteTask(pollId: string): Promise<void> {
 		await container.tasks.delete(this.pollJobId(pollId));
 	}
 
-	public async end({ guildId, pollId }: GuildAndPollId): Promise<boolean> {
+	/**
+	 * End a poll.
+	 * @param guildId - The ID of the guild
+	 * @param pollId - The ID of the poll
+	 */
+	public async end(guildId: string, pollId: string): Promise<boolean> {
 		const { client, validator, logger } = container;
 
 		const guild = client.guilds.cache.get(guildId);
@@ -154,7 +207,13 @@ export class PollService {
 		}
 	}
 
-	public calculateResults({ options }: Poll, votes: Map<string, number>): string[] {
+	/**
+	 * Calculate the results of a poll from the votes.
+	 * @param poll - The poll to calculate results for
+	 * @param votes - A {@link Map} of the votes
+	 */
+	public calculateResults(poll: Poll, votes: Map<string, number>): string[] {
+		const { options } = poll;
 		const formattedOptions = options.map((option) => ({ name: option, value: 0 }));
 
 		for (const option of [...votes.values()]) {

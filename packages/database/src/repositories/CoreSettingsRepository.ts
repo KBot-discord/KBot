@@ -4,6 +4,9 @@ import type { CoreSettings, PrismaClient } from '@kbotdev/prisma';
 import type { RedisClient } from '@kbotdev/redis';
 import type { GuildId, ServiceOptions, UpsertCoreSettingsData } from '../lib/types';
 
+/**
+ * Repository that handles database operations for core settings.
+ */
 export class CoreSettingsRepository {
 	private readonly database: PrismaClient;
 	private readonly cache: RedisClient;
@@ -18,7 +21,13 @@ export class CoreSettingsRepository {
 		this.defaultExpiry = cache.defaultExpiry ?? 3600000;
 	}
 
-	public async get({ guildId }: GuildId): Promise<CoreSettings | null> {
+	/**
+	 * Get a guild's core settings.
+	 * @param query - The {@link GuildId} to query
+	 */
+	public async get(query: GuildId): Promise<CoreSettings | null> {
+		const { guildId } = query;
+
 		if (isNullish(guildId)) return null;
 		const key = this.cacheKey(guildId);
 
@@ -39,7 +48,14 @@ export class CoreSettingsRepository {
 		return dbResult;
 	}
 
-	public async upsert({ guildId }: GuildId, data: UpsertCoreSettingsData): Promise<CoreSettings> {
+	/**
+	 * Upsert a guild's core settings.
+	 * @param query - The {@link GuildId} to query
+	 * @param data - The {@link UpsertCoreSettingsData} to upsert
+	 */
+	public async upsert(query: GuildId, data: UpsertCoreSettingsData): Promise<CoreSettings> {
+		const { guildId } = query;
+
 		const key = this.cacheKey(guildId);
 
 		const settings = await this.database.coreSettings.upsert({
@@ -52,7 +68,13 @@ export class CoreSettingsRepository {
 		return settings;
 	}
 
-	public async delete({ guildId }: GuildId): Promise<CoreSettings | null> {
+	/**
+	 * Delete a guild's core settings.
+	 * @param query - The {@link GuildId} to query
+	 */
+	public async delete(query: GuildId): Promise<CoreSettings | null> {
+		const { guildId } = query;
+
 		const key = this.cacheKey(guildId);
 
 		await this.cache.delete(key);

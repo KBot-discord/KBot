@@ -67,6 +67,13 @@ export class UtilityTask extends ScheduledTask {
 		}
 	}
 
+	/**
+	 * Send incident notifications to valid channels.
+	 * @param incident - The Discord incident
+	 * @param embed - The incident's embed
+	 * @param notifications - The notifications to be sent
+	 * @param newIncident - If the incident is new
+	 */
 	private async handleNotifications(
 		incident: StatusPageIncident,
 		embed: EmbedBuilder,
@@ -124,6 +131,10 @@ export class UtilityTask extends ScheduledTask {
 		}
 	}
 
+	/**
+	 * Build an embed from a Discord incident.
+	 * @param incident - The Discord incident
+	 */
 	private embedFromIncident(incident: StatusPageIncident): EmbedBuilder {
 		const color =
 			incident.status === 'resolved' || incident.status === 'postmortem'

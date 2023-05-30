@@ -50,6 +50,11 @@ export class ModalHandler extends InteractionHandler {
 		return this.some({ code });
 	}
 
+	/**
+	 * Evaluate any JS/TS code.
+	 * @param code - The code to evaluate
+	 * @param options - The options to be made available in the eval function
+	 */
 	// @ts-expect-error This is so `eval` can access `options`
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	private async eval(code: string, options: EvalOptions): Promise<string> {
@@ -59,6 +64,10 @@ export class ModalHandler extends InteractionHandler {
 		return this.clean(result);
 	}
 
+	/**
+	 * Clean the result of the `eval` call.
+	 * @param result - The result
+	 */
 	private async clean(result: string): Promise<string> {
 		if (typeof result !== 'string') {
 			result = inspect(result, { depth: 1 });

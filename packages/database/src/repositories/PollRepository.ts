@@ -3,6 +3,9 @@ import type { Key, RedisClient } from '@kbotdev/redis';
 import type { CreatePollData, GuildAndPollId, GuildId, PollId, ServiceOptions, UpsertPollUserData } from '../lib/types';
 import type { Poll, PrismaClient } from '@kbotdev/prisma';
 
+/**
+ * Repository that handles database operations for polls.
+ */
 export class PollRepository {
 	private readonly database: PrismaClient;
 	private readonly cache: RedisClient;
@@ -13,19 +16,39 @@ export class PollRepository {
 		this.cache = cache.client;
 	}
 
-	public async get({ pollId }: PollId): Promise<Poll | null> {
+	/**
+	 * Get a poll.
+	 * @param query - The {@link PollId} to query
+	 */
+	public async get(query: PollId): Promise<Poll | null> {
+		const { pollId } = query;
+
 		return this.database.poll.findUnique({
 			where: { id: pollId }
 		});
 	}
 
-	public async getByGuild({ guildId }: GuildId): Promise<Poll[]> {
+	/**
+	 * Get the polls of a guild.
+	 * @param query - The {@link GuildId} to query
+	 */
+	public async getByGuild(query: GuildId): Promise<Poll[]> {
+		const { guildId } = query;
+
 		return this.database.poll.findMany({
 			where: { guildId }
 		});
 	}
 
-	public async create({ guildId, pollId }: GuildAndPollId, { title, channelId, time, options, creator }: CreatePollData): Promise<Poll> {
+	/**
+	 * Create a poll.
+	 * @param query - The {@link GuildAndPollId} to query
+	 * @param data - The {@link CreatePollData} to create the poll
+	 */
+	public async create(query: GuildAndPollId, data: CreatePollData): Promise<Poll> {
+		const { guildId, pollId } = query;
+		const { title, channelId, time, options, creator } = data;
+
 		await this.addActive({ guildId, pollId });
 		return this.database.poll.create({
 			data: {
@@ -40,7 +63,13 @@ export class PollRepository {
 		});
 	}
 
-	public async delete({ guildId, pollId }: GuildAndPollId): Promise<Poll | null> {
+	/**
+	 * Delete a poll.
+	 * @param query - The {@link GuildAndPollId} to query
+	 */
+	public async delete(query: GuildAndPollId): Promise<Poll | null> {
+		const { guildId, pollId } = query;
+
 		const pollKey = this.pollKey(guildId, pollId);
 
 		await this.cache.del(pollKey);
@@ -51,34 +80,70 @@ export class PollRepository {
 			.catch(() => null);
 	}
 
-	public async count({ guildId }: GuildId): Promise<number> {
+	/**
+	 * Get the count of polls for a guild.
+	 * @param query - The {@link GuildId} to query
+	 */
+	public async count(query: GuildId): Promise<number> {
+		const { guildId } = query;
+
 		return this.database.poll.count({
 			where: { guildId }
 		});
 	}
 
-	public async isActive({ guildId, pollId }: GuildAndPollId): Promise<boolean> {
+	/**
+	 * Check if a poll is active.
+	 * @param query - The {@link GuildAndPollId} to query
+	 */
+	public async isActive(query: GuildAndPollId): Promise<boolean> {
+		const { guildId, pollId } = query;
+
 		return this.cache.sIsMember(this.setKey(guildId), this.memberKey(pollId));
 	}
 
-	public async upsertVote({ guildId, pollId, userId, option }: UpsertPollUserData): Promise<void> {
+	/**
+	 * Add a vote to a poll.
+	 * @param data - The {@link UpsertPollUserData} to upsert a vote
+	 */
+	public async upsertVote(data: UpsertPollUserData): Promise<void> {
+		const { guildId, pollId, userId, option } = data;
+
 		const pollKey = this.pollKey(guildId, pollId);
 		const userKey = this.pollUserKey(userId);
 
 		await this.cache.hSet<number>(pollKey, userKey, option);
 	}
 
-	public async getVotes({ guildId, pollId }: GuildAndPollId): Promise<Map<string, number>> {
+	/**
+	 * Get a poll's votes.
+	 * @param query - The {@link GuildAndPollId} to query
+	 */
+	public async getVotes(query: GuildAndPollId): Promise<Map<string, number>> {
+		const { guildId, pollId } = query;
+
 		const pollKey = this.pollKey(guildId, pollId);
 
 		return this.cache.hGetAll<number>(pollKey);
 	}
 
-	public async addActive({ guildId, pollId }: GuildAndPollId): Promise<boolean> {
+	/**
+	 * Set a poll as active.
+	 * @param data - The {@link GuildAndPollId} to set the poll as active
+	 */
+	public async addActive(data: GuildAndPollId): Promise<boolean> {
+		const { guildId, pollId } = data;
+
 		return this.cache.sAdd(this.setKey(guildId), this.memberKey(pollId));
 	}
 
-	public async removeActive({ guildId, pollId }: GuildAndPollId): Promise<boolean> {
+	/**
+	 * Set a poll as inactive.
+	 * @param data - The {@link GuildAndPollId} to set the poll as inactive
+	 */
+	public async removeActive(data: GuildAndPollId): Promise<boolean> {
+		const { guildId, pollId } = data;
+
 		return this.cache.sRem(this.setKey(guildId), this.memberKey(pollId));
 	}
 

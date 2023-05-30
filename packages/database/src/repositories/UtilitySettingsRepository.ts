@@ -4,6 +4,9 @@ import type { PrismaClient, UtilitySettings } from '@kbotdev/prisma';
 import type { RedisClient } from '@kbotdev/redis';
 import type { GuildId, ServiceOptions, UpsertUtilitySettingsData } from '../lib/types';
 
+/**
+ * Repository that handles database operations for utility settings.
+ */
 export class UtilitySettingsRepository {
 	private readonly database: PrismaClient;
 	private readonly cache: RedisClient;
@@ -18,6 +21,10 @@ export class UtilitySettingsRepository {
 		this.defaultExpiry = cache.defaultExpiry ?? 3600000;
 	}
 
+	/**
+	 * Get a guild's utility settings.
+	 * @param query - The {@link GuildId} to query
+	 */
 	public async get({ guildId }: GuildId): Promise<UtilitySettings | null> {
 		const key = this.cacheKey(guildId);
 
@@ -38,6 +45,11 @@ export class UtilitySettingsRepository {
 		return dbResult;
 	}
 
+	/**
+	 * Upsert a guild's utility settings.
+	 * @param query - The {@link GuildId} to query
+	 * @param data - The {@link UpsertUtilitySettingsData} to upsert
+	 */
 	public async upsert({ guildId }: GuildId, data: UpsertUtilitySettingsData): Promise<UtilitySettings> {
 		const key = this.cacheKey(guildId);
 
@@ -59,6 +71,9 @@ export class UtilitySettingsRepository {
 		return settings;
 	}
 
+	/**
+	 * Get all of the valid Discord incident channels.
+	 */
 	public async getIncidentChannels(): Promise<{ guildId: string; channelId: string }[]> {
 		return this.database.utilitySettings
 			.findMany({

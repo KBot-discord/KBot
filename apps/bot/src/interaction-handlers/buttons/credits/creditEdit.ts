@@ -73,6 +73,10 @@ export class ButtonHandler extends InteractionHandler {
 		return this.some({ resource, type: t });
 	}
 
+	/**
+	 * Get the credit info from an embed's fields.
+	 * @param embed - The embed to parse
+	 */
 	private parseEmbedFields(embed: Embed): EmoteCreditEmbed {
 		const { fields } = embed;
 		return {
@@ -82,6 +86,13 @@ export class ButtonHandler extends InteractionHandler {
 		};
 	}
 
+	/**
+	 * Build a modal for editing a credit's info.
+	 * @param messageId - The ID of the message
+	 * @param resourceId - The ID of the resource
+	 * @param type - The type of resource
+	 * @param data - The credit info
+	 */
 	private buildModal(messageId: string, resourceId: string, type: CreditType, data: EmoteCreditEmbed): ModalBuilder {
 		const { description, artist, source } = data;
 		return new ModalBuilder()

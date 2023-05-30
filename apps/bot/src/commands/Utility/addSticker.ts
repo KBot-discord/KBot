@@ -19,7 +19,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
 import type { Credit } from '#types/CustomIds';
-import type { Message, ModalSubmitInteraction } from 'discord.js';
+import type { Guild, Message, ModalSubmitInteraction } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { InteractionResponseUnion } from '#types/Augments';
 
@@ -70,7 +70,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			);
 		}
 
-		const { slotsLeft, totalSlots } = this.calculateSlots(interaction);
+		const { slotsLeft, totalSlots } = this.calculateSlots(interaction.guild);
 
 		if (slotsLeft === 0) {
 			return interaction.errorReply('No stickers slots are left.', {
@@ -116,6 +116,12 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 	}
 
+	/**
+	 * Handle the submission of the sticker name modal
+	 * @param modal - The modal interaction
+	 * @param emojiData - The sticker data
+	 * @param slotsLeft - Info about the guild's sticker slots
+	 */
 	private async handleSubmit(
 		modal: ModalSubmitInteraction<'cached'>,
 		emojiData: StickerData,
@@ -157,12 +163,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		});
 	}
 
-	private calculateSlots(interaction: KBotCommand.ContextMenuCommandInteraction): {
-		slotsLeft: number;
-		totalSlots: number;
-	} {
-		const allStickers = interaction.guild.stickers.cache;
-		const totalSlots = getGuildStickerSlots(interaction.guild.premiumTier);
+	/**
+	 * Calcuate how many emoji slots are left in the guild.
+	 * @param guild - The guild
+	 */
+	private calculateSlots(guild: Guild): { slotsLeft: number; totalSlots: number } {
+		const allStickers = guild.stickers.cache;
+		const totalSlots = getGuildStickerSlots(guild.premiumTier);
 
 		return {
 			slotsLeft: totalSlots - allStickers.size,
@@ -170,10 +177,15 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		};
 	}
 
+	/**
+	 * Parse any sticker data in the targetted message.
+	 * @param message - The message
+	 *
+	 * @remarks The priority for parsing is: emoji \> attachment \> links
+	 */
 	private async getSticker(message: Message): Promise<StickerData | null> {
 		const sticker = message.stickers.at(0)?.url;
 
-		// Priority: emoji -> attachment -> links
 		if (!isNullOrUndefined(sticker)) {
 			return { url: sticker };
 		}

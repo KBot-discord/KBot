@@ -6,12 +6,16 @@ import type { ChatInputCommandErrorPayload, ContextMenuCommandErrorPayload } fro
 
 const codesToIgnore = [RESTJSONErrorCodes.UnknownChannel, RESTJSONErrorCodes.UnknownMessage];
 
-async function handleError(options: {
+/**
+ * Handle errors passed from the command error listeners.
+ * @param data - Data and context about the error
+ */
+async function handleError(data: {
 	message: string;
 	error: Error;
 	payload: ChatInputCommandErrorPayload | ContextMenuCommandErrorPayload;
 }): Promise<void> {
-	const { error, message, payload } = options;
+	const { error, message, payload } = data;
 	const { command, interaction } = payload;
 
 	if (error instanceof DiscordAPIError || error instanceof HTTPError) {

@@ -1,12 +1,12 @@
 import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
-import { WelcomeModule } from '#modules/WelcomeModule';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { isNullOrUndefined } from '#utils/functions';
 import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits, channelMention } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { WelcomeModule } from '#modules/WelcomeModule';
 import type { APIEmbedField, ColorResolvable, InteractionEditReplyOptions } from 'discord.js';
 import type { WelcomeSettings } from '@kbotdev/database';
 
@@ -237,6 +237,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 
 	public async chatInputTest(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { member } = interaction;
+
 		const settings = await this.module.settings.get(interaction.guildId);
 		if (!settings || (!settings.message && !settings.title && !settings.description && !settings.image)) {
 			return interaction.defaultReply('There are no settings to test');
@@ -245,7 +246,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		const options: InteractionEditReplyOptions = { allowedMentions: { users: [member.id] } };
 
 		if (!isNullOrUndefined(settings.message) && settings.message.length > 0) {
-			options.content = WelcomeModule.formatText(settings.message, member);
+			options.content = this.module.formatText(settings.message, member);
 		}
 
 		if (settings.title || settings.description || settings.image) {
@@ -256,11 +257,11 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 				.setTimestamp();
 
 			if (settings.title && settings.title.length > 0) {
-				embed.setTitle(WelcomeModule.formatText(settings.title, member));
+				embed.setTitle(this.module.formatText(settings.title, member));
 			}
 
 			if (settings.description && settings.description.length > 0) {
-				embed.setDescription(WelcomeModule.formatText(settings.description, member));
+				embed.setDescription(this.module.formatText(settings.description, member));
 			}
 
 			options.embeds = [embed];

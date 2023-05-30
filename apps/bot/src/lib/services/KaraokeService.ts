@@ -11,13 +11,12 @@ import type {
 	CreateEventData,
 	CreateScheduledEventData,
 	KaraokeEvent,
-	KaraokeEventId,
 	KaraokeEventWithUsers,
 	KaraokeUser,
 	RemoveFromQueueData,
 	UpdateEventData
 } from '@kbotdev/database';
-import type { Guild, GuildMember, GuildMemberManager, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
+import type { Guild, GuildMember, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
 
 export class KaraokeService extends ResultClass {
 	private readonly repository: KaraokeRepository;
@@ -26,147 +25,153 @@ export class KaraokeService extends ResultClass {
 		super();
 
 		this.repository = new KaraokeRepository({
-			database: container.prisma,
-			cache: {
-				client: container.redis
-			}
+			database: container.prisma
 		});
 	}
 
+	/**
+	 * Get a karaoke event.
+	 * @param eventId - The ID of the karaoke event
+	 */
 	public async getEvent(eventId: string): Promise<KaraokeEvent | null> {
 		return this.repository.getEvent({ eventId });
 	}
 
+	/**
+	 * Get a karaoke event with its queue.
+	 * @param eventId - The ID of the karaoke event
+	 */
 	public async getEventWithQueue(eventId: string): Promise<(KaraokeEvent & { queue: KaraokeUser[] }) | null> {
 		return this.repository.getEventWithQueue({ eventId });
 	}
 
+	/**
+	 * Get all the karaoke events of a guild.
+	 * @param guildId - The ID of the guild
+	 */
 	public async getEventByGuild(guildId: string): Promise<KaraokeEvent[]> {
 		return this.repository.getEventByGuild({ guildId });
 	}
 
+	/**
+	 * Delete a karaoke event.
+	 * @param eventId - The ID of the karaoke event
+	 */
 	public async deleteEvent(eventId: string): Promise<KaraokeEvent | null> {
 		return this.repository.deleteEvent({ eventId });
 	}
 
-	public async updateQueueLock(eventId: string, isLocked: boolean): Promise<KaraokeEvent> {
-		return this.repository.updateQueueLock({ eventId }, isLocked);
-	}
-
+	/**
+	 * Create a karaoke event.
+	 * @param data - The data to create the karaoke event
+	 */
 	public async createEvent(data: CreateEventData): Promise<KaraokeEvent> {
 		return this.repository.createEvent(data);
 	}
 
+	/**
+	 * Create a scheduled karaoke event.
+	 * @param data - The data to create the scheduled karaoke event
+	 */
 	public async createScheduledEvent(data: CreateScheduledEventData): Promise<KaraokeEvent> {
 		return this.repository.createScheduledEvent(data);
 	}
 
+	/**
+	 * Update a karaoke event.
+	 * @param data - The data to update the karaoke event
+	 */
 	public async updateEvent(data: UpdateEventData): Promise<KaraokeEvent> {
 		return this.repository.updateEvent(data);
 	}
 
+	/**
+	 * Get a count of the total amount of karaoke events.
+	 */
 	public async countEvents(): Promise<number> {
 		return this.repository.countEvents();
 	}
 
+	/**
+	 * Get the total count of karaoke events in a guild.
+	 * @param guildId - The ID of the guild
+	 */
 	public async countEventsByGuild(guildId: string): Promise<number> {
 		return this.repository.countEventsByGuild({ guildId });
 	}
 
-	public async addUserToQueue(
-		{ eventId }: KaraokeEventId, //
-		data: AddToQueueData
-	): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
+	/**
+	 * Add a user to a karaoke event queue.
+	 * @param eventId - The ID of the karaoke event
+	 * @param data - The data to add the user to the queue
+	 */
+	public async addUserToQueue(eventId: string, data: AddToQueueData): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
 		return this.repository.addUserToQueue({ eventId }, data);
 	}
 
-	public async removeUserFromQueue(
-		{ eventId }: KaraokeEventId, //
-		data: RemoveFromQueueData
-	): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
+	/**
+	 * Remove a user from a karaoke event queue.
+	 * @param eventId - The ID of the karaoke event
+	 * @param data - The data to remove the user from the queue
+	 */
+	public async removeUserFromQueue(eventId: string, data: RemoveFromQueueData): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
 		return this.repository.removeUserFromQueue({ eventId }, data);
 	}
 
-	public async setUserToSinger(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<void> {
-		const member = await memberManager.fetch(eventUser.id);
-		if (member.voice.channelId && member.manageable) {
-			if (member.voice.channel!.type === ChannelType.GuildStageVoice) {
-				await member.voice.setSuppressed(false).catch();
-			} else {
-				await member.voice.setMute(false).catch();
-			}
-		}
-
-		if (eventUser.partnerId && member.manageable) {
-			const partner = await memberManager.fetch(eventUser.partnerId);
-
-			if (partner.voice.channelId) {
-				if (partner.voice.channel!.type === ChannelType.GuildStageVoice) {
-					await partner.voice.setSuppressed(false).catch();
-				} else {
-					await partner.voice.setMute(false).catch();
-				}
-			}
-		}
+	/**
+	 * Set a user to be the karaoke event singer.
+	 * @param user - The user to set to singer
+	 * @param partner - If it is a duet, the user's partner
+	 */
+	public async setUserToSinger(user: GuildMember, partner?: GuildMember): Promise<void> {
+		return this.muteUsers(false, { user, partner });
 	}
 
-	public async setUserToAudience(memberManager: GuildMemberManager, eventUser: KaraokeUser): Promise<void> {
-		const member = await memberManager.fetch(eventUser.id);
-		if (member.voice.channel && member.manageable) {
-			if (member.voice.channel.type === ChannelType.GuildStageVoice) {
-				await member.voice.setSuppressed(true).catch((error) => {
-					container.logger.sentryError(error, { context: member });
-				});
-			} else {
-				await member.voice.setMute(true).catch((error) => {
-					container.logger.sentryError(error, { context: member });
-				});
-			}
-		}
-
-		if (eventUser.partnerId && member.manageable) {
-			const partner = await memberManager.fetch(eventUser.partnerId);
-
-			if (partner.voice.channel) {
-				if (partner.voice.channel.type === ChannelType.GuildStageVoice) {
-					await partner.voice.setSuppressed(true).catch((error) => {
-						container.logger.sentryError(error, { context: partner });
-					});
-				} else {
-					await partner.voice.setMute(true).catch((error) => {
-						container.logger.sentryError(error, { context: partner });
-					});
-				}
-			}
-		}
+	/**
+	 * Set a user to the karaoke event audience.
+	 * @param user - The user to set to the audience
+	 * @param partner - If it is a duet, the user's partner
+	 */
+	public async setUserToAudience(user: GuildMember, partner?: GuildMember): Promise<void> {
+		return this.muteUsers(true, { user, partner });
 	}
 
+	/**
+	 * Rotate the karaoke queue.
+	 * @param guild - The guild the karaoke event is in
+	 * @param event - The karaoke event
+	 * @param textChannel - The text channel
+	 */
 	public async rotateQueue(
-		memberManager: GuildMemberManager,
+		guild: Guild, //
 		event: KaraokeEventWithUsers,
-		textChannel: GuildTextBasedChannel | null
+		textChannel: GuildTextBasedChannel
 	): Promise<void> {
 		const { queue } = event;
 
-		const previousSinger = queue[0];
-		const nextSinger = queue[1];
+		const [currentUser, currentPartner] = await this.fetchEventUsers(guild, queue[0].id, queue[0].partnerId);
+		const [nextUser, nextPartner] = await this.fetchEventUsers(guild, queue[1].id, queue[1].partnerId);
 
-		const updatedEvent = await this.rotate(memberManager, event);
+		const updatedEvent = await this.rotate(
+			event, //
+			{ user: currentUser, partner: currentPartner },
+			{ user: nextUser, partner: nextPartner }
+		);
 
 		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
 		if (isNullOrUndefined(textChannel) || !result) return;
 
-		let done = userMention(previousSinger.id);
-		let next = queue.length > 1 ? `${userMention(nextSinger.id)} is` : '';
-		const mentions: string[] = queue.length > 1 ? [nextSinger.id] : [];
+		let done = userMention(currentUser.id);
+		let next = queue.length > 1 ? `${userMention(nextUser.id)} is` : '';
+		const mentions: string[] = queue.length > 1 ? [nextUser.id] : [];
 
-		if (previousSinger.partnerId) {
-			done = `${userMention(previousSinger.id)} and ${userMention(previousSinger.partnerId)}`;
+		if (currentPartner?.id) {
+			done = `${userMention(currentUser.id)} and ${userMention(currentPartner.id)}`;
 		}
 
-		if (queue.length > 1 && nextSinger.partnerId) {
-			next = `${userMention(nextSinger.id)} & ${userMention(nextSinger.partnerId)} are`;
-			mentions.push(nextSinger.partnerId);
+		if (queue.length > 1 && nextPartner?.id) {
+			next = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
+			mentions.push(nextPartner.id);
 		}
 
 		const content =
@@ -177,69 +182,44 @@ export class KaraokeService extends ResultClass {
 		await this.sendEmbed(textChannel, updatedEvent, content, mentions);
 	}
 
+	/**
+	 * Skip the current singer.
+	 * @param guild - The guild the karaoke event is in
+	 * @param event - The karaoke event
+	 * @param textChannel - The text channel
+	 * @param moderatorId - The ID of the user that triggered the skip
+	 */
 	public async skipQueue(
-		memberManager: GuildMemberManager,
-		event: KaraokeEventWithUsers,
-		textChannel: GuildTextBasedChannel | null,
-		moderatorId: string
-	): Promise<void> {
-		const { queue } = event;
-
-		const previousSinger = queue[0];
-		const nextSinger = queue[1];
-
-		const updatedEvent = await this.rotate(memberManager, event);
-
-		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
-		if (isNullOrUndefined(textChannel) || !result) return;
-
-		let done = `${userMention(previousSinger.id)} has been skipped by ${userMention(moderatorId)}`;
-		let next = queue.length > 1 ? `${userMention(nextSinger.id)} is` : '';
-		const mentions: string[] = queue.length > 1 ? [nextSinger.id] : [];
-
-		if (previousSinger.partnerId) {
-			done = `${userMention(previousSinger.id)} & ${userMention(previousSinger.partnerId)} have been skipped by ${userMention(moderatorId)}`;
-		}
-
-		if (queue.length > 1 && nextSinger.partnerId) {
-			next = `${userMention(nextSinger.id)} & ${userMention(nextSinger.partnerId)} are`;
-			mentions.push(nextSinger.partnerId);
-		}
-
-		const content =
-			queue.length > 1 //
-				? `${done}\n\n${next} up next!`
-				: done;
-
-		await this.sendEmbed(textChannel, updatedEvent, content, mentions);
-	}
-
-	public async forceRemoveUserFromQueue(
-		memberManager: GuildMemberManager,
+		guild: Guild, //
 		event: KaraokeEventWithUsers,
 		textChannel: GuildTextBasedChannel,
 		moderatorId: string
 	): Promise<void> {
 		const { queue } = event;
 
-		const previousSinger = queue[0];
-		const nextSinger = queue[1];
+		const [currentUser, currentPartner] = await this.fetchEventUsers(guild, queue[0].id, queue[0].partnerId);
+		const [nextUser, nextPartner] = await this.fetchEventUsers(guild, queue[1].id, queue[1].partnerId);
 
-		const updatedEvent = await this.rotate(memberManager, event);
+		const updatedEvent = await this.rotate(
+			event, //
+			{ user: currentUser, partner: currentPartner },
+			{ user: nextUser, partner: nextPartner }
+		);
 
-		let done = `${userMention(previousSinger.id)} has been removed from the queue by ${userMention(moderatorId)}`;
-		let next = queue.length > 1 ? `${userMention(nextSinger.id)} is` : '';
-		const mentions: string[] = queue.length > 1 ? [nextSinger.id] : [];
+		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
+		if (isNullOrUndefined(textChannel) || !result) return;
 
-		if (previousSinger.partnerId) {
-			done = `${userMention(previousSinger.id)} & ${userMention(previousSinger.partnerId)} have been removed from the queue by ${userMention(
-				moderatorId
-			)}`;
+		let done = `${userMention(currentUser.id)} has been skipped by ${userMention(moderatorId)}`;
+		let next = queue.length > 1 ? `${userMention(nextUser.id)} is` : '';
+		const mentions: string[] = queue.length > 1 ? [nextUser.id] : [];
+
+		if (currentPartner?.id) {
+			done = `${userMention(currentUser.id)} & ${userMention(currentPartner.id)} have been skipped by ${userMention(moderatorId)}`;
 		}
 
-		if (queue.length > 1 && nextSinger.partnerId) {
-			next = `${userMention(nextSinger.id)} & ${userMention(nextSinger.partnerId)} are`;
-			mentions.push(nextSinger.partnerId);
+		if (queue.length > 1 && nextPartner?.id) {
+			next = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
+			mentions.push(nextPartner.id);
 		}
 
 		const content =
@@ -250,9 +230,60 @@ export class KaraokeService extends ResultClass {
 		await this.sendEmbed(textChannel, updatedEvent, content, mentions);
 	}
 
+	/**
+	 * Remove a user from the karaoke event queue. This is for event management.
+	 * @param guild - The guild the karaoke event is in
+	 * @param event - The karaoke event
+	 * @param textChannel - The text channel
+	 * @param moderatorId - The ID of the user that triggered the removal
+	 */
+	public async forceRemoveUserFromQueue(
+		guild: Guild,
+		event: KaraokeEventWithUsers,
+		textChannel: GuildTextBasedChannel,
+		moderatorId: string
+	): Promise<void> {
+		const { queue } = event;
+
+		const [currentUser, currentPartner] = await this.fetchEventUsers(guild, queue[0].id, queue[0].partnerId);
+		const [nextUser, nextPartner] = await this.fetchEventUsers(guild, queue[1].id, queue[1].partnerId);
+
+		const updatedEvent = await this.rotate(
+			event, //
+			{ user: currentUser, partner: currentPartner },
+			{ user: nextUser, partner: nextPartner }
+		);
+
+		let done = `${userMention(currentUser.id)} has been removed from the queue by ${userMention(moderatorId)}`;
+		let next = queue.length > 1 ? `${userMention(nextUser.id)} is` : '';
+		const mentions: string[] = queue.length > 1 ? [nextUser.id] : [];
+
+		if (currentPartner?.id) {
+			done = `${userMention(currentUser.id)} & ${userMention(currentPartner.id)} have been removed from the queue by ${userMention(moderatorId)}`;
+		}
+
+		if (queue.length > 1 && nextPartner?.id) {
+			next = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
+			mentions.push(nextPartner.id);
+		}
+
+		const content =
+			queue.length > 1 //
+				? `${done}\n\n${next} up next!`
+				: done;
+
+		await this.sendEmbed(textChannel, updatedEvent, content, mentions);
+	}
+
+	/**
+	 * Check if a user is eligible to join a karaoke event queue.
+	 * @param event - The event to check
+	 * @param userId - The ID of the user to check
+	 * @param partner - If a duet, the {@link GuildMember} object of the parter
+	 */
 	public isJoinValid(
 		event: KaraokeEventWithUsers,
-		memberId: string,
+		userId: string,
 		partner?: GuildMember
 	): { valid: false; reason: string } | { valid: true; reason?: undefined } {
 		if (event.locked) {
@@ -261,7 +292,7 @@ export class KaraokeService extends ResultClass {
 		if (event.queue.length > 50) {
 			return { valid: false, reason: 'Queue limit of 50 people has been reached.' };
 		}
-		if (memberId === partner?.id) {
+		if (userId === partner?.id) {
 			return { valid: false, reason: 'You cannot duet with yourself.' };
 		}
 		if (partner && (!partner.voice.channelId || partner.voice.channelId !== event.id)) {
@@ -270,7 +301,7 @@ export class KaraokeService extends ResultClass {
 				reason: `Tell your partner to please join the stage, then run this command again.\n\n**Stage:** <#${event.id}>`
 			};
 		}
-		if (event.queue.some((member) => member.id === memberId)) {
+		if (event.queue.some((member) => member.id === userId)) {
 			return { valid: false, reason: 'You are already in queue.' };
 		}
 		if (partner && event.queue.some((member) => member.id === partner.id)) {
@@ -279,19 +310,31 @@ export class KaraokeService extends ResultClass {
 		return { valid: true };
 	}
 
-	public isAddValid(event: KaraokeEventWithUsers, memberId: string): { valid: false; reason: string } | { valid: true; reason?: undefined } {
+	/**
+	 * Check if a user is eligible to be added to a karaoke event queue.
+	 * @param event - The event to check
+	 * @param userId - The ID of the user to check
+	 */
+	public isAddValid(event: KaraokeEventWithUsers, userId: string): { valid: false; reason: string } | { valid: true; reason?: undefined } {
 		if (event.queue.length > 50) {
 			return { valid: false, reason: 'Queue limit of 50 people has been reached.' };
 		}
-		if (event.queue.some((member) => member.id === memberId)) {
+		if (event.queue.some((member) => member.id === userId)) {
 			return { valid: false, reason: 'User is already in the queue.' };
 		}
 		return { valid: true };
 	}
 
+	/**
+	 * Start a karaoke event.
+	 * @param guild - The guild that the event is in
+	 * @param voiceChannel - The voice channel of the event
+	 * @param textChannel - The text channel of the event
+	 * @param data - The data to start the event
+	 */
 	public async startEvent(
 		guild: Guild,
-		eventChannel: VoiceBasedChannel,
+		voiceChannel: VoiceBasedChannel,
 		textChannel: GuildTextBasedChannel,
 		data: {
 			stageTopic?: string | null;
@@ -302,8 +345,8 @@ export class KaraokeService extends ResultClass {
 
 		return Result.fromAsync(async () => {
 			const eventName = data.stageTopic ?? 'Karaoke Event';
-			const baseEmbed = events.karaokeInstructionsEmbed(eventChannel.id);
-			const embed = await this.setupVoiceChannel(baseEmbed, eventChannel, eventName);
+			const baseEmbed = events.karaokeInstructionsEmbed(voiceChannel.id);
+			const embed = await this.setupVoiceChannel(baseEmbed, voiceChannel, eventName);
 
 			const message = await this.sendAnnouncement(embed, textChannel, data.roleId);
 
@@ -313,7 +356,7 @@ export class KaraokeService extends ResultClass {
 			}
 
 			return this.createEvent({
-				id: eventChannel.id,
+				id: voiceChannel.id,
 				guildId: guild.id,
 				textChannelId: textChannel.id,
 				pinMessageId: textChannel.isVoiceBased() ? undefined : message?.id
@@ -321,6 +364,12 @@ export class KaraokeService extends ResultClass {
 		});
 	}
 
+	/**
+	 * Schedule a karaoke event.
+	 * @param guild - The guild that the event is in
+	 * @param event - The data of the event
+	 * @param stageTopic - The topic of the stage
+	 */
 	public async startScheduledEvent(guild: Guild, event: KaraokeEvent, stageTopic: string): Promise<Result<KaraokeEvent, Error>> {
 		const { events, validator } = container;
 
@@ -349,6 +398,11 @@ export class KaraokeService extends ResultClass {
 		});
 	}
 
+	/**
+	 * End a karaoke event.
+	 * @param guild - The guild that the event is in
+	 * @param event - The even to end
+	 */
 	public async endEvent(guild: Guild, event: KaraokeEvent): Promise<Result<undefined, Error>> {
 		const { validator } = container;
 
@@ -382,6 +436,10 @@ export class KaraokeService extends ResultClass {
 		});
 	}
 
+	/**
+	 * Build the queue embed for a karaoke event.
+	 * @param event - The karaoke event to build the embed for
+	 */
 	public buildQueueEmbed(event: KaraokeEventWithUsers): EmbedBuilder {
 		const { queue } = event;
 
@@ -406,26 +464,68 @@ export class KaraokeService extends ResultClass {
 		return embed;
 	}
 
-	private async rotate(memberManager: GuildMemberManager, event: KaraokeEventWithUsers): Promise<KaraokeEventWithUsers> {
+	public async rotate(
+		event: KaraokeEventWithUsers,
+		current: { user: GuildMember; partner?: GuildMember },
+		next: { user: GuildMember; partner?: GuildMember }
+	): Promise<KaraokeEventWithUsers> {
 		const { queue } = event;
 
-		await this.removeUserFromQueue(
-			{
-				eventId: event.id
-			},
-			{ id: queue[0].id, partnerId: queue[0].partnerId }
-		);
+		await this.removeUserFromQueue(event.id, {
+			id: current.user.id,
+			partnerId: current.partner?.id
+		});
 
-		await this.setUserToAudience(memberManager, queue[0]);
+		await this.setUserToAudience(current.user, current.partner);
 
 		if (queue.length > 1) {
-			await this.setUserToSinger(memberManager, queue[1]);
+			await this.setUserToSinger(next.user, next.partner);
 		}
 
 		queue.shift();
 		return event;
 	}
 
+	/**
+	 * Mute or unmute users.
+	 * @param shouldMute - If the users should be muted
+	 * @param data - The user and, if applicable, the partner to mute.
+	 */
+	private async muteUsers(shouldMute: boolean, data: { user: GuildMember; partner?: GuildMember }): Promise<void> {
+		const { user, partner } = data;
+
+		if (user.voice.channel && user.manageable) {
+			if (user.voice.channel.type === ChannelType.GuildStageVoice) {
+				await user.voice.setSuppressed(shouldMute).catch((error) => {
+					container.logger.sentryError(error, { context: user });
+				});
+			} else {
+				await user.voice.setMute(shouldMute).catch((error) => {
+					container.logger.sentryError(error, { context: user });
+				});
+			}
+		}
+
+		if (partner?.voice.channel && partner.manageable) {
+			if (partner.voice.channel.type === ChannelType.GuildStageVoice) {
+				await partner.voice.setSuppressed(shouldMute).catch((error) => {
+					container.logger.sentryError(error, { context: partner });
+				});
+			} else {
+				await partner.voice.setMute(shouldMute).catch((error) => {
+					container.logger.sentryError(error, { context: partner });
+				});
+			}
+		}
+	}
+
+	/**
+	 * Send a karaoke event message to a channel.
+	 * @param textChannel - The channel to sent the embed to
+	 * @param event - The karaoke event
+	 * @param content - The message to send
+	 * @param mentions - The IDs of the users to mention
+	 */
 	private async sendEmbed(textChannel: GuildTextBasedChannel, event: KaraokeEventWithUsers, content: string, mentions: string[]): Promise<void> {
 		await textChannel.send({
 			content,
@@ -438,6 +538,12 @@ export class KaraokeService extends ResultClass {
 		});
 	}
 
+	/**
+	 * Send the karaoke event announcement to a channel.
+	 * @param embed - The {@link EmbedBuilder} for the announcement
+	 * @param textChannel - The channel to send the announcement to
+	 * @param roleId - The ID of the role to ping
+	 */
 	private async sendAnnouncement(embed: EmbedBuilder, textChannel: GuildTextBasedChannel, roleId?: string | null): Promise<Message | null> {
 		return textChannel
 			.send({
@@ -448,20 +554,26 @@ export class KaraokeService extends ResultClass {
 			.catch(() => null);
 	}
 
-	private async setupVoiceChannel(embed: EmbedBuilder, eventChannel: VoiceBasedChannel, eventName: string): Promise<EmbedBuilder> {
-		if (eventChannel.type === ChannelType.GuildStageVoice) {
-			if (isNullOrUndefined(eventChannel.stageInstance)) {
-				embed.setTitle(`Event: ${eventName}`);
-				await eventChannel.createStageInstance({ topic: eventName });
+	/**
+	 * Sets up the stage or voice channel of the karaoke event.
+	 * @param embed - The {@link EmbedBuilder} for the announcement
+	 * @param voiceChannel - The voice channel
+	 * @param stageTopic - If its a stage channel, the topic of the stage
+	 */
+	private async setupVoiceChannel(embed: EmbedBuilder, voiceChannel: VoiceBasedChannel, stageTopic: string): Promise<EmbedBuilder> {
+		if (voiceChannel.type === ChannelType.GuildStageVoice) {
+			if (isNullOrUndefined(voiceChannel.stageInstance)) {
+				embed.setTitle(`Event: ${stageTopic}`);
+				await voiceChannel.createStageInstance({ topic: stageTopic });
 			} else {
-				embed.setTitle(`Event: ${eventChannel.stageInstance.topic}`);
+				embed.setTitle(`Event: ${voiceChannel.stageInstance.topic}`);
 			}
 		} else {
 			embed.setTitle('Event: Karaoke Event');
 
-			if (eventChannel.members.size > 0) {
+			if (voiceChannel.members.size > 0) {
 				await Promise.allSettled(
-					eventChannel.members.map(async (member) => member.voice.setMute(true)) //
+					voiceChannel.members.map(async (member) => member.voice.setMute(true)) //
 				);
 			}
 		}
@@ -469,12 +581,18 @@ export class KaraokeService extends ResultClass {
 		return embed;
 	}
 
-	private async fetchEventChannels(guild: Guild, eventId: string, textChannelId: string): Promise<[VoiceBasedChannel, GuildTextBasedChannel]> {
-		const eventChannel = (await guild.channels.fetch(eventId)) as VoiceBasedChannel | null;
+	/**
+	 * Fetch the channels for a karaoke event.
+	 * @param guild - The guild of the karaoke event
+	 * @param voiceChannelId - The ID of the voice channel
+	 * @param textChannelId - The ID of the text channel
+	 */
+	private async fetchEventChannels(guild: Guild, voiceChannelId: string, textChannelId: string): Promise<[VoiceBasedChannel, GuildTextBasedChannel]> {
+		const eventChannel = (await guild.channels.fetch(voiceChannelId)) as VoiceBasedChannel | null;
 		if (!eventChannel) {
 			throw new DiscordFetchError({
 				message: 'Failed to fetch event voice channel',
-				resourceId: eventId
+				resourceId: voiceChannelId
 			});
 		}
 
@@ -487,5 +605,18 @@ export class KaraokeService extends ResultClass {
 		}
 
 		return [eventChannel, textChannel];
+	}
+
+	/**
+	 * Fetch the user for a karaoke event.
+	 * @param guild - The guild that the event is in
+	 * @param userId - The ID of the user
+	 * @param partnerId - The ID of the partner
+	 */
+	private async fetchEventUsers(guild: Guild, userId: string, partnerId?: string | null): Promise<[GuildMember, GuildMember | undefined]> {
+		const user = await guild.members.fetch(userId);
+		const partner = partnerId ? await guild.members.fetch(partnerId) : undefined;
+
+		return [user, partner];
 	}
 }

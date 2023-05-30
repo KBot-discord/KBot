@@ -8,7 +8,11 @@ module.exports = {
 		'plugin:import/typescript',
 		'turbo'
 	],
-	plugins: ['@typescript-eslint', 'import'],
+	plugins: [
+		'@typescript-eslint', //
+		'import',
+		'eslint-plugin-tsdoc'
+	],
 	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		sourceType: 'module',
@@ -413,6 +417,7 @@ module.exports = {
 					'type'
 				]
 			}
-		]
+		],
+		'tsdoc/syntax': 'warn'
 	}
 };

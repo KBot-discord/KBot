@@ -18,6 +18,10 @@ export abstract class KBotCommand<M extends Module> extends ModuleCommand<M> {
 			.build();
 	}
 
+	/**
+	 * If the command encounters an unhandled subcommand.
+	 * @param interaction - The ineraction that couldn't be handled
+	 */
 	protected unknownSubcommand(interaction: KBotCommand.ChatInputCommandInteraction): void {
 		interaction.client.emit(KBotErrors.MissingSubcommandHandler, {
 			interaction,

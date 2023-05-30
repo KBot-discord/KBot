@@ -198,6 +198,10 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return new PollMenu(interaction.guild).run(interaction);
 	}
 
+	/**
+	 * Format the provided options from the interaction.
+	 * @param interaction - The interaction
+	 */
 	private formatOptions(interaction: KBotCommand.ChatInputCommandInteraction): string[] {
 		const options: string[] = [];
 
@@ -212,12 +216,19 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return options;
 	}
 
-	private createPollEmbeds(userTag: string, text: string, choices: string[], expiresAt?: number): EmbedBuilder[] {
+	/**
+	 * Create the embeds for a poll.
+	 * @param userTag - The user's tag
+	 * @param text - The poll's title
+	 * @param options - The poll's options
+	 * @param expiresAt - When the poll ends
+	 */
+	private createPollEmbeds(userTag: string, text: string, options: string[], expiresAt?: number): EmbedBuilder[] {
 		const embeds = [
 			new EmbedBuilder()
 				.setColor(EmbedColors.Default)
 				.setTitle(text)
-				.setDescription(choices.join('\n'))
+				.setDescription(options.join('\n'))
 				.setFooter({ text: `Poll made by ${userTag}` })
 				.setTimestamp()
 		];
@@ -234,6 +245,10 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return embeds;
 	}
 
+	/**
+	 * Create the buttons based on the poll's options.
+	 * @param options - The options
+	 */
 	private createPollButtons(options: string[]): ActionRowBuilder<ButtonBuilder>[] {
 		const rows = [];
 

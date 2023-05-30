@@ -34,15 +34,29 @@ export class KBotMetrics {
 		};
 	}
 
-	public incrementCommand({ command, success, value = 1 }: { command: string; success: boolean; value?: number }): void {
+	/**
+	 * Increment the command counter.
+	 * @param data - The data to increment the counter
+	 */
+	public incrementCommand(data: { command: string; success: boolean; value?: number }): void {
+		const { command, success, value = 1 } = data;
+
 		this.counters.commands.inc({ command, success: String(success) }, value);
 	}
 
+	/**
+	 * Increment the YouTube notification counter.
+	 * @param data - The data to increment the counter
+	 */
 	public incrementYoutube({ success, value = 1 }: { success: boolean; value?: number }): void {
 		this.counters.youtube.inc({ success: String(success) }, value);
 	}
 
-	public incrementHolodex({ value = 1 }: { value?: number }): void {
+	/**
+	 * Increment the Holodex API counter.
+	 * @param data - The data to increment the counter
+	 */
+	public incrementHolodex({ value = 1 }: { value?: number } = {}): void {
 		this.counters.holodex.inc(value);
 	}
 

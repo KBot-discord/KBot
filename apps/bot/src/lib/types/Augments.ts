@@ -25,6 +25,9 @@ export type FollowupArgs = [text: string, options?: { ephemeral?: boolean }];
 
 declare module 'discord.js' {
 	interface Client {
+		/**
+		 * Send formatted errors to a channel in the developer server.
+		 */
 		readonly webhook: WebhookClient | null;
 	}
 
@@ -35,40 +38,153 @@ declare module 'discord.js' {
 	}
 
 	interface CommandInteraction {
+		/**
+		 * Reply to an interaction with a default embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Reply to an interaction with a success embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Reply to an interaction with a error embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
+		/**
+		 * Followup to an interaction with a default embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Followup to an interaction with a success embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Followup to an interaction with a error embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 
 	interface MessageComponentInteraction {
+		/**
+		 * Reply to an interaction with a default embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Reply to an interaction with a success embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Reply to an interaction with a error embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
+		/**
+		 * Followup to an interaction with a default embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Followup to an interaction with a success embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Followup to an interaction with a error embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 
 	interface ModalSubmitInteraction {
+		/**
+		 * Reply to an interaction with a default embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Reply to an interaction with a success embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Reply to an interaction with a error embed.
+		 * @param text - The text to reply to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
+		/**
+		 * Followup to an interaction with a default embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Followup to an interaction with a success embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
+
+		/**
+		 * Followup to an interaction with a error embed.
+		 * @param text - The text to followup to the interaction with
+		 * @param options - The options to pass to the handler
+		 */
 		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 }
 
 declare module '@sapphire/pieces' {
 	interface Container {
+		/**
+		 * Configurations values for the bot.
+		 */
 		config: ClientConfig;
+
+		/**
+		 * Validators to ensure the bot runs with the proper permissions and settings.
+		 */
 		validator: Validator;
+
+		/**
+		 * Metrics about the bot to send to send to Prometheus.
+		 */
 		metrics: KBotMetrics;
 
 		prisma: PrismaClient;
@@ -87,15 +203,40 @@ declare module '@sapphire/pieces' {
 
 declare module '@sapphire/framework' {
 	interface ILogger {
+		/**
+		 * Print a value along with it's tag.
+		 * @param tag - The relevant domain of the value
+		 * @param value - The value to print
+		 */
 		infoTag(tag: string, value: string): void;
+
+		/**
+		 * Send a message to Sentry
+		 * @param message - The message to send
+		 * @param data - The data to send
+		 */
 		sentryMessage(message: string, data?: { context?: NonNullable<unknown> }): void;
+
+		/**
+		 * Send an error to Sentry
+		 * @param error - The error to send
+		 * @param data - The data to send
+		 */
 		sentryError(error: unknown, data?: { message?: string; context?: NonNullable<unknown> }): void;
+
+		/**
+		 * Send a formatted error to a channel in the developer server.
+		 * @param builder - The embed for the webhook
+		 */
 		webhookError(builder: (builder: WebhookErrorBuilder) => WebhookErrorBuilder): Promise<void>;
 	}
 }
 
 declare module '@bufbuild/connect' {
 	interface HandlerContext {
+		/**
+		 * Authentication data about the incoming Request.
+		 */
 		auth: AuthData;
 	}
 }

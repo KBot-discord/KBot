@@ -1,6 +1,9 @@
 import type { IncidentMessage, Prisma, PrismaClient } from '@kbotdev/prisma';
 import type { ServiceOptions } from '../lib/types';
 
+/**
+ * Repository that handles database operations for Discord incidents.
+ */
 export class DiscordIncidentRepository {
 	private readonly database: PrismaClient;
 
@@ -8,6 +11,10 @@ export class DiscordIncidentRepository {
 		this.database = database;
 	}
 
+	/**
+	 * Get Discord incidents of the provided IDs.
+	 * @param incidentIds - The incidents to query
+	 */
 	public async getManyIncidentsInArray(incidentIds: string[]): Promise<
 		{
 			id: string;
@@ -21,6 +28,10 @@ export class DiscordIncidentRepository {
 		});
 	}
 
+	/**
+	 * Delete any Discord incidents that are NOT in the array.
+	 * @param incidentsIds - The IDs of the incidents to not delete
+	 */
 	public async deleteManyIncidentsNotInArray(incidentsIds: string[]): Promise<Prisma.BatchPayload> {
 		return this.database.discordIncident.deleteMany({
 			where: { NOT: { id: { in: incidentsIds } } }

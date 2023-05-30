@@ -2,11 +2,11 @@ import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
 import { MinageHandler } from '#structures/handlers/MinageHandler';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { ModerationModule } from '#modules/ModerationModule';
 import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import type { ModerationModule } from '#modules/ModerationModule';
 import type { ModerationSettings } from '@kbotdev/database';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -180,7 +180,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		const reqDay = Math.floor(86400000 * req);
 		const reqDate = Math.floor(creation + reqDay);
 
-		const embed = ModerationModule.formatMinageEmbed(member, settings?.minAccountAgeMsg, req, reqDate);
+		const embed = this.module.formatMinageEmbed(member, settings?.minAccountAgeMsg, req, reqDate);
 		return interaction.editReply({ embeds: [embed] });
 	}
 

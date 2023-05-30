@@ -13,7 +13,7 @@ import type { CoreModule } from '#modules/CoreModule';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Echo')
-			.setOptions({ label: '/echo <text> <channel>' });
+			.setOption({ label: '/echo <text> <channel>' });
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {

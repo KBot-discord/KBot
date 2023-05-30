@@ -22,10 +22,13 @@ export class HolodexTask extends ScheduledTask {
 				offset: page * 100
 			});
 
-			channels.push(...fetchedChannels);
-
-			page++;
-			pagesLeft = fetchedChannels.length === 100;
+			if (fetchedChannels) {
+				channels.push(...fetchedChannels);
+				page++;
+				pagesLeft = fetchedChannels.length === 100;
+			} else {
+				pagesLeft = false;
+			}
 		};
 
 		logger.debug('[HolodexTask] Syncing channels');

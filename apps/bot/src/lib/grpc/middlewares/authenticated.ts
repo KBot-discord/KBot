@@ -9,10 +9,15 @@ import { OAuth2Routes } from 'discord.js';
 import type { RESTPostOAuth2AccessTokenResult } from 'discord.js';
 import type { HandlerContext } from '@bufbuild/connect';
 
+/**
+ * Ensures that any Requests is authenticated.
+ *
+ * @remarks This will also refreshes the Request's authentication if it is about to expire.
+ */
 export const authenticated = (): MethodDecorator => {
-	return createMethodDecorator((_: any, __: any, descriptor: any) => {
+	return createMethodDecorator((_target: any, _property: any, descriptor: any) => {
 		const method = descriptor.value;
-		if (!method || typeof method !== 'function') {
+		if (typeof method !== 'function') {
 			throw new Error('This can only be used on class methods');
 		}
 

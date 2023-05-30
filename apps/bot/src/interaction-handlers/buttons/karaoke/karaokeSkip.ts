@@ -35,7 +35,7 @@ export class ButtonHandler extends InteractionHandler {
 
 		const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel;
 
-		await karaoke.skipQueue(interaction.guild.members, event, textChannel, interaction.user.id);
+		await karaoke.skipQueue(interaction.guild, event, textChannel, interaction.user.id);
 
 		await interaction.defaultReply('User skipped.');
 	}

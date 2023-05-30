@@ -4,6 +4,12 @@ import { container } from '@sapphire/framework';
 import type { Awaitable, Guild, GuildMember } from 'discord.js';
 import type { AuthData } from '@sapphire/plugin-api';
 
+/**
+ * Asserts that the callback is called with the correct permissions
+ * @param guildId - The ID of the guild
+ * @param auth - The Request's authentication data
+ * @param callback - The callback to assert permissions for
+ */
 export async function assertManagePermissions<R>(
 	guildId: string,
 	auth: AuthData,

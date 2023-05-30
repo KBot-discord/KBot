@@ -12,7 +12,7 @@ export class GuildListener extends Listener {
 		if (isNullOrUndefined(oldEvent.channel) || isNullOrUndefined(oldEvent.guild)) return;
 
 		if (oldEvent.entityType !== GuildScheduledEventEntityType.External && newEvent.entityType === GuildScheduledEventEntityType.External) {
-			return this.handleInternalToExternal(oldEvent.guildId, oldEvent.channel);
+			return this.handleInternalToExternal(oldEvent.guild, oldEvent.channel);
 		}
 
 		if (oldEvent.status === GuildScheduledEventStatus.Scheduled && newEvent.status === GuildScheduledEventStatus.Active) {
@@ -20,10 +20,15 @@ export class GuildListener extends Listener {
 		}
 	}
 
-	private async handleInternalToExternal(guildId: string, channel: StageChannel | VoiceChannel): Promise<void> {
+	/**
+	 * Handle when a scheduled karaoke event's channel is set to no longer be in Discord.
+	 * @param guild - The guild the event is in
+	 * @param channel - The event's voice channel
+	 */
+	private async handleInternalToExternal(guild: Guild, channel: StageChannel | VoiceChannel): Promise<void> {
 		const { events } = this.container;
 
-		const settings = await events.settings.get(guildId);
+		const settings = await events.settings.get(guild.id);
 		if (isNullOrUndefined(settings) || !settings.enabled) return;
 
 		const event = await events.karaoke.getEvent(channel.id);
@@ -32,6 +37,12 @@ export class GuildListener extends Listener {
 		await events.karaoke.deleteEvent(channel.id);
 	}
 
+	/**
+	 * Handle when the Discord event associated with a scheduled karaoke event goes live.
+	 * @param guild - The guild the event is in
+	 * @param channel - the events voice channel
+	 * @param stageTopic - The topic of the stage
+	 */
 	private async handleGoingActive(guild: Guild, channel: StageChannel | VoiceChannel, stageTopic: string): Promise<void> {
 		const { events, validator } = this.container;
 

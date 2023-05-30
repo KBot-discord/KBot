@@ -10,12 +10,20 @@ export class MenuPageBuilder {
 		this.page = page ?? { embeds: [], actions: [] };
 	}
 
+	/**
+	 * Add an embed to the page.
+	 * @param embed - The embed to add
+	 */
 	public addEmbed(embed: EmbedBuilder | ((embed: EmbedBuilder) => EmbedBuilder)): this {
 		if (!this.page.embeds) this.page.embeds = [];
 		this.page.embeds.push(isFunction(embed) ? embed(new EmbedBuilder()) : embed);
 		return this;
 	}
 
+	/**
+	 * Set the embeds of a page.
+	 * @param embeds - The embed to set
+	 */
 	public setEmbeds(
 		embeds:
 			| EmbedBuilder[]
@@ -49,17 +57,30 @@ export class MenuPageBuilder {
 		return this;
 	}
 
+	/**
+	 * Add an action to the page.
+	 * @param action - The action to add
+	 */
 	public addAction(action: PaginatedMessageAction): this {
 		if (!this.page.actions) this.page.actions = [];
 		this.page.actions.push(action);
 		return this;
 	}
 
+	/**
+	 * Clear and then set the actions of a page.
+	 * @param actions - The actions to set
+	 */
 	public setActions(actions: PaginatedMessageAction[]): this {
 		for (const action of actions) this.addAction(action);
 		return this;
 	}
 
+	/**
+	 * Edit the embed at the provided index.
+	 * @param index - The index of the embed
+	 * @param embed - A callback to edit the embed
+	 */
 	public editEmbed(index: number, embed: (builder: EmbedBuilder) => EmbedBuilder): this {
 		if (!this.page.embeds) this.page.embeds = [];
 
@@ -70,6 +91,9 @@ export class MenuPageBuilder {
 		return this;
 	}
 
+	/**
+	 * Build the resulting {@link PaginatedMessagePage}
+	 */
 	public build(): PaginatedMessagePage {
 		return this.page;
 	}

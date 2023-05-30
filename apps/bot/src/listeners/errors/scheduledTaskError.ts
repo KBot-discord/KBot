@@ -7,7 +7,7 @@ import { ScheduledTaskEvents } from '@sapphire/plugin-scheduled-tasks';
 })
 export class ErrorListener extends Listener<typeof ScheduledTaskEvents.ScheduledTaskError> {
 	public async run(error: unknown, task: string, payload: unknown): Promise<void> {
-		const taskPiece = this.container.stores.get('scheduled-tasks').get('task');
+		const taskPiece = this.container.stores.get('scheduled-tasks').get(task);
 
 		let message = `Encountered error on scheduled task "${task}"`;
 		if (taskPiece) message += ` at path "${taskPiece.location.full}"`;

@@ -1,8 +1,7 @@
-import { EmbedColors } from '#utils/constants';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import { PermissionFlagsBits } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -14,6 +13,11 @@ import type { CoreModule } from '#modules/CoreModule';
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
+	private readonly permissionInfo = [
+		'To edit command permissions go to `Server Settings -> Integrations -> KBot -> Manage`', //
+		'Info about default permissions can be found at: https://docs.kbot.ca/configuration/permissions'
+	].join('\n');
+
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
@@ -30,17 +34,6 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	}
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		return interaction.reply({
-			embeds: [
-				new EmbedBuilder()
-					.setColor(EmbedColors.Default) //
-					.setDescription(
-						[
-							'To edit command permissions go to `Server Settings -> Integrations -> KBot -> Manage`', //
-							'Info about default permissions can be found at: https://docs.kbot.ca/configuration/permissions'
-						].join('\n')
-					)
-			]
-		});
+		return interaction.defaultReply(this.permissionInfo);
 	}
 }

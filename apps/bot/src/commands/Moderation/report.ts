@@ -138,6 +138,12 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		return interaction.defaultReply(`[Report sent](${reportMessage.url})`);
 	}
 
+	/**
+	 * Build the action row for the report message
+	 * @param message - The reported message
+	 * @param member - The author of the reported message
+	 * @param ownerId - The ID of the guild's owner
+	 */
 	private buildRow(message: Message, member: GuildMember, ownerId: string): ActionRowBuilder<ButtonBuilder> {
 		const row = new ActionRowBuilder<ButtonBuilder>()
 			.addComponents(
@@ -168,6 +174,12 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		return row;
 	}
 
+	/**
+	 * Build the embed for the report message
+	 * @param message - The reported message
+	 * @param moderator - The user that reported the message
+	 * @param target - The author of the reported message
+	 */
 	private buildEmbed(message: Message, moderator: GuildMember, target: GuildMember): EmbedBuilder {
 		const embed = new EmbedBuilder()
 			.setColor(EmbedColors.Default)

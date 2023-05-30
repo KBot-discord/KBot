@@ -1,6 +1,11 @@
 import type { Channel, Guild, PermissionResolvable } from 'discord.js';
 
 export class ClientValidator {
+	/**
+	 * Checks if the bot has the provided permissions in the guild.
+	 * @param guild - The guild
+	 * @param permissions - The permissions to check
+	 */
 	public async hasGuildPermissions(guild: Guild, permissions: PermissionResolvable[]): Promise<boolean> {
 		const client = await guild.members.fetchMe();
 		for (const permission of permissions) {
@@ -11,11 +16,16 @@ export class ClientValidator {
 		return true;
 	}
 
-	public async hasChannelPermissions(channel: Channel | null, permissionsToCheck: PermissionResolvable[]): Promise<boolean> {
+	/**
+	 * Checks if the bot has the provided permissions in the channel.
+	 * @param channel - The channel
+	 * @param permissions - The permissions to check
+	 */
+	public async hasChannelPermissions(channel: Channel | null, permissions: PermissionResolvable[]): Promise<boolean> {
 		if (!channel || channel.isDMBased()) return false;
 		const client = await channel.guild.members.fetchMe();
 		const channelPermissions = channel.permissionsFor(client);
-		for (const permission of permissionsToCheck) {
+		for (const permission of permissions) {
 			if (!channelPermissions.has(permission)) {
 				return false;
 			}

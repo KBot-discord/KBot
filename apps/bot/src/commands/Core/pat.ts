@@ -18,6 +18,13 @@ type PatOptions = {
 	delay?: number;
 };
 
+type Dimentions = {
+	width: number;
+	height: number;
+	offsetX: number;
+	offsetY: number;
+};
+
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Core,
 	description: 'Creates a pat gif of the member.',
@@ -60,7 +67,14 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		});
 	}
 
-	public async createPatGif(avatarURL: string, { resolution = 64, delay = 25 }: PatOptions = {}): Promise<Buffer> {
+	/**
+	 * Create a pat GIF from a user's avatar.
+	 * @param avatarURL - The user's avatar URL
+	 * @param options - The GIF options
+	 */
+	public async createPatGif(avatarURL: string, options: PatOptions = {}): Promise<Buffer> {
+		const { resolution = 64, delay = 25 } = options;
+
 		const frames = this.pats.length * 2;
 		const encoder = new GifEncoder(resolution, resolution);
 		const canvas = new Canvas(resolution, resolution);
@@ -94,19 +108,16 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	private calculateDimensions(
-		i: number,
-		frames: number
-	): {
-		width: number;
-		height: number;
-		offsetX: number;
-		offsetY: number;
-	} {
+	/**
+	 * Calculate the frame dimentions from the iteration.
+	 * @param iteration - The current iteration
+	 * @param frames - The total amount of frames
+	 */
+	private calculateDimensions(iteration: number, frames: number): Dimentions {
 		const j =
-			i < frames / 2 //
-				? i
-				: frames - i;
+			iteration < frames / 2 //
+				? iteration
+				: frames - iteration;
 
 		const width = 0.8 + j * 0.02;
 		const height = 0.8 - j * 0.05;

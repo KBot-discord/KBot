@@ -44,7 +44,11 @@ export class ButtonHandler extends InteractionHandler {
 			});
 		}
 
-		const updatedEvent = await karaoke.updateQueueLock(eventId, !event.locked);
+		const updatedEvent = await karaoke.updateEvent({
+			id: eventId,
+			locked: !event.locked
+		});
+
 		const lockString = updatedEvent.locked //
 			? `${KBotEmoji.Locked} locked`
 			: `${KBotEmoji.Unlocked} unlocked`;

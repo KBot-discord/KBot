@@ -30,6 +30,9 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 		void this.banner();
 	}
 
+	/**
+	 * Print the bot's starting banner
+	 */
 	private async banner(): Promise<void> {
 		const { client, config, stores, prisma, redis, meili } = this.container;
 
@@ -59,13 +62,16 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 		});
 	}
 
-	private print({
-		values,
-		lists
-	}: {
+	/**
+	 * Print the provided options.
+	 * @param options - The options
+	 */
+	private print(options: {
 		values?: { name: string; value: string }[]; //
 		lists?: { name: string; items: string[] }[];
 	}): void {
+		const { values, lists } = options;
+
 		const pad = ' '.repeat(3);
 		const title = yellowBright;
 
@@ -82,14 +88,24 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 		}
 	}
 
-	private printValue({ pad, title, value }: { pad: string; title: string; value: string }): void {
+	/**
+	 * Print a value.
+	 * @param data - The data to print
+	 */
+	private printValue(data: { pad: string; title: string; value: string }): void {
 		const { logger } = this.container;
+		const { pad, title, value } = data;
 
 		logger.info(`${pad}${title}: ${value}`);
 	}
 
-	private printList({ pad, title, array }: { pad: string; title: string; array: string[] }): void {
+	/**
+	 * Print a list of values.
+	 * @param data - The data to print
+	 */
+	private printList(data: { pad: string; title: string; array: string[] }): void {
 		const { logger } = this.container;
+		const { pad, title, array } = data;
 
 		logger.info(`\n${pad}${title}`);
 		const last = array.pop();
@@ -101,6 +117,10 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 		logger.info(`${pad}└─ ${last}`);
 	}
 
+	/**
+	 * Check if the provided modules have properly loaded.
+	 * @param modulesToCheck - The modules to check.
+	 */
 	private checkModules(modulesToCheck: { key: string; value: keyof Modules }[]): Map<string, boolean> {
 		const { stores } = this.container;
 		const modules = stores.get('modules');
@@ -111,6 +131,10 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 		}, new Map());
 	}
 
+	/**
+	 * Check if the provided services are healthy.
+	 * @param servicesToCheck - The services to check.
+	 */
 	private checkServices(servicesToCheck: { key: string; value: Result<unknown, unknown> | boolean }[]): Map<string, boolean> {
 		return servicesToCheck.reduce<Map<string, boolean>>((acc, { key, value }) => {
 			if (typeof value === 'boolean') {
@@ -122,6 +146,9 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 		}, new Map());
 	}
 
+	/**
+	 * Sync the bot's command with the `commands` index in MeiliSearch.
+	 */
 	private async syncMeili(): Promise<void> {
 		const { logger } = this.container;
 

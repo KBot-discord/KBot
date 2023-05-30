@@ -4,6 +4,9 @@ import type { RedisClient } from '@kbotdev/redis';
 import type { PrismaClient, YoutubeSettings } from '@kbotdev/prisma';
 import type { GuildId, ServiceOptions, UpsertUtilitySettingsData } from '../lib/types';
 
+/**
+ * Repository that handles database operations for YouTube settings.
+ */
 export class YoutubeSettingsRepository {
 	private readonly database: PrismaClient;
 	private readonly cache: RedisClient;
@@ -18,6 +21,10 @@ export class YoutubeSettingsRepository {
 		this.defaultExpiry = cache.defaultExpiry ?? 3600000;
 	}
 
+	/**
+	 * Get a guild's youtube settings.
+	 * @param query - The {@link GuildId} to query
+	 */
 	public async get({ guildId }: GuildId): Promise<YoutubeSettings | null> {
 		const key = this.cacheKey(guildId);
 
@@ -38,6 +45,11 @@ export class YoutubeSettingsRepository {
 		return dbResult;
 	}
 
+	/**
+	 * Upsert a guild's youtube settings.
+	 * @param query - The {@link GuildId} to query
+	 * @param data - The {@link UpsertWelcomeSettingsData} to upsert
+	 */
 	public async upsert({ guildId }: GuildId, data: UpsertUtilitySettingsData): Promise<YoutubeSettings> {
 		const key = this.cacheKey(guildId);
 
