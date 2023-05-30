@@ -35,7 +35,7 @@ jobs:
 
       - name: Detect changes
         id: detect-change
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v36
         with:
           files: protos/${{ matrix.module }}/**
 
