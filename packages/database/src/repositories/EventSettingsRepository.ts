@@ -4,6 +4,9 @@ import type { EventSettings, PrismaClient } from '@kbotdev/prisma';
 import type { RedisClient } from '@kbotdev/redis';
 import type { GuildId, ServiceOptions, UpsertEventSettingsData } from '../lib/types';
 
+/**
+ * Repository that handles database operations for event settings.
+ */
 export class EventSettingsRepository {
 	private readonly database: PrismaClient;
 	private readonly cache: RedisClient;
@@ -18,6 +21,10 @@ export class EventSettingsRepository {
 		this.defaultExpiry = cache.defaultExpiry ?? 3600000;
 	}
 
+	/**
+	 * Get a guild's event settings.
+	 * @param query - The {@link GuildId} to query
+	 */
 	public async get({ guildId }: GuildId): Promise<EventSettings | null> {
 		const key = this.cacheKey(guildId);
 
@@ -38,6 +45,11 @@ export class EventSettingsRepository {
 		return dbResult;
 	}
 
+	/**
+	 * Upsert a guild's event settings.
+	 * @param query - The {@link GuildId} to query
+	 * @param data - The {@link UpsertEventSettingsData} to upsert
+	 */
 	public async upsert({ guildId }: GuildId, data: UpsertEventSettingsData): Promise<EventSettings> {
 		const key = this.cacheKey(guildId);
 

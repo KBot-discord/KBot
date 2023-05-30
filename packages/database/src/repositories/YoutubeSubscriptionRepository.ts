@@ -8,6 +8,9 @@ import type {
 	YoutubeSubscriptionWithChannel
 } from '../lib/types';
 
+/**
+ * Repository that handles database operations for YouTube subscriptions.
+ */
 export class YoutubeSubscriptionRepository {
 	private readonly database: PrismaClient;
 
@@ -15,27 +18,51 @@ export class YoutubeSubscriptionRepository {
 		this.database = database;
 	}
 
-	public async get({ guildId, channelId }: GuildAndHolodexChannelId): Promise<YoutubeSubscriptionWithChannel | null> {
+	/**
+	 * Get a YouTube subscription.
+	 * @param query - The {@link GuildAndHolodexChannelId} to query
+	 */
+	public async get(query: GuildAndHolodexChannelId): Promise<YoutubeSubscriptionWithChannel | null> {
+		const { guildId, channelId } = query;
+
 		return this.database.youtubeSubscription.findUnique({
 			where: { channelId_guildId: { channelId, guildId } },
 			include: { channel: true }
 		});
 	}
 
-	public async getByGuild({ guildId }: GuildId): Promise<YoutubeSubscriptionWithChannel[]> {
+	/**
+	 * Get the YouTube subscriptions of a guild.
+	 * @param query - The {@link GuildId} to query
+	 */
+	public async getByGuild(query: GuildId): Promise<YoutubeSubscriptionWithChannel[]> {
+		const { guildId } = query;
+
 		return this.database.youtubeSubscription.findMany({
 			where: { guildId },
 			include: { channel: true }
 		});
 	}
 
-	public async getByChannel({ channelId }: HolodexChannelId): Promise<YoutubeSubscription[]> {
+	/**
+	 * Get the YouTube subscriptions of a channel.
+	 * @param query - The {@link HolodexChannelId} to query
+	 */
+	public async getByChannel(query: HolodexChannelId): Promise<YoutubeSubscription[]> {
+		const { channelId } = query;
+
 		return this.database.youtubeSubscription.findMany({
 			where: { id: channelId }
 		});
 	}
 
-	public async getValid({ channelId }: HolodexChannelId): Promise<YoutubeSubscription[]> {
+	/**
+	 * Get the YouTube subscriptions of a channel with valid settings to send notifications.
+	 * @param query - The {@link HolodexChannelId} to query
+	 */
+	public async getValid(query: HolodexChannelId): Promise<YoutubeSubscription[]> {
+		const { channelId } = query;
+
 		return this.database.youtubeSubscription.findMany({
 			where: {
 				AND: {
@@ -47,7 +74,13 @@ export class YoutubeSubscriptionRepository {
 		});
 	}
 
-	public async delete({ guildId, channelId }: GuildAndHolodexChannelId): Promise<YoutubeSubscriptionWithChannel | null> {
+	/**
+	 * Get the YouTube subscriptions of a channel with valid settings.
+	 * @param query - The {@link GuildAndHolodexChannelId} to query
+	 */
+	public async delete(query: GuildAndHolodexChannelId): Promise<YoutubeSubscriptionWithChannel | null> {
+		const { guildId, channelId } = query;
+
 		return this.database.youtubeSubscription
 			.delete({
 				where: { channelId_guildId: { guildId, channelId } },
@@ -56,14 +89,17 @@ export class YoutubeSubscriptionRepository {
 			.catch(() => null);
 	}
 
+	/**
+	 * Upsert a YouTube subscription.
+	 * @param query - The {@link GuildAndHolodexChannelId} to query
+	 * @param data - The {@link UpdateYoutubeSubscriptionData} to upsert the subscription
+	 */
 	public async upsert(
-		{ guildId, channelId }: GuildAndHolodexChannelId,
+		query: GuildAndHolodexChannelId,
 		data?: UpdateYoutubeSubscriptionData
-	): Promise<
-		YoutubeSubscription & {
-			channel: HolodexChannel;
-		}
-	> {
+	): Promise<YoutubeSubscription & { channel: HolodexChannel }> {
+		const { guildId, channelId } = query;
+
 		return this.database.youtubeSubscription.upsert({
 			where: { channelId_guildId: { guildId, channelId } },
 			update: { ...data },
@@ -88,13 +124,25 @@ export class YoutubeSubscriptionRepository {
 		});
 	}
 
-	public async countByGuild({ guildId }: GuildId): Promise<number> {
+	/**
+	 * Get the YouTube subscription count of a guild.
+	 * @param query - The {@link GuildId} to query
+	 */
+	public async countByGuild(query: GuildId): Promise<number> {
+		const { guildId } = query;
+
 		return this.database.youtubeSubscription.count({
 			where: { guildId }
 		});
 	}
 
-	public async exists({ channelId, guildId }: GuildAndHolodexChannelId): Promise<boolean> {
+	/**
+	 * Check if a YouTube subscriptions exists for a guild.
+	 * @param query - The {@link GuildAndHolodexChannelId} to query
+	 */
+	public async exists(query: GuildAndHolodexChannelId): Promise<boolean> {
+		const { guildId, channelId } = query;
+
 		const result = await this.database.youtubeSubscription.count({
 			where: { channelId, guildId }
 		});

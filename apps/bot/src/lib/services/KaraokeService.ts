@@ -26,10 +26,7 @@ export class KaraokeService extends ResultClass {
 		super();
 
 		this.repository = new KaraokeRepository({
-			database: container.prisma,
-			cache: {
-				client: container.redis
-			}
+			database: container.prisma
 		});
 	}
 

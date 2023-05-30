@@ -4,6 +4,9 @@ import type { RedisClient } from '@kbotdev/redis';
 import type { PrismaClient, WelcomeSettings } from '@kbotdev/prisma';
 import type { GuildId, ServiceOptions, UpsertWelcomeSettingsData } from '../lib/types';
 
+/**
+ * Repository that handles database operations for welcome settings.
+ */
 export class WelcomeSettingsRepository {
 	private readonly database: PrismaClient;
 	private readonly cache: RedisClient;
@@ -18,6 +21,10 @@ export class WelcomeSettingsRepository {
 		this.defaultExpiry = cache.defaultExpiry ?? 3600000;
 	}
 
+	/**
+	 * Get a guild's welcome settings.
+	 * @param query - The {@link GuildId} to query
+	 */
 	public async get({ guildId }: GuildId): Promise<WelcomeSettings | null> {
 		const key = this.cacheKey(guildId);
 
@@ -38,6 +45,11 @@ export class WelcomeSettingsRepository {
 		return dbResult;
 	}
 
+	/**
+	 * Upsert a guild's welcome settings.
+	 * @param query - The {@link GuildId} to query
+	 * @param data - The {@link UpsertWelcomeSettingsData} to upsert
+	 */
 	public async upsert({ guildId }: GuildId, data: UpsertWelcomeSettingsData): Promise<WelcomeSettings> {
 		const key = this.cacheKey(guildId);
 

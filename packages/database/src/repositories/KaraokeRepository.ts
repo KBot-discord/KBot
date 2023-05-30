@@ -1,12 +1,8 @@
-import { karaokeEventActiveCacheKey, karaokeEventExistsCacheKey } from '../keys';
-import { CacheValues } from '../lib/utilities';
 import type { KaraokeEvent, KaraokeUser, PrismaClient } from '@kbotdev/prisma';
-import type { RedisClient } from '@kbotdev/redis';
 import type {
 	AddToQueueData,
 	CreateEventData,
 	CreateScheduledEventData,
-	GuildAndKaraokeEventId,
 	GuildId,
 	KaraokeEventId,
 	RemoveFromQueueData,
@@ -14,44 +10,60 @@ import type {
 	UpdateEventData
 } from '../lib/types';
 
+/**
+ * Repository that handles database operations for karaoke events.
+ */
 export class KaraokeRepository {
 	private readonly database: PrismaClient;
-	private readonly cache: RedisClient;
 
-	private readonly existsKey = karaokeEventExistsCacheKey;
-	private readonly isActiveKey = karaokeEventActiveCacheKey;
-
-	public constructor({ database, cache }: ServiceOptions) {
+	public constructor({ database }: Omit<ServiceOptions, 'cache'>) {
 		this.database = database;
-
-		this.cache = cache.client;
 	}
 
-	public async getEvent({ eventId }: KaraokeEventId): Promise<KaraokeEvent | null> {
+	/**
+	 * Get a karaoke event.
+	 * @param query - The {@link KaraokeEventId} to query
+	 */
+	public async getEvent(query: KaraokeEventId): Promise<KaraokeEvent | null> {
+		const { eventId } = query;
+
 		return this.database.karaokeEvent.findUnique({
 			where: { id: eventId }
 		});
 	}
 
-	public async getEventWithQueue({ eventId }: KaraokeEventId): Promise<
-		| (KaraokeEvent & {
-				queue: KaraokeUser[];
-		  })
-		| null
-	> {
+	/**
+	 * Get a karaoke event along with its queue.
+	 * @param query - The {@link KaraokeEventId} to query
+	 */
+	public async getEventWithQueue(query: KaraokeEventId): Promise<(KaraokeEvent & { queue: KaraokeUser[] }) | null> {
+		const { eventId } = query;
+
 		return this.database.karaokeEvent.findUnique({
 			where: { id: eventId },
 			include: { queue: { orderBy: { createdAt: 'asc' } } }
 		});
 	}
 
-	public async getEventByGuild({ guildId }: GuildId): Promise<KaraokeEvent[]> {
+	/**
+	 * Get all the event associated with a guild.
+	 * @param query - The {@link GuildId} to query
+	 */
+	public async getEventByGuild(query: GuildId): Promise<KaraokeEvent[]> {
+		const { guildId } = query;
+
 		return this.database.karaokeEvent.findMany({
 			where: { guildId }
 		});
 	}
 
-	public async deleteEvent({ eventId }: KaraokeEventId): Promise<KaraokeEvent | null> {
+	/**
+	 * Delete a karaoke event.
+	 * @param query - The {@link KaraokeEventId} to query
+	 */
+	public async deleteEvent(query: KaraokeEventId): Promise<KaraokeEvent | null> {
+		const { eventId } = query;
+
 		return this.database.karaokeEvent
 			.delete({
 				where: { id: eventId }
@@ -59,14 +71,26 @@ export class KaraokeRepository {
 			.catch(() => null);
 	}
 
-	public async updateQueueLock({ eventId }: KaraokeEventId, isLocked: boolean): Promise<KaraokeEvent> {
+	/**
+	 * Update the lock for a karaoke event.
+	 * @param query - The {@link KaraokeEventId} to query
+	 */
+	public async updateQueueLock(query: KaraokeEventId, isLocked: boolean): Promise<KaraokeEvent> {
+		const { eventId } = query;
+
 		return this.database.karaokeEvent.update({
 			where: { id: eventId },
 			data: { locked: isLocked }
 		});
 	}
 
-	public async createEvent({ id, guildId, textChannelId, pinMessageId }: CreateEventData): Promise<KaraokeEvent> {
+	/**
+	 * Create a karaoke event.
+	 * @param data - The {@link CreateEventData} to create the karaoke event
+	 */
+	public async createEvent(data: CreateEventData): Promise<KaraokeEvent> {
+		const { id, guildId, textChannelId, pinMessageId } = data;
+
 		return this.database.karaokeEvent.create({
 			data: {
 				id,
@@ -79,7 +103,13 @@ export class KaraokeRepository {
 		});
 	}
 
-	public async createScheduledEvent({ id, guildId, textChannelId, discordEventId, roleId }: CreateScheduledEventData): Promise<KaraokeEvent> {
+	/**
+	 * Create a scheduled karaoke event.
+	 * @param data - The {@link CreateScheduledEventData} to create the scheduled karaoke event
+	 */
+	public async createScheduledEvent(data: CreateScheduledEventData): Promise<KaraokeEvent> {
+		const { id, guildId, textChannelId, discordEventId, roleId } = data;
+
 		return this.database.karaokeEvent.create({
 			data: {
 				id,
@@ -93,48 +123,48 @@ export class KaraokeRepository {
 		});
 	}
 
-	public async updateEvent({ id, textChannelId, locked, isActive, discordEventId, roleId }: UpdateEventData): Promise<KaraokeEvent> {
+	/**
+	 * Update a karaoke event.
+	 * @param data - The {@link UpdateEventData} to update the karaoke event
+	 */
+	public async updateEvent(data: UpdateEventData): Promise<KaraokeEvent> {
+		const { id, textChannelId, locked, isActive, discordEventId, roleId } = data;
+
 		return this.database.karaokeEvent.update({
 			where: { id },
 			data: { textChannelId, locked, isActive, discordEventId, roleId }
 		});
 	}
 
+	/**
+	 * Get the count of all the karaoke events.
+	 */
 	public async countEvents(): Promise<number> {
 		return this.database.karaokeEvent.count();
 	}
 
-	public async countEventsByGuild({ guildId }: GuildId): Promise<number> {
+	/**
+	 * Get the count of karaoke events in a guild.
+	 * @param query - The {@link GuildId} to query
+	 */
+	public async countEventsByGuild(query: GuildId): Promise<number> {
+		const { guildId } = query;
+
 		return this.database.karaokeEvent.count({
 			where: { guildId }
 		});
 	}
 
-	public async eventExists({ guildId, eventId }: GuildAndKaraokeEventId): Promise<boolean> {
-		const key = this.existsKey(guildId, eventId);
+	/**
+	 * Add a user to a karaoke event's queue.
+	 * @param query - The {@link KaraokeEventId} to query
+	 * @param data - The {@link AddToQueueData} to add the user to the queue
+	 */
+	public async addUserToQueue(query: KaraokeEventId, data: AddToQueueData): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
+		const { eventId } = query;
+		const { id, name, partnerId, partnerName } = data;
 
-		const result = await this.cache.get(key);
-
-		return result === CacheValues.Exists;
-	}
-
-	public async eventActive({ guildId, eventId }: GuildAndKaraokeEventId): Promise<boolean> {
-		const key = this.isActiveKey(guildId, eventId);
-
-		const result = await this.cache.get(key);
-
-		return result === CacheValues.Active;
-	}
-
-	public async addUserToQueue(
-		{ eventId }: KaraokeEventId,
-		{ id, name, partnerId, partnerName }: AddToQueueData
-	): Promise<
-		KaraokeEvent & {
-			queue: KaraokeUser[];
-		}
-	> {
-		const data = await this.database.karaokeUser.create({
+		const result = await this.database.karaokeUser.create({
 			data: { id, name, partnerId, partnerName, karaokeEvent: { connect: { id: eventId } } },
 			include: {
 				karaokeEvent: {
@@ -143,18 +173,19 @@ export class KaraokeRepository {
 			}
 		});
 
-		return data.karaokeEvent;
+		return result.karaokeEvent;
 	}
 
-	public async removeUserFromQueue(
-		{ eventId }: KaraokeEventId,
-		{ id }: RemoveFromQueueData
-	): Promise<
-		KaraokeEvent & {
-			queue: KaraokeUser[];
-		}
-	> {
-		const data = await this.database.karaokeUser.delete({
+	/**
+	 * Remove a user from a karaoke event's queue.
+	 * @param query - The {@link KaraokeEventId} to query
+	 * @param data - The {@link RemoveFromQueueData} to remove the user to the queue
+	 */
+	public async removeUserFromQueue(query: KaraokeEventId, data: RemoveFromQueueData): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
+		const { eventId } = query;
+		const { id } = data;
+
+		const result = await this.database.karaokeUser.delete({
 			where: { id_eventId: { id, eventId } },
 			include: {
 				karaokeEvent: {
@@ -163,6 +194,6 @@ export class KaraokeRepository {
 			}
 		});
 
-		return data.karaokeEvent;
+		return result.karaokeEvent;
 	}
 }

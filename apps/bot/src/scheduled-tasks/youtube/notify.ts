@@ -1,4 +1,5 @@
 import { BrandColors, EmbedColors } from '#utils/constants';
+import { isNullOrUndefined } from '#utils/functions';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, roleMention } from 'discord.js';
@@ -35,16 +36,17 @@ export class YoutubeTask extends ScheduledTask {
 			.then((res) => res.map(({ channelId }) => channelId));
 		if (channelIds.length < 1) return;
 
-		const liveStreams = await holodex.videos
-			.getLive({
-				channels: channelIds
-			})
-			.then((streams) =>
-				streams.filter(({ available_at }) => {
-					return new Date(available_at).getTime() < Date.now() + Time.Hour;
-				})
-			);
+		const fetchedStreams = await holodex.videos.getLive({
+			channels: channelIds
+		});
+
 		metrics.incrementHolodex({ value: 1 });
+
+		if (isNullOrUndefined(fetchedStreams)) return;
+
+		const liveStreams = fetchedStreams.filter(({ available_at }) => {
+			return new Date(available_at).getTime() < Date.now() + Time.Hour;
+		});
 
 		const cachedStreams = await redis.hGetValues<HolodexVideoWithChannel>(this.streamsKey);
 		const danglingStreams = cachedStreams.filter(({ channel }) => {
