@@ -34,8 +34,8 @@
 		"k8s:build": "kustomize build ./k8s -o ./k8s/result.yml"
 	},
 	"devDependencies": {
-		"@commitlint/cli": "^17.6.3",
-		"@commitlint/config-conventional": "^17.6.3",
+		"@commitlint/cli": "^17.6.5",
+		"@commitlint/config-conventional": "^17.6.5",
 		"@kbotdev/eslint-config": "workspace:^",
 		"@kbotdev/prettier-config": "workspace:^",
 		"@kbotdev/ts-config": "workspace:^",
@@ -47,7 +47,7 @@
 		"schemix": "^1.13.0",
 		"turbo": "1.10.0",
 		"typescript": "^5.0.4",
-		"vitest": "^0.31.1"
+		"vitest": "^0.31.2"
 	},
 	"lint-staged": {
 		"*.{mjs,cjs,js,ts}": [
