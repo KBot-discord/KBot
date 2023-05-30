@@ -19,7 +19,7 @@ export class KBotLogger extends Logger {
 		[LogLevel.None, (content: string): string => this.stylize(content, white, '')]
 	]);
 
-	public infoTag(tag: string, value: string): void {
+	public infoTag(tag: string, value: unknown): void {
 		super.info(`[${redBright(tag)}] ${value}`);
 	}
 

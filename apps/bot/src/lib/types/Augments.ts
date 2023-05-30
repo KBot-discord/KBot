@@ -208,7 +208,7 @@ declare module '@sapphire/framework' {
 		 * @param tag - The relevant domain of the value
 		 * @param value - The value to print
 		 */
-		infoTag(tag: string, value: string): void;
+		infoTag(tag: string, value: unknown): void;
 
 		/**
 		 * Send a message to Sentry

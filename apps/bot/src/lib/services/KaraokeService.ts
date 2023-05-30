@@ -147,10 +147,10 @@ export class KaraokeService extends ResultClass {
 		event: KaraokeEventWithUsers,
 		textChannel: GuildTextBasedChannel
 	): Promise<void> {
-		const { queue } = event;
+		const { current, next } = await this.fetchEventUsers(guild, event.queue);
 
-		const [currentUser, currentPartner] = await this.fetchEventUsers(guild, queue[0].id, queue[0].partnerId);
-		const [nextUser, nextPartner] = await this.fetchEventUsers(guild, queue[1].id, queue[1].partnerId);
+		const [currentUser, currentPartner] = current;
+		const [nextUser, nextPartner] = next;
 
 		const updatedEvent = await this.rotate(
 			event, //
@@ -162,22 +162,21 @@ export class KaraokeService extends ResultClass {
 		if (isNullOrUndefined(textChannel) || !result) return;
 
 		let done = userMention(currentUser.id);
-		let next = queue.length > 1 ? `${userMention(nextUser.id)} is` : '';
-		const mentions: string[] = queue.length > 1 ? [nextUser.id] : [];
+		let nextMention = nextUser ? `${userMention(nextUser.id)} is` : undefined;
+		const mentions: string[] = nextUser ? [nextUser.id] : [];
 
 		if (currentPartner?.id) {
 			done = `${userMention(currentUser.id)} and ${userMention(currentPartner.id)}`;
 		}
 
-		if (queue.length > 1 && nextPartner?.id) {
-			next = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
+		if (nextUser && nextPartner) {
+			nextMention = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
 			mentions.push(nextPartner.id);
 		}
 
-		const content =
-			queue.length > 1 //
-				? `${done}'s turn is over.\n\n${next} up next!`
-				: `${done}'s turn is over.`;
+		const content = nextMention //
+			? `${done}'s turn is over.\n\n${nextMention} up next!`
+			: `${done}'s turn is over.`;
 
 		await this.sendEmbed(textChannel, updatedEvent, content, mentions);
 	}
@@ -195,10 +194,10 @@ export class KaraokeService extends ResultClass {
 		textChannel: GuildTextBasedChannel,
 		moderatorId: string
 	): Promise<void> {
-		const { queue } = event;
+		const { current, next } = await this.fetchEventUsers(guild, event.queue);
 
-		const [currentUser, currentPartner] = await this.fetchEventUsers(guild, queue[0].id, queue[0].partnerId);
-		const [nextUser, nextPartner] = await this.fetchEventUsers(guild, queue[1].id, queue[1].partnerId);
+		const [currentUser, currentPartner] = current;
+		const [nextUser, nextPartner] = next;
 
 		const updatedEvent = await this.rotate(
 			event, //
@@ -210,22 +209,21 @@ export class KaraokeService extends ResultClass {
 		if (isNullOrUndefined(textChannel) || !result) return;
 
 		let done = `${userMention(currentUser.id)} has been skipped by ${userMention(moderatorId)}`;
-		let next = queue.length > 1 ? `${userMention(nextUser.id)} is` : '';
-		const mentions: string[] = queue.length > 1 ? [nextUser.id] : [];
+		let nextMention = nextUser ? `${userMention(nextUser.id)} is` : undefined;
+		const mentions: string[] = nextUser ? [nextUser.id] : [];
 
-		if (currentPartner?.id) {
+		if (currentPartner) {
 			done = `${userMention(currentUser.id)} & ${userMention(currentPartner.id)} have been skipped by ${userMention(moderatorId)}`;
 		}
 
-		if (queue.length > 1 && nextPartner?.id) {
-			next = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
+		if (nextUser && nextPartner) {
+			nextMention = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
 			mentions.push(nextPartner.id);
 		}
 
-		const content =
-			queue.length > 1 //
-				? `${done}\n\n${next} up next!`
-				: done;
+		const content = nextMention //
+			? `${done}\n\n${nextMention} up next!`
+			: done;
 
 		await this.sendEmbed(textChannel, updatedEvent, content, mentions);
 	}
@@ -243,10 +241,10 @@ export class KaraokeService extends ResultClass {
 		textChannel: GuildTextBasedChannel,
 		moderatorId: string
 	): Promise<void> {
-		const { queue } = event;
+		const { current, next } = await this.fetchEventUsers(guild, event.queue);
 
-		const [currentUser, currentPartner] = await this.fetchEventUsers(guild, queue[0].id, queue[0].partnerId);
-		const [nextUser, nextPartner] = await this.fetchEventUsers(guild, queue[1].id, queue[1].partnerId);
+		const [currentUser, currentPartner] = current;
+		const [nextUser, nextPartner] = next;
 
 		const updatedEvent = await this.rotate(
 			event, //
@@ -255,22 +253,21 @@ export class KaraokeService extends ResultClass {
 		);
 
 		let done = `${userMention(currentUser.id)} has been removed from the queue by ${userMention(moderatorId)}`;
-		let next = queue.length > 1 ? `${userMention(nextUser.id)} is` : '';
-		const mentions: string[] = queue.length > 1 ? [nextUser.id] : [];
+		let nextMention = nextUser ? `${userMention(nextUser.id)} is` : undefined;
+		const mentions: string[] = nextUser ? [nextUser.id] : [];
 
-		if (currentPartner?.id) {
+		if (currentPartner) {
 			done = `${userMention(currentUser.id)} & ${userMention(currentPartner.id)} have been removed from the queue by ${userMention(moderatorId)}`;
 		}
 
-		if (queue.length > 1 && nextPartner?.id) {
-			next = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
+		if (nextUser && nextPartner) {
+			nextMention = `${userMention(nextUser.id)} & ${userMention(nextPartner.id)} are`;
 			mentions.push(nextPartner.id);
 		}
 
-		const content =
-			queue.length > 1 //
-				? `${done}\n\n${next} up next!`
-				: done;
+		const content = nextMention //
+			? `${done}\n\n${nextMention} up next!`
+			: done;
 
 		await this.sendEmbed(textChannel, updatedEvent, content, mentions);
 	}
@@ -467,7 +464,7 @@ export class KaraokeService extends ResultClass {
 	public async rotate(
 		event: KaraokeEventWithUsers,
 		current: { user: GuildMember; partner?: GuildMember },
-		next: { user: GuildMember; partner?: GuildMember }
+		next: { user?: GuildMember; partner?: GuildMember }
 	): Promise<KaraokeEventWithUsers> {
 		const { queue } = event;
 
@@ -478,7 +475,7 @@ export class KaraokeService extends ResultClass {
 
 		await this.setUserToAudience(current.user, current.partner);
 
-		if (queue.length > 1) {
+		if (next.user) {
 			await this.setUserToSinger(next.user, next.partner);
 		}
 
@@ -494,7 +491,7 @@ export class KaraokeService extends ResultClass {
 	private async muteUsers(shouldMute: boolean, data: { user: GuildMember; partner?: GuildMember }): Promise<void> {
 		const { user, partner } = data;
 
-		if (user.voice.channel && user.manageable) {
+		if (user.voice.channel) {
 			if (user.voice.channel.type === ChannelType.GuildStageVoice) {
 				await user.voice.setSuppressed(shouldMute).catch((error) => {
 					container.logger.sentryError(error, { context: user });
@@ -506,7 +503,7 @@ export class KaraokeService extends ResultClass {
 			}
 		}
 
-		if (partner?.voice.channel && partner.manageable) {
+		if (partner?.voice.channel) {
 			if (partner.voice.channel.type === ChannelType.GuildStageVoice) {
 				await partner.voice.setSuppressed(shouldMute).catch((error) => {
 					container.logger.sentryError(error, { context: partner });
@@ -527,14 +524,12 @@ export class KaraokeService extends ResultClass {
 	 * @param mentions - The IDs of the users to mention
 	 */
 	private async sendEmbed(textChannel: GuildTextBasedChannel, event: KaraokeEventWithUsers, content: string, mentions: string[]): Promise<void> {
+		const embed = this.buildQueueEmbed(event);
+
 		await textChannel.send({
 			content,
+			embeds: [embed],
 			allowedMentions: { users: mentions }
-		});
-
-		const embed = this.buildQueueEmbed(event);
-		await textChannel.send({
-			embeds: [embed]
 		});
 	}
 
@@ -610,13 +605,26 @@ export class KaraokeService extends ResultClass {
 	/**
 	 * Fetch the user for a karaoke event.
 	 * @param guild - The guild that the event is in
-	 * @param userId - The ID of the user
-	 * @param partnerId - The ID of the partner
+	 * @param queue - The event's queue
 	 */
-	private async fetchEventUsers(guild: Guild, userId: string, partnerId?: string | null): Promise<[GuildMember, GuildMember | undefined]> {
-		const user = await guild.members.fetch(userId);
-		const partner = partnerId ? await guild.members.fetch(partnerId) : undefined;
+	private async fetchEventUsers(
+		guild: Guild,
+		queue: KaraokeUser[]
+	): Promise<{ current: [GuildMember, GuildMember | undefined]; next: [GuildMember | undefined, GuildMember | undefined] }> {
+		const currentUserId = queue.at(0)!.id;
+		const currentPartnerId = queue.at(0)?.partnerId;
+		const nextUserId = queue.at(1)?.id;
+		const nextPartnerId = queue.at(1)?.partnerId;
 
-		return [user, partner];
+		const currentUser = await guild.members.fetch(currentUserId);
+		const currentPartner = currentPartnerId ? await guild.members.fetch(currentPartnerId) : undefined;
+
+		const nextUser = nextUserId ? await guild.members.fetch(nextUserId) : undefined;
+		const nextPartner = nextPartnerId ? await guild.members.fetch(nextPartnerId) : undefined;
+
+		return {
+			current: [currentUser, currentPartner],
+			next: [nextUser, nextPartner]
+		};
 	}
 }
