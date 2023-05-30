@@ -14,10 +14,19 @@ export class WelcomeSettingsService {
 		});
 	}
 
+	/**
+	 * Get a guild's welcome settings.
+	 * @param guildId - The ID of the guild
+	 */
 	public async get(guildId: string): Promise<WelcomeSettings | null> {
 		return this.repository.get({ guildId });
 	}
 
+	/**
+	 * Upsert a guild's welcome settings.
+	 * @param guildId - The ID of the guild
+	 * @param data - The settings to upsert
+	 */
 	public async upsert(guildId: string, data: UpsertWelcomeSettingsData): Promise<WelcomeSettings> {
 		return this.repository.upsert({ guildId }, data);
 	}

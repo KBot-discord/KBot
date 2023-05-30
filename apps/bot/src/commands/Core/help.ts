@@ -14,7 +14,7 @@ import type { DocumentCommand } from '@kbotdev/meili';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('help')
-			.setOptions({ label: '/help [command]' });
+			.setOption({ label: '/help [command]' });
 	}
 })
 export class CoreCommand extends KBotCommand<CoreModule> {

@@ -451,16 +451,13 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.errorReply(reason);
 		}
 
-		const updatedEvent = await karaoke.addUserToQueue(
-			{ eventId },
-			{
-				id: member.id,
-				name: member.displayName
-			}
-		);
+		const updatedEvent = await karaoke.addUserToQueue(eventId, {
+			id: member.id,
+			name: member.displayName
+		});
 
 		if (updatedEvent.queue.length === 1) {
-			await karaoke.setUserToSinger(interaction.guild.members, updatedEvent.queue[0]);
+			await karaoke.setUserToSinger(member);
 			await textChannel!.send({
 				content: `${userMention(member.id)} is up!`,
 				embeds: [karaoke.buildQueueEmbed(updatedEvent)],
@@ -522,9 +519,9 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		if (event.queue[0].id === member.id || event.queue[0].partnerId === member.id) {
-			await karaoke.forceRemoveUserFromQueue(interaction.guild.members, event, textChannel!, interaction.user.id);
+			await karaoke.forceRemoveUserFromQueue(interaction.guild, event, textChannel!, interaction.user.id);
 		} else {
-			await karaoke.removeUserFromQueue({ eventId }, { id: userEntry.id, partnerId: userEntry.partnerId });
+			await karaoke.removeUserFromQueue(eventId, { id: userEntry.id, partnerId: userEntry.partnerId });
 
 			const content = userEntry.partnerId
 				? `${userMention(userEntry.id)} & ${userMention(userEntry.partnerId)} have`

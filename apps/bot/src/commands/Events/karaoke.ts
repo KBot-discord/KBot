@@ -142,12 +142,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const updatedEvent = await karaoke.addUserToQueue(
-			{ eventId }, //
+			eventId, //
 			{ id: member.id, name: member.displayName }
 		);
 
 		if (updatedEvent.queue.length === 1) {
-			await karaoke.setUserToSinger(interaction.guild.members, updatedEvent.queue[0]);
+			await karaoke.setUserToSinger(interaction.member);
 
 			await textChannel!.send({
 				content: `${userMention(member.id)} is up!`,
@@ -215,18 +215,15 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('Your duet partner denied your join request.');
 		}
 
-		const updatedEvent = await karaoke.addUserToQueue(
-			{ eventId },
-			{
-				id: member.id,
-				name: member.displayName,
-				partnerId: partner.id,
-				partnerName: partner.displayName
-			}
-		);
+		const updatedEvent = await karaoke.addUserToQueue(eventId, {
+			id: member.id,
+			name: member.displayName,
+			partnerId: partner.id,
+			partnerName: partner.displayName
+		});
 
 		if (updatedEvent.queue.length === 1) {
-			await karaoke.setUserToSinger(interaction.guild.members, updatedEvent.queue[0]);
+			await karaoke.setUserToSinger(member, partner);
 			await textChannel!.send({
 				content: `${userMention(member.id)} & ${userMention(partner.id)} are up!`,
 				embeds: [karaoke.buildQueueEmbed(updatedEvent)],
@@ -282,9 +279,9 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		if (event.queue[0].id === member.id || event.queue[0].partnerId === member.id) {
-			await karaoke.rotateQueue(interaction.guild.members, event, textChannel);
+			await karaoke.rotateQueue(interaction.guild, event, textChannel!);
 		} else {
-			await karaoke.removeUserFromQueue({ eventId }, { id: userEntry.id, partnerId: userEntry.partnerId ?? undefined });
+			await karaoke.removeUserFromQueue(eventId, { id: userEntry.id, partnerId: userEntry.partnerId ?? undefined });
 
 			if (userEntry.partnerId) {
 				const ping = member.id === userEntry.id ? userEntry.partnerId : userEntry.id;
@@ -373,6 +370,12 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
+	/**
+	 * Sends a confirmation prompt for the partner.
+	 * @param channel - The event's text channel
+	 * @param memberId - the ID of the member
+	 * @param partnerId - The ID of the partner
+	 */
 	private async duetConfirmation(channel: GuildTextBasedChannel, memberId: string, partnerId: string): Promise<boolean | null> {
 		const PromptButtons = {
 			Yes: '@kbotdev/karaoke.duet.yes',

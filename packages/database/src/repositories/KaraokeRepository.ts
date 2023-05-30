@@ -46,7 +46,7 @@ export class KaraokeRepository {
 	}
 
 	/**
-	 * Get all the event associated with a guild.
+	 * Get all the karaoke events of a guild.
 	 * @param query - The {@link GuildId} to query
 	 */
 	public async getEventByGuild(query: GuildId): Promise<KaraokeEvent[]> {
@@ -69,19 +69,6 @@ export class KaraokeRepository {
 				where: { id: eventId }
 			})
 			.catch(() => null);
-	}
-
-	/**
-	 * Update the lock for a karaoke event.
-	 * @param query - The {@link KaraokeEventId} to query
-	 */
-	public async updateQueueLock(query: KaraokeEventId, isLocked: boolean): Promise<KaraokeEvent> {
-		const { eventId } = query;
-
-		return this.database.karaokeEvent.update({
-			where: { id: eventId },
-			data: { locked: isLocked }
-		});
 	}
 
 	/**

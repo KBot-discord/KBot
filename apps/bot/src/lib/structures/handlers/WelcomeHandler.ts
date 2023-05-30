@@ -1,4 +1,3 @@
-import { WelcomeModule } from '#modules/WelcomeModule';
 import { isNullOrUndefined } from '#utils/functions';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
@@ -33,14 +32,15 @@ export class WelcomeHandler {
 	}
 
 	private async withEmbed(channel: GuildTextBasedChannel, settings: WelcomeSettings): Promise<Message<true>> {
+		const { welcome } = container;
 		const embed = this.createTemplateEmbed(settings.color, settings.image);
 
 		if (settings.title) {
-			const title = WelcomeModule.formatText(settings.title, this.member);
+			const title = welcome.formatText(settings.title, this.member);
 			embed.setTitle(title);
 		}
 		if (settings.description) {
-			const desc = WelcomeModule.formatText(settings.description, this.member);
+			const desc = welcome.formatText(settings.description, this.member);
 			embed.setDescription(desc);
 		}
 
@@ -50,7 +50,8 @@ export class WelcomeHandler {
 	}
 
 	private async withMessage(channel: GuildTextBasedChannel, settings: WelcomeSettings): Promise<Message<true>> {
-		const message = WelcomeModule.formatText(settings.message!, this.member);
+		const { welcome } = container;
+		const message = welcome.formatText(settings.message!, this.member);
 
 		return channel.send({
 			content: message,
@@ -59,18 +60,19 @@ export class WelcomeHandler {
 	}
 
 	private async withMessageAndEmbed(channel: GuildTextBasedChannel, settings: WelcomeSettings): Promise<Message<true>> {
+		const { welcome } = container;
 		const embed = this.createTemplateEmbed(settings.color, settings.image);
 
 		if (settings.title) {
-			const title = WelcomeModule.formatText(settings.title, this.member);
+			const title = welcome.formatText(settings.title, this.member);
 			embed.setTitle(title);
 		}
 		if (settings.description) {
-			const desc = WelcomeModule.formatText(settings.description, this.member);
+			const desc = welcome.formatText(settings.description, this.member);
 			embed.setDescription(desc);
 		}
 
-		const message = WelcomeModule.formatText(settings.message!, this.member);
+		const message = welcome.formatText(settings.message!, this.member);
 
 		return channel.send({
 			content: message,

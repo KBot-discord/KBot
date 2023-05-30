@@ -40,7 +40,7 @@ export class YoutubeTask extends ScheduledTask {
 			channels: channelIds
 		});
 
-		metrics.incrementHolodex({ value: 1 });
+		metrics.incrementHolodex();
 
 		if (isNullOrUndefined(fetchedStreams)) return;
 
@@ -109,6 +109,10 @@ export class YoutubeTask extends ScheduledTask {
 		);
 	}
 
+	/**
+	 * Send live notifications for a stream.
+	 * @param stream - The YouTube stream
+	 */
 	private async handleLive(stream: HolodexVideoWithChannel): Promise<void> {
 		const { client, youtube, validator, metrics, logger, redis } = this.container;
 
@@ -182,6 +186,11 @@ export class YoutubeTask extends ScheduledTask {
 		metrics.incrementYoutube({ success: true });
 	}
 
+	/**
+	 * Update notifications for an ended stream.
+	 * @param stream - The YouTube stream
+	 * @param messages - The sent notifications
+	 */
 	private async handleEnded(stream: HolodexVideoWithChannel, messages: Map<string, { channelId: string }>): Promise<void> {
 		const { client, validator } = this.container;
 

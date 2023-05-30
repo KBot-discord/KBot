@@ -14,7 +14,7 @@ import type { ModerationModule } from '#modules/ModerationModule';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('User')
-			.setOptions({ label: '/user <target>' });
+			.setOption({ label: '/user <target>' });
 	}
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {

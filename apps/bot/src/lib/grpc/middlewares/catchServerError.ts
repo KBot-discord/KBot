@@ -4,10 +4,13 @@ import { createMethodDecorator } from '@sapphire/decorators';
 import { ConnectError } from '@bufbuild/connect';
 import type { HandlerContext } from '@bufbuild/connect';
 
+/**
+ * Catches any unhandled errors and returns them as {@link InternalServerError}
+ */
 export const catchServerError = (): MethodDecorator => {
-	return createMethodDecorator((_: any, __: any, descriptor: any) => {
+	return createMethodDecorator((_target: any, _property: any, descriptor: any) => {
 		const method = descriptor.value;
-		if (!method || typeof method !== 'function') {
+		if (typeof method !== 'function') {
 			throw new Error('This can only be used on class methods');
 		}
 

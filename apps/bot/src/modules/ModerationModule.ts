@@ -30,7 +30,7 @@ export class ModerationModule extends Module {
 		return isNullOrUndefined(settings) ? false : settings.enabled;
 	}
 
-	public static formatMinageMessage(member: GuildMember, message: string, req: number, reqDate: number): string {
+	public formatMinageMessage(member: GuildMember, message: string, req: number, reqDate: number): string {
 		const seconds = Math.floor(reqDate / 1000);
 		const stampDays = time(seconds, 'R');
 		const stampDate = time(seconds, 'D');
@@ -42,10 +42,10 @@ export class ModerationModule extends Module {
 			.replaceAll('{date}', stampDate);
 	}
 
-	public static formatMinageEmbed(member: GuildMember, msg: string | null | undefined, req: number, reqDate: number): EmbedBuilder {
+	public formatMinageEmbed(member: GuildMember, msg: string | null | undefined, req: number, reqDate: number): EmbedBuilder {
 		const message = msg ?? MinageHandler.defaultMessage;
 
-		const formattedMessage = ModerationModule.formatMinageMessage(member, message, req, reqDate);
+		const formattedMessage = this.formatMinageMessage(member, message, req, reqDate);
 		const icon = getGuildIcon(member.guild);
 
 		return new EmbedBuilder()

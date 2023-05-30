@@ -6,9 +6,7 @@ import { roleMention, time, userMention } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
 import type {
 	APIUser,
-	ButtonInteraction,
 	Collection,
-	CommandInteraction,
 	Emoji,
 	Guild,
 	GuildMember,
@@ -23,11 +21,22 @@ import type {
 import type { ImageURLOptions } from '@discordjs/rest';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { FormattedGuild, TransformedLoginData } from '#types/Api';
+import type { AnyInteraction } from '@sapphire/discord.js-utilities';
 
-export function encode<T>(data: JSONEncodable<T> | T): T {
-	return isJSONEncodable(data) ? data.toJSON() : data;
+/**
+ * Converts a value to JSON if it is encodeable.
+ * @param data - The data to convert
+ */
+export function encode<T>(value: JSONEncodable<T> | T): T {
+	return isJSONEncodable(value) ? value.toJSON() : value;
 }
 
+/**
+ * Get an emote or sticker from its ID
+ * @param guildId - The ID of the guild
+ * @param resourceId - The ID of the resource
+ * @param type - The type of of the resource
+ */
 export function getResourceFromType(guildId: string, resourceId: string, type: CreditType): Emoji | Sticker | null {
 	const guild = container.client.guilds.cache.get(guildId);
 	if (!guild) return null;
@@ -43,12 +52,28 @@ export function getResourceFromType(guildId: string, resourceId: string, type: C
 	return null;
 }
 
+/**
+ * Get the emote slot count from a guild's premium tier.
+ * @param tier - The guild's premium tier
+ */
 export const getGuildEmoteSlots = (tier: GuildPremiumTier): number => GuildEmoteSlots[tier];
 
+/**
+ * Get the sticker slot count from a guild's premium tier.
+ * @param tier - The guild's premium tier
+ */
 export const getGuildStickerSlots = (tier: GuildPremiumTier): number => GuildStickerSlots[tier];
 
+/**
+ * Get the soundboard slot count from a guild's premium tier.
+ * @param tier - The guild's premium tier
+ */
 export const getGuildSoundboardSlots = (tier: GuildPremiumTier): number => GuildSoundboardSlots[tier];
 
+/**
+ * Get the first attachment from a message.
+ * @param message - The message
+ */
 export function attachmentFromMessage(message: Message): { url: string; fileType: string } | null {
 	const attachmentUrl = message.attachments.at(0)?.url;
 	if (isNullOrUndefined(attachmentUrl)) return null;
@@ -62,7 +87,8 @@ export function attachmentFromMessage(message: Message): { url: string; fileType
 	};
 }
 
-export async function transformLoginData({ user, guilds }: LoginData): Promise<TransformedLoginData> {
+export async function transformLoginData(data: LoginData): Promise<TransformedLoginData> {
+	const { user, guilds } = data;
 	if (!user) return { user, guilds: [] };
 
 	const formattedUser = {
@@ -88,6 +114,11 @@ export async function transformLoginData({ user, guilds }: LoginData): Promise<T
 	return { user: formattedUser, guilds: formattedGuilds };
 }
 
+/**
+ * Checks if a user has `Manager Server` permissions in a guild.
+ * @param guild - The guild to check
+ * @param userId - The ID of the user to check
+ */
 export async function canManageGuildFilter(guild: Guild | RESTAPIPartialCurrentUserGuild, userId: string): Promise<boolean> {
 	const fetchedGuild = container.client.guilds.cache.get(guild.id);
 	if (!fetchedGuild) return false;
@@ -96,6 +127,11 @@ export async function canManageGuildFilter(guild: Guild | RESTAPIPartialCurrentU
 	return canManageGuild(fetchedGuild, member);
 }
 
+/**
+ * Checks if a member has `Manager Server` permissions in a guild.
+ * @param guild - The guild to check
+ * @param member - The member to check
+ */
 export async function canManageGuild(guild: Guild, member: GuildMember | null): Promise<boolean> {
 	if (!member) return false;
 	if (guild.ownerId === member.id) return true;
@@ -111,11 +147,19 @@ export async function canManageGuild(guild: Guild, member: GuildMember | null): 
 	}
 }
 
+/**
+ * Checks if a message is from a webhook.
+ * @param message - The message to check
+ */
 export function isWebhookMessage(message: Message): boolean {
 	if (isNullOrUndefined(message.webhookId)) return false;
 	return message.type === MessageType.Default;
 }
 
+/**
+ * Convert a collection of roles to a string.
+ * @param roles - The collection of roles to convert
+ */
 export function rolesToString(roles: Collection<Snowflake, Role>): string {
 	return roles.size <= 1
 		? BlankSpace
@@ -126,7 +170,12 @@ export function rolesToString(roles: Collection<Snowflake, Role>): string {
 				.toString();
 }
 
-export async function getUserInfo(interaction: ButtonInteraction | CommandInteraction, userId: string): Promise<EmbedBuilder> {
+/**
+ * Create an info embed about a user.
+ * @param interaction - An interaction
+ * @param userId - The ID of the user
+ */
+export async function getUserInfo(interaction: AnyInteraction, userId: string): Promise<EmbedBuilder> {
 	const user = await interaction.client.users.fetch(userId, { force: true });
 	const member = await interaction.guild?.members.fetch(userId).catch(() => null);
 	const userBanner = getUserBannerUrl(user);
@@ -176,7 +225,14 @@ export async function getUserInfo(interaction: ButtonInteraction | CommandIntera
 		.setFooter({ text: `Present in server: ${KBotEmoji.RedX}` });
 }
 
-export function getUserAvatarUrl(user: APIUser | User, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string {
+/**
+ * Get the URL of a user's avatar
+ * @param user - The user
+ * @param options - The image options for the avatar
+ */
+export function getUserAvatarUrl(user: APIUser | User, options: ImageURLOptions = {}): string {
+	const { forceStatic = false, size = 512 } = options;
+
 	if (user instanceof User) {
 		return user.avatar //
 			? user.avatarURL({ forceStatic, size, extension: 'png' })!
@@ -185,20 +241,46 @@ export function getUserAvatarUrl(user: APIUser | User, { forceStatic = false, si
 	return user.avatar ?? createDefaultAvatar();
 }
 
-export function getMemberAvatarUrl(member: GuildMember, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string {
+/**
+ * Get the URL of a member's avatar.
+ * @param member - The member
+ * @param options - The image options for the avatar
+ *
+ * @remarks If the member has a server avatar, that is what will be returned.
+ */
+export function getMemberAvatarUrl(member: GuildMember, options: ImageURLOptions = {}): string {
+	const { forceStatic = false, size = 512 } = options;
+
 	return member.avatar //
 		? member.avatarURL({ forceStatic, size, extension: 'png' })!
 		: getUserAvatarUrl(member.user, { forceStatic, extension: 'png' });
 }
 
+/**
+ * Create a default avatar.
+ */
 export function createDefaultAvatar(): string {
 	return `https://cdn.discordapp.com/embed/avatars/${Math.random() * 4}.png`;
 }
 
-export function getUserBannerUrl(user: User, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string | null | undefined {
+/**
+ * Get a user's banner.
+ * @param user - The user
+ * @param options - The image options for the banner
+ */
+export function getUserBannerUrl(user: User, options: ImageURLOptions = {}): string | null | undefined {
+	const { forceStatic = false, size = 512 } = options;
+
 	return user.bannerURL({ forceStatic, size, extension: 'png' });
 }
 
-export function getGuildIcon(guild: Guild | null, { forceStatic = false, size = 512 }: ImageURLOptions = {}): string | undefined {
+/**
+ * Get a guild's icon.
+ * @param guild - The guild
+ * @param options - The image options for the icon
+ */
+export function getGuildIcon(guild: Guild | null, options: ImageURLOptions = {}): string | undefined {
+	const { forceStatic = false, size = 512 } = options;
+
 	return guild?.iconURL({ forceStatic, size, extension: 'png' }) ?? undefined;
 }

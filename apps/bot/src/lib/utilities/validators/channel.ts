@@ -6,6 +6,10 @@ import { ChannelType, PermissionFlagsBits } from 'discord.js';
 import type { Channel, GuildChannel, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
 
 export class ChannelValidator {
+	/**
+	 * Checks if the bot has the required permissions to send messages and embeds.
+	 * @param channel - The text channel
+	 */
 	public async canSendEmbeds(
 		channel: Channel | GuildChannel | GuildTextBasedChannel | null
 	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {
@@ -52,6 +56,10 @@ export class ChannelValidator {
 		};
 	}
 
+	/**
+	 * Checks if the bot has the required permissions to mute and move users in a voice channel.
+	 * @param channel - The voice channel
+	 */
 	public async canModerateVoice(
 		channel: StageChannel | VoiceChannel | null
 	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {

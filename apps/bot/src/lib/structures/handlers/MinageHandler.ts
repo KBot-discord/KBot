@@ -1,5 +1,5 @@
-import { ModerationModule } from '#modules/ModerationModule';
 import { isNullOrUndefined } from '#utils/functions';
+import { container } from '@sapphire/framework';
 import type { GuildMember } from 'discord.js';
 import type { ModerationSettings } from '@kbotdev/database';
 
@@ -7,6 +7,8 @@ export class MinageHandler {
 	public constructor(private readonly member: GuildMember, private readonly settings: ModerationSettings) {}
 
 	public async run(): Promise<boolean> {
+		const { moderation } = container;
+
 		if (
 			!this.settings.enabled || //
 			!this.member.kickable ||
@@ -22,7 +24,7 @@ export class MinageHandler {
 		const { reqAge, reqDate } = this.calculateAge(req);
 		if (createdAt <= reqAge) return false;
 
-		await this.member.send({ embeds: [ModerationModule.formatMinageEmbed(this.member, msg, req, reqDate)] }).catch(() => null);
+		await this.member.send({ embeds: [moderation.formatMinageEmbed(this.member, msg, req, reqDate)] }).catch(() => null);
 		await this.member.kick(`Account too new. Required age: ${req}, Account age: ${Math.floor((Date.now() - createdAt) / 86400000)}`);
 
 		return true;

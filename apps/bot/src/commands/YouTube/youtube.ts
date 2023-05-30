@@ -397,6 +397,11 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		});
 	}
 
+	/**
+	 * Create a role reaction embed in the target channel.
+	 * @param guild - The guild that the channel is in
+	 * @param channel - The text channel
+	 */
 	private async createReactionRoleMessage(guild: Guild, channel: GuildTextBasedChannel): Promise<unknown> {
 		const subscriptions = await this.module.subscriptions.getByGuild(guild.id);
 
@@ -412,6 +417,10 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return message;
 	}
 
+	/**
+	 * Update the role reaction message with the updated subscription roles.
+	 * @param guild - The guild that the message is in
+	 */
 	private async updateReactionRoleMessage(guild: Guild): Promise<unknown> {
 		const settings = await this.module.settings.get(guild.id);
 		if (!settings?.reactionRoleChannelId || !settings.reactionRoleMessageId) return;
@@ -442,6 +451,10 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		return editMessage;
 	}
 
+	/**
+	 * Build the message options from the guild's YouTube subscriptions and roles.
+	 * @param subscriptions - The subscriptions
+	 */
 	private async buildRoleReactionMessage(subscriptions: YoutubeSubscriptionWithChannel[]): Promise<BaseMessageOptions> {
 		const relevantSubscriptions = subscriptions.filter(({ roleId, memberRoleId }) => !isNullOrUndefined(roleId) || !isNullOrUndefined(memberRoleId));
 
@@ -458,10 +471,10 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			roleString = '\n\nUse the select menu below to be notified for member streams.';
 		}
 
-		const description = this.createRoleReactionDescription(relevantSubscriptions);
+		const description = this.createChannelList(relevantSubscriptions);
 
 		if (subscriptionsWithRoleIds.length > 0) {
-			const options = this.createRoleReactionOptions(subscriptionsWithRoleIds);
+			const options = this.createStringMenuOptions(subscriptionsWithRoleIds);
 
 			components.push(
 				new ActionRowBuilder<StringSelectMenuBuilder>() //
@@ -477,7 +490,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		}
 
 		if (subscriptionsWithMemberRoleIds.length > 0) {
-			const memberOptions = this.createRoleReactionOptions(subscriptionsWithMemberRoleIds);
+			const memberOptions = this.createStringMenuOptions(subscriptionsWithMemberRoleIds);
 
 			components.push(
 				new ActionRowBuilder<StringSelectMenuBuilder>() //
@@ -501,13 +514,18 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 				new EmbedBuilder() //
 					.setColor(EmbedColors.Default)
 					.setTitle('Channels')
-					.setDescription(description.length > 0 ? description : 'There are no channels with roles set at the moment.')
+					.setDescription(description)
 			],
 			components
 		};
 	}
 
-	private createRoleReactionDescription(subscriptions: YoutubeSubscriptionWithChannel[]): string {
+	/**
+	 * Create the embed description from the guild's YouTube subscriptions.
+	 * @param subscriptions - The subscriptions
+	 */
+	private createChannelList(subscriptions: YoutubeSubscriptionWithChannel[]): string {
+		if (subscriptions.length === 0) return 'There are no channels with roles set at the moment.';
 		return subscriptions
 			.map(({ channel }) => {
 				return `[${channel.name}](https://www.youtube.com/channel/${channel.youtubeId})`;
@@ -515,7 +533,11 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			.join('\n');
 	}
 
-	private createRoleReactionOptions(subscriptions: YoutubeSubscriptionWithChannel[]): APISelectMenuOption[] {
+	/**
+	 * Create the select menu options from the guild's YouTube subscriptions.
+	 * @param subscriptions - The subscriptions
+	 */
+	private createStringMenuOptions(subscriptions: YoutubeSubscriptionWithChannel[]): APISelectMenuOption[] {
 		return subscriptions.map(({ channel }) => {
 			return { label: channel.name, value: channel.youtubeId };
 		});

@@ -7,7 +7,7 @@ import type { PollResultPayload } from '#types/Tasks';
 })
 export class UtilityTask extends ScheduledTask {
 	public override async run({ guildId, pollId }: PollResultPayload): Promise<void> {
-		await this.container.utility.polls.end({ guildId, pollId });
+		await this.container.utility.polls.end(guildId, pollId);
 	}
 }
 

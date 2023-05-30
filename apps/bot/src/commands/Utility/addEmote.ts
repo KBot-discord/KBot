@@ -19,7 +19,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
 import type { Credit } from '#types/CustomIds';
-import type { Message, ModalSubmitInteraction } from 'discord.js';
+import type { Guild, Message, ModalSubmitInteraction } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { InteractionResponseUnion } from '#types/Augments';
 
@@ -71,7 +71,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			);
 		}
 
-		const { staticSlots, animatedSlots, totalSlots } = this.calculateSlots(interaction);
+		const { staticSlots, animatedSlots, totalSlots } = this.calculateSlots(interaction.guild);
 
 		if (emoji.animated && animatedSlots === 0) {
 			return interaction.errorReply('No animated emoji slots are left.', {
@@ -125,6 +125,12 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 	}
 
+	/**
+	 * Handle the submission of the emote name modal
+	 * @param modal - The modal interaction
+	 * @param emojiData - The emoji data
+	 * @param slotsLeft - Info about the guild's emoji slots
+	 */
 	private async handleSubmit(modal: ModalSubmitInteraction<'cached'>, emojiData: EmojiData, slotsLeft: string): Promise<InteractionResponseUnion> {
 		const embed = new EmbedBuilder();
 		const { url } = emojiData;
@@ -164,13 +170,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		});
 	}
 
-	private calculateSlots(interaction: KBotCommand.ContextMenuCommandInteraction): {
-		staticSlots: number;
-		animatedSlots: number;
-		totalSlots: number;
-	} {
-		const allEmojis = interaction.guild.emojis.cache;
-		const totalSlots = getGuildEmoteSlots(interaction.guild.premiumTier);
+	/**
+	 * Calcuate how many emoji slots are left in the guild.
+	 * @param guild - The guild
+	 */
+	private calculateSlots(guild: Guild): { staticSlots: number; animatedSlots: number; totalSlots: number } {
+		const allEmojis = guild.emojis.cache;
+		const totalSlots = getGuildEmoteSlots(guild.premiumTier);
 		const animatedEmojiCount = allEmojis.filter((e) => Boolean(e.animated)).size;
 
 		return {
@@ -180,10 +186,15 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		};
 	}
 
+	/**
+	 * Parse any emoji data in the targetted message.
+	 * @param message - The message
+	 *
+	 * @remarks The priority for parsing is: emoji \> attachment \> links
+	 */
 	private async getEmoji(message: Message): Promise<EmojiData | null> {
 		const emojiData = message.content.match(EmojiRegex);
 
-		// Priority: emoji -> attachment -> links
 		if (!isNullOrUndefined(emojiData)) {
 			return {
 				url: `https://cdn.discordapp.com/emojis/${emojiData[3]}.${emojiData[1] === 'a' ? 'gif' : 'png'}`,

@@ -1,6 +1,10 @@
 import { flattenObject, isNullOrUndefinedOrEmpty } from '#utils/functions';
 import type { ClientConfig } from '#types/Config';
 
+/**
+ * Asserts that a config has no undefined values.
+ * @param config - The config to check
+ */
 export function validateConfig(config: ClientConfig): boolean {
 	let error = false;
 	const flattenedConfig = flattenObject(config);

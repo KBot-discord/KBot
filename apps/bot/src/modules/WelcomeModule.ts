@@ -27,7 +27,7 @@ export class WelcomeModule extends Module {
 		return isNullOrUndefined(settings) ? false : settings.enabled;
 	}
 
-	public static formatText(text: string, member: GuildMember): string {
+	public formatText(text: string, member: GuildMember): string {
 		return text
 			.replaceAll('{nl}', '\n')
 			.replaceAll('{@member}', userMention(member.id))

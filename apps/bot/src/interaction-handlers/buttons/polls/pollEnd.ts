@@ -20,10 +20,7 @@ export class ButtonHandler extends InteractionHandler {
 			return void interaction.defaultReply('That poll is not active. Run `/poll menu` to see the updated menu.');
 		}
 
-		const success = await polls.end({
-			guildId: interaction.guildId,
-			pollId
-		});
+		const success = await polls.end(interaction.guildId, pollId);
 
 		if (success) {
 			polls.deleteTask(pollId);

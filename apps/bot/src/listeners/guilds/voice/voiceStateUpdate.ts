@@ -73,7 +73,7 @@ export class VoiceListener extends Listener {
 
 			// Rotate queue if the person to leave was speaking
 			if (queue[0].id === newState.id || queue[0].partnerId === newState.id) {
-				await events.karaoke.rotateQueue(oldState.guild.members, event, textChannel);
+				await events.karaoke.rotateQueue(oldState.guild, event, textChannel);
 				return;
 			}
 
@@ -81,7 +81,7 @@ export class VoiceListener extends Listener {
 			const user = queue.find(({ id, partnerId, eventId }) => eventId === oldState.channelId && (id === oldState.id || partnerId === oldState.id));
 			if (isNullOrUndefined(user)) return;
 
-			await events.karaoke.removeUserFromQueue({ eventId }, { id: user.id, partnerId: user.partnerId ?? undefined });
+			await events.karaoke.removeUserFromQueue(eventId, { id: user.id, partnerId: user.partnerId ?? undefined });
 
 			const { result } = await validator.channels.canSendEmbeds(textChannel);
 			if (result) {
