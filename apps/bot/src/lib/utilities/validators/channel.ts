@@ -3,7 +3,7 @@ import { isNullOrUndefined } from '#utils/functions';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
 import { ChannelType, PermissionFlagsBits } from 'discord.js';
-import type { Channel, GuildChannel, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
+import type { Channel, GuildChannel, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
 
 export class ChannelValidator {
 	/**
@@ -61,7 +61,7 @@ export class ChannelValidator {
 	 * @param channel - The voice channel
 	 */
 	public async canModerateVoice(
-		channel: StageChannel | VoiceChannel | null
+		channel: VoiceBasedChannel | null
 	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {
 		if (isNullOrUndefined(channel) || !channel.isVoiceBased()) {
 			return {

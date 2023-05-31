@@ -18,7 +18,7 @@ export class StageListener extends Listener {
 		const event = await events.karaoke.getEvent(stageInstance.channelId);
 		if (isNullOrUndefined(event) || !event.isActive) return;
 
-		const result = await events.karaoke.endEvent(stageInstance.guild, event);
+		const result = await events.karaoke.endEvent(event);
 
 		result.inspectErr((error) => {
 			this.container.logger.sentryError(error, {

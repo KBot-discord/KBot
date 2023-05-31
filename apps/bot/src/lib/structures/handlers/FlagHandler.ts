@@ -14,9 +14,9 @@ export class FlagHandler {
 	private collector: InteractionCollector<InteractionUnion> | null = null;
 	private flags: FeatureFlags[] = [];
 
-	public constructor({ response, targetGuild, target }: { response: ChatInputCommandInteraction; targetGuild: Guild; target: User }) {
+	public constructor({ response, targetGuild, target }: { response: ChatInputCommandInteraction<'cached'>; targetGuild: Guild; target: User }) {
 		this.response = response;
-		this.setupCollector(response.channel as GuildTextBasedChannel, target, targetGuild);
+		this.setupCollector(response.channel!, target, targetGuild);
 	}
 
 	private setupCollector(channel: GuildTextBasedChannel, target: User, targetGuild: Guild): void {

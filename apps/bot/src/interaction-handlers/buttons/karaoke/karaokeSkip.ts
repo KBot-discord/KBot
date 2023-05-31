@@ -1,6 +1,7 @@
 import { KaraokeCustomIds } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
 import { isNullOrUndefined, parseCustomId } from '#utils/functions';
+import { fetchChannel } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
@@ -33,9 +34,9 @@ export class ButtonHandler extends InteractionHandler {
 			return void interaction.defaultReply('There is no user to skip.');
 		}
 
-		const textChannel = (await interaction.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel;
+		const textChannel = await fetchChannel<GuildTextBasedChannel>(event.textChannelId);
 
-		await karaoke.skipQueue(interaction.guild, event, textChannel, interaction.user.id);
+		await karaoke.skipQueue(interaction.guild, event, textChannel!, interaction.user.id);
 
 		await interaction.defaultReply('User skipped.');
 	}

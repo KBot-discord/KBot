@@ -1,4 +1,5 @@
 import { isNullOrUndefined } from '#utils/functions';
+import { fetchChannel } from '#utils/discord';
 import { container } from '@sapphire/framework';
 import type { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
 import type { IncidentMessage } from '@kbotdev/database';
@@ -20,7 +21,7 @@ export class IncidentNotification {
 	}
 
 	public async fetchChannel(): Promise<this> {
-		this.channel = (await container.client.channels.fetch(this.channelId).catch(() => null)) as GuildTextBasedChannel | null;
+		this.channel = await fetchChannel<GuildTextBasedChannel>(this.channelId);
 		return this;
 	}
 

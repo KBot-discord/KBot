@@ -1,13 +1,13 @@
 import { BlankSpace, EmbedColors, KBotEmoji } from '#utils/constants';
 import { KaraokeCustomIds } from '#utils/customIds';
-import { getGuildIcon } from '#utils/discord';
+import { fetchChannel, getGuildIcon } from '#utils/discord';
 import { buildCustomId, isNullOrUndefined } from '#utils/functions';
 import { Menu } from '#structures/menus/Menu';
 import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
 import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
-import type { Guild, GuildChannel, Message, User } from 'discord.js';
+import type { Guild, GuildBasedChannel, Message, User } from 'discord.js';
 import type { KaraokeEvent } from '@kbotdev/database';
 import type { KaraokeMenuButton } from '#types/CustomIds';
 import type { AnyInteractableInteraction, PaginatedMessageAction, PaginatedMessageActionButton } from '@sapphire/discord.js-utilities';
@@ -20,7 +20,7 @@ const KaraokeEventActions: { id: string; text: string; emoji: string | null }[] 
 
 export class KaraokeEventMenu extends Menu {
 	private readonly guild;
-	private events: { event: KaraokeEvent; channel: GuildChannel }[] = [];
+	private events: { event: KaraokeEvent; channel: GuildBasedChannel }[] = [];
 
 	public constructor(guild: Guild) {
 		super();
@@ -104,17 +104,20 @@ export class KaraokeEventMenu extends Menu {
 
 	private async buildEmbeds(): Promise<EmbedBuilder[]> {
 		const {
-			events: { karaoke },
-			client
+			events: { karaoke }
 		} = container;
 		const { guild } = this;
 
-		this.events = await Promise.all(
-			((await karaoke.getEventByGuild(guild.id)) ?? []).map(async (event) => ({
+		const event = (await karaoke.getEventByGuild(guild.id)) ?? [];
+
+		const mergedEvents = await Promise.all(
+			event.map(async (event) => ({
 				event,
-				channel: (await client.channels.fetch(event.id)) as GuildChannel
+				channel: (await fetchChannel<GuildBasedChannel>(event.id))!
 			}))
 		);
+
+		this.events = mergedEvents.filter((event) => !isNullOrUndefined(event.channel));
 
 		return Promise.all(
 			this.events.map(async ({ event, channel }, index) => {

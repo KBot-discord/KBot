@@ -1,5 +1,6 @@
 import { CustomEmotes, EmbedColors } from '#utils/constants';
 import { isNullOrUndefined } from '#utils/functions';
+import { fetchChannel } from '#utils/discord';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { PollRepository } from '@kbotdev/database';
@@ -143,7 +144,7 @@ export class PollService {
 				return false;
 			}
 
-			channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
+			channel = await fetchChannel<GuildTextBasedChannel>(poll.channelId);
 			const { result } = await validator.channels.canSendEmbeds(channel);
 			if (!result || !channel || !channel.isTextBased() || channel.isDMBased()) return false;
 
