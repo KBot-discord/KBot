@@ -190,7 +190,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				{ name: 'Author', value: userMention(target.id), inline: true },
 				{ name: 'Message link', value: `[Go to message](${message.url})`, inline: true }
 			])
-			.setFooter({ text: `Reported by ${moderator.user.tag}` })
+			.setFooter({ text: `Reported by ${moderator.user.username}` })
 			.setTimestamp();
 
 		if (message.reference?.messageId) {
