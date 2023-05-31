@@ -268,7 +268,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			});
 		}
 
-		const result = await this.module.karaoke.startEvent(interaction.guild, voiceChannel, textChannel, {
+		const result = await this.module.karaoke.startEvent(voiceChannel, textChannel, {
 			stageTopic: topic,
 			roleId: role?.id
 		});

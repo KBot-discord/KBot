@@ -331,7 +331,6 @@ export class KaraokeService extends ResultClass {
 	 * @param data - The data to start the event
 	 */
 	public async startEvent(
-		guild: Guild,
 		voiceChannel: VoiceBasedChannel,
 		textChannel: GuildTextBasedChannel,
 		data: {
@@ -355,7 +354,7 @@ export class KaraokeService extends ResultClass {
 
 			return this.createEvent({
 				id: voiceChannel.id,
-				guildId: guild.id,
+				guildId: voiceChannel.guildId,
 				textChannelId: textChannel.id,
 				pinMessageId: textChannel.isVoiceBased() ? undefined : message?.id
 			});
