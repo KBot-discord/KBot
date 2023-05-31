@@ -1,8 +1,8 @@
 import { APIKEY_HEADER } from './constants';
 import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 
-export async function fetchApi<T = unknown>(url: URL, apiKey: string): Promise<T | null> {
-	const result = await fetch(
+export async function fetchApi<T = unknown>(url: URL, apiKey: string): Promise<T> {
+	return fetch<T>(
 		url.href,
 		{
 			method: FetchMethods.Get,
@@ -11,9 +11,6 @@ export async function fetchApi<T = unknown>(url: URL, apiKey: string): Promise<T
 				[APIKEY_HEADER]: apiKey
 			}
 		},
-		FetchResultTypes.Result
+		FetchResultTypes.JSON
 	);
-
-	if (result.status !== 200) return null;
-	return (await result.json()) as T;
 }

@@ -19,7 +19,7 @@ export class VideoHandler {
 	 * @param query - The query options
 	 * @returns The result of the query
 	 */
-	public async getLive(query: { channels: string[] }): Promise<HolodexVideoWithChannel[] | null> {
+	public async getLive(query: { channels: string[] }): Promise<HolodexVideoWithChannel[]> {
 		const url = new URL(`${BASE_URL}/users/live`);
 		url.searchParams.append('channels', query.channels.toString());
 
@@ -31,7 +31,7 @@ export class VideoHandler {
 	 * @param query - The query options
 	 * @returns The paginated result of the query
 	 */
-	public async getPastPaginated(query: { from: number; to: number; offset: number }): Promise<PaginatedResponse<HolodexVideoWithChannel> | null> {
+	public async getPastPaginated(query: { from: number; to: number; offset: number }): Promise<PaginatedResponse<HolodexVideoWithChannel>> {
 		const { from, to, offset } = query;
 
 		const url = new URL(`${BASE_URL}/videos`);
