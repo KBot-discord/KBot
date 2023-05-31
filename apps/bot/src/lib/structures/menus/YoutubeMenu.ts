@@ -1,4 +1,3 @@
-import { EmbedColors } from '#utils/constants';
 import { Menu } from '#structures/menus/Menu';
 import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
 import { container } from '@sapphire/framework';
@@ -26,19 +25,7 @@ export class YoutubeMenu extends Menu {
 			return { label: channel.englishName ?? channel.name };
 		});
 
-		if (embeds.length > 0) {
-			this.setMenuPages(pages);
-		} else {
-			this.setHomePage((builder) =>
-				builder.setEmbeds((embed) => {
-					return [
-						embed //
-							.setColor(EmbedColors.Default)
-							.setDescription('There are no subscriptions to show.')
-					];
-				})
-			);
-		}
+		this.setMenuPages(pages);
 
 		return super.run(messageOrInteraction, target);
 	}

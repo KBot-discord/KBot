@@ -386,6 +386,10 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 	public async chatInputSubscriptions(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		const subscriptions = await this.module.subscriptions.getByGuild(interaction.guildId);
 
+		if (subscriptions.length === 0) {
+			return interaction.defaultReply('There are no subscriptions to show.');
+		}
+
 		return new YoutubeMenu(subscriptions).run(interaction, interaction.user);
 	}
 
@@ -423,10 +427,12 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 	 */
 	private async updateReactionRoleMessage(guild: Guild): Promise<unknown> {
 		const settings = await this.module.settings.get(guild.id);
-		if (!settings?.reactionRoleChannelId || !settings.reactionRoleMessageId) return;
+		if (isNullOrUndefined(settings) || isNullOrUndefined(settings.reactionRoleChannelId) || isNullOrUndefined(settings.reactionRoleMessageId)) {
+			return;
+		}
 
-		const channel = (await guild.channels.fetch(settings.reactionRoleChannelId)) as GuildTextBasedChannel | null;
-		if (!channel) {
+		const channel = (await guild.channels.fetch(settings.reactionRoleChannelId).catch(() => null)) as GuildTextBasedChannel | null;
+		if (isNullOrUndefined(channel)) {
 			return this.module.settings.upsert(guild.id, {
 				reactionRoleMessageId: null,
 				reactionRoleChannelId: null
@@ -441,7 +447,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 		// Need to catch the edit since we dont have message intents/listeners
 		const editMessage = await oldMessage?.edit(messageOptions).catch(() => null);
 
-		if (!editMessage) {
+		if (isNullOrUndefined(editMessage)) {
 			return this.module.settings.upsert(guild.id, {
 				reactionRoleMessageId: null,
 				reactionRoleChannelId: null
