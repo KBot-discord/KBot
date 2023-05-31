@@ -427,7 +427,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 	 */
 	private async updateReactionRoleMessage(guild: Guild): Promise<unknown> {
 		const settings = await this.module.settings.get(guild.id);
-		if (isNullOrUndefined(settings) || isNullOrUndefined(settings?.reactionRoleChannelId) || isNullOrUndefined(settings.reactionRoleMessageId)) {
+		if (isNullOrUndefined(settings) || isNullOrUndefined(settings.reactionRoleChannelId) || isNullOrUndefined(settings.reactionRoleMessageId)) {
 			return;
 		}
 
