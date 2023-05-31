@@ -100,12 +100,17 @@ export class YoutubeTask extends ScheduledTask {
 		}
 
 		await redis.deleteMany(keysToDelete);
-		await redis.hmSet(
-			this.streamsKey,
-			new Map<Key, HolodexVideoWithChannel>(
-				liveStreams.map((stream) => [stream.id as Key, stream]) //
-			)
-		);
+
+		if (liveStreams.length > 0) {
+			await redis.hmSet(
+				this.streamsKey,
+				new Map<Key, HolodexVideoWithChannel>(
+					liveStreams.map((stream) => [stream.id as Key, stream]) //
+				)
+			);
+		} else {
+			await redis.delete(this.streamsKey);
+		}
 	}
 
 	/**
@@ -180,7 +185,9 @@ export class YoutubeTask extends ScheduledTask {
 			}
 		}
 
-		await redis.hmSet(this.messagesKey(stream.id), keysToSet);
+		if (keysToSet.size > 0) {
+			await redis.hmSet(this.messagesKey(stream.id), keysToSet);
+		}
 
 		metrics.incrementYoutube({ success: true });
 	}

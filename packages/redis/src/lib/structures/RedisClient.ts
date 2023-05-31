@@ -91,6 +91,8 @@ export class RedisClient extends Redis {
 	 * @param hashKey - The key of the hash
 	 * @param data - A {@link Map} of the data to set
 	 * @returns If the operation was successful
+	 *
+	 * @remarks Passing an empty {@link Map} will throw an error.
 	 */
 	public async hmSet<T = unknown>(hashKey: Key, data: Map<Key, T>): Promise<number> {
 		const formattedData = new Map<Key, string>();
