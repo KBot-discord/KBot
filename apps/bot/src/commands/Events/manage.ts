@@ -465,7 +465,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			});
 		}
 
-		return interaction.successReply(`${member.user.tag} has been added to the queue.`);
+		return interaction.successReply(`${member.user.username} has been added to the queue.`);
 	}
 
 	public async chatInputKaraokeRemove(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -535,7 +535,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			});
 		}
 
-		return interaction.successReply(`${member.user.tag} has been removed from the queue.`);
+		return interaction.successReply(`${member.user.username} has been removed from the queue.`);
 	}
 
 	public async chatInputKaraokeMenu(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {

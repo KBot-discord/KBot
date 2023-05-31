@@ -301,7 +301,8 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 			{
 				name: 'Variables:',
 				value: `\`{@member}\` - To @ them
-				\`{membertag}\` - The members's discord tag (ex: KBot#7091)
+				\`{membertag}\` - The member's discord tag (ex: KBot#7091)
+				\`{username}\` - The member's username
 				\`{server}\` - The name of the server
 				\`{nl}\` - To add a line break`
 			}

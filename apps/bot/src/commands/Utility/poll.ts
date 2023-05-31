@@ -174,7 +174,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		const expiresAt = expiresIn + Date.now();
 
 		const pollMessage = await interaction.channel!.send({
-			embeds: this.createPollEmbeds(interaction.user.tag, text, options, expiresAt)
+			embeds: this.createPollEmbeds(interaction.user.username, text, options, expiresAt)
 		});
 
 		await polls.create(pollMessage.guildId, pollMessage.id, {
@@ -182,7 +182,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			options,
 			time: BigInt(expiresAt),
 			channelId: pollMessage.channelId,
-			creator: interaction.user.tag
+			creator: interaction.user.username
 		});
 		await polls.createTask(expiresIn, { guildId: pollMessage.guildId, pollId: pollMessage.id });
 

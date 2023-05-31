@@ -94,7 +94,7 @@ export class ReportHandler {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setDescription(text)
-					.setFooter({ text: `Confirmation for ${interaction.member.user.tag}` })
+					.setFooter({ text: `Confirmation for ${interaction.member.user.username}` })
 			],
 			components: [row]
 		});

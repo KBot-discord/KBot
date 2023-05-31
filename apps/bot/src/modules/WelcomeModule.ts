@@ -32,6 +32,7 @@ export class WelcomeModule extends Module {
 			.replaceAll('{nl}', '\n')
 			.replaceAll('{@member}', userMention(member.id))
 			.replaceAll('{membertag}', member.user.tag)
+			.replaceAll('{username}', member.user.username)
 			.replaceAll('{server}', member.guild.name);
 	}
 }

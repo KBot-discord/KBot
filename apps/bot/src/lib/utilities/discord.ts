@@ -180,7 +180,7 @@ export async function getUserInfo(interaction: AnyInteraction, userId: string): 
 	const member = await interaction.guild?.members.fetch(userId).catch(() => null);
 	const userBanner = getUserBannerUrl(user);
 	const embed = new EmbedBuilder()
-		.setAuthor({ name: `${user.tag} - ${user.id}` })
+		.setAuthor({ name: `@${user.username} - ${user.id}` })
 		.setImage(userBanner!)
 		.setTimestamp();
 
