@@ -1,4 +1,5 @@
 import { isNullOrUndefined } from '#utils/functions';
+import { fetchChannel } from '#utils/discord';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits } from 'discord.js';
@@ -68,7 +69,7 @@ export class VoiceListener extends Listener {
 			// Do nothing if nobody is in queue
 			if (queue.length === 0) return;
 
-			const textChannel = (await newState.guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
+			const textChannel = await fetchChannel<GuildTextBasedChannel>(event.textChannelId);
 			if (isNullOrUndefined(textChannel)) return;
 
 			// Rotate queue if the person to leave was speaking

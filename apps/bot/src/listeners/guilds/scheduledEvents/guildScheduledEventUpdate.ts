@@ -2,7 +2,7 @@ import { isNullOrUndefined } from '#utils/functions';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, GuildScheduledEventEntityType, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
-import type { Guild, GuildScheduledEvent, StageChannel, VoiceChannel } from 'discord.js';
+import type { Guild, GuildScheduledEvent, VoiceBasedChannel } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.GuildScheduledEventUpdate
@@ -25,7 +25,7 @@ export class GuildListener extends Listener {
 	 * @param guild - The guild the event is in
 	 * @param channel - The event's voice channel
 	 */
-	private async handleInternalToExternal(guild: Guild, channel: StageChannel | VoiceChannel): Promise<void> {
+	private async handleInternalToExternal(guild: Guild, channel: VoiceBasedChannel): Promise<void> {
 		const { events } = this.container;
 
 		const settings = await events.settings.get(guild.id);
@@ -43,7 +43,7 @@ export class GuildListener extends Listener {
 	 * @param channel - the events voice channel
 	 * @param stageTopic - The topic of the stage
 	 */
-	private async handleGoingActive(guild: Guild, channel: StageChannel | VoiceChannel, stageTopic: string): Promise<void> {
+	private async handleGoingActive(guild: Guild, channel: VoiceBasedChannel, stageTopic: string): Promise<void> {
 		const { events, validator } = this.container;
 
 		const settings = await events.settings.get(guild.id);
@@ -64,7 +64,7 @@ export class GuildListener extends Listener {
 		}
 		if (event.isActive) return;
 
-		const result = await events.karaoke.startScheduledEvent(guild, event, stageTopic);
+		const result = await events.karaoke.startScheduledEvent(event, stageTopic);
 
 		result.inspectErr((error) => {
 			this.container.logger.sentryError(error, {

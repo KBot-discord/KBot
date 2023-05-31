@@ -9,6 +9,7 @@ import type {
 	Collection,
 	Emoji,
 	Guild,
+	GuildBasedChannel,
 	GuildMember,
 	GuildPremiumTier,
 	JSONEncodable,
@@ -283,4 +284,15 @@ export function getGuildIcon(guild: Guild | null, options: ImageURLOptions = {})
 	const { forceStatic = false, size = 512 } = options;
 
 	return guild?.iconURL({ forceStatic, size, extension: 'png' }) ?? undefined;
+}
+
+/**
+ * Fetch a channel from the guild.
+ * @param guild - The guild
+ * @param channelId - The ID of the channel
+ *
+ * @typeParam T - The type of the channel
+ */
+export async function fetchChannel<T extends GuildBasedChannel>(channelId: string): Promise<T | null> {
+	return container.client.channels.fetch(channelId).catch(() => null) as unknown as T | null;
 }

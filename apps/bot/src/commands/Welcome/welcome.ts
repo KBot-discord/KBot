@@ -1,5 +1,5 @@
 import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/discord';
+import { fetchChannel, getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { isNullOrUndefined } from '#utils/functions';
 import { KBotModules } from '#types/Enums';
@@ -277,7 +277,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 	}
 
 	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: WelcomeSettings | null): Promise<unknown> {
-		const { channels, members } = interaction.guild;
+		const { members } = interaction.guild;
 
 		const bot = await members.fetchMe();
 		const fields: APIEmbedField[] = [
@@ -309,7 +309,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		];
 
 		if (!isNullOrUndefined(settings) && !isNullOrUndefined(settings.channelId)) {
-			const welcomeChannel = await channels.fetch(settings.channelId);
+			const welcomeChannel = await fetchChannel(settings.channelId);
 			if (!isNullOrUndefined(welcomeChannel)) {
 				const viewChannel = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.ViewChannel);
 				const sendMessage = bot.permissionsIn(welcomeChannel).has(PermissionFlagsBits.SendMessages);

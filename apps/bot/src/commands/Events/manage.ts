@@ -1,6 +1,6 @@
 import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { BlankSpace, EmbedColors, KBotEmoji, formGenericError } from '#utils/constants';
-import { getGuildIcon } from '#utils/discord';
+import { fetchChannel, getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors, KBotModules } from '#types/Enums';
 import { isNullOrUndefined } from '#utils/functions';
@@ -8,7 +8,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { channelMention, time, userMention } from '@discordjs/builders';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { ApplicationCommandOptionChoiceData, GuildScheduledEvent, GuildTextBasedChannel, StageChannel, VoiceChannel } from 'discord.js';
+import type { ApplicationCommandOptionChoiceData, GuildScheduledEvent, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import type { EventModule } from '#modules/EventModule';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -185,7 +185,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 				return interaction.respond([]);
 			}
 
-			const channelData = await Promise.all(events.map(async ({ id }) => interaction.guild.channels.fetch(id)));
+			const channelData = await Promise.all(events.map(async ({ id }) => fetchChannel(id)));
 
 			const eventOptions: ApplicationCommandOptionChoiceData[] = channelData //
 				.filter((e) => !isNullOrUndefined(e))
@@ -291,7 +291,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 	}
 
 	public async chatInputKaraokeSchedule(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const { client, validator } = this.container;
+		const { validator } = this.container;
 
 		const discordEventId = interaction.options.getString('discord_event', true);
 		const textChannel = interaction.options.getChannel('text_channel', true, [
@@ -312,7 +312,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('There is no channel set for that Discord event.');
 		}
 
-		const voiceChannel = (await client.channels.fetch(discordEvent.channelId)) as StageChannel | VoiceChannel | null;
+		const voiceChannel = await fetchChannel<VoiceBasedChannel>(discordEvent.channelId);
 		const voiceResult = await validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -382,7 +382,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('There is no karaoke event to stop.');
 		}
 
-		const result = await this.module.karaoke.endEvent(interaction.guild, event);
+		const result = await this.module.karaoke.endEvent(event);
 
 		return result.match({
 			ok: () => {
@@ -402,7 +402,6 @@ export class EventsCommand extends KBotCommand<EventModule> {
 	}
 
 	public async chatInputKaraokeAdd(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const { guild } = interaction;
 		const { karaoke } = this.module;
 
 		const eventId = interaction.options.getString('event', true);
@@ -428,7 +427,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('There is no karaoke event to stop.');
 		}
 
-		const voiceChannel = (await guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
+		const voiceChannel = await fetchChannel<VoiceBasedChannel>(eventId);
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -437,7 +436,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			});
 		}
 
-		const textChannel = (await guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
+		const textChannel = await fetchChannel<GuildTextBasedChannel>(event.textChannelId);
 		const textResult = await this.container.validator.channels.canSendEmbeds(textChannel);
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -469,7 +468,6 @@ export class EventsCommand extends KBotCommand<EventModule> {
 	}
 
 	public async chatInputKaraokeRemove(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const { guild } = interaction;
 		const { karaoke } = this.module;
 
 		const eventId = interaction.options.getString('event', true);
@@ -495,7 +493,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			return interaction.defaultReply('There is no karaoke event to stop.');
 		}
 
-		const voiceChannel = (await guild.channels.fetch(eventId)) as StageChannel | VoiceChannel | null;
+		const voiceChannel = await fetchChannel<VoiceBasedChannel>(eventId);
 		const voiceResult = await this.container.validator.channels.canModerateVoice(voiceChannel);
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
@@ -504,7 +502,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 			});
 		}
 
-		const textChannel = (await guild.channels.fetch(event.textChannelId)) as GuildTextBasedChannel | null;
+		const textChannel = await fetchChannel<GuildTextBasedChannel>(event.textChannelId);
 		const textResult = await this.container.validator.channels.canSendEmbeds(textChannel);
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {

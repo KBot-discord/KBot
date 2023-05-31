@@ -1,4 +1,5 @@
 import { isNullOrUndefined } from '#utils/functions';
+import { fetchChannel } from '#utils/discord';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
 import type { GuildMember, GuildTextBasedChannel, HexColorString, Message } from 'discord.js';
@@ -8,13 +9,13 @@ export class WelcomeHandler {
 	public constructor(private readonly member: GuildMember) {}
 
 	public async run(): Promise<void> {
-		const { client, welcome, validator } = container;
+		const { welcome, validator } = container;
 
 		const settings = await welcome.settings.get(this.member.guild.id);
 		if (isNullOrUndefined(settings) || !settings.enabled || isNullOrUndefined(settings.channelId)) return;
 		if (!settings.message && !settings.title && !settings.description) return;
 
-		const channel = (await client.channels.fetch(settings.channelId)) as GuildTextBasedChannel | null;
+		const channel = await fetchChannel<GuildTextBasedChannel>(settings.channelId);
 		const { result } = await validator.channels.canSendEmbeds(channel);
 		if (isNullOrUndefined(channel) || !result) return;
 

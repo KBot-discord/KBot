@@ -1,6 +1,6 @@
 import { YoutubeMenu } from '#structures/menus/YoutubeMenu';
 import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/discord';
+import { fetchChannel, getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { YoutubeCustomIds } from '#utils/customIds';
 import { KBotErrors, KBotModules } from '#types/Enums';
@@ -431,7 +431,7 @@ export class NotificationsCommand extends KBotCommand<YoutubeModule> {
 			return;
 		}
 
-		const channel = (await guild.channels.fetch(settings.reactionRoleChannelId).catch(() => null)) as GuildTextBasedChannel | null;
+		const channel = await fetchChannel<GuildTextBasedChannel>(settings.reactionRoleChannelId);
 		if (isNullOrUndefined(channel)) {
 			return this.module.settings.upsert(guild.id, {
 				reactionRoleMessageId: null,

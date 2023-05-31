@@ -2,6 +2,7 @@ import { EmbedColors } from '#utils/constants';
 import { PollCustomIds } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
 import { isNullOrUndefined, parseCustomId } from '#utils/functions';
+import { fetchChannel } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ButtonInteraction, EmbedBuilder } from 'discord.js';
@@ -14,7 +15,6 @@ import type { PollMenuButton } from '#types/CustomIds';
 export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>): Promise<void> {
 		const {
-			client,
 			utility: { polls }
 		} = this.container;
 
@@ -28,7 +28,7 @@ export class ButtonHandler extends InteractionHandler {
 			return void interaction.errorReply('There was an error when trying to show the poll results.');
 		}
 
-		const channel = (await client.channels.fetch(poll.channelId)) as GuildTextBasedChannel | null;
+		const channel = await fetchChannel<GuildTextBasedChannel>(poll.channelId);
 		if (!channel) {
 			return void interaction.errorReply("The channel that the poll was sent in doesn't exist anymore.");
 		}

@@ -2,7 +2,7 @@ import { EmbedColors } from '#utils/constants';
 import { CreditCustomIds, CreditFields, CreditType } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
 import { KBotErrors } from '#types/Enums';
-import { getResourceFromType } from '#utils/discord';
+import { fetchChannel, getResourceFromType } from '#utils/discord';
 import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
 import { buildCustomId, isNullOrUndefined, parseCustomId } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -25,7 +25,7 @@ export class ModalHandler extends InteractionHandler {
 		if (description) fields.push({ name: 'Description', value: description });
 		if (artist) fields.push({ name: 'Artist', value: artist });
 
-		const creditsChannel = (await interaction.guild.channels.fetch(channelId)) as GuildTextBasedChannel | null;
+		const creditsChannel = await fetchChannel<GuildTextBasedChannel>(channelId);
 		if (isNullOrUndefined(creditsChannel)) {
 			return void interaction.errorReply("The current credits channel doesn't exist. Please set a new one with `/credits set`");
 		}

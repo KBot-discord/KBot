@@ -2,6 +2,7 @@ import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { isNullOrUndefined } from '#utils/functions';
 import { DiscordFetchError } from '#structures/errors';
 import { ResultClass } from '#structures/ResultClass';
+import { fetchChannel } from '#utils/discord';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { Result, container } from '@sapphire/framework';
 import { roleMention, userMention } from '@discordjs/builders';
@@ -367,11 +368,11 @@ export class KaraokeService extends ResultClass {
 	 * @param event - The data of the event
 	 * @param stageTopic - The topic of the stage
 	 */
-	public async startScheduledEvent(guild: Guild, event: KaraokeEvent, stageTopic: string): Promise<Result<KaraokeEvent, Error>> {
+	public async startScheduledEvent(event: KaraokeEvent, stageTopic: string): Promise<Result<KaraokeEvent, Error>> {
 		const { events, validator } = container;
 
 		return Result.fromAsync(async () => {
-			const [eventChannel, textChannel] = await this.fetchEventChannels(guild, event.id, event.textChannelId);
+			const [eventChannel, textChannel] = await this.fetchEventChannels(event.id, event.textChannelId);
 
 			const baseEmbed = events.karaokeInstructionsEmbed(event.id);
 			const embed = await this.setupVoiceChannel(baseEmbed, eventChannel, stageTopic);
@@ -400,11 +401,11 @@ export class KaraokeService extends ResultClass {
 	 * @param guild - The guild that the event is in
 	 * @param event - The even to end
 	 */
-	public async endEvent(guild: Guild, event: KaraokeEvent): Promise<Result<undefined, Error>> {
+	public async endEvent(event: KaraokeEvent): Promise<Result<undefined, Error>> {
 		const { validator } = container;
 
 		return Result.fromAsync(async () => {
-			const [eventChannel, textChannel] = await this.fetchEventChannels(guild, event.id, event.textChannelId);
+			const [eventChannel, textChannel] = await this.fetchEventChannels(event.id, event.textChannelId);
 
 			if (eventChannel.type === ChannelType.GuildStageVoice && eventChannel.stageInstance) {
 				await eventChannel.stageInstance.delete();
@@ -582,8 +583,8 @@ export class KaraokeService extends ResultClass {
 	 * @param voiceChannelId - The ID of the voice channel
 	 * @param textChannelId - The ID of the text channel
 	 */
-	private async fetchEventChannels(guild: Guild, voiceChannelId: string, textChannelId: string): Promise<[VoiceBasedChannel, GuildTextBasedChannel]> {
-		const eventChannel = (await guild.channels.fetch(voiceChannelId)) as VoiceBasedChannel | null;
+	private async fetchEventChannels(voiceChannelId: string, textChannelId: string): Promise<[VoiceBasedChannel, GuildTextBasedChannel]> {
+		const eventChannel = await fetchChannel<VoiceBasedChannel>(voiceChannelId);
 		if (!eventChannel) {
 			throw new DiscordFetchError({
 				message: 'Failed to fetch event voice channel',
@@ -591,7 +592,7 @@ export class KaraokeService extends ResultClass {
 			});
 		}
 
-		const textChannel = (await guild.channels.fetch(textChannelId)) as GuildTextBasedChannel | null;
+		const textChannel = await fetchChannel<GuildTextBasedChannel>(textChannelId);
 		if (!textChannel) {
 			throw new DiscordFetchError({
 				message: 'Failed to fetch event text channel',

@@ -1,4 +1,4 @@
-import { getMemberAvatarUrl } from '#utils/discord';
+import { fetchChannel, getMemberAvatarUrl } from '#utils/discord';
 import { EmbedColors, formGenericError } from '#utils/constants';
 import { ReportButtons, ReportHandler } from '#structures/handlers/ReportHandler';
 import { KBotErrors, KBotModules } from '#types/Enums';
@@ -70,7 +70,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			return interaction.defaultReply('No report channel is set. Please run `/moderation set report_channel`.');
 		}
 
-		const reportChannel = (await interaction.guild.channels.fetch(settings.reportChannelId)) as GuildTextBasedChannel | null;
+		const reportChannel = await fetchChannel<GuildTextBasedChannel>(settings.reportChannelId);
 		if (isNullOrUndefined(reportChannel)) {
 			return interaction.errorReply("The current report channel doesn't exist. Please set a new one with `/moderation set report_channel`.");
 		}

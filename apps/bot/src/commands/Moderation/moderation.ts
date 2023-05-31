@@ -1,5 +1,5 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/discord';
+import { fetchChannel, getGuildIcon } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { isNullOrUndefined } from '#utils/functions';
 import { KBotModules } from '#types/Enums';
@@ -162,7 +162,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 	}
 
 	public async chatInputPermissions(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const { channels, members } = interaction.guild;
+		const { members } = interaction.guild;
 
 		const settings = await this.module.settings.get(interaction.guildId);
 
@@ -171,7 +171,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 		if (!isNullOrUndefined(settings)) {
 			if (!isNullOrUndefined(settings.reportChannelId)) {
-				const report = await channels.fetch(settings.reportChannelId);
+				const report = await fetchChannel(settings.reportChannelId);
 				if (!isNullOrUndefined(report)) {
 					const reportViewChannel = bot.permissionsIn(report).has(PermissionFlagsBits.ViewChannel);
 					const reportSendMessage = bot.permissionsIn(report).has(PermissionFlagsBits.SendMessages);
