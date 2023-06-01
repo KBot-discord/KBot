@@ -18,8 +18,8 @@ export class ButtonHandler extends InteractionHandler {
 
 		const event = await karaoke.getEventWithQueue(eventId);
 		if (!event) {
-			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
-				context: { eventId }
+			this.container.logger.sentryMessage('Failed to fetch an event for a menu', {
+				context: { eventId, piece: this, interaction }
 			});
 			return;
 		}
