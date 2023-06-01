@@ -2,7 +2,7 @@ import { isNullOrUndefined } from '#utils/functions';
 import { fetchChannel } from '#utils/discord';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType, PermissionFlagsBits } from 'discord.js';
+import { ChannelType, PermissionFlagsBits, userMention } from 'discord.js';
 import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
 import type { KaraokeUser } from '@kbotdev/database';
 
@@ -87,17 +87,12 @@ export class VoiceListener extends Listener {
 			const { result } = await validator.channels.canSendEmbeds(textChannel);
 			if (result) {
 				await textChannel.send({
-					content: user.partnerId ? `<@${user.id}> & <@${user.partnerId}> have left the queue.` : `<@${user.id}> has left the queue.`,
-					allowedMentions: { parse: ['users'] }
+					content: user.partnerId //
+						? `${userMention(user.id)} & ${userMention(user.partnerId)} have left the queue.`
+						: `${userMention(user.id)} has left the queue.`,
+					allowedMentions: { users: user.partnerId ? [user.id, user.partnerId] : [user.id] }
 				});
 			}
-
-			return;
-		}
-
-		// User joins channel
-		if (!newState.serverMute && newState.channelId === eventId && isNullOrUndefined(oldState.channel)) {
-			await newState.setMute(true);
 		}
 	}
 
