@@ -372,10 +372,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 
 		const event = await this.module.karaoke.getEvent(eventId);
 		if (!event) {
-			this.container.logger.sentryMessage('Failed to find an event that was trying to be ended', {
-				context: { eventId }
-			});
-			return interaction.errorReply(formGenericError());
+			return interaction.errorReply('There is no event with the ID you provided.');
 		}
 
 		if (!event.isActive) {
@@ -416,15 +413,8 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
-		if (isNullOrUndefined(event)) {
-			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
-				context: { eventId }
-			});
-			return interaction.errorReply(formGenericError());
-		}
-
-		if (!event.isActive) {
-			return interaction.defaultReply('There is no karaoke event to stop.');
+		if (isNullOrUndefined(event) || !event.isActive) {
+			return interaction.defaultReply('There is no karaoke event to join.');
 		}
 
 		const voiceChannel = await fetchChannel<VoiceBasedChannel>(eventId);
@@ -482,15 +472,8 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		}
 
 		const event = await karaoke.getEventWithQueue(eventId);
-		if (isNullOrUndefined(event)) {
-			this.container.logger.sentryMessage('Failed to fetch an event that was set as active', {
-				context: { eventId }
-			});
-			return interaction.errorReply(formGenericError());
-		}
-
-		if (!event.isActive) {
-			return interaction.defaultReply('There is no karaoke event to stop.');
+		if (isNullOrUndefined(event) || !event.isActive) {
+			return interaction.defaultReply('There is no karaoke event to join.');
 		}
 
 		const voiceChannel = await fetchChannel<VoiceBasedChannel>(eventId);

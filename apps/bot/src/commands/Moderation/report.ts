@@ -1,5 +1,5 @@
 import { fetchChannel, getMemberAvatarUrl } from '#utils/discord';
-import { EmbedColors, formGenericError } from '#utils/constants';
+import { EmbedColors } from '#utils/constants';
 import { ReportButtons, ReportHandler } from '#structures/handlers/ReportHandler';
 import { KBotErrors, KBotModules } from '#types/Enums';
 import { KBotCommand } from '#extensions/KBotCommand';
@@ -59,14 +59,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		const message = interaction.options.getMessage('message', true);
 
 		const settings = await this.module.settings.get(interaction.guildId);
-		if (isNullOrUndefined(settings)) {
-			this.container.logger.sentryMessage('Failed to fetch moderation settings', {
-				context: { guildId: interaction.guildId }
-			});
-			return interaction.errorReply(formGenericError());
-		}
-
-		if (isNullOrUndefined(settings.reportChannelId)) {
+		if (isNullOrUndefined(settings) || isNullOrUndefined(settings.reportChannelId)) {
 			return interaction.defaultReply('No report channel is set. Please run `/moderation set report_channel`.');
 		}
 
