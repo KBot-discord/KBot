@@ -1,24 +1,13 @@
 import { KBotErrors } from '#types/Enums';
 import { WebhookErrorBuilder } from '#structures/builders/WebhookErrorBuilder';
-import { LogLevel, Logger, Result, container } from '@sapphire/framework';
+import { Result, container } from '@sapphire/framework';
+import { Logger } from '@sapphire/plugin-logger';
 import { captureException, captureMessage } from '@sentry/node';
-import { bgRed, cyan, gray, isColorSupported, magenta, red, redBright, white, yellow } from 'colorette';
-import { inspect } from 'util';
+import { redBright } from 'colorette';
 import type { EmbedBuilder } from 'discord.js';
-import type { Color } from 'colorette';
 import type { Scope } from '@sentry/types';
 
 export class KBotLogger extends Logger {
-	private readonly formats = new Map<LogLevel, (content: string) => string>([
-		[LogLevel.Trace, (content: string): string => this.stylize(content, gray, 'TRACE')],
-		[LogLevel.Debug, (content: string): string => this.stylize(content, magenta, 'DEBUG')],
-		[LogLevel.Info, (content: string): string => this.stylize(content, cyan, 'INFO')],
-		[LogLevel.Warn, (content: string): string => this.stylize(content, yellow, 'WARN')],
-		[LogLevel.Error, (content: string): string => this.stylize(content, red, 'ERROR')],
-		[LogLevel.Fatal, (content: string): string => this.stylize(content, bgRed, 'FATAL')],
-		[LogLevel.None, (content: string): string => this.stylize(content, white, '')]
-	]);
-
 	public infoTag(tag: string, value: unknown): void {
 		super.info(`[${redBright(tag)}] ${value}`);
 	}
@@ -62,52 +51,5 @@ export class KBotLogger extends Logger {
 		result.inspectErr((error) => {
 			container.client.emit(KBotErrors.WebhookError, error);
 		});
-	}
-
-	public override write(level: LogLevel, ...values: readonly unknown[]): void {
-		if (level < this.level) return;
-
-		const method = Logger.levels.get(level)!;
-		const formatter = this.formats.get(level)!;
-
-		console[method](formatter(this.process(values)));
-	}
-
-	private process(values: readonly unknown[]): string {
-		return values
-			.map((value) =>
-				typeof value === 'string' //
-					? value
-					: inspect(value, { colors: isColorSupported, depth: 0 })
-			)
-			.join('\n');
-	}
-
-	private stylize(content: string, color: Color, name: string): string {
-		const utc = new Date(new Date().toUTCString());
-		const timestamp = this.formatTime(utc);
-
-		const prefix = `${color(`[${timestamp}] ${name.padEnd(5, ' ')}`)} - `;
-
-		return content
-			.split('\n')
-			.map((line: string) => prefix + line)
-			.join('\n');
-	}
-
-	private formatTime(date: Date): string {
-		const year = String(date.getFullYear());
-		const month = this.pad(date.getMonth() + 1);
-		const day = this.pad(date.getDate());
-
-		const hour = this.pad(date.getHours());
-		const minute = this.pad(date.getMinutes());
-		const second = this.pad(date.getSeconds());
-
-		return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-	}
-
-	private pad(time: number): string {
-		return String(time).padStart(2, '0');
 	}
 }
