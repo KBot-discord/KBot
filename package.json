@@ -29,7 +29,8 @@
 		"db:push": "turbo run db:push",
 		"docker:bot": "docker buildx build -f apps/bot/Dockerfile -t kbot/bot .",
 		"docker:web": "docker buildx build -f apps/web/Dockerfile -t kbot/web .",
-		"k8s:build": "kustomize build ./k8s -o ./k8s/result.yml"
+		"k8s:build": "kustomize build ./k8s -o ./k8s/result.yml",
+		"k8s:sync": "bash scripts/kustomize-sync.sh"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^17.6.5",

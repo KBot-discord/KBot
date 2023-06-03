@@ -1,10 +1,16 @@
-resources:
-  - configmap.yml
-  - deployments.yml
-  - namespace.yml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-  - name: ghcr.io/kbot-discord/kbot
-    newName: ghcr.io/kbot-discord/kbot
+  - name: ghcr.io/kbot-discord/bot
+    newName: ghcr.io/kbot-discord/bot
     newTag: latest
+  - name: ghcr.io/kbot-discord/web
+    newName: ghcr.io/kbot-discord/web
+    newTag: latest
+resources:
+  - bot/deployment.yml
+  - resources/configmap.yml
+  - resources/namespace.yml
+  - web/deployment.yml
+  - web/ingress.yml
+  - web/service.yml
