@@ -26,6 +26,7 @@ import type { InteractionResponseUnion } from '#types/Augments';
 type EmojiData = {
 	url: string;
 	animated: boolean;
+	name?: string;
 };
 
 @ApplyOptions<KBotCommand.Options>({
@@ -90,22 +91,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			: `**Static emote slots left:** ${staticSlots - 1}/${totalSlots}`;
 
 		try {
-			await interaction.showModal(
-				new ModalBuilder()
-					.setCustomId(ResourceCustomIds.Name)
-					.setTitle('Emote name')
-					.addComponents(
-						new ActionRowBuilder<TextInputBuilder>().addComponents(
-							new TextInputBuilder()
-								.setCustomId(ResourceFields.Name)
-								.setLabel('Emote name')
-								.setStyle(TextInputStyle.Short)
-								.setMinLength(2)
-								.setMaxLength(32)
-								.setRequired(true)
-						)
-					)
-			);
+			await interaction.showModal(this.buildModal(emoji.name));
 
 			return interaction //
 				.awaitModalSubmit({
@@ -198,7 +184,8 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		if (!isNullOrUndefined(emojiData)) {
 			return {
 				url: `https://cdn.discordapp.com/emojis/${emojiData[3]}.${emojiData[1] === 'a' ? 'gif' : 'png'}`,
-				animated: emojiData[1] === 'a'
+				animated: emojiData.at(1) === 'a',
+				name: emojiData.at(2)
 			};
 		}
 
@@ -224,5 +211,25 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 
 		return null;
+	}
+
+	private buildModal(emojiName?: string): ModalBuilder {
+		const textBuilder = new TextInputBuilder()
+			.setCustomId(ResourceFields.Name)
+			.setLabel('Emote name')
+			.setStyle(TextInputStyle.Short)
+			.setMinLength(2)
+			.setMaxLength(32)
+			.setRequired(true);
+
+		if (emojiName) textBuilder.setValue(emojiName);
+
+		return new ModalBuilder() //
+			.setCustomId(ResourceCustomIds.Name)
+			.setTitle('Emote name')
+			.addComponents(
+				new ActionRowBuilder<TextInputBuilder>() //
+					.addComponents(textBuilder)
+			);
 	}
 }

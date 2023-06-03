@@ -25,6 +25,7 @@ import type { InteractionResponseUnion } from '#types/Augments';
 
 type StickerData = {
 	url: string;
+	name?: string;
 };
 
 @ApplyOptions<KBotCommand.Options>({
@@ -81,22 +82,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		const slotsLeftString = `**Sticker slots left:** ${slotsLeft - 1}/${totalSlots}`;
 
 		try {
-			await interaction.showModal(
-				new ModalBuilder()
-					.setCustomId(ResourceCustomIds.Name)
-					.setTitle('Sticker name')
-					.addComponents(
-						new ActionRowBuilder<TextInputBuilder>().addComponents(
-							new TextInputBuilder()
-								.setCustomId(ResourceFields.Name)
-								.setLabel('Sticker name')
-								.setStyle(TextInputStyle.Short)
-								.setMinLength(2)
-								.setMaxLength(30)
-								.setRequired(true)
-						)
-					)
-			);
+			await interaction.showModal(this.buildModal(sticker.name));
 
 			return interaction //
 				.awaitModalSubmit({
@@ -184,10 +170,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 	 * @remarks The priority for parsing is: emoji \> attachment \> links
 	 */
 	private async getSticker(message: Message): Promise<StickerData | null> {
-		const sticker = message.stickers.at(0)?.url;
+		const sticker = message.stickers.at(0);
 
-		if (!isNullOrUndefined(sticker)) {
-			return { url: sticker };
+		if (!isNullOrUndefined(sticker) && !isNullOrUndefined(sticker.url)) {
+			return {
+				url: sticker.url,
+				name: sticker.name
+			};
 		}
 
 		if (message.attachments.size > 0) {
@@ -200,5 +189,25 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		}
 
 		return null;
+	}
+
+	private buildModal(stickerName?: string): ModalBuilder {
+		const textBuilder = new TextInputBuilder()
+			.setCustomId(ResourceFields.Name)
+			.setLabel('Sticker name')
+			.setStyle(TextInputStyle.Short)
+			.setMinLength(2)
+			.setMaxLength(30)
+			.setRequired(true);
+
+		if (stickerName) textBuilder.setValue(stickerName);
+
+		return new ModalBuilder() //
+			.setCustomId(ResourceCustomIds.Name)
+			.setTitle('Sticker name')
+			.addComponents(
+				new ActionRowBuilder<TextInputBuilder>() //
+					.addComponents(textBuilder)
+			);
 	}
 }
