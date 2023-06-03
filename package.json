@@ -3,14 +3,12 @@
 	"version": "0.0.1",
 	"author": "@kbotdev",
 	"private": true,
-	"workspaces": {
-		"packages": [
-			"apps/**",
-			"packages/**",
-			"plugins/**",
-			"protos/**"
-		]
-	},
+	"workspaces": [
+		"apps/*",
+		"packages/*",
+		"plugins/*",
+		"protos/*"
+	],
 	"scripts": {
 		"postinstall": "husky install",
 		"update": "yarn upgrade-interactive",
