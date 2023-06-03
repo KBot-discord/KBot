@@ -5,6 +5,5 @@
 	"labels": ["dependencies"],
 	"docker-compose": {
 		"enabled": false
-	},
-	"updateInternalDeps": true
+	}
 }
