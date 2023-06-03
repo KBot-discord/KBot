@@ -74,7 +74,12 @@ export const HexColorRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
 
 export const UrlRegex = /https\S*?([a-zA-Z0-9]+)(?:\.\w+)?(?:\s|$)/;
 
-export const EmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/;
+/**
+ * @remarks Group 1: If the emoji is animated
+ * @remarks Group 2: The name of the emoji
+ * @remarks Group 3: The ID of the emoji
+ */
+export const EmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,20})>?/;
 
 const GENERIC_ERROR = 'Woops, something went wrong. The devs have been made aware of the error and are looking into it.';
 
