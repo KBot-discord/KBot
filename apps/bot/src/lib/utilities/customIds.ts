@@ -1,4 +1,15 @@
 /**
+ * Echo
+ */
+export const EchoCustomIds = {
+	Detailed: 'echo-detailed' as const
+};
+
+export const EchoFields = {
+	Text: 'text-to-send'
+} as const;
+
+/**
  * Eval
  */
 export const EvalCustomIds = {

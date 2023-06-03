@@ -4,6 +4,8 @@ import { BlankSpace, EmbedColors, GuildEmoteSlots, GuildSoundboardSlots, GuildSt
 import { EmbedBuilder, MessageType, PermissionFlagsBits, User, isJSONEncodable } from 'discord.js';
 import { roleMention, time, userMention } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
+import { MessageLinkRegex } from '@sapphire/discord.js-utilities';
+import type { AnyInteraction } from '@sapphire/discord.js-utilities';
 import type {
 	APIUser,
 	Collection,
@@ -22,7 +24,6 @@ import type {
 import type { ImageURLOptions } from '@discordjs/rest';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { FormattedGuild, TransformedLoginData } from '#types/Api';
-import type { AnyInteraction } from '@sapphire/discord.js-utilities';
 
 /**
  * Converts a value to JSON if it is encodeable.
@@ -295,4 +296,19 @@ export function getGuildIcon(guild: Guild | null, options: ImageURLOptions = {})
  */
 export async function fetchChannel<T extends GuildBasedChannel>(channelId: string): Promise<T | null> {
 	return container.client.channels.fetch(channelId).catch(() => null) as unknown as T | null;
+}
+
+/**
+ * Parses a message link for a guild ID, channel ID, and message ID.
+ * @param link - The link to parse
+ */
+export function parseMessageLink(link: string): { guildId?: string; channelId: string; messageId: string } | null {
+	const result = link.match(MessageLinkRegex);
+	if (isNullOrUndefined(result)) return null;
+
+	return {
+		guildId: result.at(1),
+		channelId: result.at(2)!,
+		messageId: result.at(3)!
+	};
 }

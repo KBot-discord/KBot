@@ -28,7 +28,10 @@ export class KBotClient extends SapphireClient {
 				activities: [{ name: '/help', type: ActivityType.Playing }]
 			},
 			logger: {
-				instance: new KBotLogger({ level: LogLevel.Info })
+				instance: new KBotLogger({
+					level: LogLevel.Info,
+					join: '\n'
+				})
 			},
 			api: {
 				origin: config.web.url,

@@ -1,6 +1,17 @@
 import type { CreditType } from '#utils/customIds';
 
 /**
+ * Echo
+ */
+export type EchoModal = {
+	/** Role ID */
+	role?: string;
+
+	/** Channel ID */
+	channel: string;
+};
+
+/**
  * Credits
  */
 export type Credit = {

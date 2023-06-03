@@ -35,10 +35,24 @@ The command creates an interactive menu when run, such as having pages you can m
 
 Sends the provided text to the selected channel.
 
+#### /echo simple
+
+Sends the provided text.
+
 | Option  | Required | Description                         |
 | ------- | :------: | :---------------------------------- |
 | Text    |    ✓     | The text of the message.            |
 | Channel |    ✓     | The channel to send the message to. |
+| Role    |    ✕     | The role to ping.                   |
+
+#### /echo detailed
+
+Open a text modal and then sends the submitted text. Useful if you need proper formatting.
+
+| Option  | Required | Description                         |
+| ------- | :------: | :---------------------------------- |
+| Channel |    ✓     | The channel to send the message to. |
+| Role    |    ✕     | The role to ping.                   |
 
 ### Help <Badge type='tip' text='Slash' /> <Badge type='info' text='Uses autocomplete' />
 
