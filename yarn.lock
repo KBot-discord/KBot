@@ -981,14 +981,14 @@ __metadata:
     "@kbotdev/prettier-config": "workspace:^"
     "@kbotdev/ts-config": "workspace:^"
     "@types/node": ^20.2.5
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     husky: ^8.0.3
     lint-staged: ^13.2.2
     prettier: ^2.8.8
     schemix: ^1.13.0
     turbo: 1.10.1
-    typescript: ^5.0.4
-    vitest: ^0.31.2
+    typescript: ^5.1.3
+    vitest: ^0.31.4
   languageName: unknown
   linkType: soft
 
@@ -1015,26 +1015,26 @@ __metadata:
     "@sapphire/plugin-api": ^5.0.4
     "@sapphire/plugin-logger": ^3.0.4
     "@sapphire/plugin-scheduled-tasks": ^7.1.0
-    "@sentry/integrations": ^7.53.1
-    "@sentry/node": ^7.53.1
-    "@sentry/types": ^7.53.1
+    "@sentry/integrations": ^7.54.0
+    "@sentry/node": ^7.54.0
+    "@sentry/types": ^7.54.0
     "@skyra/gifenc": ^1.0.1
     "@swc/core": ^1.3.61
     "@types/humanize-duration": ^3.27.1
-    bullmq: ^3.14.1
+    bullmq: ^3.15.0
     canvas: 2.11.2
     canvas-constructor: ^7.0.1
     colorette: ^2.0.20
     discord.js: ^14.11.0
-    dotenv: ^16.1.0
-    eslint: ^8.41.0
+    dotenv: ^16.1.3
+    eslint: ^8.42.0
     fuzzysort: ^2.0.4
     humanize-duration: ^3.28.0
     prettier: ^2.8.8
     prom-client: ^14.2.0
     tsup: ^6.7.0
-    typescript: ^5.0.4
-    vitest: ^0.31.2
+    typescript: ^5.1.3
+    vitest: ^0.31.4
   languageName: unknown
   linkType: soft
 
@@ -1045,9 +1045,9 @@ __metadata:
     "@kbotdev/prisma": "workspace:^"
     "@kbotdev/redis": "workspace:^"
     "@sapphire/utilities": ^3.11.2
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     prettier: ^2.8.8
-    typescript: ^5.0.4
+    typescript: ^5.1.3
   languageName: unknown
   linkType: soft
 
@@ -1067,15 +1067,15 @@ __metadata:
     "@types/node": ^20.2.5
     "@typescript-eslint/eslint-plugin": ^5.59.8
     "@typescript-eslint/parser": ^5.59.8
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     eslint-config-prettier: ^8.8.0
-    eslint-config-turbo: ^1.10.0
+    eslint-config-turbo: ^1.10.1
     eslint-import-resolver-typescript: ^3.5.5
     eslint-plugin-import: ^2.27.5
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-tsdoc: ^0.2.17
     prettier: ^2.8.8
-    typescript: ^5.0.4
+    typescript: ^5.1.3
   languageName: unknown
   linkType: soft
 
@@ -1084,7 +1084,7 @@ __metadata:
   resolution: "@kbotdev/holodex@workspace:packages/holodex"
   dependencies:
     "@sapphire/fetch": ^2.4.1
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     prettier: ^2.8.8
   languageName: unknown
   linkType: soft
@@ -1093,7 +1093,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/meili@workspace:packages/meili"
   dependencies:
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     meilisearch: ^0.32.5
     prettier: ^2.8.8
   languageName: unknown
@@ -1122,12 +1122,12 @@ __metadata:
   dependencies:
     "@prisma/client": ^4.15.0
     "@types/node": ^20.2.5
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     prettier: ^2.8.8
     prisma: ^4.15.0
     schemix: ^1.13.0
     ts-node: ^10.9.1
-    typescript: ^5.0.4
+    typescript: ^5.1.3
   languageName: unknown
   linkType: soft
 
@@ -1138,7 +1138,7 @@ __metadata:
     "@bufbuild/protoc-gen-connect-es": ^0.9.1
     "@bufbuild/protoc-gen-es": ^1.2.1
     "@swc/core": ^1.3.61
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     prettier: ^2.8.8
     tsup: ^6.7.0
   languageName: unknown
@@ -1160,7 +1160,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kbotdev/redis@workspace:packages/redis"
   dependencies:
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     ioredis: ^5.3.2
     prettier: ^2.8.8
   languageName: unknown
@@ -1187,13 +1187,13 @@ __metadata:
     "@sapphire/plugin-api": ^5.0.4
     "@skeletonlabs/skeleton": ^1.6.2
     "@sveltejs/adapter-node": ^1.2.4
-    "@sveltejs/kit": ^1.20.0
+    "@sveltejs/kit": ^1.20.1
     "@sveltejs/vite-plugin-svelte": ^2.4.1
     "@tailwindcss/forms": ^0.5.3
     autoprefixer: ^10.4.14
     discord-api-types: ^0.37.43
     discord.js: ^14.11.0
-    eslint: ^8.41.0
+    eslint: ^8.42.0
     eslint-plugin-svelte3: ^4.0.0
     postcss: ^8.4.24
     prettier: ^2.8.8
@@ -1201,11 +1201,11 @@ __metadata:
     svelte: ^3.59.1
     svelte-check: ^3.4.3
     svelte-fa: ^3.0.4
-    svelte-meta-tags: ^2.7.2
+    svelte-meta-tags: ^2.8.0
     svelte-sitemap: ^2.6.0
     tailwindcss: ^3.3.2
     vite: ^4.3.9
-    vitest: ^0.31.2
+    vitest: ^0.31.4
   languageName: unknown
   linkType: soft
 
@@ -1704,7 +1704,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/integrations@npm:^7.53.1":
+"@sentry/integrations@npm:^7.54.0":
   version: 7.54.0
   resolution: "@sentry/integrations@npm:7.54.0"
   dependencies:
@@ -1716,7 +1716,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:^7.53.1":
+"@sentry/node@npm:^7.54.0":
   version: 7.54.0
   resolution: "@sentry/node@npm:7.54.0"
   dependencies:
@@ -1732,7 +1732,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.54.0, @sentry/types@npm:^7.53.1":
+"@sentry/types@npm:7.54.0, @sentry/types@npm:^7.54.0":
   version: 7.54.0
   resolution: "@sentry/types@npm:7.54.0"
   checksum: a2f37a9fcc283e6b9c27ec12163bbeded0e6c34d9e55ca6d3d96f5ce270cb287fa308c19358dda6ab8fa6f8bba3dabdbf58cc6ed31219d712a3306e5005e8a14
@@ -1782,7 +1782,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/kit@npm:^1.20.0":
+"@sveltejs/kit@npm:^1.20.1":
   version: 1.20.1
   resolution: "@sveltejs/kit@npm:1.20.1"
   dependencies:
@@ -3014,7 +3014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:^3.14.1":
+"bullmq@npm:^3.15.0":
   version: 3.15.0
   resolution: "bullmq@npm:3.15.0"
   dependencies:
@@ -3781,7 +3781,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.1.0":
+"dotenv@npm:^16.1.3":
   version: 16.1.3
   resolution: "dotenv@npm:16.1.3"
   checksum: 8f73bae720161cf365b679de162fe79a05f5b7a21d0d2b8bf9fb0601a2ed30f7e9dc49fa8b752d93206e4b7d427eccea2f383a1622cd5da4a1824f43bf8f780b
@@ -4047,7 +4047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-turbo@npm:^1.10.0":
+"eslint-config-turbo@npm:^1.10.1":
   version: 1.10.1
   resolution: "eslint-config-turbo@npm:1.10.1"
   dependencies:
@@ -4196,7 +4196,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.41.0":
+"eslint@npm:^8.42.0":
   version: 8.42.0
   resolution: "eslint@npm:8.42.0"
   dependencies:
@@ -7878,7 +7878,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte-meta-tags@npm:^2.7.2":
+"svelte-meta-tags@npm:^2.8.0":
   version: 2.8.0
   resolution: "svelte-meta-tags@npm:2.8.0"
   dependencies:
@@ -8487,7 +8487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.4 || ^5.0.0, typescript@npm:^5.0.3, typescript@npm:^5.0.4":
+"typescript@npm:^4.6.4 || ^5.0.0, typescript@npm:^5.0.3, typescript@npm:^5.1.3":
   version: 5.1.3
   resolution: "typescript@npm:5.1.3"
   bin:
@@ -8507,7 +8507,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.4 || ^5.0.0#~builtin<compat/typescript>, typescript@patch:typescript@^5.0.3#~builtin<compat/typescript>, typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.6.4 || ^5.0.0#~builtin<compat/typescript>, typescript@patch:typescript@^5.0.3#~builtin<compat/typescript>, typescript@patch:typescript@^5.1.3#~builtin<compat/typescript>":
   version: 5.1.3
   resolution: "typescript@patch:typescript@npm%3A5.1.3#~builtin<compat/typescript>::version=5.1.3&hash=5da071"
   bin:
@@ -8721,7 +8721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.31.2":
+"vitest@npm:^0.31.4":
   version: 0.31.4
   resolution: "vitest@npm:0.31.4"
   dependencies:
