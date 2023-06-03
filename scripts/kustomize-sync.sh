@@ -9,7 +9,7 @@ yq -i 'del(.resources)' $file
 
 for dir in */; do
 	dirname=${dir%/}
-	kustomize edit add resource $dirname/**
+	kustomize edit add resource "$dirname/**"
 	echo "✅ Synced k8s/$dirname/ to $file"
 done
 
