@@ -25,7 +25,7 @@ RUN go test -v ./...
 RUN go build -o ./build
 
 ## App ##
-FROM gcr.io/distroless/base as app
+FROM gcr.io/distroless/static-debian11:nonroot as app
 
 COPY --from=builder /temp/app/build /
 
