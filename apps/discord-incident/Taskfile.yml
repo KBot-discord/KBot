@@ -1,0 +1,20 @@
+version: "3"
+
+tasks:
+  build:
+    cmds:
+      - go build -o ./dist
+  start:
+    cmds:
+      - go run main.go
+  vet:
+    cmds:
+      - go vet -v
+  test:
+    cmds:
+      - go test -v ./...
+  generate:
+    cmds:
+      - rm -r -f ./gen
+      - buf generate ../../protos/bot
+      - buf generate ../../protos/types

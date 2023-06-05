@@ -1,6 +1,7 @@
 {
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"eslint.format.enable": true,
+	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"[svelte]": {
 		"editor.defaultFormatter": "svelte.svelte-vscode"
@@ -14,5 +15,7 @@
 	"[prisma]": {
 		"editor.defaultFormatter": "Prisma.prisma"
 	},
-	"editor.formatOnSave": true
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
+	}
 }

@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  discord-incident:
+    image: kbot/discord-incident:latest
+    container_name: discord-incident
+    env_file:
+      - .env
