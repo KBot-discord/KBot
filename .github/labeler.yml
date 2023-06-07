@@ -15,10 +15,5 @@
 "packages":
   - "packages/**"
 
-"config":
-  - "packages/eslint-config/**"
-  - "packages/prettier-config/**"
-  - "packages/ts-config/**"
-
 "protos":
   - "protos/**"
