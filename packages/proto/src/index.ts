@@ -30,8 +30,8 @@ export * from './gen/bot/youtube/subscriptions/v1/subscriptions_connect';
 export * from './gen/bot/youtube/subscriptions/v1/subscriptions_pb';
 
 // Discord-status
-export * from './gen/discord_incident/guilds/v1/guild_connect';
-export * from './gen/discord_incident/guilds/v1/guild_pb';
+export * from './gen/discord_status/guilds/v1/guild_connect';
+export * from './gen/discord_status/guilds/v1/guild_pb';
 
 // Types
 export * from './gen/types/crud/v1/crud_pb';

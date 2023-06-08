@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/kbot-discord/kbot/apps/discord-status/gen/discord_incident/guilds/v1/guildsv1connect"
+	"github.com/kbot-discord/kbot/apps/discord-status/gen/discord_status/guilds/v1/guildsv1connect"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )

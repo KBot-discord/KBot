@@ -6,7 +6,7 @@ import (
 
 	"github.com/bufbuild/connect-go"
 	"github.com/kbot-discord/kbot/apps/discord-status/cmd/database"
-	guildsv1 "github.com/kbot-discord/kbot/apps/discord-status/gen/discord_incident/guilds/v1"
+	guildsv1 "github.com/kbot-discord/kbot/apps/discord-status/gen/discord_status/guilds/v1"
 )
 
 type GuildsServer struct{}
