@@ -79,3 +79,13 @@ MEILI_APIKEY=password
 ```bash
 $ docker compose -f apps/bot/docker-compose.dev.yml up -d
 ```
+
+## Adding yourself to `all-contributors`
+
+If you wish to be recognized for your contibutions to the repository, you can add a comment to your PR with:
+
+```
+@all-contributors please add @<username> for <contributions>
+```
+
+More information on the command can be found at: https://allcontributors.org/docs/en/bot/usage

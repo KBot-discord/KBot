@@ -7,6 +7,7 @@
 ## Directories
 
 - `/protos/bot` - Discord bot RPCs
+- `/protos/discord-incident` - Discord-incident service RPCs
 - `/protos/types` - Shared protobuf types
 
 ## Development requirements

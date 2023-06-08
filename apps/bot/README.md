@@ -30,8 +30,8 @@ yarn dev
 
 ## Docker
 
-To build a docker image of the application, run this in the root of the repository:
+To build a docker image of the application, run this command:
 
 ```bash
-docker buildx build -t kbot/bot -f .apps/bot/Dockerfile .
+yarn docker:bot
 ```

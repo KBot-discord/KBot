@@ -1,14 +1,14 @@
 name: Build (Web)
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/web/**"
-      - "packages/**"
-      - "protos/**"
-      - "!**/README.md"
+on: workflow_dispatch
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - "apps/web/**"
+#      - "packages/**"
+#      - "protos/**"
+#      - "!**/README.md"
 
 permissions:
   contents: read
