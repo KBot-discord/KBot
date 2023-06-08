@@ -1,0 +1,10 @@
+version: v1
+name: buf.build/kbotdev/discord-status
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
+  service_suffix: Service
+  enum_zero_value_suffix: UNDEFINED

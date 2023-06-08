@@ -1151,9 +1151,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kbotdev/protobuf-discord-incident@workspace:protos/discord-incident":
+"@kbotdev/protobuf-discord-status@workspace:protos/discord-status":
   version: 0.0.0-use.local
-  resolution: "@kbotdev/protobuf-discord-incident@workspace:protos/discord-incident"
+  resolution: "@kbotdev/protobuf-discord-status@workspace:protos/discord-status"
   languageName: unknown
   linkType: soft
 

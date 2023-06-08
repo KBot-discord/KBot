@@ -26,7 +26,7 @@ A fill list of features can be found in the [documentation](https://docs.kbot.ca
 
 - `/apps`
   - `/apps/bot` - Discord bot
-  - `/apps/discord-incident` - Service to send alerts about Discord incidents
+  - `/apps/discord-status` - Service to send alerts about Discord incidents
   - `/apps/docs` - Documentation for the bot
   - `/apps/web` - Dashboard to edit bot settings
 - `/k8s` - Kubernetes configuration files for infrastructure

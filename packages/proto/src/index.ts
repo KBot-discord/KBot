@@ -29,7 +29,7 @@ export * from './gen/bot/youtube/settings/v1/settings_pb';
 export * from './gen/bot/youtube/subscriptions/v1/subscriptions_connect';
 export * from './gen/bot/youtube/subscriptions/v1/subscriptions_pb';
 
-// Discord-incident
+// Discord-status
 export * from './gen/discord_incident/guilds/v1/guild_connect';
 export * from './gen/discord_incident/guilds/v1/guild_pb';
 
