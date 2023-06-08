@@ -1,7 +1,5 @@
 version: v1
 name: buf.build/kbotdev/discord-incident
-deps:
-  - buf.build/kbotdev/types
 breaking:
   use:
     - FILE
