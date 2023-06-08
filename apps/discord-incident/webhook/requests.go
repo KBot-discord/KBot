@@ -3,10 +3,11 @@ package webhook
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
-func CreateRequest(wc *WebhookClient, method string, url string, payload any) (*http.Request, error) {
+func (wc *WebhookClient) createRequest(method string, url string, payload any) (*http.Request, error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
@@ -20,13 +21,13 @@ func CreateRequest(wc *WebhookClient, method string, url string, payload any) (*
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bot "+wc.Config.Discord.Token)
+	req.Header.Set("Authorization", fmt.Sprintf("Bot %s", wc.config.Discord.Token))
 
 	return req, nil
 }
 
-func ExecuteRequest(wc *WebhookClient, req *http.Request) error {
-	resp, err := wc.Http.Do(req)
+func (wc *WebhookClient) executeRequest(req *http.Request) error {
+	resp, err := wc.http.Do(req)
 	if err != nil {
 		if resp != nil {
 			resp.Body.Close()

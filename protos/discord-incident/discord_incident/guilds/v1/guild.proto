@@ -30,9 +30,7 @@ message DeleteGuildRequest {
   string guild_id = 1;
 }
 
-message DeleteGuildResponse {
-  Guild guild = 1;
-}
+message DeleteGuildResponse {}
 
 service GuildService {
   rpc GetGuild(GetGuildRequest) returns (GetGuildResponse);

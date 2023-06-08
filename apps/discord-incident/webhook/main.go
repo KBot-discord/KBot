@@ -2,18 +2,23 @@ package webhook
 
 import (
 	"net/http"
+	"time"
 
-	config "github.com/kbot-discord/kbot/apps/discord-incident/internal"
+	"github.com/kbot-discord/kbot/apps/discord-incident/internal/config"
 )
 
+var Client *WebhookClient
+
 type WebhookClient struct {
-	Config *config.Config
-	Http   *http.Client
+	config *config.Config
+	http   *http.Client
 }
 
-func New(cfg *config.Config) *WebhookClient {
-	return &WebhookClient{
-		Config: cfg,
-		Http:   &http.Client{},
+func New(cfg *config.Config) {
+	Client = &WebhookClient{
+		config: cfg,
+		http: &http.Client{
+			Timeout: time.Second * 10,
+		},
 	}
 }

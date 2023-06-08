@@ -6,7 +6,9 @@ import (
 )
 
 type Config struct {
+	Env     string   `json:"env"`
 	Discord *Discord `json:"discord"`
+	Sentry  string   `json:"sentry"`
 }
 
 type Discord struct {

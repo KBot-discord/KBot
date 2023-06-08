@@ -17,30 +17,34 @@ type MessageEdit struct {
 	MessageID    string
 }
 
-func SendMessage(wc *WebhookClient, w *MessageCreate, p *discordgo.WebhookParams) error {
-	req, err := CreateRequest(
-		wc,
+func (wc *WebhookClient) SendMessage(
+	data *MessageCreate,
+	payload *discordgo.WebhookParams,
+) error {
+	req, err := wc.createRequest(
 		http.MethodPost,
-		discordgo.EndpointWebhookToken(w.WebhookID, w.WebhookToken),
-		p,
+		discordgo.EndpointWebhookToken(data.WebhookID, data.WebhookToken),
+		payload,
 	)
 	if err != nil {
 		return err
 	}
 
-	return ExecuteRequest(wc, req)
+	return wc.executeRequest(req)
 }
 
-func EditMessage(wc *WebhookClient, w *MessageEdit, p *discordgo.WebhookParams) error {
-	req, err := CreateRequest(
-		wc,
+func (wc *WebhookClient) EditMessage(
+	data *MessageEdit,
+	payload *discordgo.WebhookParams,
+) error {
+	req, err := wc.createRequest(
 		http.MethodPatch,
-		discordgo.EndpointWebhookMessage(w.WebhookID, w.WebhookToken, w.MessageID),
-		p,
+		discordgo.EndpointWebhookMessage(data.WebhookID, data.WebhookToken, data.MessageID),
+		payload,
 	)
 	if err != nil {
 		return err
 	}
 
-	return ExecuteRequest(wc, req)
+	return wc.executeRequest(req)
 }
