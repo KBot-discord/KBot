@@ -49,5 +49,5 @@ jobs:
         uses: bufbuild/buf-push-action@v1
         if: steps.detect-change.outputs.any_changed == 'true'
         with:
-          input: ${{ matrix.module }}
-          buf_token: protos/${{ secrets.BUF_TOKEN }}
+          input: protos/${{ matrix.module }}
+          buf_token: ${{ secrets.BUF_TOKEN }}
