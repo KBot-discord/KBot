@@ -1,7 +1,14 @@
 package main
 
-import "github.com/kbot-discord/kbot/apps/discord-incident/cmd"
+import (
+	"log"
+
+	"github.com/kbot-discord/kbot/apps/discord-incident/cmd/database"
+	"github.com/kbot-discord/kbot/apps/discord-incident/cmd/server"
+)
 
 func main() {
-	cmd.Start()
+	log.Println("Started")
+	database.Start()
+	server.Listen()
 }

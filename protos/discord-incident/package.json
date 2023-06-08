@@ -1,0 +1,8 @@
+{
+	"name": "@kbotdev/protobuf-discord-incident",
+	"private": true,
+	"scripts": {
+		"lint": "buf lint .",
+		"format": "buf format . -w"
+	}
+}

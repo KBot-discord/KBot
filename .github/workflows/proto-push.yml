@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: [bot, types]
+        module: [bot, types, discord-incident]
 
     steps:
       - name: Check out Git repository

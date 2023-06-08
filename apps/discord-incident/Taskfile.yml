@@ -3,18 +3,23 @@ version: "3"
 tasks:
   build:
     cmds:
-      - go build -o ./dist
+      - CGO_ENABLED=1 go build -o ./dist/app
   start:
     cmds:
       - go run main.go
+  buf:generate:
+    cmds:
+      - rm -r -f ./gen
+      - buf generate ../../protos/discord-incident
+  db:generate:
+    cmds:
+      - go generate ./ent
   vet:
     cmds:
       - go vet -v
   test:
     cmds:
       - go test -v ./...
-  generate:
+  tidy:
     cmds:
-      - rm -r -f ./gen
-      - buf generate ../../protos/bot
-      - buf generate ../../protos/types
+      - go mod tidy

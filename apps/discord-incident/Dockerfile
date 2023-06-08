@@ -1,9 +1,11 @@
 ## Builder ##
-FROM golang:1.20.4-alpine as builder
+FROM golang:1.20.5-alpine as builder
 
-RUN apk add -q --no-cache curl && \
+ENV CGO_ENABLED=1 GOOS=linux GOARCH=amd64
+
+RUN apk add -q --no-cache ca-certificates curl gcc musl-dev && \
 	curl -sSL \
-      "https://github.com/bufbuild/buf/releases/download/v1.19.0/buf-$(uname -s)-$(uname -m)" \
+      "https://github.com/bufbuild/buf/releases/download/v1.21.0/buf-$(uname -s)-$(uname -m)" \
       -o "/usr/local/bin/buf" && \
     chmod +x "/usr/local/bin/buf" && \
 	apk update
@@ -15,18 +17,17 @@ COPY ./protos ./protos/
 
 WORKDIR /temp/app
 
-RUN buf generate ../protos/bot && \
-	buf generate ../protos/types
-
-RUN go mod download
-RUN go vet -v
-RUN go test -v ./...
-
-RUN go build -o ./build
+RUN buf generate ../protos/discord-incident && \
+	go mod download && \
+	go vet -v && \
+	go test -v ./... && \
+	go build -o ./build -ldflags '-linkmode external -extldflags -static'
 
 ## App ##
-FROM gcr.io/distroless/static-debian11:nonroot as app
+FROM scratch as app
 
-COPY --from=builder /temp/app/build /
+COPY --from=builder /temp/app/build /app/build
 
-ENTRYPOINT ["/build"]
+EXPOSE 8080
+
+ENTRYPOINT ["/app/build"]
