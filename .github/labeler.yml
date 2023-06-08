@@ -2,6 +2,9 @@
   - "apps/bot/**"
   - "protos/**"
 
+"apps:discord-incident":
+  - "apps/discord-incident/**"
+
 "apps:docs":
   - "apps/docs/**"
 
