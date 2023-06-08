@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package discord_incident.guilds.v1;
+
+message Guild {
+  string id = 1;
+  string webhook_id = 2;
+  string webhook_token = 3;
+}
+
+message GetGuildRequest {
+  string guild_id = 1;
+}
+
+message GetGuildResponse {
+  Guild guild = 1;
+}
+
+message CreateGuildRequest {
+  string id = 1;
+  string webhook_id = 2;
+  string webhook_token = 3;
+}
+
+message CreateGuildResponse {
+  Guild guild = 1;
+}
+
+message DeleteGuildRequest {
+  string guild_id = 1;
+}
+
+message DeleteGuildResponse {}
+
+service GuildService {
+  rpc GetGuild(GetGuildRequest) returns (GetGuildResponse);
+  rpc CreateGuild(CreateGuildRequest) returns (CreateGuildResponse);
+  rpc DeleteGuild(DeleteGuildRequest) returns (DeleteGuildResponse);
+}

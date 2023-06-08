@@ -4,5 +4,6 @@ services:
   discord-incident:
     image: kbot/discord-incident:latest
     container_name: discord-incident
-    env_file:
-      - .env
+    volumes:
+      - $PWD/data.db:/app/data.db
+      - $PWD/config.json:/app/config.json

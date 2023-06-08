@@ -1,1 +1,11 @@
+dist/
 gen/
+.dockerignore
+.gitignore
+buf.gen.yaml
+config.json
+data.db
+docker-compose.yml
+Dockerfile
+README.md
+Taskfile.yml
