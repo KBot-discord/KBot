@@ -1,13 +1,51 @@
 {
-	"projectName": "kbot",
-	"projectOwner": "kbot-discord",
-	"repoType": "github",
-	"repoHost": "https://github.com",
-	"files": [
-		"README.md"
-	],
-	"imageSize": 100,
-	"commit": true,
-	"contributorsPerLine": 7,
-	"contributors": []
+  "projectName": "kbot",
+  "projectOwner": "kbot-discord",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "killbasa",
+      "name": "Shane",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13106700?v=4",
+      "profile": "https://kbot.ca/",
+      "contributions": [
+        "bug",
+        "code",
+        "design",
+        "doc",
+        "infra",
+        "maintenance",
+        "plugin",
+        "review"
+      ]
+    },
+    {
+      "login": "renovate[bot]",
+      "name": "renovate[bot]",
+      "avatar_url": "https://avatars.githubusercontent.com/in/2740?v=4",
+      "profile": "https://github.com/apps/renovate",
+      "contributions": [
+        "maintenance",
+        "tool"
+      ]
+    },
+    {
+      "login": "allcontributors[bot]",
+      "name": "allcontributors[bot]",
+      "avatar_url": "https://avatars.githubusercontent.com/in/23186?v=4",
+      "profile": "https://github.com/apps/allcontributors",
+      "contributions": [
+        "tool"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
