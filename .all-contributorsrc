@@ -1,13 +1,32 @@
 {
-	"projectName": "kbot",
-	"projectOwner": "kbot-discord",
-	"repoType": "github",
-	"repoHost": "https://github.com",
-	"files": [
-		"README.md"
-	],
-	"imageSize": 100,
-	"commit": true,
-	"contributorsPerLine": 7,
-	"contributors": []
+  "projectName": "kbot",
+  "projectOwner": "kbot-discord",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "killbasa",
+      "name": "Shane",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13106700?v=4",
+      "profile": "https://kbot.ca/",
+      "contributions": [
+        "bug",
+        "code",
+        "design",
+        "doc",
+        "infra",
+        "maintenance",
+        "plugin",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
