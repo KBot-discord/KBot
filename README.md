@@ -63,7 +63,7 @@ Any support helps immensely. Everything received goes back into the development 
 
 ## Contributors ✨
 
-Thank you to all contributors!
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -73,6 +73,7 @@ Thank you to all contributors!
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://kbot.ca/"><img src="https://avatars.githubusercontent.com/u/13106700?v=4?s=100" width="100px;" alt="Shane"/><br /><sub><b>Shane</b></sub></a><br /><a href="https://github.com/kbot-discord/kbot/issues?q=author%3Akillbasa" title="Bug reports">🐛</a> <a href="https://github.com/kbot-discord/kbot/commits?author=killbasa" title="Code">💻</a> <a href="#design-killbasa" title="Design">🎨</a> <a href="https://github.com/kbot-discord/kbot/commits?author=killbasa" title="Documentation">📖</a> <a href="#infra-killbasa" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-killbasa" title="Maintenance">🚧</a> <a href="#plugin-killbasa" title="Plugin/utility libraries">🔌</a> <a href="https://github.com/kbot-discord/kbot/pulls?q=is%3Apr+reviewed-by%3Akillbasa" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/apps/renovate"><img src="https://avatars.githubusercontent.com/in/2740?v=4?s=100" width="100px;" alt="renovate[bot]"/><br /><sub><b>renovate[bot]</b></sub></a><br /><a href="#maintenance-renovate[bot]" title="Maintenance">🚧</a> <a href="#tool-renovate[bot]" title="Tools">🔧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/apps/allcontributors"><img src="https://avatars.githubusercontent.com/in/23186?v=4?s=100" width="100px;" alt="allcontributors[bot]"/><br /><sub><b>allcontributors[bot]</b></sub></a><br /><a href="#tool-allcontributors[bot]" title="Tools">🔧</a></td>
     </tr>
   </tbody>
 </table>
@@ -82,4 +83,4 @@ Thank you to all contributors!
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-Definitions for each emoji can be found [here](https://allcontributors.org/docs/en/emoji-key).
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
