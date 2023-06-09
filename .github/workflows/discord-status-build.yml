@@ -1,14 +1,12 @@
-name: Build (Web)
+name: Build (Discord-status)
 
 on: workflow_dispatch
 #  push:
 #    branches:
 #      - main
 #    paths:
-#      - "apps/web/**"
-#      - "packages/**"
+#      - "apps/discord-status/**"
 #      - "protos/**"
-#      - "!**/README.md"
 
 permissions:
   contents: read
@@ -19,10 +17,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  publish:
-    name: Publish
+  build-and-publish:
+    name: Build and publish
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
@@ -41,5 +38,5 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           push: true
-          file: ./apps/web/Dockerfile
-          tags: ghcr.io/kbot-discord/web:latest
+          file: ./apps/discord-status/Dockerfile
+          tags: ghcr.io/kbot-discord/discord-status:latest

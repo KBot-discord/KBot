@@ -16,8 +16,9 @@
 	},
 	"scripts": {
 		"build": "tsup",
-		"buf:generate": "rm -r -f src/gen && yarn buf:bot && yarn buf:types",
+		"buf:generate": "rm -r -f src/gen && yarn buf:bot && yarn buf:status && yarn buf:types",
 		"buf:bot": "buf generate ../../protos/bot",
+		"buf:status": "buf generate ../../protos/discord-status",
 		"buf:types": "buf generate ../../protos/types",
 		"check": "tsc --noEmit",
 		"lint": "eslint --ext ts src && yarn check",

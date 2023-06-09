@@ -1,9 +1,0 @@
-version: "3.8"
-
-services:
-  discord-incident:
-    image: kbot/discord-incident:latest
-    container_name: discord-incident
-    volumes:
-      - $PWD/data.db:/app/data.db
-      - $PWD/config.json:/app/config.json

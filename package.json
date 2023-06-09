@@ -22,7 +22,7 @@
 		"db:generate": "turbo run db:generate",
 		"db:push": "turbo run db:push",
 		"docker:bot": "docker buildx build -f apps/bot/Dockerfile -t kbot/bot .",
-		"docker:incident": "docker buildx build -f apps/discord-incident/Dockerfile -t kbot/discord-incident .",
+		"docker:status": "docker buildx build -f apps/discord-status/Dockerfile -t kbot/discord-status .",
 		"docker:web": "docker buildx build -f apps/web/Dockerfile -t kbot/web .",
 		"k8s:build": "kustomize build ./k8s -o ./k8s/result.yml",
 		"k8s:sync": "bash scripts/kustomize-sync.sh"

@@ -1,6 +1,6 @@
 <div align="center">
 
-# Discord bot
+# Discord status
 
 </div>
 
@@ -10,22 +10,24 @@ To set up a dev environment, check out the [contribution guide](../../.github/CO
 
 ## Developing
 
-First, install the npm packages:
+First, install the Go modules:
 
 ```bash
-yarn install
+go mod download
 ```
 
-Then you'll need to build it's dependencies using [Turborepo](https://turbo.build/):
+Then you'll need to generate the database and Protobuf files:
 
 ```bash
-yarn build:bot
+task db:generate
+task buf:generate
 ```
 
-Once those two commands are run, you can start the bot in watch mode:
+Once those two commands are run, you can build and then start the server:
 
 ```bash
-yarn dev
+task build
+task start
 ```
 
 ## Docker
@@ -33,5 +35,5 @@ yarn dev
 To build a docker image of the application, run this command:
 
 ```bash
-yarn docker:bot
+yarn docker:incident
 ```
