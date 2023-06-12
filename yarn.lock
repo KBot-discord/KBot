@@ -5,31 +5,46 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@algolia/autocomplete-core@npm:1.8.2":
-  version: 1.8.2
-  resolution: "@algolia/autocomplete-core@npm:1.8.2"
+"@algolia/autocomplete-core@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@algolia/autocomplete-core@npm:1.9.2"
   dependencies:
-    "@algolia/autocomplete-shared": 1.8.2
-  checksum: 03c164d8ce685e8b690734364a2e8653a7ebaf9b49ccbea5f94236b1231d66ed6771010406a0b00a2ce884b767712d71903a7d124ec11f35a87006d1456da762
+    "@algolia/autocomplete-plugin-algolia-insights": 1.9.2
+    "@algolia/autocomplete-shared": 1.9.2
+  checksum: aa0b9db9f31731d8c6afd644c6fbc5a9b99967caaeb6b2ceb7660d524a95c08a59644a4d235c07dc387aa954739d63844e78da56fe441f75bad337da1f46e815
   languageName: node
   linkType: hard
 
-"@algolia/autocomplete-preset-algolia@npm:1.8.2":
-  version: 1.8.2
-  resolution: "@algolia/autocomplete-preset-algolia@npm:1.8.2"
+"@algolia/autocomplete-plugin-algolia-insights@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@algolia/autocomplete-plugin-algolia-insights@npm:1.9.2"
   dependencies:
-    "@algolia/autocomplete-shared": 1.8.2
+    "@algolia/autocomplete-shared": 1.9.2
+  peerDependencies:
+    search-insights: ">= 1 < 3"
+  checksum: e67370d44abc92ebd30e6caf8b32a8f8e93c952ab30d5c5dda31ac2e1b9bd97a49e02cdc4a9c0ad48e09f89fa58aa452ce1fbfb6880d5aaf737477864ccf1cda
+  languageName: node
+  linkType: hard
+
+"@algolia/autocomplete-preset-algolia@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@algolia/autocomplete-preset-algolia@npm:1.9.2"
+  dependencies:
+    "@algolia/autocomplete-shared": 1.9.2
   peerDependencies:
     "@algolia/client-search": ">= 4.9.1 < 6"
     algoliasearch: ">= 4.9.1 < 6"
-  checksum: f968b0f9d0ad9e75d3e1cfe35a02816ed01d83eb3d702bb8d4297bb9abf542991659c4a16c6ea323eea9268f189e85f58fcb109de76e6c4a9f58a0d63812c92e
+  checksum: 0dac7d4d2877cb945a16516f5e8ae66ad128a6d5ff2571fbbc1e450bbebe9c3bb015c84a982dcfd90f126b4967e8a5ea239aaadceffcc71e0f9218d0851390b6
   languageName: node
   linkType: hard
 
-"@algolia/autocomplete-shared@npm:1.8.2":
-  version: 1.8.2
-  resolution: "@algolia/autocomplete-shared@npm:1.8.2"
-  checksum: 1ec17deb594c41e983643cfd888e3590963aa7207ef6a67859c49a8f4835340493ba3b025b8b617b488365730ba9817ad58ee44a610c172332446e560fb68780
+"@algolia/autocomplete-shared@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@algolia/autocomplete-shared@npm:1.9.2"
+  peerDependencies:
+    "@algolia/client-search": ">= 4.9.1 < 6"
+    algoliasearch: ">= 4.9.1 < 6"
+  checksum: 663ba554d62bfecacd81bce751ef954bdae95d9e36c9825187f22117d877ecb5b835a36b5cc55b0acd3dec5d6e8e9b440607ac53df82ec809976b71155e0e851
   languageName: node
   linkType: hard
 
@@ -589,30 +604,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docsearch/css@npm:3.4.0, @docsearch/css@npm:^3.3.5":
-  version: 3.4.0
-  resolution: "@docsearch/css@npm:3.4.0"
-  checksum: 25984a01ef9d68ab04ce9639e96d3bb3065f360334290be60986fa92414bfa4ac5474503bd6d4c543d5c46b67a4cba1cb9a0a950c13689a773c865160c91ba3f
+"@docsearch/css@npm:3.5.0, @docsearch/css@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "@docsearch/css@npm:3.5.0"
+  checksum: 07e4b207f1c18905674012277f8dfaf0984e385b918b2e62b1d4b2a38e631f7161aef83eae6e9be0cf7ce400a608bbdd52bbaacbfb500dcaf5c1d1f98087db44
   languageName: node
   linkType: hard
 
-"@docsearch/js@npm:^3.3.5":
-  version: 3.4.0
-  resolution: "@docsearch/js@npm:3.4.0"
+"@docsearch/js@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "@docsearch/js@npm:3.5.0"
   dependencies:
-    "@docsearch/react": 3.4.0
+    "@docsearch/react": 3.5.0
     preact: ^10.0.0
-  checksum: 14b9d5d03d6be406cbf1353c79b881e8c1c706c3338c7e2896ceaf4d74bb5ecd7f8c31dc58fd66b92c4c65a639f368ef359b865187206147f9d3838e574ea5fa
+  checksum: f21fcd7a63a93f29fa2d0cb8816cd87f00543ed1344655447c931085034c51ed464f844d639c83824f3949b6725147a7c385ef676041c073107110c343c0a6f9
   languageName: node
   linkType: hard
 
-"@docsearch/react@npm:3.4.0":
-  version: 3.4.0
-  resolution: "@docsearch/react@npm:3.4.0"
+"@docsearch/react@npm:3.5.0":
+  version: 3.5.0
+  resolution: "@docsearch/react@npm:3.5.0"
   dependencies:
-    "@algolia/autocomplete-core": 1.8.2
-    "@algolia/autocomplete-preset-algolia": 1.8.2
-    "@docsearch/css": 3.4.0
+    "@algolia/autocomplete-core": 1.9.2
+    "@algolia/autocomplete-preset-algolia": 1.9.2
+    "@docsearch/css": 3.5.0
     algoliasearch: ^4.0.0
   peerDependencies:
     "@types/react": ">= 16.8.0 < 19.0.0"
@@ -625,7 +640,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: a64d42298d74946b5c9c7dab39a6bee40879bca35f46906a062171f414041d9a14c31afbdda26c454fc152170356021b7fc07a13e3434ef559fdbd024070fd43
+  checksum: 33cb27c2b574123ba366419ce8ce010ce0f420f0310a230ef39059c2a7a7a84c569859aee9211db0cdd406172d335eec04cdf02e6a1bed04f9a791a72ab18316
   languageName: node
   linkType: hard
 
@@ -825,19 +840,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/core@npm:^1.2.6":
-  version: 1.2.6
-  resolution: "@floating-ui/core@npm:1.2.6"
-  checksum: e4aa96c435277f1720d4bc939e17a79b1e1eebd589c20b622d3c646a5273590ff889b8c6e126f7be61873cf8c4d7db7d418895986ea19b8b0d0530de32504c3a
+"@floating-ui/core@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@floating-ui/core@npm:1.3.0"
+  checksum: 51d8acc9fd720cb217cae7074f5f923bf2b6e0bb4f228e03077254d0f6e49f9753b34a14b9abb1f11671c3b61284c487ab27c4ba1843bcd4397e7d72dc7d4a59
   languageName: node
   linkType: hard
 
-"@floating-ui/dom@npm:^1.2.9":
-  version: 1.2.9
-  resolution: "@floating-ui/dom@npm:1.2.9"
+"@floating-ui/dom@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@floating-ui/dom@npm:1.3.0"
   dependencies:
-    "@floating-ui/core": ^1.2.6
-  checksum: 16ae5e05a41c2ca16d51579d12729ca9d346241319f68ce5678f5fbeb9c4f9a16176c95089bbd7a0eb37c6ed90e5fd55a310ffc9948af7c841d5b8bfa0afe1b8
+    "@floating-ui/core": ^1.3.0
+  checksum: 39f92b3ce6de5d60a1cea951cbee22d0a9670fe4499b0128f0868a697d9288989994394d90cb99c3d1485aa432621e064d6b3c52914042a7d8d3c05897fb185d
   languageName: node
   linkType: hard
 
@@ -980,14 +995,14 @@ __metadata:
     "@kbotdev/eslint-config": ^0.1.1
     "@kbotdev/prettier-config": ^0.1.0
     "@kbotdev/ts-config": ^0.1.0
-    "@types/node": ^20.2.5
+    "@types/node": ^20.3.0
     eslint: ^8.42.0
-    eslint-config-turbo: ^1.10.2
+    eslint-config-turbo: ^1.10.3
     husky: ^8.0.3
     lint-staged: ^13.2.2
     prettier: ^2.8.8
     schemix: ^1.14.0
-    turbo: 1.10.2
+    turbo: 1.10.3
     typescript: ^5.1.3
     vitest: ^0.32.0
   languageName: unknown
@@ -1022,7 +1037,7 @@ __metadata:
     "@skyra/gifenc": ^1.0.1
     "@swc/core": ^1.3.62
     "@types/humanize-duration": ^3.27.1
-    bullmq: ^3.15.4
+    bullmq: ^3.15.5
     canvas: 2.11.2
     canvas-constructor: ^7.0.1
     colorette: ^2.0.20
@@ -1045,7 +1060,7 @@ __metadata:
   dependencies:
     "@kbotdev/prisma": "workspace:^"
     "@kbotdev/redis": "workspace:^"
-    "@sapphire/utilities": ^3.11.2
+    "@sapphire/utilities": ^3.12.0
     eslint: ^8.42.0
     prettier: ^2.8.8
     typescript: ^5.1.3
@@ -1057,7 +1072,7 @@ __metadata:
   resolution: "@kbotdev/docs@workspace:apps/docs"
   dependencies:
     sitemap: ^7.1.1
-    vitepress: 1.0.0-beta.1
+    vitepress: 1.0.0-beta.2
   languageName: unknown
   linkType: soft
 
@@ -1122,7 +1137,7 @@ __metadata:
   resolution: "@kbotdev/prisma@workspace:packages/prisma"
   dependencies:
     "@prisma/client": ^4.15.0
-    "@types/node": ^20.2.5
+    "@types/node": ^20.3.0
     eslint: ^8.42.0
     prettier: ^2.8.8
     prisma: ^4.15.0
@@ -1189,7 +1204,7 @@ __metadata:
     "@bufbuild/connect": ^0.9.1
     "@bufbuild/connect-node": ^0.9.1
     "@bufbuild/protobuf": ^1.2.1
-    "@floating-ui/dom": ^1.2.9
+    "@floating-ui/dom": ^1.3.0
     "@fortawesome/free-brands-svg-icons": ^6.4.0
     "@fortawesome/free-solid-svg-icons": ^6.4.0
     "@kbotdev/eslint-config": ^0.1.1
@@ -1691,6 +1706,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sapphire/utilities@npm:^3.12.0":
+  version: 3.12.0
+  resolution: "@sapphire/utilities@npm:3.12.0"
+  checksum: 002f15263f157fdbb0603c233a43a5660cd3b45a4f3fddaa9d7066d187eec23f473ee42c8d071b0e3dec4e22b08bed337fb7eb336a02b59743a78ebc8922004e
+  languageName: node
+  linkType: hard
+
 "@sentry-internal/tracing@npm:7.54.0":
   version: 7.54.0
   resolution: "@sentry-internal/tracing@npm:7.54.0"
@@ -2074,7 +2096,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.2.5":
+"@types/node@npm:*":
   version: 20.2.5
   resolution: "@types/node@npm:20.2.5"
   checksum: 38ce7c7e9d76880dc632f71d71e0d5914fcda9d5e9a7095d6c339abda55ca4affb0f2a882aeb29398f8e09d2c5151f0b6586c81c8ccdfe529c34b1ea3337425e
@@ -2085,6 +2107,13 @@ __metadata:
   version: 17.0.45
   resolution: "@types/node@npm:17.0.45"
   checksum: aa04366b9103b7d6cfd6b2ef64182e0eaa7d4462c3f817618486ea0422984c51fc69fd0d436eae6c9e696ddfdbec9ccaa27a917f7c2e8c75c5d57827fe3d95e8
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.3.0":
+  version: 20.3.0
+  resolution: "@types/node@npm:20.3.0"
+  checksum: 613e878174febc0104dae210088645cbb5096a19ae5fdf57fbc06fa6ef71755b839858c2b313fb8c1df8b7c6660e1b5f7a64db2126af9d47d1d9238e2bc0a86d
   languageName: node
   linkType: hard
 
@@ -3024,9 +3053,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:^3.15.4":
-  version: 3.15.4
-  resolution: "bullmq@npm:3.15.4"
+"bullmq@npm:^3.15.5":
+  version: 3.15.5
+  resolution: "bullmq@npm:3.15.5"
   dependencies:
     cron-parser: ^4.6.0
     glob: ^8.0.3
@@ -3036,7 +3065,7 @@ __metadata:
     semver: ^7.3.7
     tslib: ^2.0.0
     uuid: ^9.0.0
-  checksum: f4ece922627f1469c6ccde5f77c0a815b63a2e03f7e3cfb3ae6fad52983cd36e9ed5b4abdad150d7d12eae22f386a0ecc0ff1f5494b3e3a6102fa72d89af448c
+  checksum: 8d6ffa5983c764514f5aadb1520ae594fd7653fa2b075f105c90cf5760980afbed78888cb75d6c079f75f650b98a137710f3d125b416e5f1c8b8b776aa093a23
   languageName: node
   linkType: hard
 
@@ -4057,14 +4086,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-turbo@npm:^1.10.2":
-  version: 1.10.2
-  resolution: "eslint-config-turbo@npm:1.10.2"
+"eslint-config-turbo@npm:^1.10.3":
+  version: 1.10.3
+  resolution: "eslint-config-turbo@npm:1.10.3"
   dependencies:
-    eslint-plugin-turbo: 1.10.2
+    eslint-plugin-turbo: 1.10.3
   peerDependencies:
     eslint: ">6.6.0"
-  checksum: 5a2100217fcee172793228da320ce2e110f0cd1e3dc816a3c0e59b86195f5b6b00bffef054404027f8ae8354166f8641d157917c32f8793f3df2550b070f9d55
+  checksum: 749a2c8e01dc4abb4784851a7049f034ee00b3911579283692771237606052077750ffc280fe5f556ffabe5069221300dc3c3d8e03b529ff728dc470753d41d7
   languageName: node
   linkType: hard
 
@@ -4170,12 +4199,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-turbo@npm:1.10.2":
-  version: 1.10.2
-  resolution: "eslint-plugin-turbo@npm:1.10.2"
+"eslint-plugin-turbo@npm:1.10.3":
+  version: 1.10.3
+  resolution: "eslint-plugin-turbo@npm:1.10.3"
   peerDependencies:
     eslint: ">6.6.0"
-  checksum: 8880dcce8ac32553935379b039df80ec420bf8f1de7d5715a6559f05483a4b87b8c9c49f8ad5f6da649c7f7b4b1f5ca6a6ef287a99252ae535f9dc8d2419bc9d
+  checksum: b66ccea3bad9e8ca705f108c22a121255166cb7bce9a2a944414fa8184cca2aaffb03d06099a50b272ed8459f9aa7bcf8a418ea780d4199f96c94e18e95964cb
   languageName: node
   linkType: hard
 
@@ -4479,7 +4508,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"focus-trap@npm:^7.4.2":
+"focus-trap@npm:^7.4.3":
   version: 7.4.3
   resolution: "focus-trap@npm:7.4.3"
   dependencies:
@@ -8354,58 +8383,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-64@npm:1.10.2":
-  version: 1.10.2
-  resolution: "turbo-darwin-64@npm:1.10.2"
+"turbo-darwin-64@npm:1.10.3":
+  version: 1.10.3
+  resolution: "turbo-darwin-64@npm:1.10.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-darwin-arm64@npm:1.10.2":
-  version: 1.10.2
-  resolution: "turbo-darwin-arm64@npm:1.10.2"
+"turbo-darwin-arm64@npm:1.10.3":
+  version: 1.10.3
+  resolution: "turbo-darwin-arm64@npm:1.10.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-linux-64@npm:1.10.2":
-  version: 1.10.2
-  resolution: "turbo-linux-64@npm:1.10.2"
+"turbo-linux-64@npm:1.10.3":
+  version: 1.10.3
+  resolution: "turbo-linux-64@npm:1.10.3"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-linux-arm64@npm:1.10.2":
-  version: 1.10.2
-  resolution: "turbo-linux-arm64@npm:1.10.2"
+"turbo-linux-arm64@npm:1.10.3":
+  version: 1.10.3
+  resolution: "turbo-linux-arm64@npm:1.10.3"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-windows-64@npm:1.10.2":
-  version: 1.10.2
-  resolution: "turbo-windows-64@npm:1.10.2"
+"turbo-windows-64@npm:1.10.3":
+  version: 1.10.3
+  resolution: "turbo-windows-64@npm:1.10.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-windows-arm64@npm:1.10.2":
-  version: 1.10.2
-  resolution: "turbo-windows-arm64@npm:1.10.2"
+"turbo-windows-arm64@npm:1.10.3":
+  version: 1.10.3
+  resolution: "turbo-windows-arm64@npm:1.10.3"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo@npm:1.10.2":
-  version: 1.10.2
-  resolution: "turbo@npm:1.10.2"
+"turbo@npm:1.10.3":
+  version: 1.10.3
+  resolution: "turbo@npm:1.10.3"
   dependencies:
-    turbo-darwin-64: 1.10.2
-    turbo-darwin-arm64: 1.10.2
-    turbo-linux-64: 1.10.2
-    turbo-linux-arm64: 1.10.2
-    turbo-windows-64: 1.10.2
-    turbo-windows-arm64: 1.10.2
+    turbo-darwin-64: 1.10.3
+    turbo-darwin-arm64: 1.10.3
+    turbo-linux-64: 1.10.3
+    turbo-linux-arm64: 1.10.3
+    turbo-windows-64: 1.10.3
+    turbo-windows-arm64: 1.10.3
   dependenciesMeta:
     turbo-darwin-64:
       optional: true
@@ -8421,7 +8450,7 @@ __metadata:
       optional: true
   bin:
     turbo: bin/turbo
-  checksum: ec40ddbc6914aa04562a924df9e1a344d027c4bd32a2185b24df486c716726c90109fa22608c85eea05f2e9fec3145a0e893e16d2848e8f9eff5515ee54cd2a7
+  checksum: 38a11c8f1548408e6c8576d13ed78e2b0a232577e64a1cb6623faa39437cdc28012eb388f77d53af1b1853c521000aae0467cb5d91aa169b0883be976edfbdb1
   languageName: node
   linkType: hard
 
@@ -8659,7 +8688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.0.0 || ^4.0.0, vite@npm:^4.3.8, vite@npm:^4.3.9":
+"vite@npm:^3.0.0 || ^4.0.0, vite@npm:^4.3.9":
   version: 4.3.9
   resolution: "vite@npm:4.3.9"
   dependencies:
@@ -8708,26 +8737,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:1.0.0-beta.1":
-  version: 1.0.0-beta.1
-  resolution: "vitepress@npm:1.0.0-beta.1"
+"vitepress@npm:1.0.0-beta.2":
+  version: 1.0.0-beta.2
+  resolution: "vitepress@npm:1.0.0-beta.2"
   dependencies:
-    "@docsearch/css": ^3.3.5
-    "@docsearch/js": ^3.3.5
+    "@docsearch/css": ^3.5.0
+    "@docsearch/js": ^3.5.0
     "@vitejs/plugin-vue": ^4.2.3
     "@vue/devtools-api": ^6.5.0
     "@vueuse/core": ^10.1.2
     "@vueuse/integrations": ^10.1.2
     body-scroll-lock: 4.0.0-beta.0
-    focus-trap: ^7.4.2
+    focus-trap: ^7.4.3
     mark.js: 8.11.1
     minisearch: ^6.1.0
     shiki: ^0.14.2
-    vite: ^4.3.8
+    vite: ^4.3.9
     vue: ^3.3.4
   bin:
     vitepress: bin/vitepress.js
-  checksum: bbb2c666cf7640662e6d565d51175140a87681015c7cf49954f2f9fead5e56c16490c39baac0e46211253ea175c1b6f5bd6be092bf254a3d06a643b37b9b533e
+  checksum: 0259402b71707ca4e42c4b1d19d9710cdafcaab55768fa5091d82e9eaf6db03355afb986378da210e4f4eb1999391e3d1242f01e9375f6f64d0b2b08d09f00a3
   languageName: node
   linkType: hard
 

@@ -22,7 +22,7 @@
 	"dependencies": {
 		"@kbotdev/prisma": "workspace:^",
 		"@kbotdev/redis": "workspace:^",
-		"@sapphire/utilities": "^3.11.2"
+		"@sapphire/utilities": "^3.12.0"
 	},
 	"devDependencies": {
 		"eslint": "^8.42.0",
