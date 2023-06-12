@@ -6,7 +6,7 @@ tasks:
       - CGO_ENABLED=1 go build -o ./dist/app
   start:
     cmds:
-      - go run main.go
+      - go run cmd/discord-status/main.go
   buf:generate:
     cmds:
       - rm -r -f ./gen
