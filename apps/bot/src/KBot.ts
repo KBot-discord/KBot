@@ -19,10 +19,6 @@ async function main(): Promise<void> {
 		client = new KBotClient();
 
 		await client.login(discord.token);
-
-		for (const entry of client.stores.get('interaction-handlers').values()) {
-			client.logger.info(entry.location);
-		}
 	} catch (error: unknown) {
 		container.logger.sentryError(error);
 
