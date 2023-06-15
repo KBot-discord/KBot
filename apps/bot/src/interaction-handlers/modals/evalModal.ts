@@ -10,6 +10,7 @@ type EvalOptions = {
 };
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: EvalCustomIds.Eval,
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
 })
 export class ModalHandler extends InteractionHandler {

@@ -7,6 +7,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import type { ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
 import type { DocumentCommand } from '@kbotdev/meili';
+import type { KBotSubcommand } from '#extensions/KBotSubcommand';
 
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Core,
@@ -81,7 +82,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	}
 
 	public async chatInputCommand(interaction: KBotCommand.ChatInputCommandInteraction, option: string): Promise<unknown> {
-		const command = this.container.stores.get('commands').get(option) as KBotCommand<any> | undefined;
+		const command = this.container.stores.get('commands').get(option) as KBotCommand<any> | KBotSubcommand<any> | undefined;
 		if (!command) {
 			return interaction.errorReply('That command does not exist.');
 		}

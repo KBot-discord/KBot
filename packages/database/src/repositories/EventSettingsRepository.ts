@@ -1,5 +1,6 @@
 import { eventCacheKey } from '../keys';
 import { isNullish } from '@sapphire/utilities';
+import { Time } from '@sapphire/duration';
 import type { EventSettings, PrismaClient } from '@kbotdev/prisma';
 import type { RedisClient } from '@kbotdev/redis';
 import type { GuildId, ServiceOptions, UpsertEventSettingsData } from '../lib/types';
@@ -18,7 +19,7 @@ export class EventSettingsRepository {
 		this.database = database;
 
 		this.cache = cache.client;
-		this.defaultExpiry = cache.defaultExpiry ?? 3600000;
+		this.defaultExpiry = cache.defaultExpiry ?? Time.Hour;
 	}
 
 	/**

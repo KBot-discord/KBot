@@ -1,19 +1,20 @@
 import { PollMenu } from '#structures/menus/PollMenu';
 import { PollCustomIds } from '#utils/customIds';
 import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
-import { buildCustomId, isNullOrUndefined, parseTimeString } from '#utils/functions';
-import { KBotCommand } from '#extensions/KBotCommand';
+import { isNullOrUndefined, parseTimeString } from '#utils/functions';
 import { KBotErrors, KBotModules } from '#types/Enums';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { buildCustomId } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { PollOption } from '#types/CustomIds';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Utility,
 	description: 'Create, end, or manage polls.',
-	preconditions: ['ModuleEnabled'],
+	preconditions: ['EDefer', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -26,14 +27,18 @@ import type { PollOption } from '#types/CustomIds';
 				}, //
 				{ label: '/poll menu', description: 'Show the menu for controlling timed polls' }
 			]);
-	}
+	},
+	subcommands: [
+		{ name: 'create', chatInputRun: 'chatInputCreate' },
+		{ name: 'menu', chatInputRun: 'chatInputMenu' }
+	]
 })
-export class UtilityCommand extends KBotCommand<UtilityModule> {
+export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -130,19 +135,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply({ ephemeral: true });
-		switch (interaction.options.getSubcommand(true)) {
-			case 'create':
-				return this.chatInputCreate(interaction);
-			case 'menu':
-				return this.chatInputMenu(interaction);
-			default:
-				return this.unknownSubcommand(interaction);
-		}
-	}
-
-	public async chatInputCreate(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputCreate(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { polls } = this.module;
 
 		const { result, error } = await this.container.validator.channels.canSendEmbeds(interaction.channel);
@@ -194,7 +187,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return interaction.successReply(`${KBotEmoji.GreenCheck} Poll created`);
 	}
 
-	public async chatInputMenu(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputMenu(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		return new PollMenu(interaction.guild).run(interaction);
 	}
 
@@ -202,7 +195,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 	 * Format the provided options from the interaction.
 	 * @param interaction - The interaction
 	 */
-	private formatOptions(interaction: KBotCommand.ChatInputCommandInteraction): string[] {
+	private formatOptions(interaction: KBotSubcommand.ChatInputCommandInteraction): string[] {
 		const options: string[] = [];
 
 		for (let i = 0, j = 0; i < 10; i++) {

@@ -1,7 +1,7 @@
 import { CreditCustomIds, CreditType } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { getResourceFromType } from '#utils/discord';
-import { isNullOrUndefined, parseCustomId } from '#utils/functions';
+import { getResourceFromType, parseCustomId } from '#utils/discord';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ButtonInteraction, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
@@ -9,6 +9,7 @@ import { Time } from '@sapphire/duration';
 import type { Credit } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: CreditCustomIds.ResourceRefresh,
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {

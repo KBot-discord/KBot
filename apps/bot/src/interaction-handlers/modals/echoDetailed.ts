@@ -1,7 +1,6 @@
 import { EchoCustomIds, EchoFields } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
-import { parseCustomId } from '#utils/functions';
-import { fetchChannel } from '#utils/discord';
+import { fetchChannel, parseCustomId } from '#utils/discord';
 import { EmbedColors } from '#utils/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
@@ -10,6 +9,7 @@ import type { GuildTextBasedChannel } from 'discord.js';
 import type { EchoModal } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: EchoCustomIds.Detailed,
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
 })
 export class ModalHandler extends InteractionHandler {

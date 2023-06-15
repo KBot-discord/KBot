@@ -16,13 +16,13 @@ import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
+@catchServerError()
 export class UtilitySettingsServiceImpl extends gRPCService implements ServiceImpl<typeof UtilitySettingsService> {
 	public register(router: ConnectRouter): void {
 		router.service(UtilitySettingsService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getUtilitySettings({ guildId }: GetUtilitySettingsRequest, { auth }: connect.HandlerContext): Promise<GetUtilitySettingsResponse> {
 		const { utility } = container;
 
@@ -45,7 +45,6 @@ export class UtilitySettingsServiceImpl extends gRPCService implements ServiceIm
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async updateUtilitySettings(
 		{ guildId, enabled, incidentChannelId, creditsChannelId }: UpdateUtilitySettingsRequest,
 		{ auth }: connect.HandlerContext

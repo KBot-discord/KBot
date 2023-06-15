@@ -13,7 +13,7 @@ import type { WelcomeModule } from '#modules/WelcomeModule';
 import type { YoutubeModule } from '#modules/YouTubeModule';
 import type { Holodex } from '@kbotdev/holodex';
 import type { KBotErrors } from '#types/Enums';
-import type { ChannelPermissionsPayload, UnknownCommandPayload } from '#types/Errors';
+import type { ChannelPermissionsPayload } from '#types/Errors';
 import type { AuthData } from '@sapphire/plugin-api';
 import type { WebhookErrorBuilder } from '#structures/builders/WebhookErrorBuilder';
 
@@ -34,138 +34,35 @@ declare module 'discord.js' {
 	interface ClientEvents {
 		[KBotErrors.WebhookError]: [error: unknown];
 		[KBotErrors.ChannelPermissions]: [payload: ChannelPermissionsPayload];
-		[KBotErrors.MissingSubcommandHandler]: [payload: UnknownCommandPayload];
 	}
 
 	interface CommandInteraction {
-		/**
-		 * Reply to an interaction with a default embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Reply to an interaction with a success embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Reply to an interaction with a error embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
-		/**
-		 * Followup to an interaction with a default embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Followup to an interaction with a success embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Followup to an interaction with a error embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 
 	interface MessageComponentInteraction {
-		/**
-		 * Reply to an interaction with a default embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Reply to an interaction with a success embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Reply to an interaction with a error embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
-		/**
-		 * Followup to an interaction with a default embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Followup to an interaction with a success embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Followup to an interaction with a error embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 
 	interface ModalSubmitInteraction {
-		/**
-		 * Reply to an interaction with a default embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		defaultReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Reply to an interaction with a success embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		successReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Reply to an interaction with a error embed.
-		 * @param text - The text to reply to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		errorReply(...args: ReplyArgs): Promise<InteractionResponseUnion>;
 
-		/**
-		 * Followup to an interaction with a default embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		defaultFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Followup to an interaction with a success embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		successFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
-
-		/**
-		 * Followup to an interaction with a error embed.
-		 * @param text - The text to followup to the interaction with
-		 * @param options - The options to pass to the handler
-		 */
 		errorFollowup(...args: FollowupArgs): Promise<InteractionResponseUnion>;
 	}
 }

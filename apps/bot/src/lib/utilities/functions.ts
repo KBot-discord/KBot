@@ -29,16 +29,19 @@ export function isNullOrUndefinedOrEmpty(value: unknown): value is '' | null | u
 export function flattenObject(object: Record<any, any>): Record<string, unknown> {
 	const result: Record<string, unknown> = {};
 
-	for (const i in object) {
-		if (!object.hasOwnProperty(i)) continue;
-		if (typeof object[i] === 'object' && !Array.isArray(object[i])) {
-			const temp = flattenObject(object[i]);
+	for (const key in object) {
+		if (!object.hasOwnProperty(key)) continue;
+
+		const val = object[key];
+		if (typeof val === 'object' && !Array.isArray(val)) {
+			const temp = flattenObject(val);
 			for (const j in temp) {
 				if (!temp.hasOwnProperty(j)) continue;
-				result[`${i}.${j}`] = temp[j];
+
+				result[`${key}.${j}`] = temp[j];
 			}
 		} else {
-			result[i] = object[i];
+			result[key] = val;
 		}
 	}
 
@@ -46,44 +49,33 @@ export function flattenObject(object: Record<any, any>): Record<string, unknown>
 }
 
 /**
+ * Get the depth of an object.
+ * @param object - The object to check
+ */
+export function checkDepth(object: Record<string, unknown>): number {
+	let level = 1;
+
+	for (const key in object) {
+		if (!object.hasOwnProperty(key)) continue;
+
+		const val = object[key];
+		if (typeof val == 'object' && !isNullOrUndefined(val)) {
+			const depth = checkDepth(object[key] as Record<string, unknown>) + 1;
+			level = Math.max(depth, level);
+		}
+	}
+
+	return level;
+}
+
+/**
  * Parse a string for a duration.
  * @param input - The string to parse
  */
 export function parseTimeString(input: string | null): number | null {
-	if (!input) return null;
+	if (isNullOrUndefined(input)) return input;
 	const duration = new Duration(input);
 	return isNaN(duration.offset) ? null : duration.offset;
-}
-
-/**
- * Builds a custom ID and appends extra data.
- * @param prefix - The prefix of the custom ID
- * @param data - The data to add
- */
-export function buildCustomId<T = unknown>(prefix: string, data?: T): string {
-	if (isNullOrUndefined(data)) return prefix;
-
-	const values = Object.entries(data as Record<string, string>) //
-		.map(([key, val]) => `${key}:${val}`);
-	return `${prefix};${values.toString()}`;
-}
-
-/**
- * Parses a custom ID and returns the prefix and data.
- * @param customId - The custom ID to parse
- */
-export function parseCustomId<T = unknown>(customId: string): { prefix: string; data: T } {
-	const { 0: prefix, 1: data } = customId.split(';');
-
-	const parsedData = data
-		.split(',') //
-		.reduce<Record<string, string>>((acc, cur) => {
-			const [key, val] = cur.split(':');
-			acc[key] = val;
-			return acc;
-		}, {}) as T;
-
-	return { prefix, data: parsedData };
 }
 
 /**

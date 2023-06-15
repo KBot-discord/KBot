@@ -1,8 +1,8 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotErrors, KBotModules } from '#types/Enums';
-import { KBotCommand } from '#extensions/KBotCommand';
-import { buildCustomId } from '#utils/functions';
 import { EchoCustomIds, EchoFields } from '#utils/customIds';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { buildCustomId } from '#utils/discord';
 import {
 	ActionRowBuilder,
 	ChannelType,
@@ -18,7 +18,7 @@ import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
 import type { EchoModal } from '#types/CustomIds';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Core,
 	description: 'Sends the provided text to the selected channel.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
@@ -26,10 +26,14 @@ import type { EchoModal } from '#types/CustomIds';
 		return builder //
 			.setName('Echo')
 			.setOption({ label: '/echo <text> <channel>' });
-	}
+	},
+	subcommands: [
+		{ name: 'simple', chatInputRun: 'chatInputSimple' },
+		{ name: 'detailed', chatInputRun: 'chatInputDetailed' }
+	]
 })
-export class CoreCommand extends KBotCommand<CoreModule> {
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+export class CoreCommand extends KBotSubcommand<CoreModule> {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -86,18 +90,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		switch (interaction.options.getSubcommand(true)) {
-			case 'simple':
-				return this.chatInputSimple(interaction);
-			case 'detailed':
-				return this.chatInputDetailed(interaction);
-			default:
-				return this.unknownSubcommand(interaction);
-		}
-	}
-
-	public async chatInputSimple(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSimple(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 
 		const { client, validator } = this.container;
@@ -125,7 +118,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		});
 	}
 
-	public async chatInputDetailed(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputDetailed(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { client, validator } = this.container;
 
 		const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);

@@ -12,7 +12,7 @@ export const mainFolder = getRootData().root;
 export const rootFolder = join(mainFolder, '..');
 export const assetsFolder = join(rootFolder, 'assets');
 export const imageFolder = join(assetsFolder, 'images');
-export const pluginsFolder = join(assetsFolder, 'plugins');
+export const pluginsFolder = join(mainFolder, 'plugins');
 
 export const DISCORD_STATUS_BASE = 'https://srhpyqt94yxb.statuspage.io/api/v2/';
 
@@ -81,7 +81,7 @@ export const UrlRegex = /https\S*?([a-zA-Z0-9]+)(?:\.\w+)?(?:\s|$)/;
  */
 export const EmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,20})>?/;
 
-const GENERIC_ERROR = 'Woops, something went wrong. The devs have been made aware of the error and are looking into it.';
+export const GENERIC_ERROR = 'Woops, something went wrong. The devs have been made aware of the error and are looking into it.';
 
 export function formGenericError(message?: string): string {
 	if (!message) return GENERIC_ERROR;

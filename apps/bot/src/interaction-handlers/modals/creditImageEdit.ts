@@ -1,7 +1,8 @@
 import { EmbedColors } from '#utils/constants';
 import { CreditCustomIds, CreditFields } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
-import { isNullOrUndefined, parseCustomId } from '#utils/functions';
+import { isNullOrUndefined } from '#utils/functions';
+import { parseCustomId } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
@@ -9,6 +10,7 @@ import type { APIEmbedField } from 'discord.js';
 import type { CreditImageEditModal } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: CreditCustomIds.ImageModalEdit,
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
 })
 export class ModalHandler extends InteractionHandler {

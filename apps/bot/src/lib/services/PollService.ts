@@ -15,10 +15,13 @@ export class PollService {
 	private readonly repository: PollRepository;
 
 	public constructor() {
+		const { prisma, redis, config } = container;
+
 		this.repository = new PollRepository({
-			database: container.prisma,
+			database: prisma,
 			cache: {
-				client: container.redis
+				client: redis,
+				defaultExpiry: config.db.cacheExpiry
 			}
 		});
 	}

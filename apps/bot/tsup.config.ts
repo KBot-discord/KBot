@@ -2,6 +2,7 @@ import { defineTsupConfig } from '../../scripts/tsup';
 import { relative } from 'node:path';
 
 export default defineTsupConfig({
+	silent: true,
 	dts: false,
 	bundle: true,
 	splitting: true,

@@ -3,7 +3,7 @@ import type { Permissions } from 'discord-api-types/globals';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { DiscordGuild, DiscordUser } from '@kbotdev/proto';
 
-export type IDiscordUser = Pick<DiscordUser, 'avatar' | 'discriminator' | 'id' | 'username'>;
+export type IDiscordUser = Pick<DiscordUser, 'avatar' | 'id' | 'username'>;
 
 export type IDiscordGuild = Pick<DiscordGuild, 'icon' | 'id' | 'name'>;
 

@@ -5,13 +5,13 @@ import { container } from '@sapphire/framework';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
+@catchServerError()
 export class YoutubeChannelServiceImpl extends gRPCService implements ServiceImpl<typeof YoutubeChannelService> {
 	public register(router: ConnectRouter): void {
 		router.service(YoutubeChannelService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getYoutubeChannel({ channelId }: GetYoutubeChannelRequest): Promise<GetYoutubeChannelResponse> {
 		const { prisma } = container;
 

@@ -1,7 +1,7 @@
 import { KaraokeCustomIds } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { isNullOrUndefined, parseCustomId } from '#utils/functions';
-import { fetchChannel } from '#utils/discord';
+import { isNullOrUndefined } from '#utils/functions';
+import { fetchChannel, parseCustomId } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
@@ -10,6 +10,7 @@ import type { GuildTextBasedChannel } from 'discord.js';
 import type { KaraokeMenuButton } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: KaraokeCustomIds.Skip,
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {

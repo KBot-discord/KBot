@@ -7,13 +7,13 @@ import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
+@catchServerError()
 export class CoreSettingsServiceImpl extends gRPCService implements ServiceImpl<typeof CoreSettingsService> {
 	public register(router: ConnectRouter): void {
 		router.service(CoreSettingsService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getGuildFeatureFlags(
 		{ guildId }: GetGuildFeatureFlagsRequest,
 		{ auth }: connect.HandlerContext

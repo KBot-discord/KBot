@@ -40,11 +40,11 @@ export class RedisClient extends Redis {
 	 * Set the value and expiration of a key.
 	 * @param key - The key of the value to set
 	 * @param data - The value to set
-	 * @param seconds - The lifetime of the key
+	 * @param milliseconds - The lifetime of the key
 	 * @returns If the operation was successful
 	 */
-	public async setEx<T = unknown>(key: Key, data: T, seconds: number): Promise<'OK'> {
-		return super.setex(key, seconds, JSON.stringify(data));
+	public async setEx<T = unknown>(key: Key, data: T, milliseconds: number): Promise<'OK'> {
+		return super.setex(key, milliseconds / 1000, JSON.stringify(data));
 	}
 
 	/**
@@ -66,13 +66,13 @@ export class RedisClient extends Redis {
 	}
 
 	/**
-	 * Set a key's time to live in seconds.
+	 * Set a key's time to live in milliseconds.
 	 * @param key - The key to update
-	 * @param seconds - The amount of seconds to set
+	 * @param milliseconds - The amount of milliseconds to set
 	 * @returns If the operation was successful
 	 */
-	public async updateExpiry(key: Key, seconds: number): Promise<number> {
-		return super.expire(key, seconds);
+	public async updateExpiry(key: Key, milliseconds: number): Promise<number> {
+		return super.expire(key, milliseconds / 1000);
 	}
 
 	/**

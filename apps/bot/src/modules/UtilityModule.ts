@@ -1,13 +1,16 @@
 import { DiscordIncidentService, PollService, UtilitySettingsService } from '#services';
 import { CreditCustomIds, CreditFields } from '#utils/customIds';
-import { buildCustomId, isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#utils/functions';
+import { buildCustomId } from '#utils/discord';
 import { Module } from '@kbotdev/plugin-modules';
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
+import { Time } from '@sapphire/duration';
 import type { CreditType } from '#utils/customIds';
-import type { CreditImageModal, CreditModal } from '#types/CustomIds';
+import type { CreditImageModal, CreditModal, EmojiData, StickerData } from '#types/CustomIds';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { KBotModules } from '#types/Enums';
+import type { Key } from '@kbotdev/redis';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Utility Module'
@@ -31,6 +34,27 @@ export class UtilityModule extends Module {
 		if (isNullOrUndefined(guild)) return false;
 		const settings = await this.settings.get(guild.id).catch(() => null);
 		return isNullOrUndefined(settings) ? false : settings.enabled;
+	}
+
+	/**
+	 * Persist `Add emote` or `Add sticker` data between modal submissions.
+	 * @param messageId - The ID of the message
+	 * @param userId - The ID of the user
+	 * @param data - The data to set to the cache
+	 */
+	public async setResourceCache(messageId: string, userId: string, data: EmojiData | StickerData): Promise<void> {
+		await this.container.redis.setEx(this.resourceKey(messageId, userId), data, Time.Hour);
+	}
+
+	/**
+	 * Get and delete data from the cache.
+	 * @param messageId - The ID of the message
+	 * @param userId - The ID of the user
+	 */
+	public async getAndDeleteResourceCache<T = EmojiData | StickerData>(messageId: string, userId: string): Promise<T | null> {
+		const result = await this.container.redis.get(this.resourceKey(messageId, userId));
+		if (result) await this.container.redis.del(this.resourceKey(messageId, userId));
+		return result as T;
 	}
 
 	public buildCreditModal(channelId: string, resourceId?: string, type?: CreditType): ModalBuilder {
@@ -103,6 +127,8 @@ export class UtilityModule extends Module {
 			.setTitle('Add a credit entry')
 			.addComponents(components);
 	}
+
+	private readonly resourceKey = (messageId: string, userId: string): Key => `add-resource:${messageId}:${userId}` as Key;
 }
 
 declare module '@kbotdev/plugin-modules' {

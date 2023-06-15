@@ -24,7 +24,8 @@ export const EvalFields = {
  * Resources - Add emote/sticker
  */
 export const ResourceCustomIds = {
-	Name: 'resource-name' as const
+	Emote: 'emote-resource-name' as const,
+	Sticker: 'sticker-resource-name' as const
 };
 
 export const ResourceFields = {
@@ -40,14 +41,14 @@ export const enum CreditType {
 }
 
 export const CreditCustomIds = {
-	Create: 'credit-create',
-	ResourceRefresh: 'credit-resource-refresh',
-	ResourceEdit: 'credit-resource-edit',
-	ImageEdit: 'credit-image-edit',
-	ResourceModalCreate: 'credit-resource-mcreate',
-	ImageModalCreate: 'credit-image-mcreate',
-	ResourceModalEdit: 'credit-resource-medit',
-	ImageModalEdit: 'credit-image-medit'
+	Create: 'credit-create' as const,
+	ResourceRefresh: 'credit-resource-refresh' as const,
+	ResourceEdit: 'credit-resource-edit' as const,
+	ImageEdit: 'credit-image-edit' as const,
+	ResourceModalCreate: 'credit-resource-mcreate' as const,
+	ImageModalCreate: 'credit-image-mcreate' as const,
+	ResourceModalEdit: 'credit-resource-medit' as const,
+	ImageModalEdit: 'credit-image-medit' as const
 } as const;
 
 export const CreditFields = {
@@ -62,41 +63,41 @@ export const CreditFields = {
  * Karaoke
  */
 export const KaraokeCustomIds = {
-	Create: 'karaoke-create',
-	Schedule: 'karaoke-schedule',
-	ModalCreate: 'karaoke-create-modal',
-	ModalSchedule: 'karaoke-schedule-modal',
-	Unschedule: 'karaoke-unschedule',
-	Add: 'karaoke-add',
-	Remove: 'karaoke-remove',
-	Lock: 'karaoke-lock',
-	Unlock: 'karaoke-unlock',
-	Skip: 'karaoke-skip'
+	Create: 'karaoke-create' as const,
+	Schedule: 'karaoke-schedule' as const,
+	ModalCreate: 'karaoke-create-modal' as const,
+	ModalSchedule: 'karaoke-schedule-modal' as const,
+	Unschedule: 'karaoke-unschedule' as const,
+	Add: 'karaoke-add' as const,
+	Remove: 'karaoke-remove' as const,
+	Lock: 'karaoke-lock' as const,
+	Unlock: 'karaoke-unlock' as const,
+	Skip: 'karaoke-skip' as const
 } as const;
 
 /**
  * Polls
  */
 export const PollCustomIds = {
-	Vote: 'poll-vote',
-	ResultsPublic: 'poll-results-public',
-	ResultsHidden: 'poll-results-hidden',
-	End: 'poll-end'
+	Vote: 'poll-vote' as const,
+	ResultsPublic: 'poll-results-public' as const,
+	ResultsHidden: 'poll-results-hidden' as const,
+	End: 'poll-end' as const
 } as const;
 
 /**
  * Report
  */
 export const ReportCustomIds = {
-	Timeout: '@kbotdev/report.timeout',
-	Delete: '@kbotdev/report.delete',
-	Info: '@kbotdev/report.info'
+	Timeout: '@kbotdev/report.timeout' as const,
+	Delete: '@kbotdev/report.delete' as const,
+	Info: '@kbotdev/report.info' as const
 } as const;
 
 /**
  * YouTube
  */
 export const YoutubeCustomIds = {
-	RoleReaction: 'role-reaction',
-	RoleReactionMember: 'role-reaction-member'
+	RoleReaction: 'role-reaction' as const,
+	RoleReactionMember: 'role-reaction-member' as const
 } as const;

@@ -1,6 +1,7 @@
 import { CreditCustomIds } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { isNullOrUndefined, parseCustomId } from '#utils/functions';
+import { isNullOrUndefined } from '#utils/functions';
+import { parseCustomId } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
@@ -8,6 +9,7 @@ import { ButtonInteraction, PermissionFlagsBits } from 'discord.js';
 import type { Credit } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: CreditCustomIds.Create,
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {

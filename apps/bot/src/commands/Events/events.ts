@@ -1,16 +1,17 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotModules } from '#types/Enums';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EventModule } from '#modules/EventModule';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Events,
 	description: 'Edit the settings of the events module.',
+	preconditions: ['Defer'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -19,9 +20,13 @@ import type { EventModule } from '#modules/EventModule';
 				{ label: '/events toggle <value>', description: 'Enable or disable the events module' }, //
 				{ label: '/events settings', description: 'Show the current settings' }
 			]);
-	}
+	},
+	subcommands: [
+		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
+		{ name: 'settings', chatInputRun: 'chatInputSettings' }
+	]
 })
-export class EventsCommand extends KBotCommand<EventModule> {
+export class EventsCommand extends KBotSubcommand<EventModule> {
 	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
@@ -53,20 +58,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-
-		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle':
-				return this.chatInputToggle(interaction);
-			case 'settings':
-				return this.chatInputSettings(interaction);
-			default:
-				return this.unknownSubcommand(interaction);
-		}
-	}
-
-	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -87,7 +79,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return interaction.editReply({

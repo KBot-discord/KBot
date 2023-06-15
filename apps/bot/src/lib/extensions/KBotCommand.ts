@@ -1,6 +1,4 @@
 import { HelpEmbedBuilder } from '#structures/builders/HelpEmbedBuilder';
-import { KBotErrors } from '#types/Enums';
-import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EmbedBuilder } from 'discord.js';
 import type { Module } from '@kbotdev/plugin-modules';
@@ -17,17 +15,6 @@ export abstract class KBotCommand<M extends Module> extends ModuleCommand<M> {
 			.setType(this.supportsContextMenuCommands() ? 'Context-menu command' : 'Slash command')
 			.build();
 	}
-
-	/**
-	 * If the command encounters an unhandled subcommand.
-	 * @param interaction - The ineraction that couldn't be handled
-	 */
-	protected unknownSubcommand(interaction: KBotCommand.ChatInputCommandInteraction): void {
-		interaction.client.emit(KBotErrors.MissingSubcommandHandler, {
-			interaction,
-			error: new MissingSubcommandHandlerError({ command: this })
-		});
-	}
 }
 
 export namespace KBotCommand {
@@ -43,9 +30,7 @@ export namespace KBotCommand {
 		helpEmbed: (builder: HelpEmbedBuilder) => HelpEmbedBuilder;
 	};
 
-	export type JSON = ModuleCommand.JSON;
 	export type Context = ModuleCommand.Context;
-	export type RunInTypes = ModuleCommand.RunInTypes;
 	export type ChatInputCommandInteraction = ModuleCommand.ChatInputCommandInteraction<'cached'>;
 	export type ContextMenuCommandInteraction = ModuleCommand.ContextMenuCommandInteraction<'cached'>;
 	export type AutocompleteInteraction = ModuleCommand.AutocompleteInteraction<'cached'>;

@@ -9,21 +9,22 @@
 		},
 		"lint": {
 			"dependsOn": ["^build"],
-			"inputs": ["packages/eslint-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
+			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
 			"outputs": [],
 			"cache": true
 		},
 		"lint:fix": {
 			"dependsOn": ["^build"],
-			"inputs": ["packages/eslint-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
+			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
 			"outputs": [],
 			"cache": true
 		},
 		"format": {
 			"dependsOn": ["^build"],
-			"inputs": ["packages/prettier-config/**/*", "src/**/*.ts", "src/**/*.svelte"],
+			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
 			"outputs": [],
-			"cache": true
+			"cache": true,
+			"outputMode": "full"
 		},
 		"check": {
 			"dependsOn": ["^build"],
@@ -35,11 +36,9 @@
 			"outputs": ["coverage/**"],
 			"cache": true
 		},
-		"dev": {
-			"cache": false
-		},
 		"sync": {
-			"cache": false
+			"cache": false,
+			"outputMode": "errors-only"
 		},
 		"buf:generate": {
 			"inputs": ["protos/**"],

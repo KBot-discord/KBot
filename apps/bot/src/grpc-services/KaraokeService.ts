@@ -17,13 +17,13 @@ import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { KaraokeScheduledEvent } from '@kbotdev/proto';
 
+@catchServerError()
 export class KaraokeServiceImpl extends gRPCService implements ServiceImpl<typeof KaraokeEventService> {
 	public register(router: ConnectRouter): void {
 		router.service(KaraokeEventService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getKaraokeScheduledEvents(
 		{ guildId }: GetKaraokeScheduledEventsRequest,
 		{ auth }: connect.HandlerContext
@@ -49,7 +49,6 @@ export class KaraokeServiceImpl extends gRPCService implements ServiceImpl<typeo
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async updateKaraokeScheduledEvent(
 		{ guildId, voiceChannelId, textChannelId, discordEventId, roleId }: UpdateKaraokeScheduledEventRequest,
 		{ auth }: connect.HandlerContext
@@ -76,7 +75,6 @@ export class KaraokeServiceImpl extends gRPCService implements ServiceImpl<typeo
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async deleteKaraokeScheduledEvent(
 		{ guildId, voiceChannelId }: DeleteKaraokeScheduledEventRequest,
 		{ auth }: connect.HandlerContext

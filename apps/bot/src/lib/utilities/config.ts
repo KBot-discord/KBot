@@ -20,14 +20,22 @@ export function validateConfig(config: ClientConfig): boolean {
 }
 
 export function envGetString(key: string): string {
-	return process.env[key]!;
+	const value = process.env[key];
+	if (isNullOrUndefinedOrEmpty(value)) {
+		const errorString = `"${key}" must be set to a string`;
+		throw new TypeError(errorString);
+	}
+
+	return String(value);
 }
 
 export function envGetNumber(key: string): number {
-	const number = Number(process.env[key]);
-	if (isNaN(number)) {
+	const value = process.env[key];
+	const number = Number(value);
+	if (isNullOrUndefinedOrEmpty(value) || isNaN(number)) {
 		const errorString = `"${key}" must be set to a number`;
 		throw new TypeError(errorString);
 	}
+
 	return number;
 }

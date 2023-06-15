@@ -6,10 +6,13 @@ export class ModerationSettingsService {
 	private readonly repository: ModerationSettingsRepository;
 
 	public constructor() {
+		const { prisma, redis, config } = container;
+
 		this.repository = new ModerationSettingsRepository({
-			database: container.prisma,
+			database: prisma,
 			cache: {
-				client: container.redis
+				client: redis,
+				defaultExpiry: config.db.cacheExpiry
 			}
 		});
 	}

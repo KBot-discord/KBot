@@ -3,8 +3,8 @@ import { CreditCustomIds, CreditFields } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
 import { KBotErrors } from '#types/Enums';
 import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
-import { isNullOrUndefined, parseCustomId } from '#utils/functions';
-import { fetchChannel } from '#utils/discord';
+import { isNullOrUndefined } from '#utils/functions';
+import { fetchChannel, parseCustomId } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
@@ -13,6 +13,7 @@ import type { CreditImageModal } from '#types/CustomIds';
 import type { APIEmbedField, GuildTextBasedChannel } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: CreditCustomIds.ImageModalCreate,
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
 })
 export class ModalHandler extends InteractionHandler {
@@ -56,7 +57,7 @@ export class ModalHandler extends InteractionHandler {
 			]
 		});
 
-		await interaction.defaultReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
+		await interaction.successReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
 	}
 
 	@validCustomId(CreditCustomIds.ImageModalCreate)

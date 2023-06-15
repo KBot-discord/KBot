@@ -1,7 +1,6 @@
 import { EmbedColors } from '#utils/constants';
 import { PollCustomIds } from '#utils/customIds';
-import { getGuildIcon } from '#utils/discord';
-import { buildCustomId } from '#utils/functions';
+import { buildCustomId, getGuildIcon } from '#utils/discord';
 import { Menu } from '#structures/menus/Menu';
 import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
 import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';

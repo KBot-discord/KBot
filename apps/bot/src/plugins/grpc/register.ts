@@ -8,11 +8,8 @@ import { join } from 'path';
 
 export class RPCPlugin extends Plugin {
 	public static [postInitialization](this: SapphireClient): void {
-		const { stores } = this;
-		const dir = join(pluginsFolder, 'rpc');
-
-		stores.register(new gRPCStore());
-		registerPieces('listeners', dir);
+		this.stores.register(new gRPCStore());
+		registerPieces('listeners', join(pluginsFolder, 'grpc'));
 	}
 }
 

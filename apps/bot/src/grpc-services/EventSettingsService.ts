@@ -14,13 +14,13 @@ import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
+@catchServerError()
 export class EventSettingsServiceImpl extends gRPCService implements ServiceImpl<typeof EventSettingsService> {
 	public register(router: ConnectRouter): void {
 		router.service(EventSettingsService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getEventSettings({ guildId }: GetEventSettingsRequest, { auth }: connect.HandlerContext): Promise<GetEventSettingsResponse> {
 		const { events } = container;
 
@@ -34,7 +34,6 @@ export class EventSettingsServiceImpl extends gRPCService implements ServiceImpl
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async updateEventSettings(
 		{ guildId, enabled }: UpdateEventSettingsRequest,
 		{ auth }: connect.HandlerContext
