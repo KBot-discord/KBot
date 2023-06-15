@@ -1,6 +1,6 @@
 import type { DiscordUser, DiscordGuild, DiscordChannel, DiscordRole } from '@kbotdev/proto';
 
-export type User = Pick<DiscordUser, 'id' | 'username' | 'discriminator' | 'avatar'>;
+export type User = Pick<DiscordUser, 'id' | 'username' | 'avatar'>;
 
 export type Guild = Pick<DiscordGuild, 'id' | 'name' | 'icon' | 'canManage'>;
 

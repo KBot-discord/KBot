@@ -347,7 +347,7 @@ export function getMemberAvatarUrl(member: GuildMember, options: ImageURLOptions
  * Create a default avatar.
  */
 export function createDefaultAvatar(): string {
-	return `https://cdn.discordapp.com/embed/avatars/${Math.random() * 4}.png`;
+	return `https://cdn.discordapp.com/embed/avatars/${Math.floor(Math.random() * 5)}.png`;
 }
 
 /**

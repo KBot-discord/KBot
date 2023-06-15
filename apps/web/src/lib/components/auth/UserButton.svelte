@@ -15,7 +15,7 @@
 
 	let storeUser = getUserContext();
 
-	$: avatar = $storeUser?.avatar ?? createDefaultAvatar($storeUser);
+	$: avatar = $storeUser?.avatar ?? createDefaultAvatar();
 </script>
 
 {#if $storeUser}
