@@ -1,32 +1,15 @@
-import { EmbedColors, UrlRegex } from '#utils/constants';
-import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '#utils/customIds';
-import { attachmentFromMessage, getGuildStickerSlots } from '#utils/discord';
+import { UrlRegex } from '#utils/constants';
+import { ResourceCustomIds, ResourceFields } from '#utils/customIds';
+import { attachmentFromMessage, buildCustomId, calculateStickerSlots } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { buildCustomId, fetchBase64Image, isNullOrUndefined } from '#utils/functions';
+import { fetchBase64Image, isNullOrUndefined } from '#utils/functions';
 import { KBotModules } from '#types/Enums';
-import {
-	ActionRowBuilder,
-	ApplicationCommandType,
-	ButtonBuilder,
-	ButtonStyle,
-	EmbedBuilder,
-	ModalBuilder,
-	PermissionFlagsBits,
-	TextInputBuilder,
-	TextInputStyle
-} from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandType, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { Time } from '@sapphire/duration';
-import type { Credit } from '#types/CustomIds';
-import type { Guild, Message, ModalSubmitInteraction } from 'discord.js';
+import type { AddResourceModal, StickerData } from '#types/CustomIds';
+import type { Message } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { InteractionResponseUnion } from '#types/Augments';
-
-type StickerData = {
-	url: string;
-	name?: string;
-};
 
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Utility,
@@ -71,96 +54,16 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			);
 		}
 
-		const { slotsLeft, totalSlots } = this.calculateSlots(interaction.guild);
-
+		const { slotsLeft } = calculateStickerSlots(interaction.guild);
 		if (slotsLeft === 0) {
 			return interaction.errorReply('No stickers slots are left.', {
 				tryEphemeral: true
 			});
 		}
 
-		const slotsLeftString = `**Sticker slots left:** ${slotsLeft - 1}/${totalSlots}`;
+		await this.container.utility.setResourceCache(message.id, interaction.user.id, sticker);
 
-		try {
-			await interaction.showModal(this.buildModal(sticker.name));
-
-			return interaction //
-				.awaitModalSubmit({
-					filter: (i: ModalSubmitInteraction) => i.customId === ResourceCustomIds.Name,
-					time: Time.Minute * 14.5
-				})
-				.then(async (modalInteraction) => this.handleSubmit(modalInteraction, sticker, slotsLeftString))
-				.catch(async () =>
-					interaction.errorReply('The modal has timed out.', {
-						tryEphemeral: true
-					})
-				);
-		} catch {
-			return interaction.errorReply('There was an error when trying to add the emoji.', {
-				tryEphemeral: true
-			});
-		}
-	}
-
-	/**
-	 * Handle the submission of the sticker name modal
-	 * @param modal - The modal interaction
-	 * @param emojiData - The sticker data
-	 * @param slotsLeft - Info about the guild's sticker slots
-	 */
-	private async handleSubmit(
-		modal: ModalSubmitInteraction<'cached'>,
-		emojiData: StickerData,
-		slotsLeftString: string
-	): Promise<InteractionResponseUnion> {
-		const embed = new EmbedBuilder();
-		const { url } = emojiData;
-
-		const stickerName = modal.fields.getTextInputValue(ResourceFields.Name);
-		const newSticker = await modal.guild.stickers.create({
-			file: url,
-			name: stickerName,
-			tags: stickerName
-		});
-
-		if (url.startsWith('https')) {
-			embed.setThumbnail(url);
-		}
-
-		return modal.reply({
-			embeds: [
-				embed
-					.setColor(EmbedColors.Success) //
-					.setDescription(`**${stickerName}** has been added\n\n${slotsLeftString}`)
-			],
-			components: [
-				new ActionRowBuilder<ButtonBuilder>().addComponents([
-					new ButtonBuilder()
-						.setCustomId(
-							buildCustomId<Credit>(CreditCustomIds.Create, {
-								ri: newSticker.id,
-								t: CreditType.Sticker
-							})
-						)
-						.setLabel('Add to credits channel')
-						.setStyle(ButtonStyle.Success)
-				])
-			]
-		});
-	}
-
-	/**
-	 * Calcuate how many emoji slots are left in the guild.
-	 * @param guild - The guild
-	 */
-	private calculateSlots(guild: Guild): { slotsLeft: number; totalSlots: number } {
-		const allStickers = guild.stickers.cache;
-		const totalSlots = getGuildStickerSlots(guild.premiumTier);
-
-		return {
-			slotsLeft: totalSlots - allStickers.size,
-			totalSlots
-		};
+		return interaction.showModal(this.buildModal(message.id, interaction.user.id, sticker.name));
 	}
 
 	/**
@@ -191,7 +94,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return null;
 	}
 
-	private buildModal(stickerName?: string): ModalBuilder {
+	private buildModal(messageId: string, userId: string, stickerName?: string): ModalBuilder {
 		const textBuilder = new TextInputBuilder()
 			.setCustomId(ResourceFields.Name)
 			.setLabel('Sticker name')
@@ -203,7 +106,12 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		if (stickerName) textBuilder.setValue(stickerName);
 
 		return new ModalBuilder() //
-			.setCustomId(ResourceCustomIds.Name)
+			.setCustomId(
+				buildCustomId<AddResourceModal>(ResourceCustomIds.Sticker, {
+					mi: messageId,
+					ui: userId
+				})
+			)
 			.setTitle('Sticker name')
 			.addComponents(
 				new ActionRowBuilder<TextInputBuilder>() //

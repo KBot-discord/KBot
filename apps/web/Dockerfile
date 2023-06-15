@@ -6,7 +6,7 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /temp
 
-RUN yarn global add turbo@1.9.9
+RUN yarn global add turbo
 COPY . .
 RUN turbo prune --scope=@kbotdev/web --docker
 
@@ -17,7 +17,7 @@ RUN apk add --no-cache libc6-compat && \
 	apk add -q --update openssl && \
 	apk add -q --no-cache libc6-compat curl && \
 	curl -sSL \
-      "https://github.com/bufbuild/buf/releases/download/v1.19.0/buf-$(uname -s)-$(uname -m)" \
+      "https://github.com/bufbuild/buf/releases/download/v1.21.0/buf-$(uname -s)-$(uname -m)" \
       -o "/usr/local/bin/buf" && \
     chmod +x "/usr/local/bin/buf" && \
 	apk update

@@ -1,9 +1,9 @@
 import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
 import { BlankSpace, EmbedColors, KBotEmoji, formGenericError } from '#utils/constants';
 import { fetchChannel, getGuildIcon } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotErrors, KBotModules } from '#types/Enums';
 import { isNullOrUndefined } from '#utils/functions';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { channelMention, time, userMention } from '@discordjs/builders';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
@@ -11,10 +11,10 @@ import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { ApplicationCommandOptionChoiceData, GuildScheduledEvent, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import type { EventModule } from '#modules/EventModule';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Events,
 	description: 'Create, end, or manage events.',
-	preconditions: ['ModuleEnabled'],
+	preconditions: ['EDefer', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -40,14 +40,28 @@ import type { EventModule } from '#modules/EventModule';
 				},
 				{ label: '/manage karaoke menu', description: 'Open the menu to manage karaoke events' }
 			]);
-	}
+	},
+	subcommands: [
+		{
+			name: 'karaoke',
+			type: 'group',
+			entries: [
+				{ name: 'start', chatInputRun: 'chatInputKaraokeStart' },
+				{ name: 'schedule', chatInputRun: 'chatInputKaraokeSchedule' },
+				{ name: 'stop', chatInputRun: 'chatInputKaraokeStop' },
+				{ name: 'add', chatInputRun: 'chatInputKaraokeAdd' },
+				{ name: 'remove', chatInputRun: 'chatInputKaraokeRemove' },
+				{ name: 'menu', chatInputRun: 'chatInputKaraokeMenu' }
+			]
+		}
+	]
 })
-export class EventsCommand extends KBotCommand<EventModule> {
+export class EventsCommand extends KBotSubcommand<EventModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/events toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -176,7 +190,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		);
 	}
 
-	public override async autocompleteRun(interaction: KBotCommand.AutocompleteInteraction): Promise<void> {
+	public override async autocompleteRun(interaction: KBotSubcommand.AutocompleteInteraction): Promise<void> {
 		const focusedOption = interaction.options.getFocused(true);
 
 		if (focusedOption.name === 'event') {
@@ -206,32 +220,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.respond(discordEventOptions);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply({ ephemeral: true });
-
-		switch (interaction.options.getSubcommandGroup(true)) {
-			default: {
-				switch (interaction.options.getSubcommand(true)) {
-					case 'start':
-						return this.chatInputKaraokeStart(interaction);
-					case 'schedule':
-						return this.chatInputKaraokeSchedule(interaction);
-					case 'stop':
-						return this.chatInputKaraokeStop(interaction);
-					case 'add':
-						return this.chatInputKaraokeAdd(interaction);
-					case 'remove':
-						return this.chatInputKaraokeRemove(interaction);
-					case 'menu':
-						return this.chatInputKaraokeMenu(interaction);
-					default:
-						return this.unknownSubcommand(interaction);
-				}
-			}
-		}
-	}
-
-	public async chatInputKaraokeStart(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputKaraokeStart(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { validator } = this.container;
 
 		const voiceChannel = interaction.options.getChannel('voice_channel', true, [
@@ -290,7 +279,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputKaraokeSchedule(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputKaraokeSchedule(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { validator } = this.container;
 
 		const discordEventId = interaction.options.getString('discord_event', true);
@@ -367,7 +356,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputKaraokeStop(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputKaraokeStop(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const eventId = interaction.options.getString('event', true);
 
 		const event = await this.module.karaoke.getEvent(eventId);
@@ -398,7 +387,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		});
 	}
 
-	public async chatInputKaraokeAdd(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputKaraokeAdd(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { karaoke } = this.module;
 
 		const eventId = interaction.options.getString('event', true);
@@ -457,7 +446,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply(`${member.user.username} has been added to the queue.`);
 	}
 
-	public async chatInputKaraokeRemove(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputKaraokeRemove(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { karaoke } = this.module;
 
 		const eventId = interaction.options.getString('event', true);
@@ -519,7 +508,7 @@ export class EventsCommand extends KBotCommand<EventModule> {
 		return interaction.successReply(`${member.user.username} has been removed from the queue.`);
 	}
 
-	public async chatInputKaraokeMenu(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputKaraokeMenu(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		return new KaraokeEventMenu(interaction.guild).run(interaction);
 	}
 }

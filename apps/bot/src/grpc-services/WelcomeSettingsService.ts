@@ -16,13 +16,13 @@ import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
+@catchServerError()
 export class WelcomeSettingsServiceImpl extends gRPCService implements ServiceImpl<typeof WelcomeSettingsService> {
 	public register(router: ConnectRouter): void {
 		router.service(WelcomeSettingsService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getWelcomeSettings({ guildId }: GetWelcomeSettingsRequest, { auth }: connect.HandlerContext): Promise<GetWelcomeSettingsResponse> {
 		const { welcome } = container;
 
@@ -49,7 +49,6 @@ export class WelcomeSettingsServiceImpl extends gRPCService implements ServiceIm
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async updateWelcomeSettings(
 		{ guildId, enabled, channelId, message, title, description, image, color }: UpdateWelcomeSettingsRequest,
 		{ auth }: connect.HandlerContext

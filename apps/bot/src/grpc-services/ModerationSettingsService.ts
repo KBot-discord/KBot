@@ -16,13 +16,13 @@ import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
+@catchServerError()
 export class ModerationSettingsServiceImpl extends gRPCService implements ServiceImpl<typeof ModerationSettingsService> {
 	public register(router: ConnectRouter): void {
 		router.service(ModerationSettingsService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getModerationSettings(
 		{ guildId }: GetModerationSettingsRequest,
 		{ auth }: connect.HandlerContext
@@ -50,7 +50,6 @@ export class ModerationSettingsServiceImpl extends gRPCService implements Servic
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async updateModerationSettings(
 		{ guildId, enabled, reportChannelId, minageReq, minageMessage, antihoistEnabled }: UpdateModerationSettingsRequest,
 		{ auth }: connect.HandlerContext

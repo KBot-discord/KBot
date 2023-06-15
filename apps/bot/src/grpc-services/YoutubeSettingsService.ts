@@ -13,13 +13,13 @@ import * as connect from '@bufbuild/connect';
 import type { PartialMessage } from '@bufbuild/protobuf';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 
+@catchServerError()
 export class YoutubeSettingsServiceImpl extends gRPCService implements ServiceImpl<typeof YoutubeSettingsService> {
 	public register(router: ConnectRouter): void {
 		router.service(YoutubeSettingsService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getYoutubeSettings({ guildId }: GetYoutubeSettingsRequest, { auth }: connect.HandlerContext): Promise<GetYoutubeSettingsResponse> {
 		const { youtube } = container;
 
@@ -35,7 +35,6 @@ export class YoutubeSettingsServiceImpl extends gRPCService implements ServiceIm
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async updateYoutubeSettings(
 		{ guildId, enabled }: UpdateYoutubeSettingsRequest,
 		{ auth }: connect.HandlerContext

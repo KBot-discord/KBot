@@ -1,20 +1,14 @@
-import { defineConfig } from 'vitest/config';
+import rootConfig from '../../vitest.config';
+import { defaultExclude, defineProject, mergeConfig } from 'vitest/config';
 
-export default defineConfig({
-	test: {
-		globals: true,
-		coverage: {
-			provider: 'c8',
-			reporter: ['text', 'lcov', 'clover']
-		},
-		exclude: [
-			'**/node_modules/**',
-			'**/dist/**',
-			'**/cypress/**',
-			'**/.{idea,git,cache,output,temp}/**',
-			'**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
-			'**/infra',
-			'**/prisma/seed'
-		]
-	}
-});
+export default mergeConfig(
+	rootConfig,
+	defineProject({
+		test: {
+			exclude: [
+				...defaultExclude, //
+				'**/tests/mocks/**'
+			]
+		}
+	})
+);

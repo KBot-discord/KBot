@@ -1,31 +1,35 @@
-import { CreditCustomIds, CreditFields, CreditType } from '#utils/customIds';
+import { CreditCustomIds, CreditFields } from '#utils/customIds';
 import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { buildCustomId, isNullOrUndefined, parseCustomId } from '#utils/functions';
+import { isNullOrUndefined } from '#utils/functions';
+import { buildCustomId } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonInteraction, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { Time } from '@sapphire/duration';
-import type { Embed, Emoji, Sticker } from 'discord.js';
-import type { Credit, CreditEditModal } from '#types/CustomIds';
+import type { Embed } from 'discord.js';
+import type { CreditImageEditModal } from '#types/CustomIds';
 
-type EmoteCreditEmbed = {
+type CreditEmbed = {
+	name: string;
+	link: string;
 	source: string;
 	description: string;
 	artist: string;
 };
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: CreditCustomIds.ImageEdit,
 	interactionHandlerType: InteractionHandlerTypes.Button
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { resource, type }: InteractionHandler.ParseResult<this>): Promise<void> {
+	public override async run(interaction: ButtonInteraction<'cached'>): Promise<void> {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
-		const modal = this.buildModal(interaction.message.id, resource.id!, type, data);
+		const modal = this.buildModal(interaction.message.id, data);
 
 		return interaction.showModal(modal);
 	}
 
-	@validCustomId(CreditCustomIds.ResourceEdit)
+	@validCustomId(CreditCustomIds.ImageEdit)
 	@interactionRatelimit(Time.Second * 30, 5)
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
@@ -43,68 +47,59 @@ export class ButtonHandler extends InteractionHandler {
 			return this.none();
 		}
 
-		const {
-			data: { ri, t }
-		} = parseCustomId<Credit>(interaction.customId);
-
-		let resource: Emoji | Sticker;
-		if (t === CreditType.Emote) {
-			const emoji = interaction.guild.emojis.cache.get(ri);
-			if (!emoji) {
-				await interaction.defaultFollowup('That emote has been deleted.', {
-					ephemeral: true
-				});
-				return this.none();
-			}
-
-			resource = emoji;
-		} else {
-			const sticker = interaction.guild.stickers.cache.get(ri);
-			if (!sticker) {
-				await interaction.defaultFollowup('That sticker has been deleted.', {
-					ephemeral: true
-				});
-				return this.none();
-			}
-
-			resource = sticker;
-		}
-
-		return this.some({ resource, type: t });
+		return this.some();
 	}
 
 	/**
 	 * Get the credit info from an embed's fields.
 	 * @param embed - The embed to parse
 	 */
-	private parseEmbedFields(embed: Embed): EmoteCreditEmbed {
-		const { fields } = embed;
+	private parseEmbedFields(embed: Embed): CreditEmbed {
+		const { fields, title, image } = embed;
 		return {
+			name: title ?? '',
+			link: image?.url ?? '',
+			source: fields.find((e) => e.name === 'Image source')?.value ?? '',
 			description: fields.find((e) => e.name === 'Description')?.value ?? '',
-			artist: fields.find((e) => e.name === 'Artist')?.value ?? '',
-			source: fields.find((e) => e.name === 'Image source')?.value ?? ''
+			artist: fields.find((e) => e.name === 'Artist')?.value ?? ''
 		};
 	}
 
 	/**
 	 * Build a modal for editing a credit's info.
 	 * @param messageId - The ID of the message
-	 * @param resourceId - The ID of the resource
-	 * @param type - The type of resource
 	 * @param data - The credit info
 	 */
-	private buildModal(messageId: string, resourceId: string, type: CreditType, data: EmoteCreditEmbed): ModalBuilder {
-		const { description, artist, source } = data;
+	private buildModal(messageId: string, data: CreditEmbed): ModalBuilder {
+		const { name, link, source, description, artist } = data;
 		return new ModalBuilder()
 			.setCustomId(
-				buildCustomId<CreditEditModal>(CreditCustomIds.ResourceModalEdit, {
-					mi: messageId,
-					ri: resourceId,
-					t: type
+				buildCustomId<CreditImageEditModal>(CreditCustomIds.ImageModalEdit, {
+					mi: messageId
 				})
 			)
-			.setTitle(`'Edit ${type === CreditType.Emote ? 'emote' : 'sticker'} credit info'`)
+			.setTitle('Edit image credit info')
 			.addComponents(
+				new ActionRowBuilder<TextInputBuilder>().addComponents(
+					new TextInputBuilder()
+						.setCustomId(CreditFields.Name)
+						.setLabel('The title of the credit entry')
+						.setStyle(TextInputStyle.Short)
+						.setMinLength(0)
+						.setMaxLength(50)
+						.setRequired(true)
+						.setValue(name)
+				),
+				new ActionRowBuilder<TextInputBuilder>().addComponents(
+					new TextInputBuilder()
+						.setCustomId(CreditFields.Link)
+						.setLabel('The link of the image')
+						.setStyle(TextInputStyle.Paragraph)
+						.setMinLength(0)
+						.setMaxLength(100)
+						.setRequired(true)
+						.setValue(link)
+				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
 						.setCustomId(CreditFields.Source)
@@ -112,6 +107,7 @@ export class ButtonHandler extends InteractionHandler {
 						.setStyle(TextInputStyle.Paragraph)
 						.setMinLength(0)
 						.setMaxLength(100)
+						.setRequired(true)
 						.setValue(source)
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
@@ -121,6 +117,7 @@ export class ButtonHandler extends InteractionHandler {
 						.setStyle(TextInputStyle.Paragraph)
 						.setMinLength(0)
 						.setMaxLength(100)
+						.setRequired(false)
 						.setValue(description)
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(

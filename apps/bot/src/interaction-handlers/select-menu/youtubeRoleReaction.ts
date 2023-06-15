@@ -7,6 +7,7 @@ import { PermissionFlagsBits, StringSelectMenuInteraction, roleMention } from 'd
 import type { HolodexChannel } from '@kbotdev/database';
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: YoutubeCustomIds.RoleReaction,
 	interactionHandlerType: InteractionHandlerTypes.SelectMenu
 })
 export class ButtonHandler extends InteractionHandler {

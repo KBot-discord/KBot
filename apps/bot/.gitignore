@@ -1,9 +1,7 @@
 ## Builds ##
 dist
-src/rpc/gen
 
 ## Dependencies ##
-node_modules
 package-lock.json
 
 ## Package manager ##
@@ -16,11 +14,7 @@ package-lock.json
 !.yarn/versions
 
 ## Env ##
-.env
+.env*
+!.env.example
+!.env.test
 
-### intellij ###
-.idea/
-
-## Logs ##
-logs
-*.log

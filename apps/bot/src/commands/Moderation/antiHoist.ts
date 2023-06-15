@@ -1,17 +1,17 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotModules } from '#types/Enums';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { ModerationSettings } from '@kbotdev/database';
 import type { ModerationModule } from '#modules/ModerationModule';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Moderation,
 	description: 'Prevent usernames that place the user to the top of the member list.',
-	preconditions: ['ModuleEnabled'],
+	preconditions: ['Defer', 'ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageNicknames],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
@@ -21,14 +21,18 @@ import type { ModerationModule } from '#modules/ModerationModule';
 				{ label: '/antihoist toggle <value>', description: 'Enable or disable anti-hoist' }, //
 				{ label: '/antihoist settings', description: 'Show the current settings' }
 			]);
-	}
+	},
+	subcommands: [
+		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
+		{ name: 'settings', chatInputRun: 'chatInputSettings' }
+	]
 })
-export class ModerationCommand extends KBotCommand<ModerationModule> {
+export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/moderation toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -59,19 +63,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle':
-				return this.chatInputToggle(interaction);
-			case 'settings':
-				return this.chatInputSettings(interaction);
-			default:
-				return this.unknownSubcommand(interaction);
-		}
-	}
-
-	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -92,13 +84,13 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {
+	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()

@@ -19,13 +19,13 @@ import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 import type { YoutubeSubscription } from '@kbotdev/proto';
 import type { PartialMessage } from '@bufbuild/protobuf';
 
+@catchServerError()
 export class YoutubeSubscriptionServiceImpl extends gRPCService implements ServiceImpl<typeof YoutubeSubscriptionService> {
 	public register(router: ConnectRouter): void {
 		router.service(YoutubeSubscriptionService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async createYoutubeSubscription(
 		{ guildId, channelId }: CreateYoutubeSubscriptionRequest,
 		{ auth }: connect.HandlerContext
@@ -51,7 +51,6 @@ export class YoutubeSubscriptionServiceImpl extends gRPCService implements Servi
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async updateYoutubeSubscription(
 		{ guildId, channelId, message, role, discordChannel }: UpdateYoutubeSubscriptionRequest,
 		{ auth }: connect.HandlerContext
@@ -81,7 +80,6 @@ export class YoutubeSubscriptionServiceImpl extends gRPCService implements Servi
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async deleteYoutubeSubscription(
 		{ guildId, channelId }: DeleteYoutubeSubscriptionRequest,
 		{ auth }: connect.HandlerContext
@@ -109,7 +107,6 @@ export class YoutubeSubscriptionServiceImpl extends gRPCService implements Servi
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getGuildYoutubeSubscriptions(
 		{ guildId }: GetGuildYoutubeSubscriptionsRequest,
 		{ auth }: connect.HandlerContext

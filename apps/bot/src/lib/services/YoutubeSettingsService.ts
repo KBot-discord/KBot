@@ -6,10 +6,13 @@ export class YoutubeSettingsService {
 	private readonly repository: YoutubeSettingsRepository;
 
 	public constructor() {
+		const { prisma, redis, config } = container;
+
 		this.repository = new YoutubeSettingsRepository({
-			database: container.prisma,
+			database: prisma,
 			cache: {
-				client: container.redis
+				client: redis,
+				defaultExpiry: config.db.cacheExpiry
 			}
 		});
 	}

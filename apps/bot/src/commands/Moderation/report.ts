@@ -128,7 +128,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 		new ReportHandler(message, reportMessage);
 
-		return interaction.defaultReply(`[Report sent](${reportMessage.url})`);
+		return interaction.successReply(`[Report sent](${reportMessage.url})`);
 	}
 
 	/**

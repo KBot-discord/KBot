@@ -1,9 +1,9 @@
 import { EmbedColors } from '#utils/constants';
 import { KBotErrors, KBotModules } from '#types/Enums';
 import { getGuildIcon } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
 import { CreditType } from '#utils/customIds';
 import { isNullOrUndefined } from '#utils/functions';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
@@ -13,7 +13,7 @@ import type { ApplicationCommandOptionChoiceData, GuildEmoji, Sticker } from 'di
 import type { UtilityModule } from '#modules/UtilityModule';
 import type { UtilitySettings } from '@kbotdev/database';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Utility,
 	description: 'Send credits to a channel.',
 	preconditions: ['ModuleEnabled'],
@@ -29,14 +29,22 @@ import type { UtilitySettings } from '@kbotdev/database';
 				{ label: '/credits unset', description: 'Reset the credits channel' },
 				{ label: '/credits settings', description: 'Show the current settings' }
 			]);
-	}
+	},
+	subcommands: [
+		{ name: 'emote', chatInputRun: 'chatInputEmote' },
+		{ name: 'sticker', chatInputRun: 'chatInputSticker' },
+		{ name: 'image', chatInputRun: 'chatInputImage' },
+		{ name: 'set', chatInputRun: 'chatInputSet' },
+		{ name: 'unset', chatInputRun: 'chatInputUnset' },
+		{ name: 'settings', chatInputRun: 'chatInputSettings' }
+	]
 })
-export class UtilityCommand extends KBotCommand<UtilityModule> {
+export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
 		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
 	};
 
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -102,7 +110,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public override async autocompleteRun(interaction: KBotCommand.AutocompleteInteraction): Promise<unknown> {
+	public override async autocompleteRun(interaction: KBotSubcommand.AutocompleteInteraction): Promise<unknown> {
 		const subcommand = interaction.options.getSubcommand(true);
 		const search = interaction.options.getString('name', true);
 
@@ -132,28 +140,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return interaction.respond(options.slice(0, 24));
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		const subcommand = interaction.options.getSubcommand(true);
-
-		switch (subcommand) {
-			case 'emote':
-				return this.chatInputEmote(interaction);
-			case 'sticker':
-				return this.chatInputSticker(interaction);
-			case 'image':
-				return this.chatInputImage(interaction);
-			case 'set':
-				return this.chatInputSet(interaction);
-			case 'unset':
-				return this.chatInputUnset(interaction);
-			case 'settings':
-				return this.chatInputSettings(interaction);
-			default:
-				return this.unknownSubcommand(interaction);
-		}
-	}
-
-	public async chatInputEmote(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputEmote(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const emoteId = interaction.options.getString('name', true);
 		const settings = await this.module.settings.get(interaction.guildId);
 
@@ -172,7 +159,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return interaction.showModal(modal);
 	}
 
-	public async chatInputSticker(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSticker(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const emoteId = interaction.options.getString('name', true);
 		const settings = await this.module.settings.get(interaction.guildId);
 
@@ -191,7 +178,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return interaction.showModal(modal);
 	}
 
-	public async chatInputImage(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputImage(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		if (!settings?.creditsChannelId) {
@@ -202,7 +189,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return interaction.showModal(modal);
 	}
 
-	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSet(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 
 		const { client, validator } = this.container;
@@ -220,7 +207,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -230,7 +217,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 
 		const settings = await this.module.settings.get(interaction.guildId);
@@ -238,7 +225,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {
+	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()

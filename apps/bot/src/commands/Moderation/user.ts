@@ -9,7 +9,7 @@ import type { ModerationModule } from '#modules/ModerationModule';
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Moderation,
 	description: 'Get info on a user.',
-	preconditions: ['ModuleEnabled'],
+	preconditions: ['Defer', 'ModuleEnabled'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -44,8 +44,6 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 	}
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-
 		const userId = interaction.options.getUser('target', true).id;
 		const embed = await getUserInfo(interaction, userId);
 

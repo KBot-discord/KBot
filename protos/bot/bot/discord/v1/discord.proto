@@ -30,7 +30,7 @@ message DiscordRole {
 message DiscordUser {
   string id = 1;
   string username = 2;
-  string discriminator = 3;
+  string global_name = 3;
   string avatar = 4;
 }
 

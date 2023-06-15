@@ -26,13 +26,13 @@ import { ChannelType } from 'discord.js';
 import * as connect from '@bufbuild/connect';
 import type { ConnectRouter, ServiceImpl } from '@bufbuild/connect';
 
+@catchServerError()
 export class DiscordServiceImpl extends gRPCService implements ServiceImpl<typeof DiscordService> {
 	public register(router: ConnectRouter): void {
 		router.service(DiscordService, this);
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getDiscordGuilds(_req: GetDiscordGuildsRequest, { auth }: connect.HandlerContext): Promise<GetDiscordGuildsResponse> {
 		const { client } = container;
 
@@ -61,7 +61,6 @@ export class DiscordServiceImpl extends gRPCService implements ServiceImpl<typeo
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getDiscordTextChannels(
 		{ guildId }: GetDiscordTextChannelsRequest,
 		{ auth }: connect.HandlerContext
@@ -87,7 +86,6 @@ export class DiscordServiceImpl extends gRPCService implements ServiceImpl<typeo
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getDiscordVoiceChannels(
 		{ guildId }: GetDiscordVoiceChannelsRequest,
 		{ auth }: connect.HandlerContext
@@ -112,7 +110,6 @@ export class DiscordServiceImpl extends gRPCService implements ServiceImpl<typeo
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getDiscordRoles({ guildId }: GetDiscordRolesRequest, { auth }: connect.HandlerContext): Promise<GetDiscordRolesResponse> {
 		return assertManagePermissions(guildId, auth, async ({ guild }) => {
 			const fetchedRoles = await guild.roles.fetch();
@@ -126,7 +123,6 @@ export class DiscordServiceImpl extends gRPCService implements ServiceImpl<typeo
 	}
 
 	@authenticated()
-	@catchServerError()
 	public async getDiscordUser(_req: GetDiscordUserRequest, { auth }: connect.HandlerContext): Promise<GetDiscordUserResponse> {
 		const { client } = container;
 
@@ -137,6 +133,7 @@ export class DiscordServiceImpl extends gRPCService implements ServiceImpl<typeo
 
 		const discordUser = new DiscordUser({
 			id: user.id,
+			// globalName: user.global_name,
 			username: user.username,
 			avatar
 		});

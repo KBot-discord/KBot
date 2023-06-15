@@ -1,6 +1,7 @@
 import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '#utils/constants';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotModules } from '#types/Enums';
+import { isNullOrUndefinedOrEmpty } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord.js';
@@ -42,10 +43,9 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
 		const message = interaction.options.getMessage('message', true);
 
-		if (!message.content) {
-			return interaction.reply({
-				content: 'There is no text to uwu-ify',
-				ephemeral: true
+		if (isNullOrUndefinedOrEmpty(message.content)) {
+			return interaction.defaultReply('There is no text to uwu-ify', {
+				tryEphemeral: true
 			});
 		}
 
@@ -54,7 +54,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		const uwuText = this.convertString(message.content);
 		if (uwuText.length > 1999) {
 			return interaction.editReply({
-				content: 'Text is too long (>2000 characters)'
+				content: 'Text is too long (more than 2000 characters)'
 			});
 		}
 

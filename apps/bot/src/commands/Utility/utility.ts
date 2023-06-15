@@ -1,7 +1,7 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { getGuildIcon } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotModules } from '#types/Enums';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
@@ -9,9 +9,10 @@ import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilitySettings } from '@kbotdev/database';
 import type { UtilityModule } from '#modules/UtilityModule';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Utility,
 	description: 'Edit the settings of the utility module.',
+	preconditions: ['Defer'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -20,10 +21,14 @@ import type { UtilityModule } from '#modules/UtilityModule';
 				{ label: '/utility toggle <value>', description: 'Enable or disable the utility module' }, //
 				{ label: '/utility settings', description: 'Show the current settings' }
 			]);
-	}
+	},
+	subcommands: [
+		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
+		{ name: 'settings', chatInputRun: 'chatInputSettings' }
+	]
 })
-export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+export class UtilityCommand extends KBotSubcommand<UtilityModule> {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -54,19 +59,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle':
-				return this.chatInputToggle(interaction);
-			case 'settings':
-				return this.chatInputSettings(interaction);
-			default:
-				return this.unknownSubcommand(interaction);
-		}
-	}
-
-	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -87,13 +80,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {
+	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()

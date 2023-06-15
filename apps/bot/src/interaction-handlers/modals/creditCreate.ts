@@ -2,9 +2,9 @@ import { EmbedColors } from '#utils/constants';
 import { CreditCustomIds, CreditFields, CreditType } from '#utils/customIds';
 import { validCustomId } from '#utils/decorators';
 import { KBotErrors } from '#types/Enums';
-import { fetchChannel, getResourceFromType } from '#utils/discord';
+import { buildCustomId, fetchChannel, getResourceFromType, parseCustomId } from '#utils/discord';
 import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
-import { buildCustomId, isNullOrUndefined, parseCustomId } from '#utils/functions';
+import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
@@ -13,6 +13,7 @@ import type { Credit, CreditModal } from '#types/CustomIds';
 import type { APIEmbedField, GuildTextBasedChannel } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
+	name: CreditCustomIds.ResourceModalCreate,
 	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
 })
 export class ModalHandler extends InteractionHandler {
@@ -68,7 +69,7 @@ export class ModalHandler extends InteractionHandler {
 			]
 		});
 
-		await interaction.defaultReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
+		await interaction.successReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
 	}
 
 	@validCustomId(CreditCustomIds.ResourceModalCreate)

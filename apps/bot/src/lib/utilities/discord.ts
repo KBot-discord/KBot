@@ -1,9 +1,9 @@
-import { isNullOrUndefined } from '#utils/functions';
+import { checkDepth, isNullOrUndefined } from '#utils/functions';
 import { CreditType } from '#utils/customIds';
 import { BlankSpace, EmbedColors, GuildEmoteSlots, GuildSoundboardSlots, GuildStickerSlots, KBotEmoji } from '#utils/constants';
 import { EmbedBuilder, MessageType, PermissionFlagsBits, User, isJSONEncodable } from 'discord.js';
 import { roleMention, time, userMention } from '@discordjs/builders';
-import { container } from '@sapphire/framework';
+import { UserError, container } from '@sapphire/framework';
 import { MessageLinkRegex } from '@sapphire/discord.js-utilities';
 import type { AnyInteraction } from '@sapphire/discord.js-utilities';
 import type {
@@ -24,6 +24,60 @@ import type {
 import type { ImageURLOptions } from '@discordjs/rest';
 import type { LoginData } from '@sapphire/plugin-api';
 import type { FormattedGuild, TransformedLoginData } from '#types/Api';
+
+/**
+ * Builds a custom ID and appends extra data.
+ * @param prefix - The prefix of the custom ID
+ * @param data - The data to add
+ */
+export function buildCustomId<T extends Record<string, unknown> = Record<string, unknown>>(prefix: string, data?: T): string {
+	if (isNullOrUndefined(data)) return prefix;
+	if (checkDepth(data) > 1) {
+		throw new UserError({
+			identifier: 'INVALID_DEPTH',
+			message: 'Data can only have a depth of 1'
+		});
+	}
+
+	const values = Object.entries(data as Record<string, string>) //
+		.map(([key, val]) => `${key}:${val}`);
+
+	const result = `${prefix};${values.toString()}`;
+	if (result.length > 100) {
+		throw new UserError({
+			identifier: 'INVALUD_CUSTOMID',
+			message: 'Custom IDs can only have a length of 100'
+		});
+	}
+
+	return result;
+}
+
+/**
+ * Parses a custom ID and returns the prefix and data.
+ * @param customId - The custom ID to parse
+ */
+export function parseCustomId<T = Record<string, unknown>>(customId: string): { prefix: string; data: T } {
+	const { 0: prefix, 1: data } = customId.split(';');
+
+	const parsedData = data
+		.split(',') //
+		.reduce<Record<string, unknown>>((acc, cur) => {
+			const [key, val] = cur.split(':');
+
+			if (val === 'undefined') {
+				acc[key] = undefined;
+			} else if (val === 'null') {
+				acc[key] = null;
+			} else {
+				acc[key] = val;
+			}
+
+			return acc;
+		}, {}) as T;
+
+	return { prefix, data: parsedData };
+}
 
 /**
  * Converts a value to JSON if it is encodeable.
@@ -73,6 +127,36 @@ export const getGuildStickerSlots = (tier: GuildPremiumTier): number => GuildSti
 export const getGuildSoundboardSlots = (tier: GuildPremiumTier): number => GuildSoundboardSlots[tier];
 
 /**
+ * Calcuate how many emoji slots are left in the guild.
+ * @param guild - The guild
+ */
+export function calculateEmoteSlots(guild: Guild): { staticSlots: number; animatedSlots: number; totalSlots: number } {
+	const allEmojis = guild.emojis.cache;
+	const totalSlots = getGuildEmoteSlots(guild.premiumTier);
+	const animatedEmojiCount = allEmojis.filter((e) => Boolean(e.animated)).size;
+
+	return {
+		staticSlots: totalSlots - (allEmojis.size - animatedEmojiCount),
+		animatedSlots: totalSlots - animatedEmojiCount,
+		totalSlots
+	};
+}
+
+/**
+ * Calcuate how many sticker slots are left in the guild.
+ * @param guild - The guild
+ */
+export function calculateStickerSlots(guild: Guild): { slotsLeft: number; totalSlots: number } {
+	const allStickers = guild.stickers.cache;
+	const totalSlots = getGuildStickerSlots(guild.premiumTier);
+
+	return {
+		slotsLeft: totalSlots - allStickers.size,
+		totalSlots
+	};
+}
+
+/**
  * Get the first attachment from a message.
  * @param message - The message
  */
@@ -95,6 +179,7 @@ export async function transformLoginData(data: LoginData): Promise<TransformedLo
 
 	const formattedUser = {
 		id: user.id,
+		global_name: user.global_name,
 		username: user.username,
 		discriminator: user.discriminator,
 		avatar: getUserAvatarUrl(user)

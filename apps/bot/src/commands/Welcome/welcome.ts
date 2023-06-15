@@ -1,8 +1,8 @@
 import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
 import { fetchChannel, getGuildIcon } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
 import { isNullOrUndefined } from '#utils/functions';
 import { KBotModules } from '#types/Enums';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits, channelMention } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
@@ -10,9 +10,10 @@ import type { WelcomeModule } from '#modules/WelcomeModule';
 import type { APIEmbedField, ColorResolvable, InteractionEditReplyOptions } from 'discord.js';
 import type { WelcomeSettings } from '@kbotdev/database';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Welcome,
 	description: 'Edit the settings of the welcome module.',
+	preconditions: ['Defer'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -30,10 +31,17 @@ import type { WelcomeSettings } from '@kbotdev/database';
 				{ label: '/welcome test', description: 'Test the welcome message' },
 				{ label: '/welcome settings', description: 'Show the current settings' }
 			]);
-	}
+	},
+	subcommands: [
+		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
+		{ name: 'set', chatInputRun: 'chatInputSet' },
+		{ name: 'unset', chatInputRun: 'chatInputUnset' },
+		{ name: 'test', chatInputRun: 'chatInputTest' },
+		{ name: 'settings', chatInputRun: 'chatInputSettings' }
+	]
 })
-export class EventsCommand extends KBotCommand<WelcomeModule> {
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+export class EventsCommand extends KBotSubcommand<WelcomeModule> {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -152,25 +160,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle':
-				return this.chatInputToggle(interaction);
-			case 'set':
-				return this.chatInputSet(interaction);
-			case 'unset':
-				return this.chatInputUnset(interaction);
-			case 'test':
-				return this.chatInputTest(interaction);
-			case 'settings':
-				return this.chatInputSettings(interaction);
-			default:
-				return this.unknownSubcommand(interaction);
-		}
-	}
-
-	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -191,7 +181,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		});
 	}
 
-	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSet(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const channel = interaction.options.getChannel('channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
 		const message = interaction.options.getString('message');
 		const title = interaction.options.getString('title');
@@ -215,7 +205,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const channel = interaction.options.getBoolean('channel');
 		const message = interaction.options.getBoolean('message');
 		const title = interaction.options.getBoolean('title');
@@ -235,7 +225,7 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputTest(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputTest(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { member } = interaction;
 
 		const settings = await this.module.settings.get(interaction.guildId);
@@ -270,13 +260,13 @@ export class EventsCommand extends KBotCommand<WelcomeModule> {
 		return interaction.editReply(options);
 	}
 
-	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: WelcomeSettings | null): Promise<unknown> {
+	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: WelcomeSettings | null): Promise<unknown> {
 		const { members } = interaction.guild;
 
 		const bot = await members.fetchMe();

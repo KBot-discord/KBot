@@ -1,33 +1,15 @@
-import { EmbedColors, EmojiRegex, UrlRegex } from '#utils/constants';
-import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '#utils/customIds';
-import { attachmentFromMessage, getGuildEmoteSlots } from '#utils/discord';
+import { EmojiRegex, UrlRegex } from '#utils/constants';
+import { ResourceCustomIds, ResourceFields } from '#utils/customIds';
+import { attachmentFromMessage, buildCustomId, calculateEmoteSlots } from '#utils/discord';
 import { KBotCommand } from '#extensions/KBotCommand';
-import { buildCustomId, fetchBase64Image, isNullOrUndefined } from '#utils/functions';
+import { fetchBase64Image, isNullOrUndefined } from '#utils/functions';
 import { KBotModules } from '#types/Enums';
-import {
-	ActionRowBuilder,
-	ApplicationCommandType,
-	ButtonBuilder,
-	ButtonStyle,
-	EmbedBuilder,
-	ModalBuilder,
-	PermissionFlagsBits,
-	TextInputBuilder,
-	TextInputStyle
-} from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandType, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { Time } from '@sapphire/duration';
-import type { Credit } from '#types/CustomIds';
-import type { Guild, Message, ModalSubmitInteraction } from 'discord.js';
+import type { AddResourceModal, EmojiData } from '#types/CustomIds';
+import type { Message } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { InteractionResponseUnion } from '#types/Augments';
-
-type EmojiData = {
-	url: string;
-	animated: boolean;
-	name?: string;
-};
 
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Utility,
@@ -72,104 +54,21 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			);
 		}
 
-		const { staticSlots, animatedSlots, totalSlots } = this.calculateSlots(interaction.guild);
-
+		const { staticSlots, animatedSlots } = calculateEmoteSlots(interaction.guild);
 		if (emoji.animated && animatedSlots === 0) {
 			return interaction.errorReply('No animated emoji slots are left.', {
 				tryEphemeral: true
 			});
 		}
-
 		if (!emoji.animated && staticSlots === 0) {
 			return interaction.errorReply('No static emoji slots are left.', {
 				tryEphemeral: true
 			});
 		}
 
-		const slotsLeft = emoji.animated
-			? `**Animated emote slots left:** ${animatedSlots - 1}/${totalSlots}`
-			: `**Static emote slots left:** ${staticSlots - 1}/${totalSlots}`;
+		await this.container.utility.setResourceCache(message.id, interaction.user.id, emoji);
 
-		try {
-			await interaction.showModal(this.buildModal(emoji.name));
-
-			return interaction //
-				.awaitModalSubmit({
-					filter: (i: ModalSubmitInteraction) => i.customId === ResourceCustomIds.Name,
-					time: Time.Minute * 14.5
-				})
-				.then(async (modalInteraction) => this.handleSubmit(modalInteraction, emoji, slotsLeft))
-				.catch(async () =>
-					interaction.errorReply('The modal has timed out.', {
-						tryEphemeral: true
-					})
-				);
-		} catch {
-			return interaction.errorReply('There was an error when trying to add the emoji.', {
-				tryEphemeral: true
-			});
-		}
-	}
-
-	/**
-	 * Handle the submission of the emote name modal
-	 * @param modal - The modal interaction
-	 * @param emojiData - The emoji data
-	 * @param slotsLeft - Info about the guild's emoji slots
-	 */
-	private async handleSubmit(modal: ModalSubmitInteraction<'cached'>, emojiData: EmojiData, slotsLeft: string): Promise<InteractionResponseUnion> {
-		const embed = new EmbedBuilder();
-		const { url } = emojiData;
-
-		const emoteName = modal.fields.getTextInputValue(ResourceFields.Name);
-		if (!/^\w+$/.test(emoteName)) {
-			return modal.errorReply('That is not a valid emote name.', {
-				tryEphemeral: true
-			});
-		}
-
-		const newEmoji = await modal.guild.emojis.create({ attachment: url, name: emoteName });
-
-		if (url.startsWith('https')) {
-			embed.setThumbnail(url);
-		}
-
-		return modal.reply({
-			embeds: [
-				embed
-					.setColor(EmbedColors.Success) //
-					.setDescription(`**${emoteName}** has been added\n\n${slotsLeft}`)
-			],
-			components: [
-				new ActionRowBuilder<ButtonBuilder>().addComponents([
-					new ButtonBuilder()
-						.setCustomId(
-							buildCustomId<Credit>(CreditCustomIds.Create, {
-								ri: newEmoji.id,
-								t: CreditType.Emote
-							})
-						)
-						.setLabel('Add to credits channel')
-						.setStyle(ButtonStyle.Success)
-				])
-			]
-		});
-	}
-
-	/**
-	 * Calcuate how many emoji slots are left in the guild.
-	 * @param guild - The guild
-	 */
-	private calculateSlots(guild: Guild): { staticSlots: number; animatedSlots: number; totalSlots: number } {
-		const allEmojis = guild.emojis.cache;
-		const totalSlots = getGuildEmoteSlots(guild.premiumTier);
-		const animatedEmojiCount = allEmojis.filter((e) => Boolean(e.animated)).size;
-
-		return {
-			staticSlots: totalSlots - (allEmojis.size - animatedEmojiCount),
-			animatedSlots: totalSlots - animatedEmojiCount,
-			totalSlots
-		};
+		return interaction.showModal(this.buildModal(message.id, interaction.user.id, emoji.name));
 	}
 
 	/**
@@ -213,7 +112,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		return null;
 	}
 
-	private buildModal(emojiName?: string): ModalBuilder {
+	private buildModal(messageId: string, userId: string, emojiName?: string): ModalBuilder {
 		const textBuilder = new TextInputBuilder()
 			.setCustomId(ResourceFields.Name)
 			.setLabel('Emote name')
@@ -225,7 +124,12 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 		if (emojiName) textBuilder.setValue(emojiName);
 
 		return new ModalBuilder() //
-			.setCustomId(ResourceCustomIds.Name)
+			.setCustomId(
+				buildCustomId<AddResourceModal>(ResourceCustomIds.Emote, {
+					mi: messageId,
+					ui: userId
+				})
+			)
 			.setTitle('Emote name')
 			.addComponents(
 				new ActionRowBuilder<TextInputBuilder>() //

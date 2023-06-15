@@ -6,10 +6,13 @@ export class EventSettingsService {
 	private readonly repository: EventSettingsRepository;
 
 	public constructor() {
+		const { prisma, redis, config } = container;
+
 		this.repository = new EventSettingsRepository({
-			database: container.prisma,
+			database: prisma,
 			cache: {
-				client: container.redis
+				client: redis,
+				defaultExpiry: config.db.cacheExpiry
 			}
 		});
 	}

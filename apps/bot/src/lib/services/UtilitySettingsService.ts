@@ -6,10 +6,13 @@ export class UtilitySettingsService {
 	private readonly repository: UtilitySettingsRepository;
 
 	public constructor() {
+		const { prisma, redis, config } = container;
+
 		this.repository = new UtilitySettingsRepository({
-			database: container.prisma,
+			database: prisma,
 			cache: {
-				client: container.redis
+				client: redis,
+				defaultExpiry: config.db.cacheExpiry
 			}
 		});
 	}

@@ -1,23 +1,27 @@
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
-import { KBotCommand } from '#extensions/KBotCommand';
+import { KBotModules } from '#types/Enums';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord.js';
 import type { DevModule } from '#modules/DevModule';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Dev,
 	description: 'Manage the guild blacklist',
-	preconditions: ['BotOwnerOnly'],
+	preconditions: ['BotOwnerOnly', 'Defer'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('dev_blacklist');
-	}
+	},
+	subcommands: [
+		{ name: 'add', chatInputRun: 'chatInputAdd' },
+		{ name: 'remove', chatInputRun: 'chatInputRemove' },
+		{ name: 'is_blacklisted', chatInputRun: 'chatInputIsBlacklisted' }
+	]
 })
-export class DevCommand extends KBotCommand<DevModule> {
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+export class DevCommand extends KBotSubcommand<DevModule> {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -65,25 +69,7 @@ export class DevCommand extends KBotCommand<DevModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-
-		switch (interaction.options.getSubcommand(true)) {
-			case 'add':
-				return this.chatInputAdd(interaction);
-			case 'remove':
-				return this.chatInputRemove(interaction);
-			case 'is_blacklisted':
-				return this.chatInputIsBlacklisted(interaction);
-			default:
-				return interaction.client.emit(KBotErrors.MissingSubcommandHandler, {
-					interaction,
-					error: new MissingSubcommandHandlerError({ command: this })
-				});
-		}
-	}
-
-	public async chatInputAdd(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputAdd(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		await this.container.prisma.blacklist.upsert({
@@ -100,7 +86,7 @@ export class DevCommand extends KBotCommand<DevModule> {
 		return interaction.defaultReply(`${guildId} added to the blacklist.`);
 	}
 
-	public async chatInputRemove(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputRemove(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		await this.container.prisma.blacklist
@@ -112,7 +98,7 @@ export class DevCommand extends KBotCommand<DevModule> {
 		return interaction.defaultReply(`${guildId} added to the blacklist.`);
 	}
 
-	public async chatInputIsBlacklisted(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputIsBlacklisted(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const guildId = interaction.options.getString('guild', true);
 
 		const result = await this.container.prisma.blacklist.count({

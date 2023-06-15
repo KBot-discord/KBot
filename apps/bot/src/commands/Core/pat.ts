@@ -28,6 +28,7 @@ type Dimentions = {
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Core,
 	description: 'Creates a pat gif of the member.',
+	preconditions: ['Defer'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -54,8 +55,6 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 	}
 
 	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user', true);
 		const member = await interaction.guild.members.fetch(user.id);
 		const avatar = getMemberAvatarUrl(member);

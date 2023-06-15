@@ -4,7 +4,9 @@ import { Events, Listener, Result } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { green, red, yellowBright } from 'colorette';
 import type { DocumentCommand } from '@kbotdev/meili';
-import type { Modules } from '@kbotdev/plugin-modules';
+import type { Module, Modules } from '@kbotdev/plugin-modules';
+import type { KBotCommand } from '#extensions/KBotCommand';
+import type { KBotSubcommand } from '#extensions/KBotSubcommand';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.ClientReady,
@@ -12,7 +14,7 @@ import type { Modules } from '@kbotdev/plugin-modules';
 })
 export class ClientListener extends Listener<typeof Events.ClientReady> {
 	private readonly commandsToFilter = ['help'];
-	private readonly categoriesToFilter = ['Dev'];
+	private readonly modulesToFilter = [KBotModules.Dev] as string[];
 
 	private readonly modules = [
 		{ key: 'Core', value: KBotModules.Core }, //
@@ -152,11 +154,11 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 	private async syncMeili(): Promise<void> {
 		const { logger } = this.container;
 
-		const commands = this.container.stores.get('commands');
+		const commands = this.container.stores.get('commands').toJSON() as (KBotCommand<Module> | KBotSubcommand<Module>)[];
+
 		const documents: DocumentCommand[] = commands
-			.toJSON()
 			.filter((cmd) => !this.commandsToFilter.includes(cmd.name))
-			.filter((cmd) => cmd.category && !this.categoriesToFilter.includes(cmd.category))
+			.filter((cmd) => !this.modulesToFilter.includes(cmd.module.name))
 			.map((command, index) => ({
 				id: String(index),
 				name: command.name,

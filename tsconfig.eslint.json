@@ -8,8 +8,8 @@
 		"packages/**/*.ts",
 		"scripts/*.ts",
 		".eslintrc.cjs",
-		"packages/eslint-config/**/*.js",
-		"packages/prettier-config/**/*.js"
+		"vitest.config.ts",
+		"vitest.workspace.ts"
 	],
 	"exclude": ["node_modules"]
 }

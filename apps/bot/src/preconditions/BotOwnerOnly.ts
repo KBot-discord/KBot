@@ -15,8 +15,8 @@ export class BotOwnerPrecondition extends Precondition {
 		return this.isBotOwner(interaction.user.id);
 	}
 
-	public override messageRun(interaction: Message): PreconditionResult {
-		return this.isBotOwner(interaction.author.id);
+	public override messageRun(message: Message): PreconditionResult {
+		return this.isBotOwner(message.author.id);
 	}
 
 	private isBotOwner(userId: string): PreconditionResult {

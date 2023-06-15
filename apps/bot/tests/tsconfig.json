@@ -2,7 +2,13 @@
 	"extends": "../../../tsconfig.base.json",
 	"compilerOptions": {
 		"noEmit": true,
-		"incremental": false
+		"incremental": false,
+		"baseUrl": "./",
+		"paths": {
+			"#src/*": ["../src/*"],
+			"#mocks": ["./mocks/index.ts"],
+			"#mocks/*": ["./mocks/*"]
+		}
 	},
 	"include": ["./", "../src/**/*"],
 	"exclude": ["../dist/**/*"]

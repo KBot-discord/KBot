@@ -1,24 +1,28 @@
-import { KBotErrors, KBotModules } from '#types/Enums';
+import { KBotModules } from '#types/Enums';
 import { EmbedColors } from '#utils/constants';
-import { MissingSubcommandHandlerError } from '#structures/errors/MissingSubcommandHandlerError';
-import { KBotCommand } from '#extensions/KBotCommand';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { DevModule } from '#modules/DevModule';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Dev,
 	description: 'Manage the Holodex Twitch conflict list',
-	preconditions: ['BotOwnerOnly'],
+	preconditions: ['BotOwnerOnly', 'Defer'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('dev_holodex');
-	}
+	},
+	subcommands: [
+		{ name: 'add_conflict', chatInputRun: 'chatInputAddConflict' },
+		{ name: 'remove_conflict', chatInputRun: 'chatInputRemoveConflict' },
+		{ name: 'conflict_list', chatInputRun: 'chatInputConflictList' }
+	]
 })
-export class DevCommand extends KBotCommand<DevModule> {
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+export class DevCommand extends KBotSubcommand<DevModule> {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -60,25 +64,7 @@ export class DevCommand extends KBotCommand<DevModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-
-		switch (interaction.options.getSubcommand(true)) {
-			case 'add_conflict':
-				return this.chatInputAddConflict(interaction);
-			case 'remove_conflict':
-				return this.chatInputRemoveConflict(interaction);
-			case 'conflict_list':
-				return this.chatInputConflictList(interaction);
-			default:
-				return interaction.client.emit(KBotErrors.MissingSubcommandHandler, {
-					interaction,
-					error: new MissingSubcommandHandlerError({ command: this })
-				});
-		}
-	}
-
-	public async chatInputAddConflict(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputAddConflict(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const channelId = interaction.options.getString('channel', true);
 
 		await this.container.prisma.twitchConflict.upsert({
@@ -90,7 +76,7 @@ export class DevCommand extends KBotCommand<DevModule> {
 		return interaction.defaultReply(`${channelId} will be filtered out.`);
 	}
 
-	public async chatInputRemoveConflict(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputRemoveConflict(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const channelId = interaction.options.getString('channel', true);
 
 		await this.container.prisma.twitchConflict
@@ -102,7 +88,7 @@ export class DevCommand extends KBotCommand<DevModule> {
 		return interaction.defaultReply(`${channelId} added to the blacklist.`);
 	}
 
-	public async chatInputConflictList(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputConflictList(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const result = await this.container.prisma.twitchConflict.findMany();
 
 		const description: string =

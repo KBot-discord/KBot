@@ -12,6 +12,9 @@ jobs:
   checks:
     name: Checks
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
     steps:
       - name: Check out Git repository
@@ -31,17 +34,16 @@ jobs:
       - name: Install dependencies
         run: yarn workspaces focus @kbotdev/apps @kbotdev/bot
 
-      - name: Run build
-        run: yarn turbo build --filter=@kbotdev/bot
-
       - name: Lint
         run: yarn turbo lint --filter=@kbotdev/bot
+
+      - name: Run build
+        run: yarn turbo build --filter=@kbotdev/bot
 
       - name: Run tests
         run: yarn turbo test --filter=@kbotdev/bot
 
-      - name: Save coverage report
-        uses: actions/upload-artifact@v3
+      - name: Upload test coverage reports
+        uses: codecov/codecov-action@v3
         with:
-          name: nodejs-coverage
-          path: coverage/
+          token: ${{ secrets.CODECOV_TOKEN }}

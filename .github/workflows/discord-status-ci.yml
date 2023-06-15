@@ -11,8 +11,10 @@ defaults:
     working-directory: apps/discord-status
 
 jobs:
-  test:
+  checks:
+    name: Checks
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3

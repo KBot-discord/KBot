@@ -6,10 +6,13 @@ export class CoreSettingsService {
 	private readonly repository: CoreSettingsRepository;
 
 	public constructor() {
+		const { prisma, redis, config } = container;
+
 		this.repository = new CoreSettingsRepository({
-			database: container.prisma,
+			database: prisma,
 			cache: {
-				client: container.redis
+				client: redis,
+				defaultExpiry: config.db.cacheExpiry
 			}
 		});
 	}

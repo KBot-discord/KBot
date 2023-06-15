@@ -1,8 +1,8 @@
 import { EmbedColors, KBotEmoji } from '#utils/constants';
 import { fetchChannel, getGuildIcon } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
 import { isNullOrUndefined } from '#utils/functions';
 import { KBotModules } from '#types/Enums';
+import { KBotSubcommand } from '#extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
@@ -11,9 +11,10 @@ import type { APIEmbedField } from 'discord.js';
 import type { ModerationSettings } from '@kbotdev/database';
 import type { ModerationModule } from '#modules/ModerationModule';
 
-@ApplyOptions<KBotCommand.Options>({
+@ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Moderation,
 	description: 'Edit the settings of the moderation module.',
+	preconditions: ['Defer'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -37,10 +38,17 @@ import type { ModerationModule } from '#modules/ModerationModule';
 				},
 				{ label: '/moderation settings', description: 'Show the current settings' }
 			]);
-	}
+	},
+	subcommands: [
+		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
+		{ name: 'set', chatInputRun: 'chatInputSet' },
+		{ name: 'unset', chatInputRun: 'chatInputUnset' },
+		{ name: 'permissions', chatInputRun: 'chatInputPermissions' },
+		{ name: 'settings', chatInputRun: 'chatInputSettings' }
+	]
 })
-export class ModerationCommand extends KBotCommand<ModerationModule> {
-	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
+export class ModerationCommand extends KBotSubcommand<ModerationModule> {
+	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
 		registry.registerChatInputCommand(
 			(builder) =>
 				builder //
@@ -99,25 +107,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		);
 	}
 
-	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-		switch (interaction.options.getSubcommand(true)) {
-			case 'toggle':
-				return this.chatInputToggle(interaction);
-			case 'set':
-				return this.chatInputSet(interaction);
-			case 'unset':
-				return this.chatInputUnset(interaction);
-			case 'permissions':
-				return this.chatInputPermissions(interaction);
-			case 'settings':
-				return this.chatInputSettings(interaction);
-			default:
-				return this.unknownSubcommand(interaction);
-		}
-	}
-
-	public async chatInputToggle(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputToggle(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -141,7 +131,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		});
 	}
 
-	public async chatInputSet(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSet(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const reportChannel = interaction.options.getChannel('report_channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -151,7 +141,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputUnset(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const reportChannel = interaction.options.getBoolean('report_channel');
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
@@ -161,7 +151,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		return this.showSettings(interaction, settings);
 	}
 
-	public async chatInputPermissions(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputPermissions(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { members } = interaction.guild;
 
 		const settings = await this.module.settings.get(interaction.guildId);
@@ -218,7 +208,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		});
 	}
 
-	public async chatInputSettings(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
+	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		return this.showSettings(interaction, settings);
@@ -228,7 +218,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		return bool ? KBotEmoji.GreenCheck : KBotEmoji.RedX;
 	}
 
-	private async showSettings(interaction: KBotCommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {
+	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {
 		const embed = new EmbedBuilder()
 			.setColor(EmbedColors.Default)
 			.setAuthor({ name: 'Moderation module settings', iconURL: getGuildIcon(interaction.guild) })
