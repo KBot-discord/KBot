@@ -105,7 +105,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 			return {
 				url: imageData.url,
-				animated: imageData.fileType === '.gif'
+				animated: imageData.fileType === 'gif'
 			};
 		}
 
