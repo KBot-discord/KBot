@@ -6,7 +6,7 @@ import type { StageInstance } from 'discord.js';
 @ApplyOptions<Listener.Options>({
 	event: Events.StageInstanceDelete
 })
-export class StageListener extends Listener {
+export class StageListener extends Listener<typeof Events.StageInstanceDelete> {
 	public async run(stageInstance: StageInstance): Promise<void> {
 		const { events } = this.container;
 

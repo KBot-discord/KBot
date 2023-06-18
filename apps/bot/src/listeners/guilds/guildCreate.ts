@@ -5,7 +5,7 @@ import type { Guild } from 'discord.js';
 @ApplyOptions<Listener.Options>({
 	event: Events.GuildCreate
 })
-export class GuildListener extends Listener {
+export class GuildListener extends Listener<typeof Events.GuildCreate> {
 	public async run(guild: Guild): Promise<void> {
 		const isBlacklisted = await this.container.prisma.blacklist.findUnique({
 			where: { guildId: guild.id }

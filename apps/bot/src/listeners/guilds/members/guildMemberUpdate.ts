@@ -2,13 +2,13 @@ import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
 import { isNullOrUndefined } from '#utils/functions';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import type { GuildMember } from 'discord.js';
+import type { GuildMember, PartialGuildMember } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.GuildMemberUpdate
 })
-export class GuildListener extends Listener {
-	public async run(oldMember: GuildMember, newMember: GuildMember): Promise<void> {
+export class GuildListener extends Listener<typeof Events.GuildMemberUpdate> {
+	public async run(oldMember: GuildMember | PartialGuildMember, newMember: GuildMember): Promise<void> {
 		const { moderation } = this.container;
 
 		if (
