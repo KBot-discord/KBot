@@ -7,9 +7,9 @@ import type { Guild, GuildScheduledEvent, VoiceBasedChannel } from 'discord.js';
 @ApplyOptions<Listener.Options>({
 	event: Events.GuildScheduledEventUpdate
 })
-export class GuildListener extends Listener {
-	public async run(oldEvent: GuildScheduledEvent, newEvent: GuildScheduledEvent): Promise<void> {
-		if (isNullOrUndefined(oldEvent.channel) || isNullOrUndefined(oldEvent.guild)) return;
+export class GuildListener extends Listener<typeof Events.GuildScheduledEventUpdate> {
+	public async run(oldEvent: GuildScheduledEvent | null, newEvent: GuildScheduledEvent): Promise<void> {
+		if (isNullOrUndefined(oldEvent) || isNullOrUndefined(oldEvent.channel) || isNullOrUndefined(oldEvent.guild)) return;
 
 		if (oldEvent.entityType !== GuildScheduledEventEntityType.External && newEvent.entityType === GuildScheduledEventEntityType.External) {
 			return this.handleInternalToExternal(oldEvent.guild, oldEvent.channel);
