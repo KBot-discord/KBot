@@ -9,7 +9,7 @@ import type { KaraokeUser } from '@kbotdev/database';
 @ApplyOptions<Listener.Options>({
 	event: Events.VoiceStateUpdate
 })
-export class VoiceListener extends Listener {
+export class VoiceListener extends Listener<typeof Events.VoiceStateUpdate> {
 	public async run(oldState: VoiceState, newState: VoiceState): Promise<void> {
 		const { events, validator } = this.container;
 		const client = await newState.guild.members.fetchMe();

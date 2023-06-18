@@ -8,7 +8,7 @@ import type { GuildMember } from 'discord.js';
 @ApplyOptions<Listener.Options>({
 	event: Events.GuildMemberAdd
 })
-export class GuildListener extends Listener {
+export class GuildListener extends Listener<typeof Events.GuildMemberAdd> {
 	public async run(member: GuildMember): Promise<void> {
 		const { moderation } = this.container;
 

@@ -7,7 +7,7 @@ import type { GuildScheduledEvent } from 'discord.js';
 @ApplyOptions<Listener.Options>({
 	event: Events.GuildScheduledEventDelete
 })
-export class GuildListener extends Listener {
+export class GuildListener extends Listener<typeof Events.GuildScheduledEventDelete> {
 	public async run(guildScheduledEvent: GuildScheduledEvent): Promise<void> {
 		const { events } = this.container;
 
