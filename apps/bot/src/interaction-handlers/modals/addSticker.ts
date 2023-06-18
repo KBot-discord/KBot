@@ -33,7 +33,7 @@ export class ModalHandler extends InteractionHandler {
 			embeds: [
 				embed
 					.setColor(EmbedColors.Success) //
-					.setDescription(`**${stickerName}** has been added\n\n**Sticker slots left:** ${slotsLeft - 1}/${totalSlots}`)
+					.setDescription(`**${stickerName}** has been added\n\n**Sticker slots left:** ${slotsLeft}/${totalSlots}`)
 			],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>().addComponents([
