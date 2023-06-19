@@ -4,7 +4,7 @@ import { EmbedColors } from '#utils/constants';
 import { buildCustomId, calculateEmoteSlots, parseCustomId } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import type { AddResourceModal, Credit, EmojiData } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -24,7 +24,25 @@ export class ModalHandler extends InteractionHandler {
 		const embed = new EmbedBuilder();
 		const { url, animated } = emoteData;
 
-		const newEmoji = await interaction.guild.emojis.create({ attachment: url, name: emoteName });
+		const newEmoji = await interaction.guild.emojis
+			.create({
+				attachment: url,
+				name: emoteName
+			})
+			.catch((e) => (e instanceof Error ? e : null));
+		if (!newEmoji || newEmoji instanceof Error) {
+			if (newEmoji instanceof DiscordAPIError && newEmoji.code === 50045) {
+				await interaction.errorReply('The file size of that emoji is too big to upload.', {
+					tryEphemeral: true
+				});
+			} else {
+				await interaction.errorReply('Something went wrong when uploading the emoji.', {
+					tryEphemeral: true
+				});
+			}
+
+			return;
+		}
 
 		if (url.startsWith('https')) {
 			embed.setThumbnail(url);
