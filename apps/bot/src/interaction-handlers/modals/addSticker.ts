@@ -4,7 +4,7 @@ import { EmbedColors } from '#utils/constants';
 import { buildCustomId, calculateStickerSlots, parseCustomId } from '#utils/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import type { AddResourceModal, Credit, StickerData } from '#types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
@@ -17,11 +17,26 @@ export class ModalHandler extends InteractionHandler {
 		const { url } = stickerData;
 
 		const stickerName = interaction.fields.getTextInputValue(ResourceFields.Name);
-		const newSticker = await interaction.guild.stickers.create({
-			file: url,
-			name: stickerName,
-			tags: stickerName
-		});
+		const newSticker = await interaction.guild.stickers
+			.create({
+				file: url,
+				name: stickerName,
+				tags: stickerName
+			})
+			.catch((e) => (e instanceof Error ? e : null));
+		if (!newSticker || newSticker instanceof Error) {
+			if (newSticker instanceof DiscordAPIError && newSticker.code === 50045) {
+				await interaction.errorReply('The file size of that sticker is too big to upload.', {
+					tryEphemeral: true
+				});
+			} else {
+				await interaction.errorReply('Something went wrong when uploading the sticker.', {
+					tryEphemeral: true
+				});
+			}
+
+			return;
+		}
 
 		if (url.startsWith('https')) {
 			embed.setThumbnail(url);
