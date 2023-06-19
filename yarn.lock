@@ -1018,12 +1018,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/dom@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@floating-ui/dom@npm:1.4.0"
+"@floating-ui/dom@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@floating-ui/dom@npm:1.4.1"
   dependencies:
     "@floating-ui/core": ^1.3.1
-  checksum: 13b1ced52099199b64515c585f3228d00e164861d14458b2471673a96bf7c2b4beff05679629da833c3f4ef82eec3989b07c07fe5ef53672bbf0a43f5afca669
+  checksum: 5e0a27174d8e143670d3fbeffc927cc8f1824a08f4dacefa8fa1526ba4de2bffbd643efefd03cc68d3144ee110369bf5b726cc0198a6f07128a610d679130aec
   languageName: node
   linkType: hard
 
@@ -1180,7 +1180,7 @@ __metadata:
     "@kbotdev/eslint-config": ^0.1.1
     "@kbotdev/prettier-config": ^0.1.0
     "@kbotdev/ts-config": ^0.1.0
-    "@swc/core": ^1.3.64
+    "@swc/core": ^1.3.65
     "@types/node": ^20.3.1
     "@vitest/coverage-v8": ^0.32.2
     "@vitest/ui": ^0.32.2
@@ -1224,6 +1224,7 @@ __metadata:
     "@sentry/types": ^7.55.2
     "@skyra/gifenc": ^1.0.1
     "@types/humanize-duration": ^3.27.1
+    bufferutil: ^4.0.7
     bullmq: ^3.15.8
     canvas: 2.11.2
     canvas-constructor: ^7.0.1
@@ -1237,7 +1238,9 @@ __metadata:
     prom-client: ^14.2.0
     tsup: ^7.0.0
     typescript: ^5.1.3
+    utf-8-validate: ^6.0.3
     vitest: ^0.32.2
+    zlib-sync: ^0.1.8
   languageName: unknown
   linkType: soft
 
@@ -1342,7 +1345,7 @@ __metadata:
   dependencies:
     "@bufbuild/protoc-gen-connect-es": ^0.10.0
     "@bufbuild/protoc-gen-es": ^1.2.1
-    "@swc/core": ^1.3.64
+    "@swc/core": ^1.3.65
     eslint: ^8.43.0
     prettier: ^2.8.8
     tsup: ^7.0.0
@@ -1393,7 +1396,7 @@ __metadata:
     "@bufbuild/connect": ^0.10.0
     "@bufbuild/connect-node": ^0.10.0
     "@bufbuild/protobuf": ^1.2.1
-    "@floating-ui/dom": ^1.4.0
+    "@floating-ui/dom": ^1.4.1
     "@fortawesome/free-brands-svg-icons": ^6.4.0
     "@fortawesome/free-solid-svg-icons": ^6.4.0
     "@kbotdev/eslint-config": ^0.1.1
@@ -1405,7 +1408,7 @@ __metadata:
     "@sveltejs/vite-plugin-svelte": ^2.4.1
     "@tailwindcss/forms": ^0.5.3
     autoprefixer: ^10.4.14
-    discord-api-types: ^0.37.45
+    discord-api-types: ^0.37.46
     discord.js: ^14.11.0
     eslint: ^8.43.0
     eslint-plugin-svelte3: ^4.0.0
@@ -2058,90 +2061,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-darwin-arm64@npm:1.3.64"
+"@swc/core-darwin-arm64@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-darwin-arm64@npm:1.3.65"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-darwin-x64@npm:1.3.64"
+"@swc/core-darwin-x64@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-darwin-x64@npm:1.3.65"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.3.64"
+"@swc/core-linux-arm-gnueabihf@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.3.65"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.3.64"
+"@swc/core-linux-arm64-gnu@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.3.65"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-linux-arm64-musl@npm:1.3.64"
+"@swc/core-linux-arm64-musl@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-linux-arm64-musl@npm:1.3.65"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-linux-x64-gnu@npm:1.3.64"
+"@swc/core-linux-x64-gnu@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-linux-x64-gnu@npm:1.3.65"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-linux-x64-musl@npm:1.3.64"
+"@swc/core-linux-x64-musl@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-linux-x64-musl@npm:1.3.65"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.3.64"
+"@swc/core-win32-arm64-msvc@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.3.65"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.3.64"
+"@swc/core-win32-ia32-msvc@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.3.65"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core-win32-x64-msvc@npm:1.3.64"
+"@swc/core-win32-x64-msvc@npm:1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core-win32-x64-msvc@npm:1.3.65"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.3.64":
-  version: 1.3.64
-  resolution: "@swc/core@npm:1.3.64"
+"@swc/core@npm:^1.3.65":
+  version: 1.3.65
+  resolution: "@swc/core@npm:1.3.65"
   dependencies:
-    "@swc/core-darwin-arm64": 1.3.64
-    "@swc/core-darwin-x64": 1.3.64
-    "@swc/core-linux-arm-gnueabihf": 1.3.64
-    "@swc/core-linux-arm64-gnu": 1.3.64
-    "@swc/core-linux-arm64-musl": 1.3.64
-    "@swc/core-linux-x64-gnu": 1.3.64
-    "@swc/core-linux-x64-musl": 1.3.64
-    "@swc/core-win32-arm64-msvc": 1.3.64
-    "@swc/core-win32-ia32-msvc": 1.3.64
-    "@swc/core-win32-x64-msvc": 1.3.64
+    "@swc/core-darwin-arm64": 1.3.65
+    "@swc/core-darwin-x64": 1.3.65
+    "@swc/core-linux-arm-gnueabihf": 1.3.65
+    "@swc/core-linux-arm64-gnu": 1.3.65
+    "@swc/core-linux-arm64-musl": 1.3.65
+    "@swc/core-linux-x64-gnu": 1.3.65
+    "@swc/core-linux-x64-musl": 1.3.65
+    "@swc/core-win32-arm64-msvc": 1.3.65
+    "@swc/core-win32-ia32-msvc": 1.3.65
+    "@swc/core-win32-x64-msvc": 1.3.65
   peerDependencies:
     "@swc/helpers": ^0.5.0
   dependenciesMeta:
@@ -2168,7 +2171,7 @@ __metadata:
   peerDependenciesMeta:
     "@swc/helpers":
       optional: true
-  checksum: ea77168089a34dcec088ab81aef99301eba003b5ed3dca4039803050ba9344e754687f7d4fb4b3e40d22509658bdbdbac2f94f99c6f94051970566c857774371
+  checksum: 3c31cd8846e9f60265c53b812c91c76401023d5d8652e17804ec356e6719977111a0ce18da703adf3afc1648035864b54a6b282d8de1548860dda6fac15b2ea5
   languageName: node
   linkType: hard
 
@@ -3255,6 +3258,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bufferutil@npm:^4.0.7":
+  version: 4.0.7
+  resolution: "bufferutil@npm:4.0.7"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: f75aa87e3d1b99b87a95f60a855e63f70af07b57fb8443e75a2ddfef2e47788d130fdd46e3a78fd7e0c10176082b26dfbed970c5b8632e1cc299cafa0e93ce45
+  languageName: node
+  linkType: hard
+
 "builtin-modules@npm:^3.3.0":
   version: 3.3.0
   resolution: "builtin-modules@npm:3.3.0"
@@ -3990,10 +4003,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"discord-api-types@npm:^0.37.41, discord-api-types@npm:^0.37.45":
-  version: 0.37.45
-  resolution: "discord-api-types@npm:0.37.45"
-  checksum: 10cc44a1e9f340586cc3e1c86fd9a48b9b03ca8c28d9b244cfd0e7bc1251c92b516711794b0cfc810f4cb416056139faec961eedc21cfcc331c948270d31b5b0
+"discord-api-types@npm:^0.37.41, discord-api-types@npm:^0.37.46":
+  version: 0.37.46
+  resolution: "discord-api-types@npm:0.37.46"
+  checksum: 86da1a4ed1d57164fa7bbda10bc6126c72685e55b6ed8b30299406fc8cace721e78d3aebe0fe1b35039fad37be4d52a208c9e53f2abfde1bfc3d1aa034f8d264
   languageName: node
   linkType: hard
 
@@ -5171,15 +5184,15 @@ __metadata:
   linkType: hard
 
 "globby@npm:^13.1.3":
-  version: 13.1.4
-  resolution: "globby@npm:13.1.4"
+  version: 13.2.0
+  resolution: "globby@npm:13.2.0"
   dependencies:
     dir-glob: ^3.0.1
     fast-glob: ^3.2.11
     ignore: ^5.2.0
     merge2: ^1.4.1
     slash: ^4.0.0
-  checksum: e8bc13879972082d590cd1b0e27080d90d2e12fff7eeb2cee9329c29115ace14cc5b9f899e3d6beb136ba826307a727016658919a6f383e1511d698acee81741
+  checksum: 0a3dd786571788adef1c894f22112834cff5bbe061ae6e0a01c5118c39d44b3f1937ef1dae3f8b9bc24756eba84a0923e565b1ad9a4ec52831d7e2a04c035e75
   languageName: node
   linkType: hard
 
@@ -6772,6 +6785,17 @@ __metadata:
     node-gyp-build-optional-packages-optional: optional.js
     node-gyp-build-optional-packages-test: build-test.js
   checksum: bcb4537af15bcb3811914ea0db8f69284ca10db1cc7543a167a4c41ae4b9b5044b133f789fdadad0b7adc6931f6ae7def3c75b0bc7b05836881aae52400163e6
+  languageName: node
+  linkType: hard
+
+"node-gyp-build@npm:^4.3.0":
+  version: 4.6.0
+  resolution: "node-gyp-build@npm:4.6.0"
+  bin:
+    node-gyp-build: bin.js
+    node-gyp-build-optional: optional.js
+    node-gyp-build-test: build-test.js
+  checksum: 25d78c5ef1f8c24291f4a370c47ba52fcea14f39272041a90a7894cd50d766f7c8cb8fb06c0f42bf6f69b204b49d9be3c8fc344aac09714d5bdb95965499eb15
   languageName: node
   linkType: hard
 
@@ -8601,21 +8625,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tldts-core@npm:^6.0.7":
-  version: 6.0.7
-  resolution: "tldts-core@npm:6.0.7"
-  checksum: d1556b64aac8b31961d240cb5a3985c56a36f16b33ea669994739776f891f6329b248345fb3a0e9c440d045f517af3b87a166ff3063f82f4f5e292f9ed1edc7e
+"tldts-core@npm:^6.0.8":
+  version: 6.0.8
+  resolution: "tldts-core@npm:6.0.8"
+  checksum: c7ba552eb03cb1d4ebc08d48d5a81cf14f65efd9ef0d5b19724242dd45b596e0cf9c2be69140f658e931ac785f0e4e227f7c774a18ad7cd309a6057a5029f09d
   languageName: node
   linkType: hard
 
 "tldts@npm:^6.0.5":
-  version: 6.0.7
-  resolution: "tldts@npm:6.0.7"
+  version: 6.0.8
+  resolution: "tldts@npm:6.0.8"
   dependencies:
-    tldts-core: ^6.0.7
+    tldts-core: ^6.0.8
   bin:
     tldts: bin/cli.js
-  checksum: e842e6abb54406fc7524a4ff095723662651413dcae6ac1df4b7cb3dc326f8fc856f5134629e1b77a46ac9c1eb3df04d077de584e4b047f38e29045fca7965a2
+  checksum: 02908e6d5310c985598fd2c5beba245056a79b65a4c017228b33555bb8d17f55d670e248925c4910f6d4ff9a13e6a6e815a9bb26b87ff772062d195bdc4deed8
   languageName: node
   linkType: hard
 
@@ -9076,6 +9100,16 @@ __metadata:
   dependencies:
     punycode: ^2.1.0
   checksum: 7167432de6817fe8e9e0c9684f1d2de2bb688c94388f7569f7dbdb1587c9f4ca2a77962f134ec90be0cc4d004c939ff0d05acc9f34a0db39a3c797dada262633
+  languageName: node
+  linkType: hard
+
+"utf-8-validate@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "utf-8-validate@npm:6.0.3"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 5e21383c81ff7469c1912119ca69d07202d944c73ddd8a54b84dddcc546b939054e5101c78c294e494d206fe93bd43428adc635a0660816b3ec9c8ec89286ac4
   languageName: node
   linkType: hard
 
@@ -9574,5 +9608,15 @@ __metadata:
   version: 1.0.0
   resolution: "yocto-queue@npm:1.0.0"
   checksum: 2cac84540f65c64ccc1683c267edce396b26b1e931aa429660aefac8fbe0188167b7aee815a3c22fa59a28a58d898d1a2b1825048f834d8d629f4c2a5d443801
+  languageName: node
+  linkType: hard
+
+"zlib-sync@npm:^0.1.8":
+  version: 0.1.8
+  resolution: "zlib-sync@npm:0.1.8"
+  dependencies:
+    nan: ^2.17.0
+    node-gyp: latest
+  checksum: 3ee774339f50b49de764312b74d6ef090e85a9a2d6401e89f6eb1bd33dd59d644d2831c6811e01aa8a51d0ecf51d5f435bd7f551d68d40d3c360a8eebb555b6f
   languageName: node
   linkType: hard

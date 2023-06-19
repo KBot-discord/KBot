@@ -6,10 +6,10 @@ require (
 	entgo.io/ent v0.12.3
 	github.com/bufbuild/connect-go v1.8.0
 	github.com/bwmarrin/discordgo v0.27.1
-	github.com/getsentry/sentry-go v0.21.0
+	github.com/getsentry/sentry-go v0.22.0
 	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/robfig/cron/v3 v3.0.1
-	golang.org/x/net v0.10.0
+	golang.org/x/net v0.11.0
 	google.golang.org/protobuf v1.30.0
 )
 
@@ -24,8 +24,8 @@ require (
 	github.com/hashicorp/hcl/v2 v2.17.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/zclconf/go-cty v1.13.2 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/mod v0.10.0 // indirect
+	golang.org/x/crypto v0.10.0 // indirect
+	golang.org/x/mod v0.11.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
 )
