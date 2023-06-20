@@ -1,17 +1,14 @@
-import DefaultTheme from 'vitepress/theme';
-// @ts-ignore
-import KofiButton from '../components/KofiButton.vue';
-// @ts-ignore
-import Badge from 'vitepress/dist/client/theme-default/components/VPBadge.vue';
-import type { Theme } from 'vitepress';
-
 import './theme.css';
 
+import DefaultTheme from 'vitepress/theme';
+import KofiButton from '../components/KofiButton.vue';
+import type { Theme } from 'vitepress';
+
+// @ts-expect-error Theme is broken
 const theme: Theme = {
-	...DefaultTheme,
+	extends: DefaultTheme,
 	enhanceApp({ app }) {
 		app.component('KofiButton', KofiButton);
-		app.component('Badge', Badge);
 	}
 };
 
