@@ -46,8 +46,8 @@
 		"@sapphire/plugin-api": "^5.1.0",
 		"@sapphire/plugin-logger": "^3.0.4",
 		"@sapphire/plugin-scheduled-tasks": "^7.1.0",
-		"@sentry/integrations": "^7.55.2",
-		"@sentry/node": "^7.55.2",
+		"@sentry/integrations": "^7.56.0",
+		"@sentry/node": "^7.56.0",
 		"@skyra/gifenc": "^1.0.1",
 		"bufferutil": "^4.0.7",
 		"bullmq": "^3.15.8",
@@ -63,7 +63,7 @@
 		"zlib-sync": "^0.1.8"
 	},
 	"devDependencies": {
-		"@sentry/types": "^7.55.2",
+		"@sentry/types": "^7.56.0",
 		"@types/humanize-duration": "^3.27.1",
 		"eslint": "^8.43.0",
 		"prettier": "^2.8.8",
