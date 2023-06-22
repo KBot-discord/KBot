@@ -36,6 +36,7 @@ export class ModalHandler extends InteractionHandler {
 					tryEphemeral: true
 				});
 			} else {
+				this.container.logger.sentryError(newEmoji);
 				await interaction.errorReply('Something went wrong when uploading the emoji.', {
 					tryEphemeral: true
 				});
