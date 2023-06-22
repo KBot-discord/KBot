@@ -30,6 +30,7 @@ export class ModalHandler extends InteractionHandler {
 					tryEphemeral: true
 				});
 			} else {
+				this.container.logger.sentryError(newSticker);
 				await interaction.errorReply('Something went wrong when uploading the sticker.', {
 					tryEphemeral: true
 				});
