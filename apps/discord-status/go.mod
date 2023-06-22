@@ -7,7 +7,7 @@ require (
 	github.com/bufbuild/connect-go v1.8.0
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/getsentry/sentry-go v0.22.0
-	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/robfig/cron/v3 v3.0.1
 	golang.org/x/net v0.11.0
 	google.golang.org/protobuf v1.30.0
