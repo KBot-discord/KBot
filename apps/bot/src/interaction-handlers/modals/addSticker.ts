@@ -25,18 +25,7 @@ export class ModalHandler extends InteractionHandler {
 			})
 			.catch((e) => (e instanceof Error ? e : null));
 		if (!newSticker || newSticker instanceof Error) {
-			if (newSticker instanceof DiscordAPIError && newSticker.code === 50045) {
-				await interaction.errorReply('The file size of that sticker is too big to upload.', {
-					tryEphemeral: true
-				});
-			} else {
-				this.container.logger.sentryError(newSticker);
-				await interaction.errorReply('Something went wrong when uploading the sticker.', {
-					tryEphemeral: true
-				});
-			}
-
-			return;
+			return this.handleError(interaction, newSticker);
 		}
 
 		if (url.startsWith('https')) {
@@ -82,5 +71,30 @@ export class ModalHandler extends InteractionHandler {
 		await interaction.deferReply();
 
 		return this.some({ stickerData });
+	}
+
+	private async handleError(interaction: ModalSubmitInteraction<'cached'>, error: Error | null): Promise<void> {
+		if (error instanceof DiscordAPIError) {
+			// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
+			switch (error.code) {
+				case 50045: {
+					await interaction.errorReply('The file size of that sticker is too big to upload. (Discord error code: 50045)', {
+						tryEphemeral: true
+					});
+					return;
+				}
+				case 50138: {
+					await interaction.errorReply('Discord was unable to resize the sticker when uploading. (Discord error code: 50138)', {
+						tryEphemeral: true
+					});
+					return;
+				}
+			}
+		}
+
+		this.container.logger.sentryError(error);
+		await interaction.errorReply('Something went wrong when uploading the sticker.', {
+			tryEphemeral: true
+		});
 	}
 }
