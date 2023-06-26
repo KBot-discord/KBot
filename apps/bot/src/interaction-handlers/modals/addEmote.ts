@@ -31,18 +31,7 @@ export class ModalHandler extends InteractionHandler {
 			})
 			.catch((e) => (e instanceof Error ? e : null));
 		if (!newEmoji || newEmoji instanceof Error) {
-			if (newEmoji instanceof DiscordAPIError && newEmoji.code === 50045) {
-				await interaction.errorReply('The file size of that emoji is too big to upload.', {
-					tryEphemeral: true
-				});
-			} else {
-				this.container.logger.sentryError(newEmoji);
-				await interaction.errorReply('Something went wrong when uploading the emoji.', {
-					tryEphemeral: true
-				});
-			}
-
-			return;
+			return this.handleError(interaction, newEmoji);
 		}
 
 		if (url.startsWith('https')) {
@@ -92,5 +81,30 @@ export class ModalHandler extends InteractionHandler {
 		await interaction.deferReply();
 
 		return this.some({ emoteData });
+	}
+
+	private async handleError(interaction: ModalSubmitInteraction<'cached'>, error: Error | null): Promise<void> {
+		if (error instanceof DiscordAPIError) {
+			// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
+			switch (error.code) {
+				case 50045: {
+					await interaction.errorReply('The file size of that emoji is too big to upload. (Discord error code: 50045)', {
+						tryEphemeral: true
+					});
+					return;
+				}
+				case 50138: {
+					await interaction.errorReply('Discord was unable to resize the emoji when uploading. (Discord error code: 50138)', {
+						tryEphemeral: true
+					});
+					return;
+				}
+			}
+		}
+
+		this.container.logger.sentryError(error);
+		await interaction.errorReply('Something went wrong when uploading the emoji.', {
+			tryEphemeral: true
+		});
 	}
 }
