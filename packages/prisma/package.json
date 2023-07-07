@@ -20,7 +20,7 @@
 	},
 	"devDependencies": {
 		"eslint": "^8.44.0",
-		"prettier": "^3.0.0",
+		"prettier": "^2.8.0",
 		"prisma": "^4.16.2",
 		"schemix": "^1.14.1",
 		"ts-node": "^10.9.1",
