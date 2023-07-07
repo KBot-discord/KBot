@@ -17,13 +17,13 @@
 		"check": "tsc",
 		"lint": "eslint --ext ts src && yarn check",
 		"lint:fix": "eslint --fix --ext ts src",
-		"format": "prettier --write --loglevel=warn \"src/**/*.ts\""
+		"format": "prettier --write --log-level=warn \"src/**/*.ts\""
 	},
 	"dependencies": {
 		"ioredis": "^5.3.2"
 	},
 	"devDependencies": {
-		"eslint": "^8.43.0",
-		"prettier": "^2.8.8"
+		"eslint": "^8.44.0",
+		"prettier": "^3.0.0"
 	}
 }

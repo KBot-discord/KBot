@@ -7,6 +7,6 @@
 		{title}
 	</h2>
 	<div class="flex flex-col gap-4">
-		<slot/>
+		<slot />
 	</div>
 </div>

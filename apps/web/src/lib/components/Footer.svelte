@@ -30,7 +30,9 @@
 						</a>
 					</li>
 					<li>
-						<a href="https://ko-fi.com/killbasa" target="_blank" rel="noreferrer"> Donations </a>
+						<a href="https://ko-fi.com/killbasa" target="_blank" rel="noreferrer">
+							Donations
+						</a>
 					</li>
 				</ul>
 			</div>

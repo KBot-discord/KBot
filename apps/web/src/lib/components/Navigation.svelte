@@ -24,7 +24,12 @@
 		</li>
 		<hr />
 		<li>
-			<a href="https://docs.kbot.ca" target="_blank" rel="noreferrer" class="btn justify-start">
+			<a
+				href="https://docs.kbot.ca"
+				target="_blank"
+				rel="noreferrer"
+				class="btn justify-start"
+			>
 				<BookIcon height={16} width={16} />
 				<span>Docs</span>
 			</a>
@@ -36,7 +41,12 @@
 			</a>
 		</li>
 		<li>
-			<a href="https://status.kbot.ca/" target="_blank" rel="noreferrer" class="btn justify-start">
+			<a
+				href="https://status.kbot.ca/"
+				target="_blank"
+				rel="noreferrer"
+				class="btn justify-start"
+			>
 				<HeartIcon height={18} width={18} />
 				<span>Status</span>
 			</a>

@@ -3,13 +3,7 @@
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '$lib/styles/globals.postcss';
 
-	import {
-		AppShell,
-		Drawer,
-		Modal,
-		setInitialClassState,
-		storePopup
-	} from '@skeletonlabs/skeleton';
+	import { AppShell, Drawer, Modal, storePopup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { page } from '$app/stores';
 	import Navbar from '$components/Navbar.svelte';
@@ -37,10 +31,6 @@
 		? 'w-0 lg:w-64'
 		: 'w-0';
 </script>
-
-<svelte:head>
-	{@html `<script>${setInitialClassState.toString()} setInitialClassState();</script>`}
-</svelte:head>
 
 <Modal />
 

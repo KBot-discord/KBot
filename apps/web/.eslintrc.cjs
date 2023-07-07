@@ -1,7 +1,11 @@
 module.exports = {
 	root: true,
-	extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
-	plugins: ['svelte3', '@typescript-eslint'],
+	extends: [
+		'plugin:@typescript-eslint/recommended',
+		'plugin:svelte/recommended',
+		'plugin:prettier/recommended'
+	],
+	plugins: ['@typescript-eslint'],
 	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		tsconfigRootDir: __dirname,
@@ -15,12 +19,12 @@ module.exports = {
 	overrides: [
 		{
 			files: ['*.svelte'],
-			processor: 'svelte3/svelte3'
+			parser: 'svelte-eslint-parser',
+			parserOptions: {
+				parser: '@typescript-eslint/parser'
+			}
 		}
 	],
-	settings: {
-		'svelte3/typescript': () => require('typescript')
-	},
 	env: {
 		es6: true,
 		browser: true
