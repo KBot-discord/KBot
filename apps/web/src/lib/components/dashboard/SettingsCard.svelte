@@ -25,6 +25,7 @@
 	<header class="card-header flex items-center gap-2 text-2xl mb-2">
 		{title}
 		{#if documentation}
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<span
 				class="badge-icon variant-filled cursor-pointer"
 				on:click={handleClick}

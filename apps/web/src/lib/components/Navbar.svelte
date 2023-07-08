@@ -1,6 +1,6 @@
 <script lang="ts">
 	import UserButton from './auth/UserButton.svelte';
-	import { AppBar, LightSwitch , drawerStore } from '@skeletonlabs/skeleton';
+	import { AppBar, LightSwitch, drawerStore } from '@skeletonlabs/skeleton';
 	import logo from '$lib/images/logo.png';
 	import BookIcon from '$lib/images/book.svelte';
 	import DiscordIcon from '$lib/images/discord.svelte';
