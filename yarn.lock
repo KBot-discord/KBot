@@ -1051,7 +1051,7 @@ __metadata:
     husky: ^8.0.3
     lint-staged: ^13.2.3
     prettier: ^2.8.0
-    prettier-plugin-svelte: ^2.10.1
+    prettier-plugin-svelte: ^3.0.0
     schemix: ^1.14.1
     turbo: 1.10.7
     typescript: ^5.1.6
@@ -1281,7 +1281,7 @@ __metadata:
     eslint-plugin-svelte: ^2.32.2
     postcss: ^8.4.25
     prettier: 2.8.8
-    prettier-plugin-svelte: ^2.10.1
+    prettier-plugin-svelte: ^3.0.0
     svelte: ^4.0.5
     svelte-check: ^3.4.5
     svelte-eslint-parser: ^0.32.0
@@ -7229,13 +7229,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-svelte@npm:^2.10.1":
-  version: 2.10.1
-  resolution: "prettier-plugin-svelte@npm:2.10.1"
+"prettier-plugin-svelte@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "prettier-plugin-svelte@npm:3.0.0"
   peerDependencies:
-    prettier: ^1.16.4 || ^2.0.0
+    prettier: ^3.0.0
     svelte: ^3.2.0 || ^4.0.0-next.0
-  checksum: 45f7993098d9f4be7b1c8f61ebce0161996bb6030dc4883ec3d6d9cff552f2cfb5da41ba20e01349709e793b83faaad2dfe81789cd7e17a610f0134df2743266
+  checksum: db70f08ac214d50f6257cf71b4b2413d16a349a216dd5980fba14febc17cdb499304ad7840ace8b090ee97777e2b9eb1b670a632e7985a15f637aac0f155c21f
   languageName: node
   linkType: hard
 
