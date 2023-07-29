@@ -27,7 +27,8 @@
 				"zxh404.vscode-proto3",
 				"redhat.vscode-yaml",
 				"ms-kubernetes-tools.vscode-kubernetes-tools",
-				"github.vscode-github-actions"
+				"github.vscode-github-actions",
+				"golang.go"
 			]
 		}
 	},
