@@ -1091,7 +1091,7 @@ __metadata:
     "@skyra/gifenc": ^1.0.1
     "@types/humanize-duration": ^3.27.1
     bufferutil: ^4.0.7
-    bullmq: ^3.15.8
+    bullmq: ^4.0.0
     canvas: 2.11.2
     canvas-constructor: ^7.0.1
     colorette: ^2.0.20
@@ -3170,7 +3170,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:3.15.8, bullmq@npm:^3.15.8":
+"bullmq@npm:3.15.8":
   version: 3.15.8
   resolution: "bullmq@npm:3.15.8"
   dependencies:
@@ -3183,6 +3183,23 @@ __metadata:
     tslib: ^2.0.0
     uuid: ^9.0.0
   checksum: bca20de291acbb97c67736c2d29b88b4f99e372ffd818b2041d4629ffba126a8c75ba6e25a1d181053c6e03ee4e260020e67fbb91412908040273187146493a4
+  languageName: node
+  linkType: hard
+
+"bullmq@npm:^4.0.0":
+  version: 4.8.0
+  resolution: "bullmq@npm:4.8.0"
+  dependencies:
+    cron-parser: ^4.6.0
+    glob: ^8.0.3
+    ioredis: ^5.3.2
+    lodash: ^4.17.21
+    msgpackr: ^1.6.2
+    node-abort-controller: ^3.1.1
+    semver: ^7.5.4
+    tslib: ^2.0.0
+    uuid: ^9.0.0
+  checksum: b01891b07b174eac0f105d72926d12656aa38559aa2263cebfb3afd0425dceb17eed794189ad6b3072fcd75c74faa442f18d765df939db7bc1a9b45d5d4b5eec
   languageName: node
   linkType: hard
 
@@ -6578,6 +6595,13 @@ __metadata:
   version: 0.6.3
   resolution: "negotiator@npm:0.6.3"
   checksum: b8ffeb1e262eff7968fc90a2b6767b04cfd9842582a9d0ece0af7049537266e7b2506dfb1d107a32f06dd849ab2aea834d5830f7f4d0e5cb7d36e1ae55d021d9
+  languageName: node
+  linkType: hard
+
+"node-abort-controller@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "node-abort-controller@npm:3.1.1"
+  checksum: 2c340916af9710328b11c0828223fc65ba320e0d082214a211311bf64c2891028e42ef276b9799188c4ada9e6e1c54cf7a0b7c05dd9d59fcdc8cd633304c8047
   languageName: node
   linkType: hard
 
