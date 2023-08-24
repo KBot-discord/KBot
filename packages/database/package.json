@@ -26,8 +26,8 @@
 		"@sapphire/utilities": "^3.13.0"
 	},
 	"devDependencies": {
-		"eslint": "^8.46.0",
-		"prettier": "^3.0.0",
-		"typescript": "^5.1.6"
+		"eslint": "^8.47.0",
+		"prettier": "^3.0.2",
+		"typescript": "^5.2.2"
 	}
 }

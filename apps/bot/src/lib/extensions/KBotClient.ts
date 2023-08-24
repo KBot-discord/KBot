@@ -88,6 +88,6 @@ export class KBotClient extends SapphireClient {
 			this.grpc.close()
 		]);
 
-		super.destroy();
+		void super.destroy();
 	}
 }

@@ -66,9 +66,6 @@ export class VoiceListener extends Listener<typeof Events.VoiceStateUpdate> {
 
 		// User leaves channels
 		if ((oldState.channelId && !newState.channelId) ?? newState.channelId !== event.id) {
-			// Do nothing if nobody is in queue
-			if (queue.length === 0) return;
-
 			const textChannel = await fetchChannel<GuildTextBasedChannel>(event.textChannelId);
 			if (isNullOrUndefined(textChannel)) return;
 

@@ -87,6 +87,7 @@ export class HolodexTask extends ScheduledTask {
 		);
 
 		await prisma.$transaction(
+			// eslint-disable-next-line @typescript-eslint/promise-function-async
 			channels.map((channel) => {
 				const result = twitchFilter.some(({ channelId }) => {
 					return channel.id === channelId;

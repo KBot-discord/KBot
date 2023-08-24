@@ -20,10 +20,10 @@
 		"format": "prettier --write --log-level=warn \"src/**/*.ts\""
 	},
 	"dependencies": {
-		"meilisearch": "^0.33.0"
+		"meilisearch": "^0.34.1"
 	},
 	"devDependencies": {
-		"eslint": "^8.46.0",
-		"prettier": "^3.0.0"
+		"eslint": "^8.47.0",
+		"prettier": "^3.0.2"
 	}
 }

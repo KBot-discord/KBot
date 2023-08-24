@@ -5,6 +5,7 @@
 	"author": "@kbotdev",
 	"license": "AGPL-3.0-or-later",
 	"private": true,
+	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/KBot-discord/kbot.git",
@@ -21,6 +22,6 @@
 	},
 	"devDependencies": {
 		"sitemap": "^7.1.1",
-		"vitepress": "1.0.0-beta.6"
+		"vitepress": "1.0.0-rc.4"
 	}
 }
