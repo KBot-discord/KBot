@@ -4,7 +4,10 @@ import type { GuildMember } from 'discord.js';
 import type { ModerationSettings } from '@kbotdev/database';
 
 export class MinageHandler {
-	public constructor(private readonly member: GuildMember, private readonly settings: ModerationSettings) {}
+	public constructor(
+		private readonly member: GuildMember,
+		private readonly settings: ModerationSettings
+	) {}
 
 	public async run(): Promise<boolean> {
 		const { moderation } = container;

@@ -58,17 +58,14 @@ export class VoiceListener extends Listener<typeof Events.VoiceStateUpdate> {
 			const firstUser = await newState.guild.members.fetch(queue[0].id);
 			const secondUser = await newState.guild.members.fetch(queue[0].partnerId);
 			if (
-				(firstUser.voice.suppress && secondUser.voice.suppress) || //
+				(firstUser.voice.suppress && secondUser.voice.suppress) ?? //
 				(firstUser.voice.mute && secondUser.voice.mute)
 			)
 				return;
 		}
 
 		// User leaves channels
-		if ((oldState.channelId && !newState.channelId) || newState.channelId !== event.id) {
-			// Do nothing if nobody is in queue
-			if (queue.length === 0) return;
-
+		if ((oldState.channelId && !newState.channelId) ?? newState.channelId !== event.id) {
 			const textChannel = await fetchChannel<GuildTextBasedChannel>(event.textChannelId);
 			if (isNullOrUndefined(textChannel)) return;
 

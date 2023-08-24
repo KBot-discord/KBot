@@ -10,6 +10,5 @@
 		".eslintrc.cjs",
 		"vitest.config.ts",
 		"vitest.workspace.ts"
-	],
-	"exclude": ["node_modules"]
+	]
 }
