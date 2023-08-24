@@ -33,7 +33,7 @@
 		title,
 		description,
 		images: [{ url: logo, alt: 'KBot icon' }],
-		site_name: 'KBot'
+		siteName: 'KBot'
 	}}
 	twitter={{
 		cardType: 'summary',
@@ -42,9 +42,8 @@
 		image: logo,
 		imageAlt: 'KBot icon'
 	}}
-	noindex={blockRobots}
-	nofollow={blockRobots}
-	{robotsProps}
+	robots={blockRobots ? 'noindex,nofollow' : false}
+	additionalRobotsProps={robotsProps}
 />
 
 <svelte:head>

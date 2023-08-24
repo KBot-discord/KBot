@@ -6,6 +6,7 @@
 		"baseUrl": "./src",
 		"tsBuildInfoFile": "./dist/.tsbuildinfo",
 		"noEmit": true,
+		"incremental": true,
 		"typeRoots": ["./src/lib/types/**/*", "../../node_modules/@types"],
 		"paths": {
 			"#config": ["config.ts"],

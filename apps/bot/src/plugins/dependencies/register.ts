@@ -46,7 +46,7 @@ export class DependenciesPlugin extends Plugin {
 			void container.meili.sync();
 		} catch (error: unknown) {
 			container.logger.sentryError(error);
-			this.destroy();
+			void this.destroy();
 			process.exit(1);
 		}
 	}

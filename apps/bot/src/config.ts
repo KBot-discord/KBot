@@ -1,5 +1,5 @@
-import { envGetNumber, envGetString, validateConfig } from '#utils/config';
 import { NodeEnvironments, mainFolder } from '#utils/constants';
+import { envGetNumber, envGetString, validateConfig } from '#utils/config';
 import { container } from '@sapphire/framework';
 import { config } from 'dotenv';
 import { resolve } from 'path';
