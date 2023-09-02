@@ -1268,7 +1268,7 @@ __metadata:
     "@kbotdev/eslint-config": ^1.1.0
     "@kbotdev/proto": "workspace:^"
     "@sapphire/plugin-api": ^5.1.1
-    "@skeletonlabs/skeleton": ^1.12.0
+    "@skeletonlabs/skeleton": ^2.0.0
     "@sveltejs/adapter-node": ^1.3.1
     "@sveltejs/kit": ^1.23.0
     "@sveltejs/vite-plugin-svelte": ^2.4.5
@@ -1837,14 +1837,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@skeletonlabs/skeleton@npm:^1.12.0":
-  version: 1.12.0
-  resolution: "@skeletonlabs/skeleton@npm:1.12.0"
+"@skeletonlabs/skeleton@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@skeletonlabs/skeleton@npm:2.0.0"
   dependencies:
     esm-env: 1.0.0
   peerDependencies:
     svelte: ^3.56.0 || ^4.0.0
-  checksum: 30a034b68721f4e764687cf580b18b30b349c3ea7b9ea5ef8656437a1a6871ed2bc38261c247e4673233638ab0101c1c7d2f27f3c337b250165b114bc7dbed78
+  checksum: 2469707fbfe6f3e58abec787d981914cdf32d9e924befcdb9410ea49e8b563b187ad16e8af4e688670a907a6e062b649fc4bca92078557901db1f746170dbc5f
   languageName: node
   linkType: hard
 
