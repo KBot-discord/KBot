@@ -37,7 +37,7 @@
 		"svelte-fa": "^3.0.4"
 	},
 	"devDependencies": {
-		"@kbotdev/eslint-config": "^1.1.0",
+		"@kbotdev/eslint-config": "^1.1.1",
 		"@sapphire/plugin-api": "^5.1.1",
 		"@skeletonlabs/skeleton": "2.1.0",
 		"@skeletonlabs/tw-plugin": "^0.2.0",
