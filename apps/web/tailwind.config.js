@@ -1,12 +1,13 @@
+import { skeleton } from '@skeletonlabs/tw-plugin';
+import { join } from 'path';
+import { DefaultTheme } from './src/lib/themes/defaulTheme';
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	darkMode: 'class',
 	content: [
 		'./src/**/*.{html,svelte,ts}',
-		require('path').join(
-			require.resolve('@skeletonlabs/skeleton'),
-			'../**/*.{html,js,svelte,ts}'
-		)
+		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
 	],
 	theme: {
 		screens: {
@@ -21,6 +22,10 @@ module.exports = {
 	},
 	plugins: [
 		require('@tailwindcss/forms'),
-		...require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')()
+		skeleton({
+			themes: {
+				custom: [DefaultTheme]
+			}
+		})
 	]
 };

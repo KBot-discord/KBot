@@ -42,8 +42,8 @@
 		image: logo,
 		imageAlt: 'KBot icon'
 	}}
-	robots={blockRobots ? 'noindex,nofollow' : false}
-	additionalRobotsProps={robotsProps}
+	robots={blockRobots ? 'noindex,nofollow' : undefined}
+	additionalRobotsProps={blockRobots ? undefined : robotsProps}
 />
 
 <svelte:head>

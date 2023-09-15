@@ -1,7 +1,6 @@
 <script lang="ts">
-	import GuildButton from './GuildButton.svelte';
 	import { moduleSections } from './sections';
-	import { AppRail, AppRailTile } from '@skeletonlabs/skeleton';
+	import { AppRail, AppRailAnchor } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import {
 		faList,
@@ -45,8 +44,6 @@
 
 	const activeModule: Writable<string> = writable('list');
 
-	$: disabled = $page.url.pathname === '/guilds';
-	$: tag = disabled ? 'button' : 'a';
 	$: module = modules.find(
 		(m) => `/guilds/${$currentGuild?.guild.id}${m.link}` === $page.url.pathname
 	);
@@ -54,71 +51,67 @@
 	$: activeModule.set(module?.name ?? 'list');
 </script>
 
-<div
-	class="grid grid-cols-[auto_1fr] h-full bg-surface-50-900-token border-r border-surface-500/30"
->
-	<AppRail selected={activeModule} border="border-r border-surface-500/30">
-		<svelte:fragment slot="lead">
-			<AppRailTile
-				name="Guilds"
-				group="modules"
-				tag="a"
-				href="/guilds"
-				value={'list'}
-				data-sveltekit-preload-data="tap"
-			>
-				<Fa icon={faList} />
-			</AppRailTile>
-			{#each modules as module}
-				<AppRailTile
-					name={module.name}
+<nav class="h-full">
+	<div
+		class="grid grid-cols-[auto_1fr] h-full bg-surface-50-900-token border-r border-surface-500/30"
+	>
+		<AppRail border="border-r border-surface-500/30">
+			<svelte:fragment slot="lead">
+				<AppRailAnchor
+					name="Guilds"
 					group="modules"
-					href={`/guilds/${$currentGuild?.guild.id}${module.link}`}
-					data-sveltekit-preload-data="hover"
-					value={module.name}
-					{disabled}
-					{tag}
+					href="/guilds"
+					value={'list'}
+					data-sveltekit-preload-data="tap"
 				>
-					<Fa icon={module.icon} />
-				</AppRailTile>
-			{/each}
-		</svelte:fragment>
-	</AppRail>
-	{#if $currentGuild}
-		<section class="p-4 pb-20 space-y-4 overflow-y-auto">
-			<div class="flex flex-col items-center space-y-3">
-				<span>{$currentGuild.guild.name}</span>
-				<GuildButton />
-			</div>
-			<hr />
-			{#each filteredModuleSections as { values }}
-				{#if values.length > 0}
-					<nav class="list-nav">
-						<ul>
-							{#each values as { id, title }}
-								{#if id === 'main'}
-									<button class="w-full" on:click={goTop}>{title}</button>
-								{:else}
-									<a
-										href={`#${id}`}
-										class="w-full"
-										on:click|preventDefault={scrollIntoView}
-									>
-										{title}
-									</a>
-								{/if}
-							{/each}
-						</ul>
-					</nav>
-				{/if}
-			{/each}
-		</section>
-	{/if}
-</div>
-
-<!--
-Type
-	'{ label: string; href: string; "data-sveltekit-preload-data": string; value: string; disabled: boolean; tag: string; }'
-is missing the following properties from type
-	'{ [x: string]: any; group: any; name: string; value: any; regionLead?: string | undefined; regionLabel?: string | undefined; hover?: string | undefined; active?: string | undefined; spacing?: string | undefined; }': group, name
--->
+					<svelte:fragment slot="lead">
+						<Fa icon={faList} />
+					</svelte:fragment>
+				</AppRailAnchor>
+				{#each modules as entry}
+					<AppRailAnchor
+						name={entry.name}
+						group="modules"
+						href={`/guilds/${$currentGuild?.guild.id}${entry.link}`}
+						data-sveltekit-preload-data="hover"
+						value={entry.name}
+						selected={entry === module}
+					>
+						<svelte:fragment slot="lead">
+							<Fa icon={entry.icon} size="1.3x" />
+						</svelte:fragment>
+					</AppRailAnchor>
+				{/each}
+			</svelte:fragment>
+		</AppRail>
+		{#if $currentGuild}
+			<section class="p-4 pb-20 space-y-4 overflow-y-auto">
+				<div class="flex flex-col items-center space-y-3">
+					<span>{$currentGuild.guild.name}</span>
+				</div>
+				<hr />
+				{#each filteredModuleSections as { values }}
+					{#if values.length > 0}
+						<nav class="list-nav">
+							<ul>
+								{#each values as { id, title }}
+									{#if id === 'main'}
+										<button class="w-full" on:click={goTop}>{title}</button>
+									{:else}
+										<a
+											href={`#${id}`}
+											class="w-full"
+											on:click|preventDefault={scrollIntoView}
+										>
+											{title}
+										</a>
+									{/if}
+								{/each}
+							</ul>
+						</nav>
+					{/if}
+				{/each}
+			</section>
+		{/if}
+	</div>
+</nav>
