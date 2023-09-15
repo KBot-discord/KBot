@@ -16,7 +16,8 @@
 	},
 	"scripts": {
 		"build": "tsup",
-		"buf:generate": "rm -r -f src/gen && yarn buf:bot && yarn buf:status && yarn buf:types",
+		"clean": "rm -r -f src/gen",
+		"buf:generate": "yarn clean && yarn buf:bot && yarn buf:status && yarn buf:types",
 		"buf:bot": "buf generate ../../protos/bot",
 		"buf:status": "buf generate ../../protos/discord-status",
 		"buf:types": "buf generate ../../protos/types",
@@ -29,7 +30,7 @@
 		"@bufbuild/protoc-gen-connect-es": "^0.13.0",
 		"@bufbuild/protoc-gen-es": "^1.3.1",
 		"@swc/core": "^1.3.85",
-		"eslint": "8.48.0",
+		"eslint": "8.49.0",
 		"prettier": "^3.0.3",
 		"tsup": "^7.2.0"
 	}
