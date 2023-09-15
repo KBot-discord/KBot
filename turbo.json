@@ -42,7 +42,7 @@
 		},
 		"buf:generate": {
 			"inputs": ["protos/**"],
-			"cache": true
+			"cache": false
 		},
 		"db:generate": {
 			"inputs": ["prisma/schema.prisma"],
