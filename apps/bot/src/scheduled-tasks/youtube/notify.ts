@@ -43,7 +43,9 @@ export class YoutubeTask extends ScheduledTask {
 				streams.filter(({ available_at }) => {
 					return new Date(available_at).getTime() < Date.now() + Time.Hour;
 				})
-			);
+			)
+			.catch(() => null);
+		if (!liveStreams) return;
 
 		metrics.incrementHolodex();
 

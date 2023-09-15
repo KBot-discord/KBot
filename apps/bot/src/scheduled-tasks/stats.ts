@@ -24,6 +24,6 @@ export class StatsTask extends ScheduledTask {
 			body: JSON.stringify({
 				server_count: guildCount
 			})
-		});
+		}).catch(() => {});
 	}
 }

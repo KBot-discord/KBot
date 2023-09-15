@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { drawerStore } from '@skeletonlabs/skeleton';
+	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import BookIcon from '$lib/images/book.svelte';
 	import HeartIcon from '$lib/images/heart.svelte';
 	import PlusIcon from '$lib/images/plus.svelte';
 
+	const store = getDrawerStore();
+
 	function drawerClose(): void {
-		drawerStore.close();
+		store.close();
 	}
 </script>
 

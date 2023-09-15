@@ -1,9 +1,8 @@
 <script lang="ts">
-	import Logout from './Logout.svelte';
-	import Login from './Login.svelte';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { createDefaultAvatar } from '$lib/utils/discord';
 	import { getUserContext } from '$lib/stores/user';
+	import { goto } from '$app/navigation';
 
 	let settings: PopupSettings = {
 		event: 'click',
@@ -16,6 +15,14 @@
 	let storeUser = getUserContext();
 
 	$: avatar = $storeUser?.avatar ?? createDefaultAvatar();
+
+	function handleLogin() {
+		return goto('/oauth/discord/login');
+	}
+
+	function handleLogout() {
+		return goto('/oauth/discord/logout');
+	}
 </script>
 
 {#if $storeUser}
@@ -24,8 +31,9 @@
 	</button>
 
 	<div class="card variant-filled-surface p-2 w-48" data-popup="userInfoMenu">
-		<Logout />
+		<button class="btn hover:variant-soft-primary w-full" on:click={handleLogout}>Logout</button
+		>
 	</div>
 {:else}
-	<Login />
+	<button class="btn variant-filled-primary w-full" on:click={handleLogin}>Login</button>
 {/if}

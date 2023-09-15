@@ -1,23 +1,19 @@
 <script lang="ts">
-	import { Toast } from '@skeletonlabs/skeleton';
 	import type { LayoutData } from './$types';
-	import { createCurrentGuildContext } from '$lib/stores/currentGuild';
-	import { createGuildsContext, getGuildsContext } from '$lib/stores/guilds';
+	import { createGuildsContext } from '$lib/stores/guilds';
+	import AppLayout from '$components/layout/AppLayout.svelte';
+	import ModuleRail from '$components/dashboard/ModuleRail.svelte';
+	import { createCurrentGuildContext } from '$stores';
 
 	export let data: LayoutData;
 
-	createGuildsContext();
+	let guilds = createGuildsContext(data.guilds);
 	createCurrentGuildContext();
-
-	let guilds = getGuildsContext();
-	guilds.set(data.guilds ?? new Map());
 
 	$: preloadGuildIcons = [...$guilds.values()]
 		.filter(({ icon }) => icon !== '')
 		.map((guild) => guild.icon);
 </script>
-
-<Toast />
 
 <svelte:head>
 	{#each preloadGuildIcons as image}
@@ -25,4 +21,10 @@
 	{/each}
 </svelte:head>
 
-<slot />
+<AppLayout>
+	<svelte:fragment slot="sidebar">
+		<ModuleRail />
+	</svelte:fragment>
+
+	<slot />
+</AppLayout>

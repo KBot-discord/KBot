@@ -1,17 +1,35 @@
-import { toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
-export function toast({
-	message,
-	background
-}: {
-	message: string;
-	background: 'warning' | 'success' | 'error';
-}): void {
-	const settings: ToastSettings = {
-		message,
-		background,
-		autohide: true,
-		timeout: 5000
+const settings: Partial<ToastSettings> = {
+	autohide: true,
+	timeout: 5000
+};
+
+export function getExtendedToastStore() {
+	const store = getToastStore();
+
+	return {
+		trigger: store.trigger,
+		success: function (message: string) {
+			return this.trigger({
+				...settings,
+				message,
+				background: 'variant-filled-success'
+			});
+		},
+		warning: function (message: string) {
+			return this.trigger({
+				...settings,
+				message,
+				background: 'variant-filled-warning'
+			});
+		},
+		error: function (message: string) {
+			return this.trigger({
+				...settings,
+				message,
+				background: 'variant-filled-error'
+			});
+		}
 	};
-	toastStore.trigger(settings);
 }

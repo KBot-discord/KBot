@@ -19,8 +19,7 @@ export const moduleSections = [
 			{ id: 'main', title: 'Main' },
 			{ id: 'anti-hoist', title: 'Anti-Hoist' },
 			{ id: 'report', title: 'Report' },
-			{ id: 'minage', title: 'Minage' },
-			{ id: 'cases', title: 'Cases' }
+			{ id: 'minage', title: 'Minage' }
 		]
 	},
 	{

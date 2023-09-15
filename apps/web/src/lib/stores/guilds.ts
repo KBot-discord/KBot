@@ -2,13 +2,26 @@ import { writable, type Writable } from 'svelte/store';
 import { getContext, setContext } from 'svelte';
 import type { Guild } from '$lib/types/app';
 
-const storeGuilds: Writable<Map<string, Guild>> = writable(new Map<string, Guild>());
+type GuildsStore = Writable<Map<string, Guild>>;
 
-export const createGuildsContext = () => setContext('guilds', storeGuilds);
+const GUILDS_KEY = 'Guilds';
 
-export const getGuildsContext = () => getContext<Writable<Map<string, Guild>>>('guilds');
+export function createGuildsContext(guilds = new Map<string, Guild>()): GuildsStore {
+	const store = writable(guilds);
+	return setContext(GUILDS_KEY, store);
+}
 
-export const setGuildsContext = (guilds: Map<string, Guild> | undefined) => {
-	const context = getContext<Writable<Map<string, Guild>>>('guilds');
-	context.set(guilds ?? new Map<string, Guild>());
-};
+export function getGuildsContext(): GuildsStore {
+	const store = getContext<GuildsStore | undefined>(GUILDS_KEY);
+
+	if (!store) {
+		throw Error('Please run `createGuildsContext` before trying to access the context.');
+	}
+
+	return store;
+}
+
+export function setGuildsContext(guilds = new Map<string, Guild>()): void {
+	const context = getGuildsContext();
+	context.set(guilds);
+}

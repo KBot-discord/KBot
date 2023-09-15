@@ -1,17 +1,19 @@
 <script lang="ts">
-	import UserButton from './auth/UserButton.svelte';
-	import { AppBar, LightSwitch, drawerStore } from '@skeletonlabs/skeleton';
+	import UserInfo from '$components/auth/UserInfo.svelte';
+	import { AppBar, LightSwitch, getDrawerStore } from '@skeletonlabs/skeleton';
 	import logo from '$lib/images/logo.png';
 	import BookIcon from '$lib/images/book.svelte';
 	import DiscordIcon from '$lib/images/discord.svelte';
 	import GithubIcon from '$lib/images/github.svelte';
 	import HeartIcon from '$lib/images/heart.svelte';
 	import PlusIcon from '$lib/images/plus.svelte';
-	import NavbarButton from '$components/NavbarButton.svelte';
+	import NavbarButton from '$components/navigation/NavbarButton.svelte';
 	import SocialButton from '$components/SocialButton.svelte';
 
+	const store = getDrawerStore();
+
 	function drawerOpen(): void {
-		drawerStore.open();
+		store.open();
 	}
 </script>
 
@@ -67,6 +69,6 @@
 				<GithubIcon height={20} width={20} />
 			</SocialButton>
 		</section>
-		<UserButton />
+		<UserInfo />
 	</svelte:fragment>
 </AppBar>

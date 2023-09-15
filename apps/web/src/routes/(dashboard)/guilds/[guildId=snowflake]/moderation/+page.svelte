@@ -1,51 +1,130 @@
 <script lang="ts">
-	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
-	import { enhance } from '$app/forms';
-	import SettingsCard from '$components/dashboard/SettingsCard.svelte';
+	import Meta from '$components/Meta.svelte';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import SettingsRow from '$components/dashboard/SettingsRow.svelte';
 	import ChannelList from '$components/dashboard/ChannelList.svelte';
-	import Meta from '$components/Meta.svelte';
-	import { getCurrentGuildContext } from '$lib/stores/currentGuild';
-	import InputSection from '$components/dashboard/SettingsSection.svelte';
+	import { getCurrentGuildContext } from '$stores';
+	import Label from '$components/forms/Label.svelte';
+	import SettingsForm from '$components/dashboard/SettingsForm.svelte';
+	import type { ModerationSettings } from '@kbotdev/proto';
 
 	export let data: PageData;
 	const { settings } = data;
 
-	let currentGuild = getCurrentGuildContext();
+	const currentGuild = getCurrentGuildContext();
 
-	let antiHoistEnabled: boolean = settings.antihoistEnabled ?? false;
-	let minageMessage: string = settings.minageMessage ?? '';
+	let defaults: Partial<ModerationSettings> = {
+		enabled: settings.enabled,
+		antihoistEnabled: settings.antihoistEnabled,
+		reportChannelId: settings.reportChannelId,
+		minageReq: settings.minageReq,
+		minageMessage: settings.minageMessage
+	};
+
+	let values: Partial<ModerationSettings> = {
+		...defaults
+	};
+
+	let uc = {
+		module: false,
+		antihoist: false,
+		report: false,
+		minageReq: false,
+		minageMessage: false
+	};
 </script>
 
 <Meta title="Moderation" guildName={data.guild.name} />
 
-<h2 id="main">Moderation</h2>
+<section>
+	<h2 id="main">Moderation</h2>
+	<div class="space-y-6">
+		<SettingsForm title="Module" action="?/module" unsavedChanges={uc.module}>
+			<p>
+				Prevent users from adding random characters to the front of their name to appear at
+				the top of the member list.
+			</p>
+			<Label id="module-enabled" title="Enable/Disable">
+				<SlideToggle
+					label="module-enabled"
+					name="module-enabled"
+					size="sm"
+					value="true"
+					bind:checked={values.enabled}
+					on:change={() => {
+						uc.module = defaults.enabled !== values.enabled;
+					}}
+				/>
+			</Label>
+		</SettingsForm>
 
-<form method="POST" use:enhance class="space-y-6">
-	<SettingsRow>
-		<SettingsCard id="anti-hoist" title="Anti-Hoist" documentation>
-			<p>Insert description here.</p>
-			<InputSection title="Enable/Disable">
-				<SlideToggle name="anti-hoist-enabled" size="sm" bind:checked={antiHoistEnabled} />
-			</InputSection>
-		</SettingsCard>
-		<SettingsCard id="report" title="Report" documentation>
-			<p>Send a copy of the reported message to the designated channel.</p>
-			<InputSection title="Report channel">
-				<ChannelList name="report-channel" channels={$currentGuild?.textChannels ?? []} />
-			</InputSection>
-		</SettingsCard>
-	</SettingsRow>
+		<SettingsRow>
+			<SettingsForm title="Anti-Hoist" action="?/antihoist" unsavedChanges={uc.antihoist}>
+				<p>
+					Prevent users from adding random characters to the front of their name to appear
+					at the top of the member list.
+				</p>
+				<Label id="anti-hoist" title="Enable/Disable">
+					<SlideToggle
+						label="anti-hoist"
+						name="anti-hoist"
+						size="sm"
+						value="true"
+						bind:checked={values.antihoistEnabled}
+						on:change={() => {
+							uc.antihoist = defaults.antihoistEnabled !== values.antihoistEnabled;
+						}}
+					/>
+				</Label>
+			</SettingsForm>
 
-	<SettingsCard id="minage" title="Minage" documentation>
-		<input name="minage-req" type="number" class="input" />
-		<textarea
-			name="minage-message"
-			class="textarea"
-			rows={4}
-			placeholder={settings.minageMessage}
-			bind:value={minageMessage}
-		/>
-	</SettingsCard>
-</form>
+			<SettingsForm title="Report" action="?/report" unsavedChanges={uc.report}>
+				<p>The channel to send message reports to.</p>
+				<Label id="report-channel" title="Report channel">
+					<ChannelList
+						id="report-channel"
+						bind:selected={values.reportChannelId}
+						channels={$currentGuild?.textChannels}
+						on:change={() => {
+							uc.report = defaults.reportChannelId !== values.reportChannelId;
+						}}
+					/>
+				</Label>
+			</SettingsForm>
+		</SettingsRow>
+
+		<SettingsForm
+			title="Minage"
+			action="?/minage"
+			unsavedChanges={uc.minageReq || uc.minageMessage}
+		>
+			{uc.minageReq}
+			{settings.minageReq ?? null}
+			{values.minageReq}
+			<div>
+				{values.minageMessage}
+			</div>
+			<input
+				id="minage-req"
+				name="minage-req"
+				type="number"
+				class="input"
+				bind:value={values.minageReq}
+				on:change={() => {
+					uc.minageReq = (defaults.minageReq ?? null) !== values.minageReq;
+				}}
+			/>
+			<textarea
+				name="minage-message"
+				class="textarea"
+				rows={4}
+				placeholder={settings.minageMessage}
+				bind:value={values.minageMessage}
+				on:change={() => {
+					uc.minageMessage = defaults.minageMessage !== values.minageMessage;
+				}}
+			/>
+		</SettingsForm>
+	</div>
+</section>

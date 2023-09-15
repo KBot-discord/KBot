@@ -32,14 +32,6 @@
 	--vp-c-neutral: var(--vp-c-black);
 	--vp-c-neutral-inverse: var(--vp-c-white);
 
-	--vp-c-text-1: var(--vp-c-text-light-1);
-	--vp-c-text-2: var(--vp-c-text-light-2);
-	--vp-c-text-3: var(--vp-c-text-light-3);
-
-	--vp-c-text-inverse-1: var(--vp-c-text-dark-1);
-	--vp-c-text-inverse-2: var(--vp-c-text-dark-2);
-	--vp-c-text-inverse-3: var(--vp-c-text-dark-3);
-
 	--vp-c-text-code: #476582;
 
 	--vp-c-brand: hsla(225, 44%, 52%, 1);
@@ -77,42 +69,7 @@
 	--vp-c-neutral: var(--vp-c-white);
 	--vp-c-neutral-inverse: var(--vp-c-black);
 
-	--vp-c-text-1: var(--vp-c-text-dark-1);
-	--vp-c-text-2: var(--vp-c-text-dark-2);
-	--vp-c-text-3: var(--vp-c-text-dark-3);
-
-	--vp-c-text-inverse-1: var(--vp-c-text-light-1);
-	--vp-c-text-inverse-2: var(--vp-c-text-light-2);
-	--vp-c-text-inverse-3: var(--vp-c-text-light-3);
-
 	--vp-c-text-code: #c9def1;
-
-	--vp-c-mute: #313136;
-	--vp-c-mute-light: #3a3a3c;
-	--vp-c-mute-lighter: #505053;
-	--vp-c-mute-dark: #2c2c30;
-	--vp-c-mute-darker: #252529;
-}
-
-/**
- * Navbar
- * -------------------------------------------------------------------------- */
-
-.VPNavBarTitle {
-	transition: none !important;
-}
-
-/**
- * Sidebar
- * -------------------------------------------------------------------------- */
-
-.VPSidebar {
-	background-color: var(--vp-c-bg-alt) !important;
-}
-
-.VPNav.no-sidebar,
-.VPNavBar.has-sidebar .content {
-	backdrop-filter: none !important;
 }
 
 /**
@@ -125,60 +82,4 @@
 
 .vp-doc td {
 	background: var(--vp-c-bg-soft);
-}
-
-/**
- * Badges
- * -------------------------------------------------------------------------- */
-
-h1 .VPBadge,
-h2 .VPBadge,
-h3 .VPBadge,
-h4 .VPBadge,
-h5 .VPBadge,
-h6 .VPBadge {
-	vertical-align: middle !important;
-}
-
-.VPBadge.info {
-	border-color: rgba(60, 100, 225) !important;
-	color: rgba(80, 127, 240) !important;
-	background-color: rgba(16, 129, 185, 0.05) !important;
-}
-
-/**
- * Containers
- * -------------------------------------------------------------------------- */
-
-.custom-block.info {
-	border-color: #346ddb;
-	color: var(--vp-c-text-1);
-}
-
-.custom-block.info code {
-	color: var(--vp-c-text-code);
-}
-
-.custom-block.tip {
-	color: var(--vp-c-text-1);
-}
-
-.custom-block.tip code {
-	color: var(--vp-c-text-code);
-}
-
-.custom-block.warning {
-	color: var(--vp-c-text-1);
-}
-
-.custom-block.warning code {
-	color: var(--vp-c-text-code);
-}
-
-.custom-block.danger {
-	color: var(--vp-c-text-1);
-}
-
-.custom-block.danger code {
-	color: var(--vp-c-text-code);
 }
