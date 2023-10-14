@@ -58,7 +58,7 @@
 		"dotenv": "^16.3.1",
 		"fuzzysort": "^2.0.4",
 		"humanize-duration": "^3.29.0",
-		"prom-client": "^14.2.0",
+		"prom-client": "^15.0.0",
 		"utf-8-validate": "^6.0.3",
 		"zlib-sync": "^0.1.8"
 	},
