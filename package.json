@@ -29,8 +29,8 @@
 		"k8s:sync": "bash scripts/kustomize-sync.sh"
 	},
 	"devDependencies": {
-		"@commitlint/cli": "^17.7.1",
-		"@commitlint/config-conventional": "^17.7.0",
+		"@commitlint/cli": "^18.0.0",
+		"@commitlint/config-conventional": "^18.0.0",
 		"@kbotdev/eslint-config": "^1.1.1",
 		"@kbotdev/prettier-config": "^1.0.1",
 		"@kbotdev/ts-config": "^1.0.1",
