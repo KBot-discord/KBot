@@ -7,7 +7,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { ModerationModule } from '#modules/ModerationModule';
-import type { ModerationSettings } from '@kbotdev/database';
+import type { ModerationSettings } from '@prisma/client';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Moderation,

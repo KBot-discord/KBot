@@ -7,7 +7,6 @@ import { Time } from '@sapphire/duration';
 import { container } from '@sapphire/framework';
 import type { APIEmbedField, Channel } from 'discord.js';
 import type { HolodexVideoWithChannel } from '@kbotdev/holodex';
-import type { Key } from '@kbotdev/redis';
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'youtubeNotify',
@@ -15,7 +14,7 @@ import type { Key } from '@kbotdev/redis';
 	enabled: !container.config.isDev
 })
 export class YoutubeTask extends ScheduledTask {
-	private readonly streamsKey = 'youtube:streams:list' as Key;
+	private readonly streamsKey = 'youtube:streams:list';
 
 	public override async run(): Promise<void> {
 		const { prisma, holodex, logger, redis, metrics } = this.container;
@@ -77,7 +76,7 @@ export class YoutubeTask extends ScheduledTask {
 			}
 		}
 
-		const keysToDelete: Key[] = [this.streamsKey];
+		const keysToDelete: string[] = [this.streamsKey];
 
 		if (pastStreams.length > 0) {
 			await Promise.allSettled(
@@ -106,8 +105,8 @@ export class YoutubeTask extends ScheduledTask {
 		if (liveStreams.length > 0) {
 			await redis.hmSet(
 				this.streamsKey,
-				new Map<Key, HolodexVideoWithChannel>(
-					liveStreams.map((stream) => [stream.id as Key, stream]) //
+				new Map<string, HolodexVideoWithChannel>(
+					liveStreams.map((stream) => [stream.id, stream]) //
 				)
 			);
 		} else {
@@ -145,7 +144,7 @@ export class YoutubeTask extends ScheduledTask {
 				.setLabel('Watch Stream')
 		]);
 
-		const keysToSet = new Map<Key, { channelId: string }>();
+		const keysToSet = new Map<string, { channelId: string }>();
 
 		const result = await Promise.allSettled(
 			subscriptions.map(async (subscription) => {
@@ -245,7 +244,7 @@ export class YoutubeTask extends ScheduledTask {
 		);
 	}
 
-	private readonly notificationKey = (streamId: string): Key => `youtube:streams:${streamId}:notified` as Key;
-	private readonly messagesKey = (streamId: string): Key => `youtube:streams:${streamId}:messages` as Key;
-	private readonly messageKey = (messageId: string): Key => messageId as Key;
+	private readonly notificationKey = (streamId: string): string => `youtube:streams:${streamId}:notified`;
+	private readonly messagesKey = (streamId: string): string => `youtube:streams:${streamId}:messages`;
+	private readonly messageKey = (messageId: string): string => messageId;
 }

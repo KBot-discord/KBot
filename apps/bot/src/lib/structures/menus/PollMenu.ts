@@ -7,9 +7,9 @@ import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
 import type { APIEmbedField, Guild, Message, User } from 'discord.js';
-import type { Poll } from '@kbotdev/database';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 import type { PollMenuButton } from '#types/CustomIds';
+import type { Poll } from '@prisma/client';
 
 export class PollMenu extends Menu {
 	private readonly guild: Guild;

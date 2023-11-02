@@ -1,6 +1,6 @@
+import { DiscordIncidentRepository } from '#repositories/DiscordIncidentRepository';
 import { container } from '@sapphire/framework';
-import { DiscordIncidentRepository } from '@kbotdev/database';
-import type { IncidentMessage } from '@kbotdev/database';
+import type { IncidentMessage } from '@prisma/client';
 
 export class DiscordIncidentService {
 	private readonly repository: DiscordIncidentRepository;

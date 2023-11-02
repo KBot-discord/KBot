@@ -3,9 +3,9 @@ import { FlagHandler } from '#structures/handlers/FlagHandler';
 import { KBotCommand } from '#extensions/KBotCommand';
 import { KBotModules } from '#types/Enums';
 import { ApplyOptions } from '@sapphire/decorators';
-import { FeatureFlags } from '@kbotdev/database';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits, StringSelectMenuBuilder } from 'discord.js';
+import { FeatureFlags } from '@prisma/client';
 import type { APISelectMenuOption } from 'discord.js';
 import type { DevModule } from '#modules/DevModule';
 

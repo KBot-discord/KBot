@@ -10,7 +10,6 @@
 		"protos/*"
 	],
 	"scripts": {
-		"postinstall": "husky install",
 		"update": "yarn upgrade-interactive",
 		"build": "turbo run build",
 		"build:bot": "yarn turbo build --filter=@kbotdev/bot",
@@ -23,10 +22,7 @@
 		"db:generate": "turbo run db:generate",
 		"db:push": "turbo run db:push",
 		"docker:bot": "docker buildx build -f apps/bot/Dockerfile -t kbot/bot .",
-		"docker:status": "docker buildx build -f apps/discord-status/Dockerfile -t kbot/discord-status .",
-		"docker:web": "docker buildx build -f apps/web/Dockerfile -t kbot/web .",
-		"k8s:build": "kustomize build ./k8s -o ./k8s/result.yml",
-		"k8s:sync": "bash scripts/kustomize-sync.sh"
+		"docker:web": "docker buildx build -f apps/web/Dockerfile -t kbot/web ."
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^18.2.0",
@@ -59,6 +55,9 @@
 		],
 		"*.{json,yml,yaml,md}": [
 			"prettier --write --log-level=warn \"**/*.{json,yml,yaml,md}\""
+		],
+		"*.prisma": [
+			"prisma format"
 		]
 	},
 	"commitlint": {
@@ -67,7 +66,7 @@
 		]
 	},
 	"engines": {
-		"node": ">=18.x"
+		"node": ">=20.x"
 	},
 	"packageManager": "yarn@4.0.1"
 }

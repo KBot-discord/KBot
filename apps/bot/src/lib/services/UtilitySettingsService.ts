@@ -1,6 +1,7 @@
+import { UtilitySettingsRepository } from '#repositories/UtilitySettingsRepository';
 import { container } from '@sapphire/framework';
-import { UtilitySettingsRepository } from '@kbotdev/database';
-import type { UpsertUtilitySettingsData, UtilitySettings } from '@kbotdev/database';
+import type { UtilitySettings } from '@prisma/client';
+import type { UpsertUtilitySettingsData } from '#repositories/types';
 
 export class UtilitySettingsService {
 	private readonly repository: UtilitySettingsRepository;

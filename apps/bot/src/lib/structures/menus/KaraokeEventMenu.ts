@@ -8,9 +8,9 @@ import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
 import type { Guild, GuildBasedChannel, Message, User } from 'discord.js';
-import type { KaraokeEvent } from '@kbotdev/database';
 import type { KaraokeMenuButton } from '#types/CustomIds';
 import type { AnyInteractableInteraction, PaginatedMessageAction, PaginatedMessageActionButton } from '@sapphire/discord.js-utilities';
+import type { KaraokeEvent } from '@prisma/client';
 
 const KaraokeEventActions: { id: string; text: string; emoji: string | null }[] = [
 	{ id: KaraokeCustomIds.Lock, text: 'Lock queue', emoji: KBotEmoji.Locked },

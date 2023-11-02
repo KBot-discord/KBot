@@ -2,8 +2,6 @@ import type { MeilisearchClient } from '@kbotdev/meili';
 import type { APIMessage, InteractionResponse, Message } from 'discord.js';
 import type { KBotMetrics } from '#observability/KBotMetrics';
 import type { ClientConfig } from '#types/Config';
-import type { RedisClient } from '@kbotdev/redis';
-import type { PrismaClient } from '@kbotdev/database';
 import type { Validator } from '#utils/validators';
 import type { CoreModule } from '#modules/CoreModule';
 import type { EventModule } from '#modules/EventModule';
@@ -14,8 +12,9 @@ import type { YoutubeModule } from '#modules/YouTubeModule';
 import type { Holodex } from '@kbotdev/holodex';
 import type { KBotErrors } from '#types/Enums';
 import type { ChannelPermissionsPayload } from '#types/Errors';
-import type { AuthData } from '@sapphire/plugin-api';
 import type { WebhookErrorBuilder } from '#structures/builders/WebhookErrorBuilder';
+import type { PrismaClient } from '@prisma/client';
+import type { RedisClient } from '@killbasa/redis-utils';
 
 export type InteractionResponseUnion = APIMessage | InteractionResponse | Message | void;
 
@@ -126,14 +125,5 @@ declare module '@sapphire/framework' {
 		 * @param builder - The embed for the webhook
 		 */
 		webhookError(builder: (builder: WebhookErrorBuilder) => WebhookErrorBuilder): Promise<void>;
-	}
-}
-
-declare module '@bufbuild/connect' {
-	interface HandlerContext {
-		/**
-		 * Authentication data about the incoming Request.
-		 */
-		auth: AuthData;
 	}
 }

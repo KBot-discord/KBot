@@ -47,15 +47,6 @@ export class KBotClient extends SapphireClient {
 					transformers: [transformLoginData]
 				}
 			},
-			grpc: {
-				host: config.api.host,
-				port: config.rpc.server.port,
-				options: {
-					connect: true,
-					grpc: false,
-					grpcWeb: false
-				}
-			},
 			tasks: {
 				bull: {
 					connection: {
@@ -84,8 +75,7 @@ export class KBotClient extends SapphireClient {
 	public override async destroy(): Promise<void> {
 		await Promise.allSettled([
 			container.prisma.$disconnect(), //
-			container.redis.quit(),
-			this.grpc.close()
+			container.redis.quit()
 		]);
 
 		void super.destroy();

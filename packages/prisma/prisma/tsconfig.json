@@ -1,9 +1,0 @@
-{
-	"extends": "../../../tsconfig.base.json",
-	"compilerOptions": {
-		"noEmit": true,
-		"noEmitHelpers": false,
-		"module": "Node16"
-	},
-	"include": ["."]
-}

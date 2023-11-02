@@ -1,13 +1,13 @@
 import { CustomEmotes, EmbedColors } from '#utils/constants';
 import { isNullOrUndefined } from '#utils/functions';
 import { fetchChannel } from '#utils/discord';
+import { PollRepository } from '#repositories/PollRepository';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { PollRepository } from '@kbotdev/database';
-import type { CreatePollData, Poll, UpsertPollUserData } from '@kbotdev/database';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
 import type { PollResultPayload } from '#types/Tasks';
-import type { Key } from '@kbotdev/redis';
+import type { Poll } from '@prisma/client';
+import type { CreatePollData, UpsertPollUserData } from '#repositories/types';
 
 const BAR_LENGTH = 10;
 
@@ -238,5 +238,5 @@ export class PollService {
 		});
 	}
 
-	private readonly pollJobId = (pollId: string): Key => `poll:${pollId}` as Key;
+	private readonly pollJobId = (pollId: string): string => `poll:${pollId}`;
 }

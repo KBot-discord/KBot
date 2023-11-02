@@ -1,6 +1,7 @@
+import { YoutubeSubscriptionRepository } from '#repositories/YoutubeSubscriptionRepository';
 import { container } from '@sapphire/framework';
-import { YoutubeSubscriptionRepository } from '@kbotdev/database';
-import type { HolodexChannel, UpdateYoutubeSubscriptionData, YoutubeSubscription, YoutubeSubscriptionWithChannel } from '@kbotdev/database';
+import type { HolodexChannel, YoutubeSubscription } from '@prisma/client';
+import type { UpdateYoutubeSubscriptionData, YoutubeSubscriptionWithChannel } from '#repositories/types';
 
 export class YoutubeSubscriptionService {
 	private readonly repository: YoutubeSubscriptionRepository;

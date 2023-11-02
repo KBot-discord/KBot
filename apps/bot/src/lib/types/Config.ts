@@ -1,5 +1,4 @@
 import type { MeiliClientOptions } from '@kbotdev/meili';
-import type { RedisClientOptions } from '@kbotdev/redis';
 
 export type ClientConfig = {
 	isDev: boolean;
@@ -31,7 +30,11 @@ export type ClientConfig = {
 		url: string;
 		cacheExpiry: number;
 	};
-	redis: RedisClientOptions;
+	redis: {
+		host: string;
+		port: number;
+		password: string;
+	};
 	meili: MeiliClientOptions;
 	holodex: {
 		apiKey: string;

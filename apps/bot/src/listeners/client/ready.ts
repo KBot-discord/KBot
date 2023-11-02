@@ -46,7 +46,6 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 			{ key: 'Prisma', value: await Result.fromAsync(async () => prisma.$queryRaw`SELECT 1`) },
 			{ key: 'Redis', value: await Result.fromAsync(async () => redis.ping()) },
 			{ key: 'Meili', value: await Result.fromAsync(async () => meili.health()) },
-			{ key: 'gRPC Enabled', value: !isNullOrUndefined(client.options.grpc) },
 			{ key: 'API Enabled', value: !isNullOrUndefined(client.options.api) },
 			{ key: 'OAuth 2.0 Enabled', value: !isNullOrUndefined(client.options.api?.auth) }
 		]);

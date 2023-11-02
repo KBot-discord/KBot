@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from '#utils/functions';
 import { container } from '@sapphire/framework';
+import type { ModerationSettings } from '@prisma/client';
 import type { GuildMember } from 'discord.js';
-import type { ModerationSettings } from '@kbotdev/database';
 
 export class MinageHandler {
 	public constructor(

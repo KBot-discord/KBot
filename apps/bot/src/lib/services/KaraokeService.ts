@@ -3,21 +3,21 @@ import { isNullOrUndefined } from '#utils/functions';
 import { DiscordFetchError } from '#structures/errors';
 import { ResultClass } from '#structures/ResultClass';
 import { fetchChannel } from '#utils/discord';
+import { KaraokeRepository } from '#repositories/KaraokeRepository';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { Result, container } from '@sapphire/framework';
 import { roleMention, userMention } from '@discordjs/builders';
-import { KaraokeRepository } from '@kbotdev/database';
+
+import type { Guild, GuildMember, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
+import type { KaraokeEvent, KaraokeUser } from '@prisma/client';
 import type {
 	AddToQueueData,
 	CreateEventData,
 	CreateScheduledEventData,
-	KaraokeEvent,
 	KaraokeEventWithUsers,
-	KaraokeUser,
 	RemoveFromQueueData,
 	UpdateEventData
-} from '@kbotdev/database';
-import type { Guild, GuildMember, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
+} from '#repositories/types';
 
 export class KaraokeService extends ResultClass {
 	private readonly repository: KaraokeRepository;

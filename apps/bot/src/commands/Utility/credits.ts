@@ -11,7 +11,7 @@ import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import fuzzysort from 'fuzzysort';
 import type { ApplicationCommandOptionChoiceData, GuildEmoji, Sticker } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { UtilitySettings } from '@kbotdev/database';
+import type { UtilitySettings } from '@prisma/client';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Utility,

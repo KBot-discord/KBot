@@ -3,7 +3,7 @@ import { fetchChannel } from '#utils/discord';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
 import type { GuildMember, GuildTextBasedChannel, HexColorString, Message } from 'discord.js';
-import type { WelcomeSettings } from '@kbotdev/database';
+import type { WelcomeSettings } from '@prisma/client';
 
 export class WelcomeHandler {
 	public constructor(private readonly member: GuildMember) {}

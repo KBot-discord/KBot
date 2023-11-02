@@ -2,7 +2,7 @@ import { isNullOrUndefined } from '#utils/functions';
 import { fetchChannel } from '#utils/discord';
 import { container } from '@sapphire/framework';
 import type { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
-import type { IncidentMessage } from '@kbotdev/database';
+import type { IncidentMessage } from '@prisma/client';
 
 export class IncidentNotification {
 	public channel: GuildTextBasedChannel | null = null;

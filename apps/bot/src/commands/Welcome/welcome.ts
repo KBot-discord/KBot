@@ -8,7 +8,7 @@ import { ChannelType, EmbedBuilder, PermissionFlagsBits, channelMention } from '
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { WelcomeModule } from '#modules/WelcomeModule';
 import type { APIEmbedField, ColorResolvable, InteractionEditReplyOptions } from 'discord.js';
-import type { WelcomeSettings } from '@kbotdev/database';
+import type { WelcomeSettings } from '@prisma/client';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Welcome,

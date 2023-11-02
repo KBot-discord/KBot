@@ -12,7 +12,7 @@
 			"#config": ["config.ts"],
 			"#extensions/*": ["lib/extensions/*"],
 			"#observability/*": ["lib/observability/*"],
-			"#grpc/*": ["lib/grpc/*"],
+			"#repositories/*": ["lib/repositories/*"],
 			"#services/*": ["lib/services/*"],
 			"#services": ["lib/services/index.ts"],
 			"#structures/*": ["lib/structures/*"],

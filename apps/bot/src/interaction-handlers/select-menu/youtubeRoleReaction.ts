@@ -4,7 +4,7 @@ import { isNullOrUndefined } from '#utils/functions';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { PermissionFlagsBits, StringSelectMenuInteraction, roleMention } from 'discord.js';
-import type { HolodexChannel } from '@kbotdev/database';
+import type { HolodexChannel } from '@prisma/client';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: YoutubeCustomIds.RoleReaction,

@@ -6,7 +6,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { UtilitySettings } from '@kbotdev/database';
+import type { UtilitySettings } from '@prisma/client';
 import type { UtilityModule } from '#modules/UtilityModule';
 
 @ApplyOptions<KBotSubcommand.Options>({

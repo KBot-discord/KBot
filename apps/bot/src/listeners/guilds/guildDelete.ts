@@ -1,6 +1,6 @@
+import { baseCacheKey } from '#repositories/keys';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { baseCacheKey } from '@kbotdev/database';
 import type { Guild } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({

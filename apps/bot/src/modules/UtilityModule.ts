@@ -10,7 +10,6 @@ import type { CreditType } from '#utils/customIds';
 import type { CreditImageModal, CreditModal, EmojiData, StickerData } from '#types/CustomIds';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { KBotModules } from '#types/Enums';
-import type { Key } from '@kbotdev/redis';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Utility Module'
@@ -128,7 +127,7 @@ export class UtilityModule extends Module {
 			.addComponents(components);
 	}
 
-	private readonly resourceKey = (messageId: string, userId: string): Key => `add-resource:${messageId}:${userId}` as Key;
+	private readonly resourceKey = (messageId: string, userId: string): string => `add-resource:${messageId}:${userId}`;
 }
 
 declare module '@kbotdev/plugin-modules' {

@@ -1,6 +1,6 @@
+import { YoutubeChannelRepository } from '#repositories/YoutubeChannelService';
 import { container } from '@sapphire/framework';
-import { YoutubeChannelRepository } from '@kbotdev/database';
-import type { HolodexChannel } from '@kbotdev/database';
+import type { HolodexChannel } from '@prisma/client';
 
 export class YoutubeChannelService {
 	private readonly repository: YoutubeChannelRepository;

@@ -8,7 +8,7 @@ import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { APIEmbedField } from 'discord.js';
-import type { ModerationSettings } from '@kbotdev/database';
+import type { ModerationSettings } from '@prisma/client';
 import type { ModerationModule } from '#modules/ModerationModule';
 
 @ApplyOptions<KBotSubcommand.Options>({

@@ -12,7 +12,7 @@ import { ActionRowBuilder, ChannelType, EmbedBuilder, PermissionFlagsBits, Strin
 import type { APISelectMenuOption, ApplicationCommandOptionChoiceData, BaseMessageOptions, Guild, GuildTextBasedChannel } from 'discord.js';
 import type { YoutubeModule } from '#modules/YouTubeModule';
 import type { DocumentYoutubeChannel } from '@kbotdev/meili';
-import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
+import type { YoutubeSubscriptionWithChannel } from '#repositories/types';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.YouTube,

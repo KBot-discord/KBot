@@ -1,6 +1,7 @@
+import { YoutubeSettingsRepository } from '#repositories/YoutubeSettingsRepository';
 import { container } from '@sapphire/framework';
-import { YoutubeSettingsRepository } from '@kbotdev/database';
-import type { UpsertYoutubeSettingsData, YoutubeSettings } from '@kbotdev/database';
+import type { YoutubeSettings } from '@prisma/client';
+import type { UpsertYoutubeSettingsData } from '#repositories/types';
 
 export class YoutubeSettingsService {
 	private readonly repository: YoutubeSettingsRepository;

@@ -1,6 +1,7 @@
+import { ModerationSettingsRepository } from '#repositories/ModerationSettingsRepository';
 import { container } from '@sapphire/framework';
-import { ModerationSettingsRepository } from '@kbotdev/database';
-import type { ModerationSettings, UpsertModerationSettingsData } from '@kbotdev/database';
+import type { ModerationSettings } from '@prisma/client';
+import type { UpsertModerationSettingsData } from '#repositories/types';
 
 export class ModerationSettingsService {
 	private readonly repository: ModerationSettingsRepository;

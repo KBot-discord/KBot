@@ -7,7 +7,7 @@ import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { UtilitySettings } from '@kbotdev/database';
+import type { UtilitySettings } from '@prisma/client';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Utility,

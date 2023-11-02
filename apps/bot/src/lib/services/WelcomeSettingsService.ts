@@ -1,6 +1,7 @@
+import { WelcomeSettingsRepository } from '#repositories/WelcomeSettingsRepository';
 import { container } from '@sapphire/framework';
-import { WelcomeSettingsRepository } from '@kbotdev/database';
-import type { UpsertWelcomeSettingsData, WelcomeSettings } from '@kbotdev/database';
+import type { WelcomeSettings } from '@prisma/client';
+import type { UpsertWelcomeSettingsData } from '#repositories/types';
 
 export class WelcomeSettingsService {
 	private readonly repository: WelcomeSettingsRepository;

@@ -4,7 +4,7 @@ import { isGuildBasedChannel } from '@sapphire/discord.js-utilities';
 import { container } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
 import type { ButtonInteraction, ChatInputCommandInteraction, Guild, GuildTextBasedChannel, StringSelectMenuInteraction, User } from 'discord.js';
-import type { FeatureFlags } from '@kbotdev/database';
+import type { FeatureFlags } from '@prisma/client';
 
 type InteractionUnion = ButtonInteraction<'cached'> | StringSelectMenuInteraction<'cached'>;
 
