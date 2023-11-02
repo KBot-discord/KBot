@@ -6,7 +6,6 @@
 [![Uptime Kuma](https://status.kbot.ca/api/badge/8/status?upLabel=online&downLabel=offline&label=Bot+status)](https://status.kbot.ca/status/kbot)
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b1a776ba1a064d34a1886e3c74c0cada)](https://www.codacy.com/gh/KBot-discord/KBot/dashboard?utm_source=github.com&utm_medium=referral&utm_content=KBot-discord/KBot&utm_campaign=Badge_Grade)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FKBot-discord%2FKBot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FKBot-discord%2FKBot?ref=badge_shield)
 
 ### A multi-purpose Discord bot using [Sapphire](https://www.sapphirejs.dev/) and [discord.js](https://discord.js.org).
