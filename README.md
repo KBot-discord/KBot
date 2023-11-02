@@ -26,10 +26,8 @@ A fill list of features can be found in the [documentation](https://docs.kbot.ca
 
 - `/apps`
   - `/apps/bot` - Discord bot
-  - `/apps/discord-status` - Service to send alerts about Discord incidents
   - `/apps/docs` - Documentation for the bot
   - `/apps/web` - Dashboard to edit bot settings
-- `/k8s` - Kubernetes configuration files for infrastructure
 - `/packages` - Shared packages
 - `/protos` - Protobuf files
 
@@ -43,13 +41,12 @@ A fill list of features can be found in the [documentation](https://docs.kbot.ca
 
 ## Development requirements 🔧
 
-- [Node.js](https://nodejs.org/en/), [yarn](https://yarnpkg.com/), and [Golang](https://go.dev/)
+- [Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/)
 - [Docker](https://www.docker.com/community-edition)
 - [Buf](https://github.com/bufbuild/buf)
 - [Redis](https://redis.io/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Meilisearch](https://www.meilisearch.com/)
-- [Task](https://github.com/go-task/task)
 
 ## Contributing 💻
 

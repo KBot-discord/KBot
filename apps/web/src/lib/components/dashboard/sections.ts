@@ -23,11 +23,6 @@ export const moduleSections = [
 		]
 	},
 	{
-		id: 'twitch',
-		title: 'Twitch',
-		values: []
-	},
-	{
 		id: 'utility',
 		title: 'Utility',
 		values: [
