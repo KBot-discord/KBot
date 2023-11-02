@@ -1,9 +1,0 @@
-version: "3.8"
-
-services:
-  discord-status:
-    image: kbot/discord-status:latest
-    container_name: discord-status
-    volumes:
-      - $PWD/data.db:/app/data.db
-      - $PWD/config.json:/app/config.json

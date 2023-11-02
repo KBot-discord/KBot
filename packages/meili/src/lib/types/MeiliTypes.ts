@@ -3,8 +3,7 @@
  */
 export const MeiliCategories = {
 	Commands: 'commands',
-	YoutubeChannels: 'youtubeChannels',
-	TwitchChannels: 'twitchChannels'
+	YoutubeChannels: 'youtubeChannels'
 } as const;
 
 export type MeiliIndex = (typeof MeiliCategories)[keyof typeof MeiliCategories];
@@ -16,8 +15,6 @@ export type MeiliDocument<T extends MeiliIndex> = T extends typeof MeiliCategori
 	? DocumentCommand
 	: T extends typeof MeiliCategories.YoutubeChannels
 	? DocumentYoutubeChannel
-	: T extends typeof MeiliCategories.TwitchChannels
-	? DocumentTwitchChannel
 	: never;
 
 type DocumentBase = {

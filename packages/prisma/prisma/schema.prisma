@@ -97,11 +97,9 @@ model WelcomeSettings {
 
 model HolodexChannel {
   youtubeId            String                @id @unique
-  twitchId             String?               @unique
   name                 String
   englishName          String?
   image                String?
-  twitchSubscriptionId String?
   youtubeSubscriptions YoutubeSubscription[]
 }
 
@@ -138,10 +136,6 @@ model CoreSettings {
   utilitySettings    UtilitySettings?
   welcomeSettings    WelcomeSettings?
   youtubeSettings    YoutubeSettings?
-}
-
-model TwitchConflict {
-  channelId String @id @unique
 }
 
 model IncidentMessage {

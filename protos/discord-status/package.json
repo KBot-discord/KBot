@@ -1,8 +1,0 @@
-{
-	"name": "@kbotdev/protobuf-discord-status",
-	"private": true,
-	"scripts": {
-		"lint": "buf lint .",
-		"format": "buf format . -w"
-	}
-}
