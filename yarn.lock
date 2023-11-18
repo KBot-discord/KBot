@@ -1472,7 +1472,7 @@ __metadata:
     "@skeletonlabs/tw-plugin": "npm:^0.2.3"
     "@sveltejs/adapter-node": "npm:^1.3.1"
     "@sveltejs/kit": "npm:^1.27.2"
-    "@sveltejs/vite-plugin-svelte": "npm:^2.4.6"
+    "@sveltejs/vite-plugin-svelte": "npm:^3.0.0"
     "@tailwindcss/forms": "npm:^0.5.6"
     "@typescript-eslint/eslint-plugin": "npm:^6.9.1"
     "@typescript-eslint/parser": "npm:^6.9.1"
@@ -2192,7 +2192,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/vite-plugin-svelte-inspector@npm:^1.0.3, @sveltejs/vite-plugin-svelte-inspector@npm:^1.0.4":
+"@sveltejs/vite-plugin-svelte-inspector@npm:^1.0.3":
   version: 1.0.4
   resolution: "@sveltejs/vite-plugin-svelte-inspector@npm:1.0.4"
   dependencies:
@@ -2202,6 +2202,19 @@ __metadata:
     svelte: ^3.54.0 || ^4.0.0
     vite: ^4.0.0
   checksum: 5e64bcef8f965d90db542d1455fad9218506f6bdcef022fec985dae067321fc6d313278956315b8965b20b10a84e9da098a777c9197e33cfadc5f054b6177b2e
+  languageName: node
+  linkType: hard
+
+"@sveltejs/vite-plugin-svelte-inspector@npm:^2.0.0-next.0 || ^2.0.0":
+  version: 2.0.0
+  resolution: "@sveltejs/vite-plugin-svelte-inspector@npm:2.0.0"
+  dependencies:
+    debug: "npm:^4.3.4"
+  peerDependencies:
+    "@sveltejs/vite-plugin-svelte": ^3.0.0
+    svelte: ^4.0.0 || ^5.0.0-next.0
+    vite: ^5.0.0
+  checksum: 065750f9048693396125f4d0cce5e8dcfca8f52785a0cb64a9f52041643eaf20ba65237ae6e56b5ff8e089a304a8b10ca655857b6dbdbfdc87ff09d7ee744cfc
   languageName: node
   linkType: hard
 
@@ -2223,21 +2236,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/vite-plugin-svelte@npm:^2.4.6":
-  version: 2.4.6
-  resolution: "@sveltejs/vite-plugin-svelte@npm:2.4.6"
+"@sveltejs/vite-plugin-svelte@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@sveltejs/vite-plugin-svelte@npm:3.0.0"
   dependencies:
-    "@sveltejs/vite-plugin-svelte-inspector": "npm:^1.0.4"
+    "@sveltejs/vite-plugin-svelte-inspector": "npm:^2.0.0-next.0 || ^2.0.0"
     debug: "npm:^4.3.4"
     deepmerge: "npm:^4.3.1"
     kleur: "npm:^4.1.5"
-    magic-string: "npm:^0.30.3"
+    magic-string: "npm:^0.30.5"
     svelte-hmr: "npm:^0.15.3"
-    vitefu: "npm:^0.2.4"
+    vitefu: "npm:^0.2.5"
   peerDependencies:
-    svelte: ^3.54.0 || ^4.0.0
-    vite: ^4.0.0
-  checksum: f65e8a6f8d75abd98ae0399139ccde690e3138ba4793f4c7d878cf77675f29143bd5acf87fc6dc6d96fd982bc29b9870e05e6461ae003774f77cb117c586caf2
+    svelte: ^4.0.0 || ^5.0.0-next.0
+    vite: ^5.0.0
+  checksum: 7e1ba2920adfebfa0091dea2f8d48ba2220aa490f098e5c598c32ef9a65c416967c6dccb876970234e998fe72c7bd992936dcd7e99c7e8d4e72e1d03f8fa15fb
   languageName: node
   linkType: hard
 
@@ -7044,7 +7057,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.30.0, magic-string@npm:^0.30.1, magic-string@npm:^0.30.2, magic-string@npm:^0.30.3":
+"magic-string@npm:^0.30.0, magic-string@npm:^0.30.1, magic-string@npm:^0.30.2":
   version: 0.30.3
   resolution: "magic-string@npm:0.30.3"
   dependencies:
@@ -10396,6 +10409,18 @@ __metadata:
     vite:
       optional: true
   checksum: 6ef3fda7b830628c1fb1aef75f6e90a354a8dd7bbaf9902a55afb360af29a572444abc8d49c94b0a281a9c56a91b87edc610c8bef4e35aa2baf655edab7be7e9
+  languageName: node
+  linkType: hard
+
+"vitefu@npm:^0.2.5":
+  version: 0.2.5
+  resolution: "vitefu@npm:0.2.5"
+  peerDependencies:
+    vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+  peerDependenciesMeta:
+    vite:
+      optional: true
+  checksum: 65ef98208c1e26f78315b5f3e1b73f87189b34f1e6a8dc11f66a3263624dd27bd1ff1571a3a54ad5ef273336259f26545b6005bab6fc04a049d50aa4b829791d
   languageName: node
   linkType: hard
 
