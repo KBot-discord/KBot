@@ -1,5 +1,5 @@
 ## Builder ##
-FROM node:20.9.0-alpine as builder
+FROM node:21.3.0-alpine as builder
 
 WORKDIR /temp
 
@@ -10,7 +10,7 @@ COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
 ## Dependencies ##
-FROM node:20.9.0-alpine AS deps
+FROM node:21.3.0-alpine AS deps
 
 ENV NODE_ENV=production
 
@@ -37,7 +37,7 @@ COPY --from=builder /temp/out/full/ .
 RUN yarn turbo build --filter=@kbotdev/bot
 
 ## App ##
-FROM node:20.9.0-alpine as app
+FROM node:21.3.0-alpine as app
 
 WORKDIR /app
 
