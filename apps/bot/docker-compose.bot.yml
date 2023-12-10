@@ -1,8 +1,12 @@
-version: "3.8"
+version: "3.9"
 
 services:
   bot:
     image: kbot/bot:latest
     container_name: kbot
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres_kbot:5432/kbot
+      - REDIS_HOST=redis_kbot
+      - MEILI_HOST=meili_kbot
     env_file:
       - .env
