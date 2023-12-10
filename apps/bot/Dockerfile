@@ -1,5 +1,5 @@
 ## Builder ##
-FROM node:20.9.0-alpine as builder
+FROM node:20.10.0-alpine as builder
 
 WORKDIR /temp
 
@@ -10,7 +10,7 @@ COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
 ## Dependencies ##
-FROM node:20.9.0-alpine AS deps
+FROM node:20.10.0-alpine AS deps
 
 ENV NODE_ENV=production
 
@@ -20,7 +20,6 @@ RUN apk add -q --no-cache openssl libc6-compat cairo-dev jpeg-dev pango-dev gifl
 	apk update
 
 COPY .yarn .yarn/
-COPY protos protos/
 COPY scripts scripts/
 COPY .yarnrc.yml tsconfig.base.json ./
 COPY --from=builder /temp/out/json/ /temp/out/yarn.lock ./
@@ -30,26 +29,31 @@ RUN yarn install
 
 COPY --from=builder /temp/out/full/ .
 
-RUN yarn turbo build --filter=@kbotdev/bot
+RUN yarn turbo build --filter=@kbotdev/bot && \
+	yarn workspaces focus @kbotdev/bot --production
 
 ## App ##
-FROM node:20.9.0-alpine as app
+FROM node:20.10.0-alpine as app
+
+LABEL org.opencontainers.image.source=https://github.com/KBot-discord/KBot
+LABEL org.opencontainers.image.licenses=AGPL-3.0-or-later
 
 WORKDIR /app
 
 ## Canvas dependencies
-RUN apk add -q --update cairo jpeg pango giflib && \
-	yarn global add prisma && \
+RUN apk add -q --no-cache cairo jpeg pango giflib && \
+	rm -rf /var/cache/apk/* && \
+	npm i -g prisma && \
 	addgroup --system --gid 1001 kbot && \
 	adduser --system --uid 1001 kbot
 
 USER kbot
 
-COPY --from=deps /temp/node_modules node_modules/
-COPY --from=deps /temp/apps/bot/assets assets/
-COPY --from=deps /temp/apps/bot/prisma/migrations prisma/migrations/
-COPY --from=deps /temp/apps/bot/prisma/schema.prisma prisma/schema.prisma
-COPY --from=deps /temp/apps/bot/dist dist/
-COPY --from=deps /temp/apps/bot/package.json ./
+COPY --from=deps --chown=kbot:kbot /temp/node_modules node_modules/
+COPY --from=deps --chown=kbot:kbot /temp/apps/bot/assets assets/
+COPY --from=deps --chown=kbot:kbot /temp/apps/bot/prisma/migrations prisma/migrations/
+COPY --from=deps --chown=kbot:kbot /temp/apps/bot/prisma/schema.prisma prisma/schema.prisma
+COPY --from=deps --chown=kbot:kbot /temp/apps/bot/dist dist/
+COPY --from=deps --chown=kbot:kbot /temp/apps/bot/package.json ./
 
-CMD yarn prisma migrate deploy && yarn run start
+CMD npx prisma migrate deploy && npm run start
