@@ -38,12 +38,14 @@ export class MeilisearchClient extends MeiliSearch {
 	 * @param searchString - The query
 	 * @returns The {@link SearchResponse} of the query
 	 */
-	public async get<T = unknown>(index: MeiliIndex, searchString: string): Promise<SearchResponse<T>> {
-		return super
+	public async get<I extends MeiliIndex>(index: I, searchString: string): Promise<SearchResponse<MeiliDocument<I>>> {
+		const result = await super
 			.index(index) //
-			.search<MeiliDocument<typeof index>>(searchString, {
+			.search<MeiliDocument<I>>(searchString, {
 				limit: 25
-			}) as unknown as Promise<SearchResponse<T>>;
+			});
+
+		return result;
 	}
 
 	/**
@@ -52,8 +54,8 @@ export class MeilisearchClient extends MeiliSearch {
 	 * @param documents - The documents to upsert
 	 * @returns The resulting task of the operation
 	 */
-	public async upsertMany(index: MeiliIndex, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
-		return super
+	public async upsertMany<I extends MeiliIndex>(index: I, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
+		return await super
 			.index(index) //
 			.addDocuments(documents);
 	}
@@ -64,8 +66,8 @@ export class MeilisearchClient extends MeiliSearch {
 	 * @param documents - The documents to update
 	 * @returns The resulting task of the operation
 	 */
-	public async updateMany(index: MeiliIndex, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
-		return super
+	public async updateMany<I extends MeiliIndex>(index: I, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
+		return await super
 			.index(index) //
 			.updateDocuments(documents);
 	}
@@ -76,9 +78,9 @@ export class MeilisearchClient extends MeiliSearch {
 	 * @param documents - The documents to add
 	 * @returns The resulting task of the operation
 	 */
-	public async resetIndex(index: MeiliIndex, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
+	public async resetIndex<I extends MeiliIndex>(index: I, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
 		await super.index(index).deleteAllDocuments();
-		return super
+		return await super
 			.index(index) //
 			.updateDocuments(documents);
 	}

@@ -1,6 +1,6 @@
-import { EmbedColors } from '#utils/constants';
+import { EmbedColors } from '#lib/utilities/constants';
 import { CommandInteraction, EmbedBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
-import type { FollowupArgs, ReplyArgs } from '#types/Augments';
+import type { FollowupArgs, ReplyArgs } from '#lib/types/Augments';
 import type { InteractionResponse, Message } from 'discord.js';
 
 type InteractionUnion = CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction;
@@ -32,53 +32,53 @@ async function _safeReply(
 ): Promise<InteractionResponse | Message> {
 	const data = formatResponse(interaction, color, text, tryEphemeral);
 	return interaction.deferred || interaction.replied //
-		? interaction.editReply(data)
-		: interaction.reply(data);
+		? await interaction.editReply(data)
+		: await interaction.reply(data);
 }
 
 async function _safeFollowup(interaction: InteractionUnion, color: EmbedColors, text: string, tryEphemeral?: boolean): Promise<Message> {
 	const data = formatResponse(interaction, color, text, tryEphemeral);
-	return interaction.followUp(data);
+	return await interaction.followUp(data);
 }
 
 CommandInteraction.prototype.defaultReply =
 	MessageComponentInteraction.prototype.defaultReply =
 	ModalSubmitInteraction.prototype.defaultReply =
 		async function defaultReply(...[text, options]: ReplyArgs): Promise<InteractionResponse | Message> {
-			return _safeReply(this, EmbedColors.Default, text, options?.tryEphemeral);
+			return await _safeReply(this, EmbedColors.Default, text, options?.tryEphemeral);
 		};
 
 CommandInteraction.prototype.successReply =
 	MessageComponentInteraction.prototype.successReply =
 	ModalSubmitInteraction.prototype.successReply =
 		async function successReply(...[text, options]: ReplyArgs): Promise<InteractionResponse | Message> {
-			return _safeReply(this, EmbedColors.Success, text, options?.tryEphemeral);
+			return await _safeReply(this, EmbedColors.Success, text, options?.tryEphemeral);
 		};
 
 CommandInteraction.prototype.errorReply =
 	MessageComponentInteraction.prototype.errorReply =
 	ModalSubmitInteraction.prototype.errorReply =
 		async function errorReply(...[text, options]: ReplyArgs): Promise<InteractionResponse | Message> {
-			return _safeReply(this, EmbedColors.Error, text, options?.tryEphemeral);
+			return await _safeReply(this, EmbedColors.Error, text, options?.tryEphemeral);
 		};
 
 CommandInteraction.prototype.defaultFollowup =
 	MessageComponentInteraction.prototype.defaultFollowup =
 	ModalSubmitInteraction.prototype.defaultFollowup =
 		async function defaultFollowup(...[text, options]: FollowupArgs): Promise<InteractionResponse | Message> {
-			return _safeFollowup(this, EmbedColors.Default, text, options?.ephemeral);
+			return await _safeFollowup(this, EmbedColors.Default, text, options?.ephemeral);
 		};
 
 CommandInteraction.prototype.successFollowup =
 	MessageComponentInteraction.prototype.successFollowup =
 	ModalSubmitInteraction.prototype.successFollowup =
 		async function successFollowup(...[text, options]: FollowupArgs): Promise<InteractionResponse | Message> {
-			return _safeFollowup(this, EmbedColors.Success, text, options?.ephemeral);
+			return await _safeFollowup(this, EmbedColors.Success, text, options?.ephemeral);
 		};
 
 CommandInteraction.prototype.errorFollowup =
 	MessageComponentInteraction.prototype.errorFollowup =
 	ModalSubmitInteraction.prototype.errorFollowup =
 		async function errorFollowup(...[text, options]: FollowupArgs): Promise<InteractionResponse | Message> {
-			return _safeFollowup(this, EmbedColors.Error, text, options?.ephemeral);
+			return await _safeFollowup(this, EmbedColors.Error, text, options?.ephemeral);
 		};

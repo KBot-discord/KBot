@@ -42,10 +42,10 @@ export function interactionRatelimit(time: number, limit: number): MethodDecorat
 			throw new Error('This can only be used on class methods');
 		}
 
-		descriptor.value = async function setValue(
+		descriptor.value = async function value(
 			this: (...args: any[]) => any,
 			interaction: ButtonInteraction | ModalSubmitInteraction | StringSelectMenuInteraction
-		) {
+		): Promise<any> {
 			const bucket = manager.acquire(`${interaction.customId}:${interaction.user.id}`);
 
 			if (bucket.limited) {
@@ -60,6 +60,6 @@ export function interactionRatelimit(time: number, limit: number): MethodDecorat
 
 			bucket.consume();
 			return method.call(this, interaction);
-		} as unknown as undefined;
+		};
 	});
 }

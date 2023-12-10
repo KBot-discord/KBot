@@ -1,10 +1,10 @@
-import { isNullOrUndefined } from '#utils/functions';
-import { fetchChannel } from '#utils/discord';
+import { fetchChannel } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, PermissionFlagsBits, userMention } from 'discord.js';
 import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
-import type { KaraokeUser } from '@kbotdev/database';
+import type { KaraokeUser } from '@prisma/client';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.VoiceStateUpdate

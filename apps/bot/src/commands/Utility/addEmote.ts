@@ -1,13 +1,13 @@
-import { EmojiRegex, UrlRegex } from '#utils/constants';
-import { ResourceCustomIds, ResourceFields } from '#utils/customIds';
-import { attachmentFromMessage, buildCustomId, calculateEmoteSlots } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
-import { fetchBase64Image, isNullOrUndefined } from '#utils/functions';
-import { KBotModules } from '#types/Enums';
+import { EmojiRegex, UrlRegex } from '#lib/utilities/constants';
+import { ResourceCustomIds, ResourceFields } from '#lib/utilities/customIds';
+import { attachmentFromMessage, buildCustomId, calculateEmoteSlots } from '#lib/utilities/discord';
+import { fetchBase64Image, isNullOrUndefined } from '#lib/utilities/functions';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { ActionRowBuilder, ApplicationCommandType, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { AddResourceModal, EmojiData } from '#types/CustomIds';
+import type { AddResourceModal, EmojiData } from '#lib/types/CustomIds';
 import type { Message } from 'discord.js';
 import type { UtilityModule } from '#modules/UtilityModule';
 

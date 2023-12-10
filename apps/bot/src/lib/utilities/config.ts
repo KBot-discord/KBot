@@ -1,5 +1,5 @@
-import { flattenObject, isNullOrUndefinedOrEmpty } from '#utils/functions';
-import type { ClientConfig } from '#types/Config';
+import { flattenObject, isNullOrUndefinedOrEmpty } from '#lib/utilities/functions';
+import type { ClientConfig } from '#lib/types/Config';
 
 /**
  * Asserts that a config has no undefined values.

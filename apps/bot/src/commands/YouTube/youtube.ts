@@ -1,18 +1,17 @@
-import { YoutubeMenu } from '#structures/menus/YoutubeMenu';
-import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { fetchChannel, getGuildIcon } from '#utils/discord';
-import { YoutubeCustomIds } from '#utils/customIds';
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { isNullOrUndefined } from '#utils/functions';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { YoutubeCustomIds } from '#lib/utilities/customIds';
+import { fetchChannel, getGuildIcon } from '#lib/utilities/discord';
+import { EmbedColors, KBotEmoji } from '#lib/utilities/constants';
+import { KBotErrors, KBotModules } from '#lib/types/Enums';
+import { YoutubeMenu } from '#lib/structures/menus/YoutubeMenu';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { MeiliCategories } from '@kbotdev/meili';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, ChannelType, EmbedBuilder, PermissionFlagsBits, StringSelectMenuBuilder, channelMention } from 'discord.js';
 import type { APISelectMenuOption, ApplicationCommandOptionChoiceData, BaseMessageOptions, Guild, GuildTextBasedChannel } from 'discord.js';
 import type { YoutubeModule } from '#modules/YouTubeModule';
-import type { DocumentYoutubeChannel } from '@kbotdev/meili';
-import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
+import type { YoutubeSubscriptionWithChannel } from '#lib/services/types/youtube';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.YouTube,
@@ -206,7 +205,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 		let options: ApplicationCommandOptionChoiceData[];
 
 		if (focusedOption.name === 'account') {
-			const result = await this.container.meili.get<DocumentYoutubeChannel>(MeiliCategories.YoutubeChannels, focusedOption.value);
+			const result = await this.container.meili.get(MeiliCategories.YoutubeChannels, focusedOption.value);
 
 			options = result.hits.map(({ name, englishName, id }) => ({
 				name: englishName ?? name,
@@ -297,7 +296,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 			await this.updateReactionRoleMessage(interaction.guild);
 		}
 
-		return this.showSettings(interaction, subscription);
+		return await this.showSettings(interaction, subscription);
 	}
 
 	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -326,7 +325,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 			await this.updateReactionRoleMessage(interaction.guild);
 		}
 
-		return this.showSettings(interaction, subscription);
+		return await this.showSettings(interaction, subscription);
 	}
 
 	public async chatInputRoleReaction(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {

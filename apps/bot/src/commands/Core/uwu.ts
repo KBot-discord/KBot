@@ -1,7 +1,7 @@
-import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '#utils/constants';
-import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotModules } from '#types/Enums';
-import { isNullOrUndefinedOrEmpty } from '#utils/functions';
+import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '#lib/utilities/constants';
+import { isNullOrUndefinedOrEmpty } from '#lib/utilities/functions';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ApplicationCommandType, PermissionFlagsBits } from 'discord.js';

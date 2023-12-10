@@ -1,13 +1,13 @@
-import { rootFolder } from '#utils/constants';
-import { Validator } from '#utils/validators';
-import { KBotMetrics } from '#observability/KBotMetrics';
+import { rootFolder } from '#lib/utilities/constants';
+import { KBotMetrics } from '#lib/observability/KBotMetrics';
+import { Validator } from '#lib/structures/Validator';
 import { MeilisearchClient } from '@kbotdev/meili';
-import { RedisClient } from '@kbotdev/redis';
-import { PrismaClient } from '@kbotdev/database';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import { Plugin, SapphireClient, container, preGenericsInitialization } from '@sapphire/framework';
 import { Holodex } from '@kbotdev/holodex';
+import { PrismaClient } from '@prisma/client';
+import { RedisClient } from '@killbasa/redis-utils';
 
 export class DependenciesPlugin extends Plugin {
 	public static [preGenericsInitialization](this: SapphireClient): void {

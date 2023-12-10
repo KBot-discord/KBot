@@ -1,11 +1,11 @@
-import { PollCustomIds } from '#utils/customIds';
-import { validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
-import { parseCustomId } from '#utils/discord';
+import { PollCustomIds } from '#lib/utilities/customIds';
+import { validCustomId } from '#lib/utilities/decorators';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { parseCustomId } from '#lib/utilities/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ButtonInteraction } from 'discord.js';
-import type { PollMenuButton } from '#types/CustomIds';
+import type { PollMenuButton } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: PollCustomIds.End,

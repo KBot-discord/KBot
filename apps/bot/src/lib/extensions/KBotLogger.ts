@@ -1,6 +1,6 @@
-import { KBotErrors } from '#types/Enums';
-import { WebhookErrorBuilder } from '#structures/builders/WebhookErrorBuilder';
-import { getUserAvatarUrl } from '#utils/discord';
+import { getUserAvatarUrl } from '#lib/utilities/discord';
+import { WebhookErrorBuilder } from '#lib/structures/builders/WebhookErrorBuilder';
+import { KBotErrors } from '#lib/types/Enums';
 import { Result, container } from '@sapphire/framework';
 import { Logger } from '@sapphire/plugin-logger';
 import { captureException, captureMessage } from '@sentry/node';
@@ -46,7 +46,7 @@ export class KBotLogger extends Logger {
 		const embed: EmbedBuilder = builder(new WebhookErrorBuilder()).build();
 
 		const result = await Result.fromAsync(async () => {
-			return webhook.send({
+			return await webhook.send({
 				avatarURL: getUserAvatarUrl(container.client.user!),
 				embeds: [embed]
 			});

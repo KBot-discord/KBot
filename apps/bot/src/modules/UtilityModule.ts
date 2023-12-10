@@ -1,16 +1,15 @@
-import { DiscordIncidentService, PollService, UtilitySettingsService } from '#services';
-import { CreditCustomIds, CreditFields } from '#utils/customIds';
-import { isNullOrUndefined } from '#utils/functions';
-import { buildCustomId } from '#utils/discord';
+import { DiscordIncidentService, PollService, UtilitySettingsService } from '#lib/services';
+import { buildCustomId } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { CreditCustomIds, CreditFields } from '#lib/utilities/customIds';
 import { Module } from '@kbotdev/plugin-modules';
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Time } from '@sapphire/duration';
-import type { CreditType } from '#utils/customIds';
-import type { CreditImageModal, CreditModal, EmojiData, StickerData } from '#types/CustomIds';
+import type { CreditType } from '#lib/utilities/customIds';
+import type { CreditImageModal, CreditModal, EmojiData, StickerData } from '#lib/types/CustomIds';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '#types/Enums';
-import type { Key } from '@kbotdev/redis';
+import type { KBotModules } from '#lib/types/Enums';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Utility Module'
@@ -20,7 +19,7 @@ export class UtilityModule extends Module {
 	public readonly incidents: DiscordIncidentService;
 	public readonly polls: PollService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
+	public constructor(context: Module.LoaderContext, options: Module.Options) {
 		super(context, options);
 
 		this.settings = new UtilitySettingsService();
@@ -64,10 +63,10 @@ export class UtilityModule extends Module {
 						c: channelId,
 						ri: resourceId,
 						t: type
-				  })
+					})
 				: buildCustomId<CreditImageModal>(CreditCustomIds.ImageModalCreate, {
 						c: channelId
-				  });
+					});
 
 		const components: ActionRowBuilder<TextInputBuilder>[] = [
 			new ActionRowBuilder<TextInputBuilder>().addComponents(
@@ -128,7 +127,7 @@ export class UtilityModule extends Module {
 			.addComponents(components);
 	}
 
-	private readonly resourceKey = (messageId: string, userId: string): Key => `add-resource:${messageId}:${userId}` as Key;
+	private readonly resourceKey = (messageId: string, userId: string): string => `add-resource:${messageId}:${userId}`;
 }
 
 declare module '@kbotdev/plugin-modules' {

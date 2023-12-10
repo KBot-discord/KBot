@@ -1,12 +1,9 @@
 {
-	"typescript.tsdk": "node_modules/typescript/lib",
+	"typescript.tsdk": "./node_modules/typescript/lib",
 	"eslint.format.enable": true,
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"eslint.validate": ["javascript", "typescript", "svelte"],
-	"[svelte]": {
-		"editor.defaultFormatter": "svelte.svelte-vscode"
-	},
+	"eslint.validate": ["javascript", "typescript"],
 	"[javascript]": {
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
 	},

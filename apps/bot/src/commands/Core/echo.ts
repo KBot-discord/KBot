@@ -1,8 +1,8 @@
-import { EmbedColors } from '#utils/constants';
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { EchoCustomIds, EchoFields } from '#utils/customIds';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
-import { buildCustomId } from '#utils/discord';
+import { EmbedColors } from '#lib/utilities/constants';
+import { EchoCustomIds, EchoFields } from '#lib/utilities/customIds';
+import { buildCustomId } from '#lib/utilities/discord';
+import { KBotErrors, KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import {
 	ActionRowBuilder,
 	ChannelType,
@@ -16,7 +16,7 @@ import {
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { CoreModule } from '#modules/CoreModule';
-import type { EchoModal } from '#types/CustomIds';
+import type { EchoModal } from '#lib/types/CustomIds';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Core,

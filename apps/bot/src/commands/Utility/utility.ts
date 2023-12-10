@@ -1,12 +1,12 @@
-import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/discord';
-import { KBotModules } from '#types/Enums';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { getGuildIcon } from '#lib/utilities/discord';
+import { EmbedColors, KBotEmoji } from '#lib/utilities/constants';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { UtilitySettings } from '@kbotdev/database';
+import type { UtilitySettings } from '@prisma/client';
 import type { UtilityModule } from '#modules/UtilityModule';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -83,7 +83,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {

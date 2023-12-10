@@ -14,8 +14,8 @@ export type MeiliIndex = (typeof MeiliCategories)[keyof typeof MeiliCategories];
 export type MeiliDocument<T extends MeiliIndex> = T extends typeof MeiliCategories.Commands
 	? DocumentCommand
 	: T extends typeof MeiliCategories.YoutubeChannels
-	? DocumentYoutubeChannel
-	: never;
+		? DocumentYoutubeChannel
+		: never;
 
 type DocumentBase = {
 	id: string;

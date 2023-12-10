@@ -1,6 +1,6 @@
-import { MinageHandler } from '#structures/handlers/MinageHandler';
-import { WelcomeHandler } from '#structures/handlers/WelcomeHandler';
-import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
+import { MinageHandler } from '#lib/structures/handlers/MinageHandler';
+import { WelcomeHandler } from '#lib/structures/handlers/WelcomeHandler';
+import { AntiHoistHandler } from '#lib/structures/handlers/AntiHoistHandler';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { GuildMember } from 'discord.js';

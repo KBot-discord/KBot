@@ -10,7 +10,6 @@ coverage/
 dist/
 build/
 infra/
-k8s/
 node_modules/
 tests/
 protos/
@@ -22,8 +21,6 @@ scripts/*.sh
 .env*
 .gitattributes
 .gitignore
-go.work
-go.work.sum
 LICENSE
 README.md
 vitest.config.ts

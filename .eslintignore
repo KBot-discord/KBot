@@ -6,6 +6,5 @@
 assets/
 coverage/
 dist/
-build/
 infra/
 node_modules/

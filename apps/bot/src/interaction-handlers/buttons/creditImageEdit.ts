@@ -1,13 +1,13 @@
-import { CreditCustomIds, CreditFields } from '#utils/customIds';
-import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
-import { buildCustomId } from '#utils/discord';
+import { buildCustomId } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { interactionRatelimit, validCustomId } from '#lib/utilities/decorators';
+import { CreditCustomIds, CreditFields } from '#lib/utilities/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonInteraction, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { Time } from '@sapphire/duration';
 import type { Embed } from 'discord.js';
-import type { CreditImageEditModal } from '#types/CustomIds';
+import type { CreditImageEditModal } from '#lib/types/CustomIds';
 
 type CreditEmbed = {
 	name: string;
@@ -26,7 +26,7 @@ export class ButtonHandler extends InteractionHandler {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
 		const modal = this.buildModal(interaction.message.id, data);
 
-		return interaction.showModal(modal);
+		await interaction.showModal(modal);
 	}
 
 	@validCustomId(CreditCustomIds.ImageEdit)

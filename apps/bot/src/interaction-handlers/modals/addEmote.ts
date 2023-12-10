@@ -1,11 +1,11 @@
-import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '#utils/customIds';
-import { validCustomId } from '#utils/decorators';
-import { EmbedColors } from '#utils/constants';
-import { buildCustomId, calculateEmoteSlots, parseCustomId } from '#utils/discord';
+import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '#lib/utilities/customIds';
+import { validCustomId } from '#lib/utilities/decorators';
+import { EmbedColors } from '#lib/utilities/constants';
+import { buildCustomId, calculateEmoteSlots, parseCustomId } from '#lib/utilities/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
-import type { AddResourceModal, Credit, EmojiData } from '#types/CustomIds';
+import type { AddResourceModal, Credit, EmojiData } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: ResourceCustomIds.Emote,
@@ -31,7 +31,8 @@ export class ModalHandler extends InteractionHandler {
 			})
 			.catch((e) => (e instanceof Error ? e : null));
 		if (!newEmoji || newEmoji instanceof Error) {
-			return this.handleError(interaction, newEmoji);
+			await this.handleError(interaction, newEmoji);
+			return;
 		}
 
 		if (url.startsWith('https')) {

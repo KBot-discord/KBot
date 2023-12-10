@@ -1,10 +1,7 @@
 import type { MeilisearchClient } from '@kbotdev/meili';
 import type { APIMessage, InteractionResponse, Message } from 'discord.js';
-import type { KBotMetrics } from '#observability/KBotMetrics';
-import type { ClientConfig } from '#types/Config';
-import type { RedisClient } from '@kbotdev/redis';
-import type { PrismaClient } from '@kbotdev/database';
-import type { Validator } from '#utils/validators';
+import type { KBotMetrics } from '#lib/observability/KBotMetrics';
+import type { ClientConfig } from '#lib/types/Config';
 import type { CoreModule } from '#modules/CoreModule';
 import type { EventModule } from '#modules/EventModule';
 import type { ModerationModule } from '#modules/ModerationModule';
@@ -12,10 +9,12 @@ import type { UtilityModule } from '#modules/UtilityModule';
 import type { WelcomeModule } from '#modules/WelcomeModule';
 import type { YoutubeModule } from '#modules/YouTubeModule';
 import type { Holodex } from '@kbotdev/holodex';
-import type { KBotErrors } from '#types/Enums';
-import type { ChannelPermissionsPayload } from '#types/Errors';
-import type { AuthData } from '@sapphire/plugin-api';
-import type { WebhookErrorBuilder } from '#structures/builders/WebhookErrorBuilder';
+import type { KBotErrors } from '#lib/types/Enums';
+import type { ChannelPermissionsPayload } from '#lib/types/Errors';
+import type { WebhookErrorBuilder } from '#lib/structures/builders/WebhookErrorBuilder';
+import type { PrismaClient } from '@prisma/client';
+import type { RedisClient } from '@killbasa/redis-utils';
+import type { Validator } from '#lib/structures/Validator';
 
 export type InteractionResponseUnion = APIMessage | InteractionResponse | Message | void;
 
@@ -126,14 +125,5 @@ declare module '@sapphire/framework' {
 		 * @param builder - The embed for the webhook
 		 */
 		webhookError(builder: (builder: WebhookErrorBuilder) => WebhookErrorBuilder): Promise<void>;
-	}
-}
-
-declare module '@bufbuild/connect' {
-	interface HandlerContext {
-		/**
-		 * Authentication data about the incoming Request.
-		 */
-		auth: AuthData;
 	}
 }

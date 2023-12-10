@@ -1,13 +1,13 @@
-import { BlankSpace, EmbedColors } from '#utils/constants';
-import { YoutubeChannelService, YoutubeSettingsService, YoutubeSubscriptionService } from '#services';
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { BlankSpace, EmbedColors } from '#lib/utilities/constants';
+import { YoutubeChannelService, YoutubeSettingsService, YoutubeSubscriptionService } from '#lib/services';
 import { Module } from '@kbotdev/plugin-modules';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
-import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '#types/Enums';
+import type { KBotModules } from '#lib/types/Enums';
+import type { YoutubeSubscriptionWithChannel } from '#lib/services/types/youtube';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Youtube Module'
@@ -17,7 +17,7 @@ export class YoutubeModule extends Module {
 	public readonly channels: YoutubeChannelService;
 	public readonly subscriptions: YoutubeSubscriptionService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
+	public constructor(context: Module.LoaderContext, options: Module.Options) {
 		super(context, options);
 
 		this.settings = new YoutubeSettingsService();

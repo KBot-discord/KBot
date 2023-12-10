@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { StageInstance } from 'discord.js';

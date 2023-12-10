@@ -1,13 +1,13 @@
-import { EmbedColors } from '#utils/constants';
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { getGuildIcon } from '#utils/discord';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { getGuildIcon } from '#lib/utilities/discord';
+import { EmbedColors } from '#lib/utilities/constants';
+import { KBotErrors, KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { UtilitySettings } from '@kbotdev/database';
+import type { UtilitySettings } from '@prisma/client';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Utility,
@@ -87,7 +87,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 			incidentChannelId: channel.id
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -95,13 +95,13 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 			incidentChannelId: null
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {

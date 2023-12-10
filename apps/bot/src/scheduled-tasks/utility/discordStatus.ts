@@ -1,12 +1,12 @@
-import { DISCORD_STATUS_BASE, StatusEmbed } from '#utils/constants';
-import { IncidentNotification } from '#structures/IncidentNotification';
+import { DISCORD_STATUS_BASE, StatusEmbed } from '#lib/utilities/constants';
+import { IncidentNotification } from '#lib/structures/IncidentNotification';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, TimestampStyles, time } from 'discord.js';
 import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 import { container } from '@sapphire/framework';
-import type { StatusPageIncident, StatusPageResult } from '#types/DiscordStatus';
-import type { IncidentMessage, Prisma } from '@kbotdev/database';
+import type { StatusPageIncident, StatusPageResult } from '#lib/types/DiscordStatus';
+import type { IncidentMessage, Prisma } from '@prisma/client';
 
 type DatabaseIncidentData = {
 	updatedAt: Date | undefined;
@@ -16,7 +16,7 @@ type DatabaseIncidentData = {
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'discordStatus',
 	pattern: '0 */5 * * * *', // Every 5 minutes
-	enabled: !container.config.isDev
+	enabled: container.config.enableTasks
 })
 export class UtilityTask extends ScheduledTask {
 	public override async run(): Promise<void> {
@@ -140,12 +140,12 @@ export class UtilityTask extends ScheduledTask {
 			incident.status === 'resolved' || incident.status === 'postmortem'
 				? StatusEmbed.Green
 				: incident.impact === 'critical'
-				? StatusEmbed.Red
-				: incident.impact === 'major'
-				? StatusEmbed.Orange
-				: incident.impact === 'minor'
-				? StatusEmbed.Yellow
-				: StatusEmbed.Black;
+					? StatusEmbed.Red
+					: incident.impact === 'major'
+						? StatusEmbed.Orange
+						: incident.impact === 'minor'
+							? StatusEmbed.Yellow
+							: StatusEmbed.Black;
 
 		const affectedComponents = incident.components.map((c) => c.name);
 

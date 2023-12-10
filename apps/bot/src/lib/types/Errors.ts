@@ -1,7 +1,7 @@
-import type { KBotError } from '#structures/errors/KBotError';
-import type { KBotCommand } from '#extensions/KBotCommand';
+import type { KBotError } from '#lib/structures/errors/KBotError';
+import type { KBotCommand } from '#lib/extensions/KBotCommand';
 import type { MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
-import type { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
+import type { ChannelPermissionsError } from '#lib/structures/errors/ChannelPermissionsError';
 
 export type ErrorPayload = {
 	error: KBotError;

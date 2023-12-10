@@ -1,6 +1,6 @@
-import { checkDepth, isNullOrUndefined } from '#utils/functions';
-import { CreditType } from '#utils/customIds';
-import { BlankSpace, EmbedColors, GuildEmoteSlots, GuildSoundboardSlots, GuildStickerSlots, KBotEmoji } from '#utils/constants';
+import { BlankSpace, EmbedColors, GuildEmoteSlots, GuildSoundboardSlots, GuildStickerSlots, KBotEmoji } from '#lib/utilities/constants';
+import { CreditType } from '#lib/utilities/customIds';
+import { checkDepth, isNullOrUndefined } from '#lib/utilities/functions';
 import { EmbedBuilder, MessageType, PermissionFlagsBits, User, isJSONEncodable } from 'discord.js';
 import { roleMention, time, userMention } from '@discordjs/builders';
 import { UserError, container } from '@sapphire/framework';
@@ -22,13 +22,13 @@ import type {
 	Sticker
 } from 'discord.js';
 import type { ImageURLOptions } from '@discordjs/rest';
-import type { LoginData } from '@sapphire/plugin-api';
-import type { FormattedGuild, TransformedLoginData } from '#types/Api';
 
 /**
- * Builds a custom ID and appends extra data.
- * @param prefix - The prefix of the custom ID
- * @param data - The data to add
+ * Builds a custom ID string with a prefix and optional data object.
+ *
+ * @param prefix - The prefix for the custom ID.
+ * @param data - The data object to include in the custom ID.
+ * @returns The generated custom ID string.
  */
 export function buildCustomId<T extends Record<string, unknown> = Record<string, unknown>>(prefix: string, data?: T): string {
 	if (isNullOrUndefined(data)) return prefix;
@@ -54,8 +54,10 @@ export function buildCustomId<T extends Record<string, unknown> = Record<string,
 }
 
 /**
- * Parses a custom ID and returns the prefix and data.
- * @param customId - The custom ID to parse
+ * Parses a custom ID string and returns an object with the prefix and parsed data.
+ *
+ * @param customId - The custom ID string to parse.
+ * @returns An object with the prefix and parsed data.
  */
 export function parseCustomId<T = Record<string, unknown>>(customId: string): { prefix: string; data: T } {
 	const { 0: prefix, 1: data } = customId.split(';');
@@ -173,34 +175,6 @@ export function attachmentFromMessage(message: Message): { url: string; fileType
 	};
 }
 
-export async function transformLoginData(data: LoginData): Promise<TransformedLoginData> {
-	const { user, guilds } = data;
-	if (!user) return { user, guilds: [] };
-
-	const formattedUser = {
-		id: user.id,
-		global_name: user.global_name,
-		username: user.username,
-		discriminator: user.discriminator,
-		avatar: getUserAvatarUrl(user)
-	};
-
-	if (!guilds) return { user: formattedUser, guilds: [] };
-
-	const formattedGuilds: FormattedGuild[] = await Promise.all(
-		guilds.length > 0
-			? guilds
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					.filter(async (guild) => canManageGuildFilter(guild, user.id)) //
-					.map(({ id, name, icon, owner, permissions, features }) => {
-						return { id, name, icon: icon ?? '', owner, permissions, features };
-					})
-			: []
-	);
-
-	return { user: formattedUser, guilds: formattedGuilds };
-}
-
 /**
  * Checks if a user has `Manager Server` permissions in a guild.
  * @param guild - The guild to check
@@ -211,7 +185,7 @@ export async function canManageGuildFilter(guild: Guild | RESTAPIPartialCurrentU
 	if (!fetchedGuild) return false;
 
 	const member = await fetchedGuild.members.fetch(userId).catch(() => null);
-	return canManageGuild(fetchedGuild, member);
+	return await canManageGuild(fetchedGuild, member);
 }
 
 /**

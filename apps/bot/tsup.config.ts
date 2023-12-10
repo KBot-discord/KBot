@@ -9,11 +9,8 @@ export default defineTsupConfig({
 	format: ['esm'],
 	tsconfig: relative(__dirname, './tsconfig.json'),
 	noExternal: [
-		'@kbotdev/database', //
-		'@kbotdev/holodex',
+		'@kbotdev/holodex', //
 		'@kbotdev/meili',
-		'@kbotdev/prisma',
-		'@kbotdev/proto',
-		'@kbotdev/redis'
+		'@kbotdev/proto'
 	]
 });

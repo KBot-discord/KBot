@@ -14,7 +14,6 @@ $ cd kbot
 
 ```bash
 $ cp apps/bot/.env.example apps/bot/.env
-$ cp apps/web/.env.example apps/web/.env
 ```
 
 ### 3. Install dependencies

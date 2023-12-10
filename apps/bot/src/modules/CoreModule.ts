@@ -1,5 +1,5 @@
-import { CoreSettingsService } from '#services';
-import { KBotModules } from '#types/Enums';
+import { KBotModules } from '#lib/types/Enums';
+import { CoreSettingsService } from '#lib/services';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 
@@ -10,7 +10,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 export class CoreModule extends Module {
 	public readonly settings: CoreSettingsService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
+	public constructor(context: Module.LoaderContext, options: Module.Options) {
 		super(context, options);
 
 		this.settings = new CoreSettingsService();

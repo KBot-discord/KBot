@@ -1,4 +1,4 @@
-import { KBotError } from './errors/KBotError';
+import { KBotError } from '#lib/structures/errors/KBotError';
 import { Result } from '@sapphire/framework';
 import type { KBotErrorOptions } from './errors/KBotError';
 

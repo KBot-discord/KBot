@@ -1,14 +1,12 @@
 import { container } from '@sapphire/framework';
-import { YoutubeSubscriptionRepository } from '@kbotdev/database';
-import type { HolodexChannel, UpdateYoutubeSubscriptionData, YoutubeSubscription, YoutubeSubscriptionWithChannel } from '@kbotdev/database';
+import type { HolodexChannel, PrismaClient, YoutubeSubscription } from '@prisma/client';
+import type { UpdateYoutubeSubscriptionData, YoutubeSubscriptionWithChannel } from '#lib/services/types/youtube';
 
 export class YoutubeSubscriptionService {
-	private readonly repository: YoutubeSubscriptionRepository;
+	private readonly database: PrismaClient;
 
 	public constructor() {
-		this.repository = new YoutubeSubscriptionRepository({
-			database: container.prisma
-		});
+		this.database = container.prisma;
 	}
 
 	/**
@@ -17,7 +15,10 @@ export class YoutubeSubscriptionService {
 	 * @param channelId - The ID of the channel
 	 */
 	public async get(guildId: string, channelId: string): Promise<YoutubeSubscriptionWithChannel | null> {
-		return this.repository.get({ guildId, channelId });
+		return await this.database.youtubeSubscription.findUnique({
+			where: { channelId_guildId: { channelId, guildId } },
+			include: { channel: true }
+		});
 	}
 
 	/**
@@ -25,7 +26,10 @@ export class YoutubeSubscriptionService {
 	 * @param guildId - The ID of the guild
 	 */
 	public async getByGuild(guildId: string): Promise<YoutubeSubscriptionWithChannel[]> {
-		return this.repository.getByGuild({ guildId });
+		return await this.database.youtubeSubscription.findMany({
+			where: { guildId },
+			include: { channel: true }
+		});
 	}
 
 	/**
@@ -33,7 +37,9 @@ export class YoutubeSubscriptionService {
 	 * @param channelId - The ID of the channel
 	 */
 	public async getByChannel(channelId: string): Promise<YoutubeSubscription[]> {
-		return this.repository.getByChannel({ channelId });
+		return await this.database.youtubeSubscription.findMany({
+			where: { id: channelId }
+		});
 	}
 
 	/**
@@ -41,7 +47,15 @@ export class YoutubeSubscriptionService {
 	 * @param channelId - the ID of the channel
 	 */
 	public async getValid(channelId: string): Promise<YoutubeSubscription[]> {
-		return this.repository.getValid({ channelId });
+		return await this.database.youtubeSubscription.findMany({
+			where: {
+				AND: {
+					channelId,
+					NOT: { discordChannelId: null },
+					youtubeSettings: { enabled: true }
+				}
+			}
+		});
 	}
 
 	/**
@@ -50,7 +64,12 @@ export class YoutubeSubscriptionService {
 	 * @param channelId - The ID of the channel
 	 */
 	public async delete(guildId: string, channelId: string): Promise<YoutubeSubscriptionWithChannel | null> {
-		return this.repository.delete({ guildId, channelId });
+		return await this.database.youtubeSubscription
+			.delete({
+				where: { channelId_guildId: { guildId, channelId } },
+				include: { channel: true }
+			})
+			.catch(() => null);
 	}
 
 	/**
@@ -64,7 +83,28 @@ export class YoutubeSubscriptionService {
 		channelId: string,
 		data?: UpdateYoutubeSubscriptionData
 	): Promise<YoutubeSubscription & { channel: HolodexChannel }> {
-		return this.repository.upsert({ guildId, channelId }, data);
+		return await this.database.youtubeSubscription.upsert({
+			where: { channelId_guildId: { guildId, channelId } },
+			update: { ...data },
+			create: {
+				channel: { connect: { youtubeId: channelId } },
+				youtubeSettings: {
+					connectOrCreate: {
+						where: { guildId },
+						create: {
+							enabled: true,
+							coreSettings: {
+								connectOrCreate: {
+									where: { guildId },
+									create: { guildId }
+								}
+							}
+						}
+					}
+				}
+			},
+			include: { channel: true }
+		});
 	}
 
 	/**
@@ -72,7 +112,9 @@ export class YoutubeSubscriptionService {
 	 * @param guildId - The ID of the guild
 	 */
 	public async countByGuild(guildId: string): Promise<number> {
-		return this.repository.countByGuild({ guildId });
+		return await this.database.youtubeSubscription.count({
+			where: { guildId }
+		});
 	}
 
 	/**
@@ -81,6 +123,9 @@ export class YoutubeSubscriptionService {
 	 * @param channelId - The ID of the channel
 	 */
 	public async exists(guildId: string, channelId: string): Promise<boolean> {
-		return this.repository.exists({ guildId, channelId });
+		const result = await this.database.youtubeSubscription.count({
+			where: { channelId, guildId }
+		});
+		return result > 0;
 	}
 }

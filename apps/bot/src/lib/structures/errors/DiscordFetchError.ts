@@ -1,5 +1,5 @@
-import { KBotError } from '#structures/errors/KBotError';
-import { KBotErrorCodes } from '#types/Enums';
+import { KBotError } from '#lib/structures/errors/KBotError';
+import { KBotErrorCodes } from '#lib/types/Enums';
 
 export type DiscordFetchErrorErrorOptions = {
 	message?: string;

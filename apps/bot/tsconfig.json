@@ -10,14 +10,8 @@
 		"typeRoots": ["./src/lib/types/**/*", "../../node_modules/@types"],
 		"paths": {
 			"#config": ["config.ts"],
-			"#extensions/*": ["lib/extensions/*"],
-			"#observability/*": ["lib/observability/*"],
-			"#grpc/*": ["lib/grpc/*"],
-			"#services/*": ["lib/services/*"],
-			"#services": ["lib/services/index.ts"],
-			"#structures/*": ["lib/structures/*"],
-			"#types/*": ["lib/types/*"],
-			"#utils/*": ["lib/utilities/*"],
+			"#lib/*": ["lib/*"],
+			"#lib/services/*": ["lib/services/*"],
 			"#modules/*": ["modules/*"],
 			"#plugins/*": ["plugins/*"]
 		}

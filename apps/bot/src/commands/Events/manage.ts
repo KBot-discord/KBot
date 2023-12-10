@@ -1,9 +1,9 @@
-import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
-import { BlankSpace, EmbedColors, KBotEmoji, formGenericError } from '#utils/constants';
-import { fetchChannel, getGuildIcon } from '#utils/discord';
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { isNullOrUndefined } from '#utils/functions';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { BlankSpace, EmbedColors, KBotEmoji, formGenericError } from '#lib/utilities/constants';
+import { fetchChannel, getGuildIcon } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { KaraokeEventMenu } from '#lib/structures/menus/KaraokeEventMenu';
+import { KBotErrors, KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { channelMention, time, userMention } from '@discordjs/builders';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';

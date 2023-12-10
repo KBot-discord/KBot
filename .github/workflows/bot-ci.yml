@@ -5,7 +5,6 @@ on:
     paths:
       - "apps/bot/**"
       - "packages/**"
-      - "protos/**"
       - "!**/README.md"
 
 jobs:
@@ -20,11 +19,6 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v4.0.0
 
-      - name: Set up Buf
-        uses: bufbuild/buf-setup-action@v1
-        with:
-          github_token: ${{ github.token }}
-
       - name: Set up NodeJS
         uses: actions/setup-node@v4.0.0
         with:
@@ -32,7 +26,9 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: yarn workspaces focus @kbotdev/apps @kbotdev/bot
+        run: |
+          yarn workspaces focus @kbotdev/apps @kbotdev/bot
+          yarn turbo db:generate
 
       - name: Lint
         run: yarn turbo lint --filter=@kbotdev/bot

@@ -1,33 +1,29 @@
-import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { isNullOrUndefined } from '#utils/functions';
-import { DiscordFetchError } from '#structures/errors';
-import { ResultClass } from '#structures/ResultClass';
-import { fetchChannel } from '#utils/discord';
+import { fetchChannel } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { EmbedColors, KBotEmoji } from '#lib/utilities/constants';
+import { ResultClass } from '#lib/structures/ResultClass';
+import { DiscordFetchError } from '#lib/structures/errors';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { Result, container } from '@sapphire/framework';
 import { roleMention, userMention } from '@discordjs/builders';
-import { KaraokeRepository } from '@kbotdev/database';
+import type { Guild, GuildMember, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
+import type { KaraokeEvent, KaraokeUser, PrismaClient } from '@prisma/client';
 import type {
 	AddToQueueData,
 	CreateEventData,
 	CreateScheduledEventData,
-	KaraokeEvent,
 	KaraokeEventWithUsers,
-	KaraokeUser,
 	RemoveFromQueueData,
 	UpdateEventData
-} from '@kbotdev/database';
-import type { Guild, GuildMember, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
+} from '#lib/services/types/karaoke';
 
 export class KaraokeService extends ResultClass {
-	private readonly repository: KaraokeRepository;
+	private readonly database: PrismaClient;
 
 	public constructor() {
 		super();
 
-		this.repository = new KaraokeRepository({
-			database: container.prisma
-		});
+		this.database = container.prisma;
 	}
 
 	/**
@@ -35,7 +31,9 @@ export class KaraokeService extends ResultClass {
 	 * @param eventId - The ID of the karaoke event
 	 */
 	public async getEvent(eventId: string): Promise<KaraokeEvent | null> {
-		return this.repository.getEvent({ eventId });
+		return await this.database.karaokeEvent.findUnique({
+			where: { id: eventId }
+		});
 	}
 
 	/**
@@ -43,7 +41,10 @@ export class KaraokeService extends ResultClass {
 	 * @param eventId - The ID of the karaoke event
 	 */
 	public async getEventWithQueue(eventId: string): Promise<(KaraokeEvent & { queue: KaraokeUser[] }) | null> {
-		return this.repository.getEventWithQueue({ eventId });
+		return await this.database.karaokeEvent.findUnique({
+			where: { id: eventId },
+			include: { queue: { orderBy: { createdAt: 'asc' } } }
+		});
 	}
 
 	/**
@@ -51,7 +52,9 @@ export class KaraokeService extends ResultClass {
 	 * @param guildId - The ID of the guild
 	 */
 	public async getEventByGuild(guildId: string): Promise<KaraokeEvent[]> {
-		return this.repository.getEventByGuild({ guildId });
+		return await this.database.karaokeEvent.findMany({
+			where: { guildId }
+		});
 	}
 
 	/**
@@ -59,7 +62,11 @@ export class KaraokeService extends ResultClass {
 	 * @param eventId - The ID of the karaoke event
 	 */
 	public async deleteEvent(eventId: string): Promise<KaraokeEvent | null> {
-		return this.repository.deleteEvent({ eventId });
+		return await this.database.karaokeEvent
+			.delete({
+				where: { id: eventId }
+			})
+			.catch(() => null);
 	}
 
 	/**
@@ -67,7 +74,18 @@ export class KaraokeService extends ResultClass {
 	 * @param data - The data to create the karaoke event
 	 */
 	public async createEvent(data: CreateEventData): Promise<KaraokeEvent> {
-		return this.repository.createEvent(data);
+		const { id, guildId, textChannelId, pinMessageId } = data;
+
+		return await this.database.karaokeEvent.create({
+			data: {
+				id,
+				textChannelId,
+				locked: false,
+				isActive: true,
+				pinMessageId,
+				eventSettings: { connect: { guildId } }
+			}
+		});
 	}
 
 	/**
@@ -75,7 +93,19 @@ export class KaraokeService extends ResultClass {
 	 * @param data - The data to create the scheduled karaoke event
 	 */
 	public async createScheduledEvent(data: CreateScheduledEventData): Promise<KaraokeEvent> {
-		return this.repository.createScheduledEvent(data);
+		const { id, guildId, textChannelId, discordEventId, roleId } = data;
+
+		return await this.database.karaokeEvent.create({
+			data: {
+				id,
+				textChannelId,
+				locked: false,
+				isActive: false,
+				discordEventId,
+				roleId,
+				eventSettings: { connect: { guildId } }
+			}
+		});
 	}
 
 	/**
@@ -83,14 +113,19 @@ export class KaraokeService extends ResultClass {
 	 * @param data - The data to update the karaoke event
 	 */
 	public async updateEvent(data: UpdateEventData): Promise<KaraokeEvent> {
-		return this.repository.updateEvent(data);
+		const { id, textChannelId, locked, isActive, discordEventId, roleId } = data;
+
+		return await this.database.karaokeEvent.update({
+			where: { id },
+			data: { textChannelId, locked, isActive, discordEventId, roleId }
+		});
 	}
 
 	/**
 	 * Get a count of the total amount of karaoke events.
 	 */
 	public async countEvents(): Promise<number> {
-		return this.repository.countEvents();
+		return await this.database.karaokeEvent.count();
 	}
 
 	/**
@@ -98,7 +133,9 @@ export class KaraokeService extends ResultClass {
 	 * @param guildId - The ID of the guild
 	 */
 	public async countEventsByGuild(guildId: string): Promise<number> {
-		return this.repository.countEventsByGuild({ guildId });
+		return await this.database.karaokeEvent.count({
+			where: { guildId }
+		});
 	}
 
 	/**
@@ -107,7 +144,18 @@ export class KaraokeService extends ResultClass {
 	 * @param data - The data to add the user to the queue
 	 */
 	public async addUserToQueue(eventId: string, data: AddToQueueData): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
-		return this.repository.addUserToQueue({ eventId }, data);
+		const { id, name, partnerId, partnerName } = data;
+
+		const result = await this.database.karaokeUser.create({
+			data: { id, name, partnerId, partnerName, karaokeEvent: { connect: { id: eventId } } },
+			include: {
+				karaokeEvent: {
+					include: { queue: { orderBy: { createdAt: 'asc' } } }
+				}
+			}
+		});
+
+		return result.karaokeEvent;
 	}
 
 	/**
@@ -116,7 +164,18 @@ export class KaraokeService extends ResultClass {
 	 * @param data - The data to remove the user from the queue
 	 */
 	public async removeUserFromQueue(eventId: string, data: RemoveFromQueueData): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
-		return this.repository.removeUserFromQueue({ eventId }, data);
+		const { id } = data;
+
+		const result = await this.database.karaokeUser.delete({
+			where: { id_eventId: { id, eventId } },
+			include: {
+				karaokeEvent: {
+					include: { queue: { orderBy: { createdAt: 'asc' } } }
+				}
+			}
+		});
+
+		return result.karaokeEvent;
 	}
 
 	/**
@@ -125,7 +184,7 @@ export class KaraokeService extends ResultClass {
 	 * @param partner - If it is a duet, the user's partner
 	 */
 	public async setUserToSinger(user: GuildMember, partner?: GuildMember): Promise<void> {
-		return this.muteUsers(false, { user, partner });
+		await this.muteUsers(false, { user, partner });
 	}
 
 	/**
@@ -134,7 +193,7 @@ export class KaraokeService extends ResultClass {
 	 * @param partner - If it is a duet, the user's partner
 	 */
 	public async setUserToAudience(user: GuildMember, partner?: GuildMember): Promise<void> {
-		return this.muteUsers(true, { user, partner });
+		await this.muteUsers(true, { user, partner });
 	}
 
 	/**
@@ -340,7 +399,7 @@ export class KaraokeService extends ResultClass {
 	): Promise<Result<KaraokeEvent, Error>> {
 		const { events, validator } = container;
 
-		return Result.fromAsync(async () => {
+		return await Result.fromAsync(async () => {
 			const eventName = data.stageTopic ?? 'Karaoke Event';
 			const baseEmbed = events.karaokeInstructionsEmbed(voiceChannel.id);
 			const embed = await this.setupVoiceChannel(baseEmbed, voiceChannel, eventName);
@@ -352,7 +411,7 @@ export class KaraokeService extends ResultClass {
 				if (canPin) await message.pin();
 			}
 
-			return this.createEvent({
+			return await this.createEvent({
 				id: voiceChannel.id,
 				guildId: voiceChannel.guildId,
 				textChannelId: textChannel.id,
@@ -370,7 +429,7 @@ export class KaraokeService extends ResultClass {
 	public async startScheduledEvent(event: KaraokeEvent, stageTopic: string): Promise<Result<KaraokeEvent, Error>> {
 		const { events, validator } = container;
 
-		return Result.fromAsync(async () => {
+		return await Result.fromAsync(async () => {
 			const [eventChannel, textChannel] = await this.fetchEventChannels(event.id, event.textChannelId);
 
 			const baseEmbed = events.karaokeInstructionsEmbed(event.id);
@@ -383,7 +442,7 @@ export class KaraokeService extends ResultClass {
 				if (canPin) await message.pin();
 			}
 
-			return this.updateEvent({
+			return await this.updateEvent({
 				id: event.id,
 				textChannelId: textChannel.id,
 				isActive: true,
@@ -403,7 +462,7 @@ export class KaraokeService extends ResultClass {
 	public async endEvent(event: KaraokeEvent): Promise<Result<undefined, Error>> {
 		const { validator } = container;
 
-		return Result.fromAsync(async () => {
+		return await Result.fromAsync(async () => {
 			const [eventChannel, textChannel] = await this.fetchEventChannels(event.id, event.textChannelId);
 
 			if (eventChannel.type === ChannelType.GuildStageVoice && eventChannel.stageInstance) {
@@ -414,7 +473,7 @@ export class KaraokeService extends ResultClass {
 					await Promise.allSettled(
 						eventChannel.members //
 							.filter((member) => member.voice.serverMute)
-							.map(async (member) => member.voice.setMute(false))
+							.map(async (member) => await member.voice.setMute(false))
 					);
 				}
 			}
@@ -540,7 +599,7 @@ export class KaraokeService extends ResultClass {
 	 * @param roleId - The ID of the role to ping
 	 */
 	private async sendAnnouncement(embed: EmbedBuilder, textChannel: GuildTextBasedChannel, roleId?: string | null): Promise<Message | null> {
-		return textChannel
+		return await textChannel
 			.send({
 				content: `${roleId ? roleMention(roleId) : ''} A karaoke event has started!`,
 				embeds: [embed],
@@ -568,7 +627,7 @@ export class KaraokeService extends ResultClass {
 
 			if (voiceChannel.members.size > 0) {
 				await Promise.allSettled(
-					voiceChannel.members.map(async (member) => member.voice.setMute(true)) //
+					voiceChannel.members.map(async (member) => await member.voice.setMute(true)) //
 				);
 			}
 		}

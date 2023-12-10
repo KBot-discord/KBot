@@ -1,13 +1,12 @@
-import { EmbedColors } from '#utils/constants';
-import { getUserAvatarUrl } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotModules } from '#types/Enums';
+import { getUserAvatarUrl } from '#lib/utilities/discord';
+import { EmbedColors } from '#lib/utilities/constants';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { ApplicationCommandOptionChoiceData } from 'discord.js';
 import type { CoreModule } from '#modules/CoreModule';
-import type { DocumentCommand } from '@kbotdev/meili';
-import type { KBotSubcommand } from '#extensions/KBotSubcommand';
+import type { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Core,
@@ -43,7 +42,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 
 	public override async autocompleteRun(interaction: KBotCommand.AutocompleteInteraction): Promise<void> {
 		const search = interaction.options.getString('command', true);
-		const result = await this.container.meili.get<DocumentCommand>('commands', search);
+		const result = await this.container.meili.get('commands', search);
 
 		const options: ApplicationCommandOptionChoiceData[] = result.hits.map(({ name }) => ({
 			name,
@@ -58,10 +57,10 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		const option = interaction.options.getString('command');
 
 		if (option) {
-			return this.chatInputCommand(interaction, option);
+			return await this.chatInputCommand(interaction, option);
 		}
 
-		return this.chatInputInfo(interaction);
+		return await this.chatInputInfo(interaction);
 	}
 
 	public async chatInputInfo(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {

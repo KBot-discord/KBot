@@ -1,14 +1,14 @@
-import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
-import { KaraokeCustomIds } from '#utils/customIds';
-import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
-import { KBotEmoji } from '#utils/constants';
-import { parseCustomId } from '#utils/discord';
+import { KaraokeCustomIds } from '#lib/utilities/customIds';
+import { interactionRatelimit, validCustomId } from '#lib/utilities/decorators';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { KBotEmoji } from '#lib/utilities/constants';
+import { parseCustomId } from '#lib/utilities/discord';
+import { KaraokeEventMenu } from '#lib/structures/menus/KaraokeEventMenu';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
 import { ButtonInteraction } from 'discord.js';
-import type { KaraokeMenuButton } from '#types/CustomIds';
+import type { KaraokeMenuButton } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: KaraokeCustomIds.Lock,

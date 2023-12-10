@@ -1,9 +1,9 @@
-import { isNullOrUndefined } from '#utils/functions';
-import { fetchChannel } from '#utils/discord';
+import { fetchChannel } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
 import type { GuildMember, GuildTextBasedChannel, HexColorString, Message } from 'discord.js';
-import type { WelcomeSettings } from '@kbotdev/database';
+import type { WelcomeSettings } from '@prisma/client';
 
 export class WelcomeHandler {
 	public constructor(private readonly member: GuildMember) {}
@@ -45,7 +45,7 @@ export class WelcomeHandler {
 			embed.setDescription(desc);
 		}
 
-		return channel.send({
+		return await channel.send({
 			embeds: [embed]
 		});
 	}
@@ -54,7 +54,7 @@ export class WelcomeHandler {
 		const { welcome } = container;
 		const message = welcome.formatText(settings.message!, this.member);
 
-		return channel.send({
+		return await channel.send({
 			content: message,
 			allowedMentions: { users: [this.member.id] }
 		});
@@ -75,7 +75,7 @@ export class WelcomeHandler {
 
 		const message = welcome.formatText(settings.message!, this.member);
 
-		return channel.send({
+		return await channel.send({
 			content: message,
 			embeds: [embed],
 			allowedMentions: { users: [this.member.id] }

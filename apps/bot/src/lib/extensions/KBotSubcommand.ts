@@ -1,4 +1,4 @@
-import { HelpEmbedBuilder } from '#structures/builders/HelpEmbedBuilder';
+import { HelpEmbedBuilder } from '#lib/structures/builders/HelpEmbedBuilder';
 import { ModuleSubcommand } from '@kbotdev/plugin-modules';
 import type { Module } from '@kbotdev/plugin-modules';
 import type { EmbedBuilder } from 'discord.js';
@@ -30,7 +30,7 @@ export namespace KBotSubcommand {
 		helpEmbed: (builder: HelpEmbedBuilder) => HelpEmbedBuilder;
 	};
 
-	export type Context = ModuleSubcommand.Context;
+	export type Context = ModuleSubcommand.LoaderContext;
 	export type ChatInputCommandInteraction = ModuleSubcommand.ChatInputCommandInteraction<'cached'>;
 	export type ContextMenuCommandInteraction = ModuleSubcommand.ContextMenuCommandInteraction<'cached'>;
 	export type AutocompleteInteraction = ModuleSubcommand.AutocompleteInteraction<'cached'>;

@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: postgres_kbot
+    environment:
+      POSTGRES_DB: kbot
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  redis:
+    image: redis:7.0.9-alpine
+    container_name: redis_kbot
+    command: ["redis-server", "--requirepass password"]
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  meili:
+    image: getmeili/meilisearch:v1.0.2
+    container_name: meili_kbot
+    ports:
+      - "127.0.0.1:7700:7700"

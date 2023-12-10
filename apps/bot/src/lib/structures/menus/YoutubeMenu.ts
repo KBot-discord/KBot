@@ -1,9 +1,9 @@
-import { Menu } from '#structures/menus/Menu';
-import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
+import { MenuPageBuilder } from '#lib/structures/builders/MenuPageBuilder';
+import { Menu } from '#lib/structures/menus/Menu';
 import { container } from '@sapphire/framework';
 import type { EmbedBuilder, Message, User } from 'discord.js';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
-import type { YoutubeSubscriptionWithChannel } from '@kbotdev/database';
+import type { YoutubeSubscriptionWithChannel } from '#lib/services/types/youtube';
 
 export class YoutubeMenu extends Menu {
 	private readonly subscriptions: YoutubeSubscriptionWithChannel[];

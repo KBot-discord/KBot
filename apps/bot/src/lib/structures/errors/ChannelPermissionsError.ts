@@ -1,4 +1,4 @@
-import { KBotError } from '#structures/errors/KBotError';
+import { KBotError } from '#lib/structures/errors/KBotError';
 import type { Channel } from 'discord.js';
 
 export type ChannelPermissionsErrorOptions = {

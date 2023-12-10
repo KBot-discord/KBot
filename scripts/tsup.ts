@@ -14,14 +14,14 @@ export function defineTsupConfig(
 		clean: true,
 		dts: true,
 		entry: ['src/index.ts'],
-		format: ['esm', 'cjs'],
+		format: ['esm'],
 		keepNames: true,
 		minify: false,
 		shims: false,
 		skipNodeModulesBundle: true,
 		splitting: false,
 		sourcemap: true,
-		target: 'esnext',
+		target: 'es2022',
 		treeshake: true,
 		...options
 	});

@@ -1,12 +1,12 @@
-import { KaraokeCustomIds } from '#utils/customIds';
-import { KaraokeEventMenu } from '#structures/menus/KaraokeEventMenu';
-import { validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
-import { parseCustomId } from '#utils/discord';
+import { KaraokeCustomIds } from '#lib/utilities/customIds';
+import { validCustomId } from '#lib/utilities/decorators';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { parseCustomId } from '#lib/utilities/discord';
+import { KaraokeEventMenu } from '#lib/structures/menus/KaraokeEventMenu';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ButtonInteraction } from 'discord.js';
-import type { KaraokeMenuButton } from '#types/CustomIds';
+import type { KaraokeMenuButton } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: KaraokeCustomIds.Unschedule,

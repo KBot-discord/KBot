@@ -7,7 +7,7 @@ import { Time } from '@sapphire/duration';
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'holodexSync',
 	pattern: '0 0 0 * * 6', // Every saturday
-	enabled: !container.config.isDev
+	enabled: container.config.enableTasks
 })
 export class HolodexTask extends ScheduledTask {
 	public override async run(data: { page: number } | undefined): Promise<void> {

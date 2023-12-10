@@ -1,15 +1,15 @@
-import { PollMenu } from '#structures/menus/PollMenu';
-import { PollCustomIds } from '#utils/customIds';
-import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#utils/constants';
-import { isNullOrUndefined, parseTimeString } from '#utils/functions';
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
-import { buildCustomId } from '#utils/discord';
+import { PollCustomIds } from '#lib/utilities/customIds';
+import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '#lib/utilities/constants';
+import { isNullOrUndefined, parseTimeString } from '#lib/utilities/functions';
+import { buildCustomId } from '#lib/utilities/discord';
+import { PollMenu } from '#lib/structures/menus/PollMenu';
+import { KBotErrors, KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import type { UtilityModule } from '#modules/UtilityModule';
-import type { PollOption } from '#types/CustomIds';
+import type { PollOption } from '#lib/types/CustomIds';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Utility,
