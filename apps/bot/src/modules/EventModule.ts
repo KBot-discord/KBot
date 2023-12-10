@@ -14,7 +14,7 @@ export class EventModule extends Module {
 	public readonly settings: EventSettingsService;
 	public readonly karaoke: KaraokeService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
+	public constructor(context: Module.LoaderContext, options: Module.Options) {
 		super(context, options);
 
 		this.settings = new EventSettingsService();

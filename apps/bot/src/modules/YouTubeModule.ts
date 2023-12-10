@@ -17,7 +17,7 @@ export class YoutubeModule extends Module {
 	public readonly channels: YoutubeChannelService;
 	public readonly subscriptions: YoutubeSubscriptionService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
+	public constructor(context: Module.LoaderContext, options: Module.Options) {
 		super(context, options);
 
 		this.settings = new YoutubeSettingsService();

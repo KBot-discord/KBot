@@ -19,7 +19,7 @@ export class UtilityModule extends Module {
 	public readonly incidents: DiscordIncidentService;
 	public readonly polls: PollService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
+	public constructor(context: Module.LoaderContext, options: Module.Options) {
 		super(context, options);
 
 		this.settings = new UtilitySettingsService();

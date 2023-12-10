@@ -13,7 +13,7 @@ import type { KBotModules } from '#types/Enums';
 export class WelcomeModule extends Module {
 	public readonly settings: WelcomeSettingsService;
 
-	public constructor(context: Module.Context, options: Module.Options) {
+	public constructor(context: Module.LoaderContext, options: Module.Options) {
 		super(context, options);
 
 		this.settings = new WelcomeSettingsService();

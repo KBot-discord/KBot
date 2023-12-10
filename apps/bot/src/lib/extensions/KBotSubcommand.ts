@@ -30,7 +30,7 @@ export namespace KBotSubcommand {
 		helpEmbed: (builder: HelpEmbedBuilder) => HelpEmbedBuilder;
 	};
 
-	export type Context = ModuleSubcommand.Context;
+	export type Context = ModuleSubcommand.LoaderContext;
 	export type ChatInputCommandInteraction = ModuleSubcommand.ChatInputCommandInteraction<'cached'>;
 	export type ContextMenuCommandInteraction = ModuleSubcommand.ContextMenuCommandInteraction<'cached'>;
 	export type AutocompleteInteraction = ModuleSubcommand.AutocompleteInteraction<'cached'>;
