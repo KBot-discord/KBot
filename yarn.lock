@@ -889,7 +889,7 @@ __metadata:
   dependencies:
     "@commitlint/cli": "npm:^18.4.3"
     "@commitlint/config-conventional": "npm:^18.4.3"
-    "@kbotdev/eslint-config": "npm:^2.0.0"
+    "@kbotdev/eslint-config": "npm:^2.0.1"
     "@kbotdev/prettier-config": "npm:^1.0.2"
     "@kbotdev/ts-config": "npm:^1.0.2"
     "@swc/core": "npm:^1.3.100"
@@ -969,9 +969,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kbotdev/eslint-config@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@kbotdev/eslint-config@npm:2.0.0"
+"@kbotdev/eslint-config@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@kbotdev/eslint-config@npm:2.0.1"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^6.13.2"
     "@typescript-eslint/parser": "npm:^6.13.2"
@@ -983,7 +983,7 @@ __metadata:
     eslint-plugin-tsdoc: "npm:^0.2.17"
     prettier: "npm:^3.1.1"
     typescript: "npm:^5.3.3"
-  checksum: 888afaad4229a5ad6d3c4b0df572aa776632ece6f3a866fe4ed110671041b457a719c7915dfbea918184244b07662a3c695edf8c88f6a09abece599935055706
+  checksum: f95660011426f9df3ab8d1dae09b88cccdc3c1484b98554a34bdd6cf7c01d72ac2e459be5f3eb3cf3690a1ee0d63d3c270c5c1a0dcfed0caf66261a674138770
   languageName: node
   linkType: hard
 

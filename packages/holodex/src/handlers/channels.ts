@@ -21,7 +21,7 @@ export class ChannelHandler {
 	public async get(query: { channelId: string }): Promise<HolodexChannel> {
 		const url = new URL(`${BASE_URL}/channels/${query.channelId}`);
 
-		return fetchApi<HolodexChannel>(url, this.apiKey);
+		return await fetchApi<HolodexChannel>(url, this.apiKey);
 	}
 
 	/**
@@ -37,6 +37,6 @@ export class ChannelHandler {
 		url.searchParams.append('limit', `${limit}`);
 		url.searchParams.append('offset', `${offset}`);
 
-		return fetchApi<HolodexChannel[]>(url, this.apiKey);
+		return await fetchApi<HolodexChannel[]>(url, this.apiKey);
 	}
 }

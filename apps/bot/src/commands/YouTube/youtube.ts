@@ -11,7 +11,6 @@ import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, ChannelType, EmbedBuilder, PermissionFlagsBits, StringSelectMenuBuilder, channelMention } from 'discord.js';
 import type { APISelectMenuOption, ApplicationCommandOptionChoiceData, BaseMessageOptions, Guild, GuildTextBasedChannel } from 'discord.js';
 import type { YoutubeModule } from '#modules/YouTubeModule';
-import type { DocumentYoutubeChannel } from '@kbotdev/meili';
 import type { YoutubeSubscriptionWithChannel } from '#lib/services/types';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -206,7 +205,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 		let options: ApplicationCommandOptionChoiceData[];
 
 		if (focusedOption.name === 'account') {
-			const result = await this.container.meili.get<DocumentYoutubeChannel>(MeiliCategories.YoutubeChannels, focusedOption.value);
+			const result = await this.container.meili.get(MeiliCategories.YoutubeChannels, focusedOption.value);
 
 			options = result.hits.map(({ name, englishName, id }) => ({
 				name: englishName ?? name,

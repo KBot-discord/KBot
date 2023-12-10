@@ -23,7 +23,7 @@ export class VideoHandler {
 		const url = new URL(`${BASE_URL}/users/live`);
 		url.searchParams.append('channels', query.channels.toString());
 
-		return fetchApi<HolodexVideoWithChannel[]>(url, this.apiKey);
+		return await fetchApi<HolodexVideoWithChannel[]>(url, this.apiKey);
 	}
 
 	/**
@@ -44,6 +44,6 @@ export class VideoHandler {
 		url.searchParams.append('to', new Date(to).toISOString());
 		url.searchParams.append('offset', `${offset}`);
 
-		return fetchApi<PaginatedResponse<HolodexVideoWithChannel>>(url, this.apiKey);
+		return await fetchApi<PaginatedResponse<HolodexVideoWithChannel>>(url, this.apiKey);
 	}
 }
