@@ -1,6 +1,6 @@
 import { container } from '@sapphire/framework';
 import type { HolodexChannel, PrismaClient, YoutubeSubscription } from '@prisma/client';
-import type { UpdateYoutubeSubscriptionData, YoutubeSubscriptionWithChannel } from '#lib/services/types';
+import type { UpdateYoutubeSubscriptionData, YoutubeSubscriptionWithChannel } from '#lib/services/types/youtube';
 
 export class YoutubeSubscriptionService {
 	private readonly database: PrismaClient;

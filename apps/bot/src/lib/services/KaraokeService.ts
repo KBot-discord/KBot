@@ -15,7 +15,7 @@ import type {
 	KaraokeEventWithUsers,
 	RemoveFromQueueData,
 	UpdateEventData
-} from '#lib/services/types';
+} from '#lib/services/types/karaoke';
 
 export class KaraokeService extends ResultClass {
 	private readonly database: PrismaClient;

@@ -3,7 +3,7 @@ import { Time } from '@sapphire/duration';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import type { PrismaClient, UtilitySettings } from '@prisma/client';
-import type { UpsertUtilitySettingsData } from '#lib/services/types';
+import type { UpsertUtilitySettingsData } from '#lib/services/types/utility';
 import type { RedisClient } from '@killbasa/redis-utils';
 
 export class UtilitySettingsService {

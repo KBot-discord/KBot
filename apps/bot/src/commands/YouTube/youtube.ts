@@ -11,7 +11,7 @@ import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, ChannelType, EmbedBuilder, PermissionFlagsBits, StringSelectMenuBuilder, channelMention } from 'discord.js';
 import type { APISelectMenuOption, ApplicationCommandOptionChoiceData, BaseMessageOptions, Guild, GuildTextBasedChannel } from 'discord.js';
 import type { YoutubeModule } from '#modules/YouTubeModule';
-import type { YoutubeSubscriptionWithChannel } from '#lib/services/types';
+import type { YoutubeSubscriptionWithChannel } from '#lib/services/types/youtube';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.YouTube,

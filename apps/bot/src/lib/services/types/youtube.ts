@@ -1,8 +1,4 @@
 import type { HolodexChannel, YoutubeSubscription } from '@prisma/client';
-import type { GuildId } from './generic';
-import type { HolodexChannelId } from './holodex';
-
-export type GuildAndHolodexChannelId = GuildId & HolodexChannelId;
 
 export type YoutubeSubscriptionWithChannel = YoutubeSubscription & { channel: HolodexChannel };
 

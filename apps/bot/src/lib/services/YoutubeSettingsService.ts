@@ -3,7 +3,7 @@ import { Time } from '@sapphire/duration';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import type { PrismaClient, YoutubeSettings } from '@prisma/client';
-import type { UpsertYoutubeSettingsData } from '#lib/services/types';
+import type { UpsertYoutubeSettingsData } from '#lib/services/types/youtube';
 import type { RedisClient } from '@killbasa/redis-utils';
 
 export class YoutubeSettingsService {

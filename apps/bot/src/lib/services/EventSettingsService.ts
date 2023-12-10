@@ -3,7 +3,6 @@ import { isNullish } from '@sapphire/utilities';
 import { Time } from '@sapphire/duration';
 import { container } from '@sapphire/framework';
 import type { EventSettings, PrismaClient } from '@prisma/client';
-import type { UpsertEventSettingsData } from '#lib/services/types';
 import type { RedisClient } from '@killbasa/redis-utils';
 
 export class EventSettingsService {
@@ -49,7 +48,12 @@ export class EventSettingsService {
 	 * @param guildId - The ID of the guild
 	 * @param data - The settings to upsert
 	 */
-	public async upsert(guildId: string, data: UpsertEventSettingsData): Promise<EventSettings> {
+	public async upsert(
+		guildId: string,
+		data: {
+			enabled?: boolean;
+		}
+	): Promise<EventSettings> {
 		const key = this.cacheKey(guildId);
 
 		const settings = await this.database.eventSettings.upsert({

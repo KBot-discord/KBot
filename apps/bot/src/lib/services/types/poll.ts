@@ -1,11 +1,3 @@
-import type { GuildId } from './generic';
-
-export type PollId = {
-	pollId: string;
-};
-
-export type GuildAndPollId = GuildId & PollId;
-
 export type CreatePollData = {
 	title: string;
 	channelId: string;

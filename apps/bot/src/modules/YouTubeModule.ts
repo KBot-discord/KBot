@@ -7,7 +7,7 @@ import { channelMention, roleMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { KBotModules } from '#lib/types/Enums';
-import type { YoutubeSubscriptionWithChannel } from '#lib/services/types';
+import type { YoutubeSubscriptionWithChannel } from '#lib/services/types/youtube';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Youtube Module'

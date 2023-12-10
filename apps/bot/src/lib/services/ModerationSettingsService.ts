@@ -3,7 +3,7 @@ import { Time } from '@sapphire/duration';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import type { ModerationSettings, PrismaClient } from '@prisma/client';
-import type { UpsertModerationSettingsData } from '#lib/services/types';
+import type { UpsertModerationSettingsData } from '#lib/services/types/moderation';
 import type { RedisClient } from '@killbasa/redis-utils';
 
 export class ModerationSettingsService {

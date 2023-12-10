@@ -2,8 +2,7 @@ import { coreCacheKey } from './keys';
 import { Time } from '@sapphire/duration';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
-import type { CoreSettings, PrismaClient } from '@prisma/client';
-import type { UpsertCoreSettingsData } from '#lib/services/types';
+import type { CoreSettings, FeatureFlags, PrismaClient } from '@prisma/client';
 import type { RedisClient } from '@killbasa/redis-utils';
 
 export class CoreSettingsService {
@@ -49,7 +48,10 @@ export class CoreSettingsService {
 	 * @param guildId - The ID of the guild
 	 * @param data - The settings to upsert
 	 */
-	public async upsert(guildId: string, data: UpsertCoreSettingsData = {}): Promise<CoreSettings> {
+	public async upsert(
+		guildId: string, //
+		data: { flags?: FeatureFlags[] } = {}
+	): Promise<CoreSettings> {
 		const key = this.cacheKey(guildId);
 
 		const settings = await this.database.coreSettings.upsert({

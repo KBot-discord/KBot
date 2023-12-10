@@ -24,9 +24,11 @@ import type {
 import type { ImageURLOptions } from '@discordjs/rest';
 
 /**
- * Builds a custom ID and appends extra data.
- * @param prefix - The prefix of the custom ID
- * @param data - The data to add
+ * Builds a custom ID string with a prefix and optional data object.
+ *
+ * @param prefix - The prefix for the custom ID.
+ * @param data - The data object to include in the custom ID.
+ * @returns The generated custom ID string.
  */
 export function buildCustomId<T extends Record<string, unknown> = Record<string, unknown>>(prefix: string, data?: T): string {
 	if (isNullOrUndefined(data)) return prefix;
@@ -52,8 +54,10 @@ export function buildCustomId<T extends Record<string, unknown> = Record<string,
 }
 
 /**
- * Parses a custom ID and returns the prefix and data.
- * @param customId - The custom ID to parse
+ * Parses a custom ID string and returns an object with the prefix and parsed data.
+ *
+ * @param customId - The custom ID string to parse.
+ * @returns An object with the prefix and parsed data.
  */
 export function parseCustomId<T = Record<string, unknown>>(customId: string): { prefix: string; data: T } {
 	const { 0: prefix, 1: data } = customId.split(';');

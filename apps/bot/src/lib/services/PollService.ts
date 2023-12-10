@@ -7,7 +7,7 @@ import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
 import type { PollResultPayload } from '#lib/types/Tasks';
 import type { Poll, PrismaClient } from '@prisma/client';
-import type { CreatePollData, UpsertPollUserData } from '#lib/services/types';
+import type { CreatePollData, UpsertPollUserData } from '#lib/services/types/poll';
 import type { RedisClient } from '@killbasa/redis-utils';
 
 const BAR_LENGTH = 10;

@@ -1,11 +1,4 @@
 import type { KaraokeEvent, KaraokeUser } from '@prisma/client';
-import type { GuildId } from './generic';
-
-export type KaraokeEventId = {
-	eventId: string;
-};
-
-export type GuildAndKaraokeEventId = GuildId & KaraokeEventId;
 
 export type KaraokeEventWithUsers = KaraokeEvent & { queue: KaraokeUser[] };
 

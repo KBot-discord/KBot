@@ -3,7 +3,7 @@ import { Time } from '@sapphire/duration';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';
 import type { PrismaClient, WelcomeSettings } from '@prisma/client';
-import type { UpsertWelcomeSettingsData } from '#lib/services/types';
+import type { UpsertWelcomeSettingsData } from '#lib/services/types/welcome';
 import type { RedisClient } from '@killbasa/redis-utils';
 
 export class WelcomeSettingsService {
