@@ -1,5 +1,5 @@
-import { isFunction } from '#utils/functions';
-import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
+import { isFunction } from '#lib/utilities/functions';
+import { MenuPageBuilder } from '#lib/structures/builders/MenuPageBuilder';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
 

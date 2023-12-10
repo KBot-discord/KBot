@@ -1,6 +1,6 @@
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
-import type { PollResultPayload } from '#types/Tasks';
+import type { PollResultPayload } from '#lib/types/Tasks';
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'pollResults'

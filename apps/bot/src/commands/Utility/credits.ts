@@ -1,9 +1,9 @@
-import { EmbedColors } from '#utils/constants';
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { getGuildIcon } from '#utils/discord';
-import { CreditType } from '#utils/customIds';
-import { isNullOrUndefined } from '#utils/functions';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { CreditType } from '#lib/utilities/customIds';
+import { getGuildIcon } from '#lib/utilities/discord';
+import { EmbedColors } from '#lib/utilities/constants';
+import { KBotErrors, KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
@@ -204,7 +204,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 			creditsChannelId: channel.id
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -214,7 +214,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 			creditsChannelId: null
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -222,7 +222,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 
 		const settings = await this.module.settings.get(interaction.guildId);
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {

@@ -1,13 +1,13 @@
-import { EmbedColors } from '#utils/constants';
-import { PollCustomIds } from '#utils/customIds';
-import { validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
-import { fetchChannel, parseCustomId } from '#utils/discord';
+import { EmbedColors } from '#lib/utilities/constants';
+import { PollCustomIds } from '#lib/utilities/customIds';
+import { validCustomId } from '#lib/utilities/decorators';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { fetchChannel, parseCustomId } from '#lib/utilities/discord';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ButtonInteraction, EmbedBuilder } from 'discord.js';
 import type { GuildTextBasedChannel } from 'discord.js';
-import type { PollMenuButton } from '#types/CustomIds';
+import type { PollMenuButton } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: PollCustomIds.ResultsHidden,

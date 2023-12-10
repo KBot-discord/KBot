@@ -1,4 +1,4 @@
-import { EmbedColors } from '#utils/constants';
+import { EmbedColors } from '#lib/utilities/constants';
 import { EmbedBuilder } from 'discord.js';
 import type { APIEmbedField } from 'discord.js';
 

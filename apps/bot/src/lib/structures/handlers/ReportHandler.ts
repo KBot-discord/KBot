@@ -1,5 +1,5 @@
-import { getUserInfo, isWebhookMessage } from '#utils/discord';
-import { EmbedColors } from '#utils/constants';
+import { getUserInfo, isWebhookMessage } from '#lib/utilities/discord';
+import { EmbedColors } from '#lib/utilities/constants';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,

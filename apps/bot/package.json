@@ -45,6 +45,7 @@
 		"@sapphire/plugin-api": "^6.0.1",
 		"@sapphire/plugin-logger": "^4.0.1",
 		"@sapphire/plugin-scheduled-tasks": "^9.0.1",
+		"@sapphire/utilities": "^3.14.0",
 		"@sentry/integrations": "^7.86.0",
 		"@sentry/node": "^7.86.0",
 		"@skyra/gifenc": "^1.0.1",
@@ -77,21 +78,7 @@
 		"vitest": "^1.0.4"
 	},
 	"imports": {
-		"#prisma": "./prisma/generated/index.js",
 		"#config": "./dist/config.js",
-		"#extensions/*": "./dist/lib/extensions/*.js",
-		"#observability/*": "./dist/lib/observability/*.js",
-		"#repositories/*": "./dist/lib/repositories/*.js",
-		"#repositories/types/*": "./dist/lib/repositories/types/*.js",
-		"#services": "./dist/lib/services/index.js",
-		"#services/*": "./dist/lib/services/*.js",
-		"#structures/*": "./dist/lib/structures/*.js",
-		"#structures/errors": "./dist/lib/structures/errors/index.js",
-		"#types/*": "./dist/lib/types/*.js",
-		"#utils/*": "./dist/lib/utilities/*.js",
-		"#utils/validators": "./dist/lib/utilities/validators/index.js",
-		"#modules/*": "./dist/modules/*.js",
-		"#plugins/*": "./dist/plugins/*.js",
-		"#plugins/grpc": "./dist/plugins/grpc/index.js"
+		"#lib/*": "./dist/lib/*.js"
 	}
 }

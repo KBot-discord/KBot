@@ -1,8 +1,8 @@
-import { KBotErrors } from '#types/Enums';
+import { KBotErrors } from '#lib/types/Enums';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import type { ChannelPermissionsPayload } from '#types/Errors';
-import type { InteractionResponseUnion } from '#types/Augments';
+import type { ChannelPermissionsPayload } from '#lib/types/Errors';
+import type { InteractionResponseUnion } from '#lib/types/Augments';
 
 @ApplyOptions<Listener.Options>({
 	event: KBotErrors.ChannelPermissions

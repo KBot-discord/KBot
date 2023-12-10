@@ -1,5 +1,5 @@
-import { ChannelValidator } from '#utils/validators/channel';
-import { ClientValidator } from '#utils/validators/client';
+import { ChannelValidator } from '#lib/structures/ChannelValidator';
+import { ClientValidator } from '#lib/structures/ClientValidator';
 
 export class Validator {
 	public readonly channels;

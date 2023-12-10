@@ -1,12 +1,12 @@
-import { EchoCustomIds, EchoFields } from '#utils/customIds';
-import { validCustomId } from '#utils/decorators';
-import { fetchChannel, parseCustomId } from '#utils/discord';
-import { EmbedColors } from '#utils/constants';
+import { EmbedColors } from '#lib/utilities/constants';
+import { fetchChannel, parseCustomId } from '#lib/utilities/discord';
+import { validCustomId } from '#lib/utilities/decorators';
+import { EchoCustomIds, EchoFields } from '#lib/utilities/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { EmbedBuilder, ModalSubmitInteraction, roleMention } from 'discord.js';
 import type { GuildTextBasedChannel } from 'discord.js';
-import type { EchoModal } from '#types/CustomIds';
+import type { EchoModal } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: EchoCustomIds.Detailed,

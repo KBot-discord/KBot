@@ -1,11 +1,11 @@
-import { DISCORD_STATUS_BASE, StatusEmbed } from '#utils/constants';
-import { IncidentNotification } from '#structures/IncidentNotification';
+import { DISCORD_STATUS_BASE, StatusEmbed } from '#lib/utilities/constants';
+import { IncidentNotification } from '#lib/structures/IncidentNotification';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, TimestampStyles, time } from 'discord.js';
 import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 import { container } from '@sapphire/framework';
-import type { StatusPageIncident, StatusPageResult } from '#types/DiscordStatus';
+import type { StatusPageIncident, StatusPageResult } from '#lib/types/DiscordStatus';
 import type { IncidentMessage, Prisma } from '@prisma/client';
 
 type DatabaseIncidentData = {

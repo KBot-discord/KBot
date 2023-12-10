@@ -1,8 +1,8 @@
-import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { fetchChannel, getGuildIcon } from '#utils/discord';
-import { isNullOrUndefined } from '#utils/functions';
-import { KBotModules } from '#types/Enums';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { fetchChannel, getGuildIcon } from '#lib/utilities/discord';
+import { EmbedColors, KBotEmoji } from '#lib/utilities/constants';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention } from '@discordjs/builders';
@@ -138,7 +138,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 			reportChannelId: reportChannel?.id
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -148,7 +148,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 			reportChannelId: reportChannel ? null : undefined
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputPermissions(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -211,7 +211,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	private formatField(bool: boolean): string {

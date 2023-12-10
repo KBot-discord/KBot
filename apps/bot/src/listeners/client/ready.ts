@@ -1,12 +1,12 @@
-import { isNullOrUndefined } from '#utils/functions';
-import { KBotModules } from '#types/Enums';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { KBotModules } from '#lib/types/Enums';
 import { Events, Listener, Result } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { green, red, yellowBright } from 'colorette';
 import type { DocumentCommand } from '@kbotdev/meili';
 import type { Module, Modules } from '@kbotdev/plugin-modules';
-import type { KBotCommand } from '#extensions/KBotCommand';
-import type { KBotSubcommand } from '#extensions/KBotSubcommand';
+import type { KBotCommand } from '#lib/extensions/KBotCommand';
+import type { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.ClientReady,
@@ -43,9 +43,9 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 		const loadedModules = this.checkModules(this.modules);
 
 		const loadedServices = this.checkServices([
-			{ key: 'Prisma', value: await Result.fromAsync(async () => prisma.$queryRaw`SELECT 1`) },
-			{ key: 'Redis', value: await Result.fromAsync(async () => redis.ping()) },
-			{ key: 'Meili', value: await Result.fromAsync(async () => meili.health()) },
+			{ key: 'Prisma', value: await Result.fromAsync(async () => await prisma.$queryRaw`SELECT 1`) },
+			{ key: 'Redis', value: await Result.fromAsync(async () => await redis.ping()) },
+			{ key: 'Meili', value: await Result.fromAsync(async () => await meili.health()) },
 			{ key: 'API Enabled', value: !isNullOrUndefined(client.options.api) },
 			{ key: 'OAuth 2.0 Enabled', value: !isNullOrUndefined(client.options.api?.auth) }
 		]);

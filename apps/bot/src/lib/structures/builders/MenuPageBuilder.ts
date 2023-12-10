@@ -1,5 +1,5 @@
-import { isFunction } from '#utils/functions';
-import { encode } from '#utils/discord';
+import { isFunction } from '#lib/utilities/functions';
+import { encode } from '#lib/utilities/discord';
 import { EmbedBuilder } from 'discord.js';
 import type { PaginatedMessageAction, PaginatedMessageMessageOptionsUnion, PaginatedMessagePage } from '@sapphire/discord.js-utilities';
 

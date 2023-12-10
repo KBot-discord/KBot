@@ -1,9 +1,9 @@
-import { NodeEnvironments, mainFolder } from '#utils/constants';
-import { envGetNumber, envGetString, validateConfig } from '#utils/config';
+import { envGetNumber, envGetString, validateConfig } from '#lib/utilities/config';
+import { NodeEnvironments, mainFolder } from '#lib/utilities/constants';
 import { container } from '@sapphire/framework';
 import { config } from 'dotenv';
 import { resolve } from 'path';
-import type { ClientConfig } from '#types/Config';
+import type { ClientConfig } from '#lib/types/Config';
 
 export function loadConfig(): void {
 	process.env.NODE_ENV ??= NodeEnvironments.Dev;

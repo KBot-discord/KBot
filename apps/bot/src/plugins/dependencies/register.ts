@@ -1,6 +1,6 @@
-import { rootFolder } from '#utils/constants';
-import { Validator } from '#utils/validators';
-import { KBotMetrics } from '#observability/KBotMetrics';
+import { rootFolder } from '#lib/utilities/constants';
+import { KBotMetrics } from '#lib/observability/KBotMetrics';
+import { Validator } from '#lib/structures/Validator';
 import { MeilisearchClient } from '@kbotdev/meili';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';

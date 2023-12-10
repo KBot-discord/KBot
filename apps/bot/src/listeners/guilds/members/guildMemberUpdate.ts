@@ -1,5 +1,5 @@
-import { AntiHoistHandler } from '#structures/handlers/AntiHoistHandler';
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { AntiHoistHandler } from '#lib/structures/handlers/AntiHoistHandler';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { GuildMember, PartialGuildMember } from 'discord.js';

@@ -1,4 +1,4 @@
-import { KBotErrors } from '#types/Enums';
+import { KBotErrors } from '#lib/types/Enums';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 

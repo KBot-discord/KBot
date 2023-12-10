@@ -1,7 +1,7 @@
-import { imageFolder } from '#utils/constants';
-import { getMemberAvatarUrl } from '#utils/discord';
-import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotModules } from '#types/Enums';
+import { getMemberAvatarUrl } from '#lib/utilities/discord';
+import { imageFolder } from '#lib/utilities/constants';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { GifEncoder } from '@skyra/gifenc';
 import { Canvas, loadImage } from 'canvas-constructor/cairo';
@@ -96,7 +96,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		}
 
 		encoder.finish();
-		return buffer(stream);
+		return await buffer(stream);
 	}
 
 	public override async onLoad(): Promise<void> {

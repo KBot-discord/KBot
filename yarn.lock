@@ -889,9 +889,9 @@ __metadata:
   dependencies:
     "@commitlint/cli": "npm:^18.4.3"
     "@commitlint/config-conventional": "npm:^18.4.3"
-    "@kbotdev/eslint-config": "npm:^1.1.1"
-    "@kbotdev/prettier-config": "npm:^1.0.1"
-    "@kbotdev/ts-config": "npm:^1.0.1"
+    "@kbotdev/eslint-config": "npm:^2.0.0"
+    "@kbotdev/prettier-config": "npm:^1.0.2"
+    "@kbotdev/ts-config": "npm:^1.0.2"
     "@swc/core": "npm:^1.3.100"
     "@types/node": "npm:^20.10.4"
     "@typescript-eslint/parser": "npm:^6.13.2"
@@ -929,6 +929,7 @@ __metadata:
     "@sapphire/plugin-api": "npm:^6.0.1"
     "@sapphire/plugin-logger": "npm:^4.0.1"
     "@sapphire/plugin-scheduled-tasks": "npm:^9.0.1"
+    "@sapphire/utilities": "npm:^3.14.0"
     "@sentry/integrations": "npm:^7.86.0"
     "@sentry/node": "npm:^7.86.0"
     "@sentry/types": "npm:^7.86.0"
@@ -968,21 +969,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kbotdev/eslint-config@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@kbotdev/eslint-config@npm:1.1.1"
+"@kbotdev/eslint-config@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@kbotdev/eslint-config@npm:2.0.0"
   dependencies:
-    "@typescript-eslint/eslint-plugin": "npm:^6.7.0"
-    "@typescript-eslint/parser": "npm:^6.7.0"
-    eslint: "npm:^8.49.0"
-    eslint-config-prettier: "npm:^9.0.0"
-    eslint-import-resolver-typescript: "npm:^3.6.0"
-    eslint-plugin-import: "npm:^2.28.1"
-    eslint-plugin-prettier: "npm:^5.0.0"
+    "@typescript-eslint/eslint-plugin": "npm:^6.13.2"
+    "@typescript-eslint/parser": "npm:^6.13.2"
+    eslint: "npm:^8.55.0"
+    eslint-config-prettier: "npm:^9.1.0"
+    eslint-import-resolver-typescript: "npm:^3.6.1"
+    eslint-plugin-import: "npm:^2.29.0"
+    eslint-plugin-prettier: "npm:^5.0.1"
     eslint-plugin-tsdoc: "npm:^0.2.17"
-    prettier: "npm:^3.0.3"
-    typescript: "npm:^5.2.2"
-  checksum: da75fa830b1303bfea2ea732224926f23806d4fc70dac4e87ede15524207695edfd07a909ad1450ea7eecdcdae43b196bf470d597d4fe4d2144c3ea7a01d72da
+    prettier: "npm:^3.1.1"
+    typescript: "npm:^5.3.3"
+  checksum: 888afaad4229a5ad6d3c4b0df572aa776632ece6f3a866fe4ed110671041b457a719c7915dfbea918184244b07662a3c695edf8c88f6a09abece599935055706
   languageName: node
   linkType: hard
 
@@ -1016,21 +1017,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kbotdev/prettier-config@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@kbotdev/prettier-config@npm:1.0.1"
+"@kbotdev/prettier-config@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@kbotdev/prettier-config@npm:1.0.2"
   dependencies:
-    prettier: "npm:^3.0.3"
-  checksum: 5e9951ae7b0f55193b5ef16ef7686ee1be1c22a838e41c5a68146f2d5052cf16f9f873e67d0dcc0ddfad79154013143547709152a9679ffb19309281fc7fb947
+    prettier: "npm:^3.1.1"
+  checksum: a54fe9235b4da1637bb16220d3032cbe814395a8db5063ebc0f324827543be5a06ef144a31fa1520b77ade4e246c087f01257571faa4593626598371f295ae32
   languageName: node
   linkType: hard
 
-"@kbotdev/ts-config@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@kbotdev/ts-config@npm:1.0.1"
+"@kbotdev/ts-config@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@kbotdev/ts-config@npm:1.0.2"
   dependencies:
-    typescript: "npm:^5.2.2"
-  checksum: 4117ba87fbbea97c591226c059b58f45121d22a3537ecdc5c53244c7c7549bf6dff0dfa97c9860875c2a24d12f9db4eb878df32d3d5128bed66a9bbac387f5f7
+    typescript: "npm:^5.3.3"
+  checksum: 55c3c354da5b32d52fd9eb9322cd05e8fc808951d806e7e9505123d8b3950a914257a170b9cd3657438d728d1dbc8a40289b149e092cc5c4809f77a7da812a98
   languageName: node
   linkType: hard
 
@@ -1884,7 +1885,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^6.13.2, @typescript-eslint/eslint-plugin@npm:^6.7.0":
+"@typescript-eslint/eslint-plugin@npm:^6.13.2":
   version: 6.13.2
   resolution: "@typescript-eslint/eslint-plugin@npm:6.13.2"
   dependencies:
@@ -1909,7 +1910,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^6.13.2, @typescript-eslint/parser@npm:^6.7.0":
+"@typescript-eslint/parser@npm:^6.13.2":
   version: 6.13.2
   resolution: "@typescript-eslint/parser@npm:6.13.2"
   dependencies:
@@ -3716,7 +3717,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:^9.0.0, eslint-config-prettier@npm:^9.1.0":
+"eslint-config-prettier@npm:^9.1.0":
   version: 9.1.0
   resolution: "eslint-config-prettier@npm:9.1.0"
   peerDependencies:
@@ -3749,7 +3750,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-typescript@npm:^3.6.0, eslint-import-resolver-typescript@npm:^3.6.1":
+"eslint-import-resolver-typescript@npm:^3.6.1":
   version: 3.6.1
   resolution: "eslint-import-resolver-typescript@npm:3.6.1"
   dependencies:
@@ -3779,7 +3780,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import@npm:^2.28.1, eslint-plugin-import@npm:^2.29.0":
+"eslint-plugin-import@npm:^2.29.0":
   version: 2.29.0
   resolution: "eslint-plugin-import@npm:2.29.0"
   dependencies:
@@ -3806,7 +3807,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:^5.0.0, eslint-plugin-prettier@npm:^5.0.1":
+"eslint-plugin-prettier@npm:^5.0.1":
   version: 5.0.1
   resolution: "eslint-plugin-prettier@npm:5.0.1"
   dependencies:
@@ -3863,7 +3864,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:8.55.0, eslint@npm:^8.49.0":
+"eslint@npm:8.55.0, eslint@npm:^8.55.0":
   version: 8.55.0
   resolution: "eslint@npm:8.55.0"
   dependencies:
@@ -6663,7 +6664,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.0.3, prettier@npm:^3.1.1":
+"prettier@npm:^3.1.1":
   version: 3.1.1
   resolution: "prettier@npm:3.1.1"
   bin:
@@ -8090,7 +8091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.2.2, typescript@npm:^5.3.3":
+"typescript@npm:^5.3.3":
   version: 5.3.3
   resolution: "typescript@npm:5.3.3"
   bin:
@@ -8100,7 +8101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
   version: 5.3.3
   resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
   bin:

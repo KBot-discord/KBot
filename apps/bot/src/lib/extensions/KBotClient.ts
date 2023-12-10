@@ -1,4 +1,4 @@
-import { KBotLogger } from '#extensions/KBotLogger';
+import { KBotLogger } from '#lib/extensions/KBotLogger';
 import { LogLevel, SapphireClient, container } from '@sapphire/framework';
 import { ActivityType, IntentsBitField, WebhookClient } from 'discord.js';
 import { Enumerable } from '@sapphire/decorators';
@@ -55,7 +55,7 @@ export class KBotClient extends SapphireClient {
 	}
 
 	public override async login(token: string): Promise<string> {
-		return super.login(token);
+		return await super.login(token);
 	}
 
 	public override async destroy(): Promise<void> {

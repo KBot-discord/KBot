@@ -1,4 +1,4 @@
-import { HelpEmbedBuilder } from '#structures/builders/HelpEmbedBuilder';
+import { HelpEmbedBuilder } from '#lib/structures/builders/HelpEmbedBuilder';
 import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EmbedBuilder } from 'discord.js';
 import type { Module } from '@kbotdev/plugin-modules';

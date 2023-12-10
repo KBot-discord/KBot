@@ -1,5 +1,5 @@
-import { KBotModules } from '#types/Enums';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord.js';

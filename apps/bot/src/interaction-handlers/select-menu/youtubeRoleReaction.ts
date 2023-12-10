@@ -1,6 +1,6 @@
-import { YoutubeCustomIds } from '#utils/customIds';
-import { validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { validCustomId } from '#lib/utilities/decorators';
+import { YoutubeCustomIds } from '#lib/utilities/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { PermissionFlagsBits, StringSelectMenuInteraction, roleMention } from 'discord.js';

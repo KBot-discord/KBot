@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
 import { container } from '@sapphire/framework';
 import type { ModerationSettings } from '@prisma/client';
 import type { GuildMember } from 'discord.js';

@@ -1,12 +1,12 @@
-import { CreditCustomIds } from '#utils/customIds';
-import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
-import { parseCustomId } from '#utils/discord';
+import { parseCustomId } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { interactionRatelimit, validCustomId } from '#lib/utilities/decorators';
+import { CreditCustomIds } from '#lib/utilities/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
 import { ButtonInteraction, PermissionFlagsBits } from 'discord.js';
-import type { Credit } from '#types/CustomIds';
+import type { Credit } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: CreditCustomIds.Create,
@@ -18,7 +18,7 @@ export class ButtonHandler extends InteractionHandler {
 		{ channelId, emoteId, type }: InteractionHandler.ParseResult<this>
 	): Promise<void> {
 		const modal = this.container.utility.buildCreditModal(channelId, emoteId, type);
-		return interaction.showModal(modal);
+		await interaction.showModal(modal);
 	}
 
 	@validCustomId(CreditCustomIds.Create)

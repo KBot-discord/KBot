@@ -1,4 +1,4 @@
-import { formGenericError } from '#utils/constants';
+import { formGenericError } from '#lib/utilities/constants';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, container } from '@sapphire/framework';
 import { DiscordAPIError, HTTPError, RESTJSONErrorCodes } from 'discord.js';
@@ -43,7 +43,7 @@ export class ChatInputCommandErrorListener extends Listener<typeof Events.ChatIn
 		const { command } = payload;
 		const { name, location } = command;
 
-		return handleError({
+		await handleError({
 			message: `Encountered error on chat input command "${name}" at path "${location.full}"`,
 			error,
 			payload
@@ -60,7 +60,7 @@ export class ContextMenuCommandErrorListener extends Listener<typeof Events.Cont
 		const { command } = payload;
 		const { name, location } = command;
 
-		return handleError({
+		await handleError({
 			message: `Encountered error on message command "${name}" at path "${location.full}"`,
 			error,
 			payload

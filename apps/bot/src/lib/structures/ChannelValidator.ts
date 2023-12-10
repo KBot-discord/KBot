@@ -1,5 +1,5 @@
-import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { ChannelPermissionsError } from '#lib/structures/errors/ChannelPermissionsError';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
 import { ChannelType, PermissionFlagsBits } from 'discord.js';

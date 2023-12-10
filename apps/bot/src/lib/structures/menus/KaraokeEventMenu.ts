@@ -1,14 +1,14 @@
-import { BlankSpace, EmbedColors, KBotEmoji } from '#utils/constants';
-import { KaraokeCustomIds } from '#utils/customIds';
-import { buildCustomId, fetchChannel, getGuildIcon } from '#utils/discord';
-import { isNullOrUndefined } from '#utils/functions';
-import { Menu } from '#structures/menus/Menu';
-import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { buildCustomId, fetchChannel, getGuildIcon } from '#lib/utilities/discord';
+import { KaraokeCustomIds } from '#lib/utilities/customIds';
+import { BlankSpace, EmbedColors, KBotEmoji } from '#lib/utilities/constants';
+import { MenuPageBuilder } from '#lib/structures/builders/MenuPageBuilder';
+import { Menu } from '#lib/structures/menus/Menu';
 import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { channelMention, time } from '@discordjs/builders';
 import type { Guild, GuildBasedChannel, Message, User } from 'discord.js';
-import type { KaraokeMenuButton } from '#types/CustomIds';
+import type { KaraokeMenuButton } from '#lib/types/CustomIds';
 import type { AnyInteractableInteraction, PaginatedMessageAction, PaginatedMessageActionButton } from '@sapphire/discord.js-utilities';
 import type { KaraokeEvent } from '@prisma/client';
 
@@ -119,7 +119,7 @@ export class KaraokeEventMenu extends Menu {
 
 		this.events = mergedEvents.filter((event) => !isNullOrUndefined(event.channel));
 
-		return Promise.all(
+		return await Promise.all(
 			this.events.map(async ({ event, channel }, index) => {
 				const fields: { name: string; value: string; inline: boolean }[] = [];
 				if (event.discordEventId) {

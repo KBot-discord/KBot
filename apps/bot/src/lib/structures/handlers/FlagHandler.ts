@@ -1,4 +1,4 @@
-import { EmbedColors } from '#utils/constants';
+import { EmbedColors } from '#lib/utilities/constants';
 import { EmbedBuilder, InteractionCollector, InteractionType } from 'discord.js';
 import { isGuildBasedChannel } from '@sapphire/discord.js-utilities';
 import { container } from '@sapphire/framework';

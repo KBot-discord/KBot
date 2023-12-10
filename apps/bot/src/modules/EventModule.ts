@@ -1,11 +1,11 @@
-import { EventSettingsService, KaraokeService } from '#services';
-import { isNullOrUndefined } from '#utils/functions';
-import { EmbedColors } from '#utils/constants';
+import { EventSettingsService, KaraokeService } from '#lib/services';
+import { EmbedColors } from '#lib/utilities/constants';
+import { isNullOrUndefined } from '#lib/utilities/functions';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, channelMention } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '#types/Enums';
+import type { KBotModules } from '#lib/types/Enums';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Event Module'

@@ -1,6 +1,6 @@
-import { KBotCommand } from '#extensions/KBotCommand';
-import { getUserInfo } from '#utils/discord';
-import { KBotModules } from '#types/Enums';
+import { getUserInfo } from '#lib/utilities/discord';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord.js';

@@ -1,5 +1,5 @@
-import { isNullOrUndefined } from '#utils/functions';
-import { fetchChannel } from '#utils/discord';
+import { fetchChannel } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
 import { container } from '@sapphire/framework';
 import type { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
 import type { IncidentMessage } from '@prisma/client';

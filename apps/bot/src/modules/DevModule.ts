@@ -1,6 +1,6 @@
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
-import type { KBotModules } from '#types/Enums';
+import type { KBotModules } from '#lib/types/Enums';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Dev Module'

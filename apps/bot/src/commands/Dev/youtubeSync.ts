@@ -1,5 +1,5 @@
-import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotModules } from '#types/Enums';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';

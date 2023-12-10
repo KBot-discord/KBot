@@ -1,8 +1,8 @@
-import { EmbedColors, HexColorRegex, KBotEmoji } from '#utils/constants';
-import { fetchChannel, getGuildIcon } from '#utils/discord';
-import { isNullOrUndefined } from '#utils/functions';
-import { KBotModules } from '#types/Enums';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { fetchChannel, getGuildIcon } from '#lib/utilities/discord';
+import { EmbedColors, HexColorRegex, KBotEmoji } from '#lib/utilities/constants';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits, channelMention } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
@@ -202,7 +202,7 @@ export class EventsCommand extends KBotSubcommand<WelcomeModule> {
 			color: color ?? undefined
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -222,7 +222,7 @@ export class EventsCommand extends KBotSubcommand<WelcomeModule> {
 			color: color ? null : undefined
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputTest(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -263,7 +263,7 @@ export class EventsCommand extends KBotSubcommand<WelcomeModule> {
 	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: WelcomeSettings | null): Promise<unknown> {

@@ -1,15 +1,15 @@
-import { DiscordIncidentService, PollService, UtilitySettingsService } from '#services';
-import { CreditCustomIds, CreditFields } from '#utils/customIds';
-import { isNullOrUndefined } from '#utils/functions';
-import { buildCustomId } from '#utils/discord';
+import { DiscordIncidentService, PollService, UtilitySettingsService } from '#lib/services';
+import { buildCustomId } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { CreditCustomIds, CreditFields } from '#lib/utilities/customIds';
 import { Module } from '@kbotdev/plugin-modules';
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Time } from '@sapphire/duration';
-import type { CreditType } from '#utils/customIds';
-import type { CreditImageModal, CreditModal, EmojiData, StickerData } from '#types/CustomIds';
+import type { CreditType } from '#lib/utilities/customIds';
+import type { CreditImageModal, CreditModal, EmojiData, StickerData } from '#lib/types/CustomIds';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '#types/Enums';
+import type { KBotModules } from '#lib/types/Enums';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Utility Module'

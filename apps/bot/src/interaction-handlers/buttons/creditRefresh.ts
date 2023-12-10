@@ -1,12 +1,12 @@
-import { CreditCustomIds, CreditType } from '#utils/customIds';
-import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { getResourceFromType, parseCustomId } from '#utils/discord';
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { getResourceFromType, parseCustomId } from '#lib/utilities/discord';
+import { interactionRatelimit, validCustomId } from '#lib/utilities/decorators';
+import { CreditCustomIds, CreditType } from '#lib/utilities/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ButtonInteraction, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { Time } from '@sapphire/duration';
-import type { Credit } from '#types/CustomIds';
+import type { Credit } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: CreditCustomIds.ResourceRefresh,

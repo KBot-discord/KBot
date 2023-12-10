@@ -1,7 +1,7 @@
-import { EmbedColors } from '#utils/constants';
-import { FlagHandler } from '#structures/handlers/FlagHandler';
-import { KBotCommand } from '#extensions/KBotCommand';
-import { KBotModules } from '#types/Enums';
+import { EmbedColors } from '#lib/utilities/constants';
+import { KBotModules } from '#lib/types/Enums';
+import { FlagHandler } from '#lib/structures/handlers/FlagHandler';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits, StringSelectMenuBuilder } from 'discord.js';

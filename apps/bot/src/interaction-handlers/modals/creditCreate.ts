@@ -1,15 +1,15 @@
-import { EmbedColors } from '#utils/constants';
-import { CreditCustomIds, CreditFields, CreditType } from '#utils/customIds';
-import { validCustomId } from '#utils/decorators';
-import { KBotErrors } from '#types/Enums';
-import { buildCustomId, fetchChannel, getResourceFromType, parseCustomId } from '#utils/discord';
-import { ChannelPermissionsError } from '#structures/errors/ChannelPermissionsError';
-import { isNullOrUndefined } from '#utils/functions';
+import { EmbedColors } from '#lib/utilities/constants';
+import { CreditCustomIds, CreditFields, CreditType } from '#lib/utilities/customIds';
+import { validCustomId } from '#lib/utilities/decorators';
+import { buildCustomId, fetchChannel, getResourceFromType, parseCustomId } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { KBotErrors } from '#lib/types/Enums';
+import { ChannelPermissionsError } from '#lib/structures/errors/ChannelPermissionsError';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import { messageLink } from '@discordjs/builders';
-import type { Credit, CreditModal } from '#types/CustomIds';
+import type { Credit, CreditModal } from '#lib/types/CustomIds';
 import type { APIEmbedField, GuildTextBasedChannel } from 'discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({

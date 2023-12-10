@@ -1,4 +1,4 @@
-import { BrandColors, EmbedColors } from '#utils/constants';
+import { BrandColors, EmbedColors } from '#lib/utilities/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, roleMention } from 'discord.js';
@@ -85,7 +85,7 @@ export class YoutubeTask extends ScheduledTask {
 					.map(async (stream) => {
 						const messages = await redis.hGetAll<{ channelId: string }>(this.messagesKey(stream.id));
 						if (messages.size < 1) return;
-						return this.handleEnded(stream, messages);
+						await this.handleEnded(stream, messages);
 					})
 			);
 
@@ -171,7 +171,7 @@ export class YoutubeTask extends ScheduledTask {
 					if (subscription.roleId) roleMentions.push(subscription.roleId);
 				}
 
-				return discordChannel.send({
+				return await discordChannel.send({
 					content: subscription.message ?? `${rolePing}${stream.channel.name} is live!`,
 					embeds: [embed],
 					components: [components],
@@ -235,7 +235,7 @@ export class YoutubeTask extends ScheduledTask {
 
 				const message = await discordChannel.messages.fetch(messageId).catch(() => null);
 
-				return message?.edit({
+				return await message?.edit({
 					content: 'Stream is offline.',
 					embeds: [embed],
 					components: []

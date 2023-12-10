@@ -1,4 +1,4 @@
-import type { KBotErrorCode } from '#types/Enums';
+import type { KBotErrorCode } from '#lib/types/Enums';
 
 export type KBotErrorOptions = {
 	name?: string;

@@ -1,4 +1,4 @@
-import type { CreditType } from '#utils/customIds';
+import type { CreditType } from '#lib/utilities/customIds';
 
 /**
  * Add emote/Add sticker

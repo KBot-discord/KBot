@@ -1,14 +1,14 @@
-import { EmbedColors } from '#utils/constants';
-import { PollCustomIds } from '#utils/customIds';
-import { buildCustomId, getGuildIcon } from '#utils/discord';
-import { Menu } from '#structures/menus/Menu';
-import { MenuPageBuilder } from '#structures/builders/MenuPageBuilder';
+import { buildCustomId, getGuildIcon } from '#lib/utilities/discord';
+import { PollCustomIds } from '#lib/utilities/customIds';
+import { EmbedColors } from '#lib/utilities/constants';
+import { MenuPageBuilder } from '#lib/structures/builders/MenuPageBuilder';
+import { Menu } from '#lib/structures/menus/Menu';
 import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { time } from '@discordjs/builders';
 import type { APIEmbedField, Guild, Message, User } from 'discord.js';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
-import type { PollMenuButton } from '#types/CustomIds';
+import type { PollMenuButton } from '#lib/types/CustomIds';
 import type { Poll } from '@prisma/client';
 
 export class PollMenu extends Menu {

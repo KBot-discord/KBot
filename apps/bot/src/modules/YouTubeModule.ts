@@ -1,13 +1,13 @@
-import { BlankSpace, EmbedColors } from '#utils/constants';
-import { YoutubeChannelService, YoutubeSettingsService, YoutubeSubscriptionService } from '#services';
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { BlankSpace, EmbedColors } from '#lib/utilities/constants';
+import { YoutubeChannelService, YoutubeSettingsService, YoutubeSubscriptionService } from '#lib/services';
 import { Module } from '@kbotdev/plugin-modules';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '#types/Enums';
-import type { YoutubeSubscriptionWithChannel } from '#repositories/types';
+import type { KBotModules } from '#lib/types/Enums';
+import type { YoutubeSubscriptionWithChannel } from '#lib/services/types';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Youtube Module'

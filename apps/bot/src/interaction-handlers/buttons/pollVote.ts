@@ -1,12 +1,12 @@
-import { EmbedColors } from '#utils/constants';
-import { PollCustomIds } from '#utils/customIds';
-import { validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
-import { parseCustomId } from '#utils/discord';
-import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { EmbedColors } from '#lib/utilities/constants';
+import { PollCustomIds } from '#lib/utilities/customIds';
+import { validCustomId } from '#lib/utilities/decorators';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { parseCustomId } from '#lib/utilities/discord';
 import { ButtonInteraction, EmbedBuilder } from 'discord.js';
-import type { PollOption } from '#types/CustomIds';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { ApplyOptions } from '@sapphire/decorators';
+import type { PollOption } from '#lib/types/CustomIds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: PollCustomIds.Vote,

@@ -1,8 +1,8 @@
-import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/discord';
-import { MinageHandler } from '#structures/handlers/MinageHandler';
-import { KBotModules } from '#types/Enums';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { EmbedColors, KBotEmoji } from '#lib/utilities/constants';
+import { getGuildIcon } from '#lib/utilities/discord';
+import { MinageHandler } from '#lib/structures/handlers/MinageHandler';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
@@ -141,7 +141,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 			minAccountAgeMsg: response
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -153,7 +153,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 			minAccountAgeMsg: response ? null : undefined
 		});
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	public async chatInputTest(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
@@ -176,7 +176,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 	public async chatInputSettings(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
-		return this.showSettings(interaction, settings);
+		return await this.showSettings(interaction, settings);
 	}
 
 	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {

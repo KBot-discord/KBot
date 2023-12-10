@@ -1,5 +1,5 @@
-import { EvalCustomIds, EvalFields } from '#utils/customIds';
-import { validCustomId } from '#utils/decorators';
+import { validCustomId } from '#lib/utilities/decorators';
+import { EvalCustomIds, EvalFields } from '#lib/utilities/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes, Result } from '@sapphire/framework';
 import { ModalSubmitInteraction, codeBlock } from 'discord.js';
@@ -18,17 +18,17 @@ export class ModalHandler extends InteractionHandler {
 		interaction: ModalSubmitInteraction<'cached'>, //
 		{ code }: InteractionHandler.ParseResult<this>
 	): Promise<void> {
-		const result = await Result.fromAsync(async () => this.eval(code, { interaction }));
+		const result = await Result.fromAsync(async () => await this.eval(code, { interaction }));
 
 		await result.match({
 			ok: async (data) => {
 				if (data.length > 1999) {
-					return interaction.editReply({
+					return await interaction.editReply({
 						content: this.formatContent({ input: code, result: 'Error: too many characters' })
 					});
 				}
 
-				return interaction.editReply({
+				return await interaction.editReply({
 					content: this.formatContent({ input: code, result: data })
 				});
 			},
@@ -62,7 +62,7 @@ export class ModalHandler extends InteractionHandler {
 		// eslint-disable-next-line no-eval
 		const result = eval(code);
 
-		return this.clean(result);
+		return await this.clean(result);
 	}
 
 	/**

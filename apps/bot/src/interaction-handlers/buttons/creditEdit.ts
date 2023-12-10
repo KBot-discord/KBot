@@ -1,13 +1,13 @@
-import { CreditCustomIds, CreditFields, CreditType } from '#utils/customIds';
-import { interactionRatelimit, validCustomId } from '#utils/decorators';
-import { isNullOrUndefined } from '#utils/functions';
-import { buildCustomId, parseCustomId } from '#utils/discord';
+import { buildCustomId, parseCustomId } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { interactionRatelimit, validCustomId } from '#lib/utilities/decorators';
+import { CreditCustomIds, CreditFields, CreditType } from '#lib/utilities/customIds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonInteraction, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { Time } from '@sapphire/duration';
 import type { Embed, Emoji, Sticker } from 'discord.js';
-import type { Credit, CreditEditModal } from '#types/CustomIds';
+import type { Credit, CreditEditModal } from '#lib/types/CustomIds';
 
 type EmoteCreditEmbed = {
 	source: string;
@@ -24,7 +24,7 @@ export class ButtonHandler extends InteractionHandler {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
 		const modal = this.buildModal(interaction.message.id, resource.id!, type, data);
 
-		return interaction.showModal(modal);
+		await interaction.showModal(modal);
 	}
 
 	@validCustomId(CreditCustomIds.ResourceEdit)

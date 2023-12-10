@@ -1,9 +1,9 @@
-import { DISCORD_STATUS_BASE } from '#utils/constants';
+import { DISCORD_STATUS_BASE } from '#lib/utilities/constants';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
 import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 import { container } from '@sapphire/framework';
-import type { StatusPageResult } from '#types/DiscordStatus';
+import type { StatusPageResult } from '#lib/types/DiscordStatus';
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'discordStatusCleanup',

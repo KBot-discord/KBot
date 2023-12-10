@@ -1,7 +1,7 @@
-import { KBotCommand } from '#extensions/KBotCommand';
-import { EvalCustomIds, EvalFields } from '#utils/customIds';
-import { KBotModules } from '#types/Enums';
-import { buildCustomId } from '#utils/discord';
+import { EvalCustomIds, EvalFields } from '#lib/utilities/customIds';
+import { buildCustomId } from '#lib/utilities/discord';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { ActionRowBuilder, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';

@@ -1,29 +1,25 @@
-import { CustomEmotes, EmbedColors } from '#utils/constants';
-import { isNullOrUndefined } from '#utils/functions';
-import { fetchChannel } from '#utils/discord';
-import { PollRepository } from '#repositories/PollRepository';
+import { pollCacheKey } from './keys';
+import { fetchChannel } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { CustomEmotes, EmbedColors } from '#lib/utilities/constants';
 import { container } from '@sapphire/framework';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import type { GuildTextBasedChannel, Message } from 'discord.js';
-import type { PollResultPayload } from '#types/Tasks';
-import type { Poll } from '@prisma/client';
-import type { CreatePollData, UpsertPollUserData } from '#repositories/types';
+import type { PollResultPayload } from '#lib/types/Tasks';
+import type { Poll, PrismaClient } from '@prisma/client';
+import type { CreatePollData, UpsertPollUserData } from '#lib/services/types';
+import type { RedisClient } from '@killbasa/redis-utils';
 
 const BAR_LENGTH = 10;
 
 export class PollService {
-	private readonly repository: PollRepository;
+	private readonly database: PrismaClient;
+	private readonly cache: RedisClient;
 
 	public constructor() {
-		const { prisma, redis, config } = container;
+		this.database = container.prisma;
 
-		this.repository = new PollRepository({
-			database: prisma,
-			cache: {
-				client: redis,
-				defaultExpiry: config.db.cacheExpiry
-			}
-		});
+		this.cache = container.redis;
 	}
 
 	/**
@@ -31,7 +27,9 @@ export class PollService {
 	 * @param pollId - The ID of the poll.
 	 */
 	public async get(pollId: string): Promise<Poll | null> {
-		return this.repository.get({ pollId });
+		return await this.database.poll.findUnique({
+			where: { id: pollId }
+		});
 	}
 
 	/**
@@ -39,7 +37,9 @@ export class PollService {
 	 * @param guildId - The ID of the guild
 	 */
 	public async getByGuild(guildId: string): Promise<Poll[]> {
-		return this.repository.getByGuild({ guildId });
+		return await this.database.poll.findMany({
+			where: { guildId }
+		});
 	}
 
 	/**
@@ -49,7 +49,20 @@ export class PollService {
 	 * @param data - The data to create the poll
 	 */
 	public async create(guildId: string, pollId: string, data: CreatePollData): Promise<Poll> {
-		return this.repository.create({ guildId, pollId }, data);
+		const { title, channelId, time, options, creator } = data;
+
+		await this.addActive(guildId, pollId);
+		return await this.database.poll.create({
+			data: {
+				id: pollId,
+				title,
+				channelId,
+				time,
+				options,
+				creator,
+				utilitySettings: { connect: { guildId } }
+			}
+		});
 	}
 
 	/**
@@ -58,7 +71,14 @@ export class PollService {
 	 * @param pollId - The ID of the poll
 	 */
 	public async delete(guildId: string, pollId: string): Promise<Poll | null> {
-		return this.repository.delete({ guildId, pollId });
+		const pollKey = this.pollKey(guildId, pollId);
+
+		await this.cache.del(pollKey);
+		return await this.database.poll
+			.delete({
+				where: { id: pollId }
+			})
+			.catch(() => null);
 	}
 
 	/**
@@ -66,7 +86,9 @@ export class PollService {
 	 * @param guildId - The ID of the guild
 	 */
 	public async count(guildId: string): Promise<number> {
-		return this.repository.count({ guildId });
+		return await this.database.poll.count({
+			where: { guildId }
+		});
 	}
 
 	/**
@@ -75,7 +97,7 @@ export class PollService {
 	 * @param pollId - The ID of the poll
 	 */
 	public async isActive(guildId: string, pollId: string): Promise<boolean> {
-		return this.repository.isActive({ guildId, pollId });
+		return await this.cache.sIsMember(this.setKey(guildId), this.memberKey(pollId));
 	}
 
 	/**
@@ -83,7 +105,12 @@ export class PollService {
 	 * @param data - The data to upsert the vote
 	 */
 	public async upsertVote(data: UpsertPollUserData): Promise<void> {
-		return this.repository.upsertVote(data);
+		const { guildId, pollId, userId, option } = data;
+
+		const pollKey = this.pollKey(guildId, pollId);
+		const userKey = this.pollUserKey(userId);
+
+		await this.cache.hSet<number>(pollKey, userKey, option);
 	}
 
 	/**
@@ -92,7 +119,25 @@ export class PollService {
 	 * @param pollId - The ID of the poll
 	 */
 	public async getVotes(guildId: string, pollId: string): Promise<Map<string, number>> {
-		return this.repository.getVotes({ guildId, pollId });
+		const pollKey = this.pollKey(guildId, pollId);
+
+		return await this.cache.hGetAll<number>(pollKey);
+	}
+
+	/**
+	 * Set a poll as active.
+	 * @param data - The {@link GuildAndPollId} to set the poll as active
+	 */
+	public async addActive(guildId: string, pollId: string): Promise<boolean> {
+		return await this.cache.sAdd(this.setKey(guildId), this.memberKey(pollId));
+	}
+
+	/**
+	 * Set a poll as inactive.
+	 * @param data - The {@link GuildAndPollId} to set the poll as inactive
+	 */
+	public async removeActive(guildId: string, pollId: string): Promise<boolean> {
+		return await this.cache.sRem(this.setKey(guildId), this.memberKey(pollId));
 	}
 
 	/**
@@ -159,7 +204,7 @@ export class PollService {
 		}
 
 		try {
-			await this.repository.removeActive({ guildId, pollId });
+			await this.removeActive(guildId, pollId);
 
 			let shouldSend = false;
 			const votes = await this.getVotes(guildId, pollId);
@@ -239,4 +284,8 @@ export class PollService {
 	}
 
 	private readonly pollJobId = (pollId: string): string => `poll:${pollId}`;
+	private readonly pollKey = (guildId: string, pollId: string): string => `${pollCacheKey(guildId)}:${pollId}`;
+	private readonly pollUserKey = (userId: string): string => `user:${userId}`;
+	private readonly setKey = (guildId: string): string => `${pollCacheKey(guildId)}:active`;
+	private readonly memberKey = (pollId: string): string => `polls:${pollId}:active`;
 }

@@ -1,7 +1,7 @@
-import { EmbedColors, KBotEmoji } from '#utils/constants';
-import { getGuildIcon } from '#utils/discord';
-import { KBotModules } from '#types/Enums';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { getGuildIcon } from '#lib/utilities/discord';
+import { EmbedColors, KBotEmoji } from '#lib/utilities/constants';
+import { KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';

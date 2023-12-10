@@ -1,14 +1,11 @@
-import { YoutubeChannelRepository } from '#repositories/YoutubeChannelService';
 import { container } from '@sapphire/framework';
-import type { HolodexChannel } from '@prisma/client';
+import type { HolodexChannel, PrismaClient } from '@prisma/client';
 
 export class YoutubeChannelService {
-	private readonly repository: YoutubeChannelRepository;
+	private readonly database: PrismaClient;
 
 	public constructor() {
-		this.repository = new YoutubeChannelRepository({
-			database: container.prisma
-		});
+		this.database = container.prisma;
 	}
 
 	/**
@@ -16,13 +13,15 @@ export class YoutubeChannelService {
 	 * @param channelId - The ID of the channel
 	 */
 	public async get(channelId: string): Promise<HolodexChannel | null> {
-		return this.repository.get({ channelId });
+		return await this.database.holodexChannel.findUnique({
+			where: { youtubeId: channelId }
+		});
 	}
 
 	/**
 	 * Get a count of the total amount of YouTube channels.
 	 */
 	public async count(): Promise<number> {
-		return this.repository.count();
+		return await this.database.holodexChannel.count();
 	}
 }

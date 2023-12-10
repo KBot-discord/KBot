@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '#utils/functions';
+import { isNullOrUndefined } from '#lib/utilities/functions';
 import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, GuildScheduledEventEntityType, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
@@ -12,11 +12,12 @@ export class GuildListener extends Listener<typeof Events.GuildScheduledEventUpd
 		if (isNullOrUndefined(oldEvent) || isNullOrUndefined(oldEvent.channel) || isNullOrUndefined(oldEvent.guild)) return;
 
 		if (oldEvent.entityType !== GuildScheduledEventEntityType.External && newEvent.entityType === GuildScheduledEventEntityType.External) {
-			return this.handleInternalToExternal(oldEvent.guild, oldEvent.channel);
+			await this.handleInternalToExternal(oldEvent.guild, oldEvent.channel);
+			return;
 		}
 
 		if (oldEvent.status === GuildScheduledEventStatus.Scheduled && newEvent.status === GuildScheduledEventStatus.Active) {
-			return this.handleGoingActive(oldEvent.guild, oldEvent.channel, oldEvent.name);
+			await this.handleGoingActive(oldEvent.guild, oldEvent.channel, oldEvent.name);
 		}
 	}
 

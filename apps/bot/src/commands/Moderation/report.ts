@@ -1,10 +1,10 @@
-import { fetchChannel, getMemberAvatarUrl } from '#utils/discord';
-import { EmbedColors } from '#utils/constants';
-import { ReportButtons, ReportHandler } from '#structures/handlers/ReportHandler';
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { KBotCommand } from '#extensions/KBotCommand';
-import { ReportCustomIds } from '#utils/customIds';
-import { isNullOrUndefined } from '#utils/functions';
+import { fetchChannel, getMemberAvatarUrl } from '#lib/utilities/discord';
+import { EmbedColors } from '#lib/utilities/constants';
+import { ReportCustomIds } from '#lib/utilities/customIds';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { ReportButtons, ReportHandler } from '#lib/structures/handlers/ReportHandler';
+import { KBotErrors, KBotModules } from '#lib/types/Enums';
+import { KBotCommand } from '#lib/extensions/KBotCommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
 	ActionRowBuilder,

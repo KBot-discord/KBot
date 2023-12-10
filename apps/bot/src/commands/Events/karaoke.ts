@@ -1,8 +1,8 @@
-import { EmbedColors } from '#utils/constants';
-import { KBotErrors, KBotModules } from '#types/Enums';
-import { isNullOrUndefined } from '#utils/functions';
-import { fetchChannel } from '#utils/discord';
-import { KBotSubcommand } from '#extensions/KBotSubcommand';
+import { fetchChannel } from '#lib/utilities/discord';
+import { isNullOrUndefined } from '#lib/utilities/functions';
+import { EmbedColors } from '#lib/utilities/constants';
+import { KBotErrors, KBotModules } from '#lib/types/Enums';
+import { KBotSubcommand } from '#lib/extensions/KBotSubcommand';
 import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { channelMention, userMention } from '@discordjs/builders';
@@ -369,7 +369,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 			allowedMentions: { users: [partnerId] }
 		});
 
-		return message
+		return await message
 			.awaitMessageComponent({
 				filter: (i: ButtonInteraction) => i.user.id === partnerId,
 				componentType: ComponentType.Button,

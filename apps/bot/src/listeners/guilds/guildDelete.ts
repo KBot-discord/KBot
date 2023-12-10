@@ -1,4 +1,4 @@
-import { baseCacheKey } from '#repositories/keys';
+import { baseCacheKey } from '#lib/services/keys';
 import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 import type { Guild } from 'discord.js';

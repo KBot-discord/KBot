@@ -1,5 +1,5 @@
-import { CoreSettingsService } from '#services';
-import { KBotModules } from '#types/Enums';
+import { KBotModules } from '#lib/types/Enums';
+import { CoreSettingsService } from '#lib/services';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 

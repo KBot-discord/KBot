@@ -1,11 +1,11 @@
-import { WelcomeSettingsService } from '#services';
-import { isNullOrUndefined } from '#utils/functions';
+import { WelcomeSettingsService } from '#lib/services';
+import { isNullOrUndefined } from '#lib/utilities/functions';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { userMention } from 'discord.js';
 import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '#types/Enums';
+import type { KBotModules } from '#lib/types/Enums';
 
 @ApplyOptions<Module.Options>({
 	fullName: 'Welcome Module'

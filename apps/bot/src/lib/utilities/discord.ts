@@ -1,6 +1,6 @@
-import { checkDepth, isNullOrUndefined } from '#utils/functions';
-import { CreditType } from '#utils/customIds';
-import { BlankSpace, EmbedColors, GuildEmoteSlots, GuildSoundboardSlots, GuildStickerSlots, KBotEmoji } from '#utils/constants';
+import { BlankSpace, EmbedColors, GuildEmoteSlots, GuildSoundboardSlots, GuildStickerSlots, KBotEmoji } from '#lib/utilities/constants';
+import { CreditType } from '#lib/utilities/customIds';
+import { checkDepth, isNullOrUndefined } from '#lib/utilities/functions';
 import { EmbedBuilder, MessageType, PermissionFlagsBits, User, isJSONEncodable } from 'discord.js';
 import { roleMention, time, userMention } from '@discordjs/builders';
 import { UserError, container } from '@sapphire/framework';
@@ -181,7 +181,7 @@ export async function canManageGuildFilter(guild: Guild | RESTAPIPartialCurrentU
 	if (!fetchedGuild) return false;
 
 	const member = await fetchedGuild.members.fetch(userId).catch(() => null);
-	return canManageGuild(fetchedGuild, member);
+	return await canManageGuild(fetchedGuild, member);
 }
 
 /**
