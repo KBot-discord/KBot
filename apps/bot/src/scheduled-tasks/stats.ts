@@ -7,7 +7,7 @@ import { MimeTypes } from '@sapphire/plugin-api';
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'statsTask',
 	pattern: '*/30 * * * *', // Every 30 minutes
-	enabled: !container.config.isDev
+	enabled: container.config.enableTasks
 })
 export class StatsTask extends ScheduledTask {
 	public override async run(): Promise<void> {

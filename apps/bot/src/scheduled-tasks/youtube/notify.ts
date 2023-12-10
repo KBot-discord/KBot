@@ -11,7 +11,7 @@ import type { HolodexVideoWithChannel } from '@kbotdev/holodex';
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'youtubeNotify',
 	pattern: '0 */1 * * * *', // Every minute
-	enabled: !container.config.isDev
+	enabled: container.config.enableTasks
 })
 export class YoutubeTask extends ScheduledTask {
 	private readonly streamsKey = 'youtube:streams:list';

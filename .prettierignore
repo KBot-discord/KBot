@@ -13,5 +13,4 @@ node_modules/
 .all-contributorsrc
 .nvmrc
 yarn.lock
-buf.lock
 LICENSE

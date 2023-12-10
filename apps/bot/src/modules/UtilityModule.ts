@@ -63,10 +63,10 @@ export class UtilityModule extends Module {
 						c: channelId,
 						ri: resourceId,
 						t: type
-				  })
+					})
 				: buildCustomId<CreditImageModal>(CreditCustomIds.ImageModalCreate, {
 						c: channelId
-				  });
+					});
 
 		const components: ActionRowBuilder<TextInputBuilder>[] = [
 			new ActionRowBuilder<TextInputBuilder>().addComponents(

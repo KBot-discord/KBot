@@ -8,7 +8,7 @@ import type { StatusPageResult } from '#types/DiscordStatus';
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'discordStatusCleanup',
 	pattern: '0 0 0 1 * *', // The first of every month
-	enabled: !container.config.isDev
+	enabled: container.config.enableTasks
 })
 export class UtilityTask extends ScheduledTask {
 	public override async run(): Promise<void> {

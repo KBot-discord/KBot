@@ -16,7 +16,7 @@ type DatabaseIncidentData = {
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'discordStatus',
 	pattern: '0 */5 * * * *', // Every 5 minutes
-	enabled: !container.config.isDev
+	enabled: container.config.enableTasks
 })
 export class UtilityTask extends ScheduledTask {
 	public override async run(): Promise<void> {
@@ -140,12 +140,12 @@ export class UtilityTask extends ScheduledTask {
 			incident.status === 'resolved' || incident.status === 'postmortem'
 				? StatusEmbed.Green
 				: incident.impact === 'critical'
-				? StatusEmbed.Red
-				: incident.impact === 'major'
-				? StatusEmbed.Orange
-				: incident.impact === 'minor'
-				? StatusEmbed.Yellow
-				: StatusEmbed.Black;
+					? StatusEmbed.Red
+					: incident.impact === 'major'
+						? StatusEmbed.Orange
+						: incident.impact === 'minor'
+							? StatusEmbed.Yellow
+							: StatusEmbed.Black;
 
 		const affectedComponents = incident.components.map((c) => c.name);
 

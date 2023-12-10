@@ -26,9 +26,7 @@ A fill list of features can be found in the [documentation](https://docs.kbot.ca
 - `/apps`
   - `/apps/bot` - Discord bot
   - `/apps/docs` - Documentation for the bot
-  - `/apps/web` - Dashboard to edit bot settings
 - `/packages` - Shared packages
-- `/protos` - Protobuf files
 
 ## Links 🔗
 
@@ -42,7 +40,6 @@ A fill list of features can be found in the [documentation](https://docs.kbot.ca
 
 - [Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/)
 - [Docker](https://www.docker.com/community-edition)
-- [Buf](https://github.com/bufbuild/buf)
 - [Redis](https://redis.io/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Meilisearch](https://www.meilisearch.com/)

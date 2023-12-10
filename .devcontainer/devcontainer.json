@@ -15,7 +15,6 @@
 				"dotfiles.installCommand": "~/dotfiles/install.sh"
 			},
 			"extensions": [
-				"bufbuild.vscode-buf",
 				"EditorConfig.EditorConfig",
 				"dbaeumer.vscode-eslint",
 				"yzhang.markdown-all-in-one",

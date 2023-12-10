@@ -300,7 +300,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 									inline: true
 								}
 							)
-				  );
+					);
 
 		return interaction.editReply({
 			embeds: [

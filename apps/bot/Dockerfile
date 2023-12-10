@@ -17,10 +17,6 @@ ENV NODE_ENV=production
 WORKDIR /temp
 
 RUN apk add -q --no-cache openssl libc6-compat cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make curl && \
-	curl -sSL \
-      "https://github.com/bufbuild/buf/releases/download/v1.21.0/buf-$(uname -s)-$(uname -m)" \
-      -o "/usr/local/bin/buf" && \
-    chmod +x "/usr/local/bin/buf" && \
 	apk update
 
 COPY .yarn .yarn/

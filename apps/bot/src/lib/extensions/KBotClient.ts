@@ -1,7 +1,6 @@
 import { KBotLogger } from '#extensions/KBotLogger';
-import { transformLoginData } from '#utils/discord';
 import { LogLevel, SapphireClient, container } from '@sapphire/framework';
-import { ActivityType, IntentsBitField, OAuth2Scopes, WebhookClient } from 'discord.js';
+import { ActivityType, IntentsBitField, WebhookClient } from 'discord.js';
 import { Enumerable } from '@sapphire/decorators';
 
 export class KBotClient extends SapphireClient {
@@ -34,17 +33,8 @@ export class KBotClient extends SapphireClient {
 				})
 			},
 			api: {
-				origin: config.web.url,
 				listenOptions: {
 					port: config.api.port
-				},
-				auth: {
-					id: config.discord.id,
-					secret: config.discord.secret,
-					cookie: config.api.auth.cookie,
-					scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
-					domainOverwrite: config.api.auth.domain,
-					transformers: [transformLoginData]
 				}
 			},
 			tasks: {
@@ -56,10 +46,6 @@ export class KBotClient extends SapphireClient {
 					},
 					defaultJobOptions: { removeOnComplete: 0, removeOnFail: 0 }
 				}
-			},
-			modules: {
-				enabled: true,
-				loadModuleErrorListeners: true
 			}
 		});
 

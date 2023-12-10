@@ -1,7 +1,9 @@
 import type { MeiliClientOptions } from '@kbotdev/meili';
 
 export type ClientConfig = {
+	env: string;
 	isDev: boolean;
+	enableTasks: boolean;
 	discord: {
 		token: string;
 		id: string;
@@ -10,16 +12,9 @@ export type ClientConfig = {
 		devServers: string[];
 		ownerIds: string[];
 	};
-	web: {
-		url: string;
-	};
 	api: {
 		host: string;
 		port: number;
-		auth: {
-			cookie: string;
-			domain: string;
-		};
 	};
 	rpc: {
 		server: {

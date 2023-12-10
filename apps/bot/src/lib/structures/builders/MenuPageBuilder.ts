@@ -52,7 +52,7 @@ export class MenuPageBuilder {
 					new EmbedBuilder(),
 					new EmbedBuilder(),
 					new EmbedBuilder()
-			  )
+				)
 			: embeds;
 		return this;
 	}

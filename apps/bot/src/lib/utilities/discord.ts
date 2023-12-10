@@ -22,8 +22,6 @@ import type {
 	Sticker
 } from 'discord.js';
 import type { ImageURLOptions } from '@discordjs/rest';
-import type { LoginData } from '@sapphire/plugin-api';
-import type { FormattedGuild, TransformedLoginData } from '#types/Api';
 
 /**
  * Builds a custom ID and appends extra data.
@@ -171,34 +169,6 @@ export function attachmentFromMessage(message: Message): { url: string; fileType
 		url: attachmentUrl,
 		fileType: parsedUrl[2]
 	};
-}
-
-export async function transformLoginData(data: LoginData): Promise<TransformedLoginData> {
-	const { user, guilds } = data;
-	if (!user) return { user, guilds: [] };
-
-	const formattedUser = {
-		id: user.id,
-		global_name: user.global_name,
-		username: user.username,
-		discriminator: user.discriminator,
-		avatar: getUserAvatarUrl(user)
-	};
-
-	if (!guilds) return { user: formattedUser, guilds: [] };
-
-	const formattedGuilds: FormattedGuild[] = await Promise.all(
-		guilds.length > 0
-			? guilds
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					.filter(async (guild) => canManageGuildFilter(guild, user.id)) //
-					.map(({ id, name, icon, owner, permissions, features }) => {
-						return { id, name, icon: icon ?? '', owner, permissions, features };
-					})
-			: []
-	);
-
-	return { user: formattedUser, guilds: formattedGuilds };
 }
 
 /**
