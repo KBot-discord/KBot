@@ -1,5 +1,5 @@
 ## Builder ##
-FROM node:20.9.0-alpine as builder
+FROM node:20.10.0-alpine as builder
 
 WORKDIR /temp
 
@@ -10,7 +10,7 @@ COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
 ## Dependencies ##
-FROM node:20.9.0-alpine AS deps
+FROM node:20.10.0-alpine AS deps
 
 ENV NODE_ENV=production
 
@@ -20,7 +20,6 @@ RUN apk add -q --no-cache openssl libc6-compat cairo-dev jpeg-dev pango-dev gifl
 	apk update
 
 COPY .yarn .yarn/
-COPY protos protos/
 COPY scripts scripts/
 COPY .yarnrc.yml tsconfig.base.json ./
 COPY --from=builder /temp/out/json/ /temp/out/yarn.lock ./
@@ -30,10 +29,11 @@ RUN yarn install
 
 COPY --from=builder /temp/out/full/ .
 
-RUN yarn turbo build --filter=@kbotdev/bot
+RUN yarn turbo build --filter=@kbotdev/bot && \
+	yarn workspaces focus @kbotdev/bot --production
 
 ## App ##
-FROM node:20.9.0-alpine as app
+FROM node:20.10.0-alpine as app
 
 WORKDIR /app
 
