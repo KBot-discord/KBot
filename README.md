@@ -6,7 +6,6 @@
 [![Uptime Kuma](https://status.kbot.ca/api/badge/8/status?upLabel=online&downLabel=offline&label=Bot+status)](https://status.kbot.ca/status/kbot)
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FKBot-discord%2FKBot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FKBot-discord%2FKBot?ref=badge_shield)
 
 ### A multi-purpose Discord bot using [Sapphire](https://www.sapphirejs.dev/) and [discord.js](https://discord.js.org).
 
