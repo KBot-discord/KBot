@@ -1,8 +1,8 @@
-import { ModerationSettingsService } from '#lib/services';
 import { isNullOrUndefined } from '#lib/utilities/functions';
 import { EmbedColors } from '#lib/utilities/constants';
 import { getGuildIcon } from '#lib/utilities/discord';
 import { MinageHandler } from '#lib/structures/handlers/MinageHandler';
+import { ModerationSettingsService } from '#lib/services/ModerationSettingsService';
 import { Module } from '@kbotdev/plugin-modules';
 import { EmbedBuilder, bold, time } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';

@@ -44,7 +44,7 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 
 		const loadedServices = this.checkServices([
 			{ key: 'Prisma', value: await Result.fromAsync(async () => await prisma.$queryRaw`SELECT 1`) },
-			{ key: 'Redis', value: await Result.fromAsync(async () => await redis.ping()) },
+			{ key: 'Redis', value: await Result.fromAsync(async () => await redis.client.ping()) },
 			{ key: 'Meili', value: await Result.fromAsync(async () => await meili.health()) },
 			{ key: 'API Enabled', value: !isNullOrUndefined(client.options.api) },
 			{ key: 'OAuth 2.0 Enabled', value: !isNullOrUndefined(client.options.api?.auth) }

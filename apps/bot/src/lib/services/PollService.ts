@@ -73,7 +73,7 @@ export class PollService {
 	public async delete(guildId: string, pollId: string): Promise<Poll | null> {
 		const pollKey = this.pollKey(guildId, pollId);
 
-		await this.cache.del(pollKey);
+		await this.cache.delete(pollKey);
 		return await this.database.poll
 			.delete({
 				where: { id: pollId }

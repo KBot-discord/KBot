@@ -1,6 +1,7 @@
-import { EventSettingsService, KaraokeService } from '#lib/services';
 import { EmbedColors } from '#lib/utilities/constants';
 import { isNullOrUndefined } from '#lib/utilities/functions';
+import { EventSettingsService } from '#lib/services/EventSettingsService';
+import { KaraokeService } from '#lib/services/KaraokeService';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { EmbedBuilder, channelMention } from 'discord.js';
