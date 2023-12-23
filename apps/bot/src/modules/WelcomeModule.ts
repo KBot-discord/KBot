@@ -1,5 +1,5 @@
-import { WelcomeSettingsService } from '#lib/services';
 import { isNullOrUndefined } from '#lib/utilities/functions';
+import { WelcomeSettingsService } from '#lib/services/WelcomeSettingsService';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { userMention } from 'discord.js';

@@ -9,7 +9,7 @@
 		"scripts/*.ts",
 		".eslintrc.cjs",
 		".lintstagedrc.cjs",
-		"vitest.config.ts",
-		"vitest.workspace.ts"
+		"vitest.config.mts",
+		"vitest.workspace.mts"
 	]
 }

@@ -1,7 +1,9 @@
-import { DiscordIncidentService, PollService, UtilitySettingsService } from '#lib/services';
 import { buildCustomId } from '#lib/utilities/discord';
 import { isNullOrUndefined } from '#lib/utilities/functions';
 import { CreditCustomIds, CreditFields } from '#lib/utilities/customIds';
+import { UtilitySettingsService } from '#lib/services/UtilitySettingsService';
+import { DiscordIncidentService } from '#lib/services/DiscordIncidentService';
+import { PollService } from '#lib/services/PollService';
 import { Module } from '@kbotdev/plugin-modules';
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -52,7 +54,7 @@ export class UtilityModule extends Module {
 	 */
 	public async getAndDeleteResourceCache<T = EmojiData | StickerData>(messageId: string, userId: string): Promise<T | null> {
 		const result = await this.container.redis.get(this.resourceKey(messageId, userId));
-		if (result) await this.container.redis.del(this.resourceKey(messageId, userId));
+		if (result) await this.container.redis.delete(this.resourceKey(messageId, userId));
 		return result as T;
 	}
 

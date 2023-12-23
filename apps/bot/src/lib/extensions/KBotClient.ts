@@ -61,7 +61,7 @@ export class KBotClient extends SapphireClient {
 	public override async destroy(): Promise<void> {
 		await Promise.allSettled([
 			container.prisma.$disconnect(), //
-			container.redis.quit()
+			container.redis.client.quit()
 		]);
 
 		void super.destroy();

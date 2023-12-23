@@ -1,6 +1,8 @@
 import { isNullOrUndefined } from '#lib/utilities/functions';
 import { BlankSpace, EmbedColors } from '#lib/utilities/constants';
-import { YoutubeChannelService, YoutubeSettingsService, YoutubeSubscriptionService } from '#lib/services';
+import { YoutubeSettingsService } from '#lib/services/YoutubeSettingsService';
+import { YoutubeChannelService } from '#lib/services/YoutubeChannelService';
+import { YoutubeSubscriptionService } from '#lib/services/YoutubeSubscriptionService';
 import { Module } from '@kbotdev/plugin-modules';
 import { EmbedBuilder } from 'discord.js';
 import { channelMention, roleMention } from '@discordjs/builders';

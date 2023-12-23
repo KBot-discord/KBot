@@ -5,7 +5,7 @@
 	"remoteUser": "node",
 	"dockerComposeFile": [
 		"docker-compose.workspace.yml", //
-		"../apps/bot/docker-compose.dev.yml"
+		"../apps/bot/docker-compose.yml"
 	],
 	"customizations": {
 		"vscode": {
