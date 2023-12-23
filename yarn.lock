@@ -919,7 +919,7 @@ __metadata:
     "@kbotdev/holodex": "workspace:^"
     "@kbotdev/meili": "workspace:^"
     "@kbotdev/plugin-modules": "npm:^3.0.0"
-    "@killbasa/redis-utils": "npm:^0.0.7"
+    "@killbasa/redis-utils": "npm:^0.0.8"
     "@prisma/client": "npm:^5.7.1"
     "@sapphire/decorators": "npm:^6.0.3"
     "@sapphire/discord.js-utilities": "npm:^7.1.4"
@@ -1036,12 +1036,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@killbasa/redis-utils@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@killbasa/redis-utils@npm:0.0.7"
+"@killbasa/redis-utils@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@killbasa/redis-utils@npm:0.0.8"
   peerDependencies:
     ioredis: ^5.0.0
-  checksum: be1b52ddf6cd22e6b4d5b7a60371f841a03d0bd2f986f89cf82c4231a359c85bed33b8da02d561dd262e690abda197218bea3626b0060fb1154c132d21408c77
+  checksum: 1d304da5ebde3791e62192e5e59ef3054587ece23f3d7b24a3b6ebbaf5ba54e4187f6065d6ffea69ba85776bb11f799705953b66f5702adcffa85da4a1d01f38
   languageName: node
   linkType: hard
 
