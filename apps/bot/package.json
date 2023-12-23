@@ -51,7 +51,7 @@
 		"@sentry/node": "^7.91.0",
 		"@skyra/gifenc": "^1.0.1",
 		"bufferutil": "^4.0.8",
-		"bullmq": "^4.17.0",
+		"bullmq": "^5.0.0",
 		"canvas": "2.11.2",
 		"canvas-constructor": "^7.0.1",
 		"colorette": "^2.0.20",
