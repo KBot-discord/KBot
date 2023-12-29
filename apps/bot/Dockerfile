@@ -54,6 +54,7 @@ COPY --from=deps --chown=kbot:kbot /temp/apps/bot/assets assets/
 COPY --from=deps --chown=kbot:kbot /temp/apps/bot/prisma/migrations prisma/migrations/
 COPY --from=deps --chown=kbot:kbot /temp/apps/bot/prisma/schema.prisma prisma/schema.prisma
 COPY --from=deps --chown=kbot:kbot /temp/apps/bot/dist dist/
+COPY --from=deps --chown=kbot:kbot /temp/packages packages/
 COPY --from=deps --chown=kbot:kbot /temp/apps/bot/package.json ./
 
 CMD npx prisma migrate deploy && npm run start
