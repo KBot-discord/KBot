@@ -4,7 +4,7 @@
 		"build": {
 			"dependsOn": ["db:generate", "^build"],
 			"inputs": ["src/**/*.ts"],
-			"outputs": ["dist/**", "build/**"],
+			"outputs": ["dist/**"],
 			"cache": true
 		},
 		"lint": {
