@@ -25,7 +25,7 @@ export class ButtonHandler extends InteractionHandler {
 			guildId: interaction.guildId,
 			pollId: interaction.message.id,
 			userId: interaction.user.id,
-			option: Number(option)
+			option
 		});
 
 		await interaction.editReply({

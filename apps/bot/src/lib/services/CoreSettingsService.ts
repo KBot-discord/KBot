@@ -1,4 +1,4 @@
-import { coreCacheKey } from './keys';
+import { coreCacheKey } from '#lib/services/keys';
 import { Time } from '@sapphire/duration';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';

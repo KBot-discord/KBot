@@ -1,4 +1,4 @@
-import { moderationCacheKey } from './keys';
+import { moderationCacheKey } from '#lib/services/keys';
 import { Time } from '@sapphire/duration';
 import { isNullish } from '@sapphire/utilities';
 import { container } from '@sapphire/framework';

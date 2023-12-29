@@ -2,7 +2,7 @@ import { fetchChannel } from '#lib/utilities/discord';
 import { isNullOrUndefined } from '#lib/utilities/functions';
 import { EmbedColors, KBotEmoji } from '#lib/utilities/constants';
 import { ResultClass } from '#lib/structures/ResultClass';
-import { DiscordFetchError } from '#lib/structures/errors';
+import { DiscordFetchError } from '#lib/structures/errors/DiscordFetchError';
 import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { Result, container } from '@sapphire/framework';
 import { roleMention, userMention } from '@discordjs/builders';

@@ -3,32 +3,32 @@
 	"pipeline": {
 		"build": {
 			"dependsOn": ["db:generate", "^build"],
-			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
+			"inputs": ["src/**/*.ts"],
 			"outputs": ["dist/**", "build/**"],
 			"cache": true
 		},
 		"lint": {
 			"dependsOn": ["^build"],
-			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
+			"inputs": ["src/**/*.ts"],
 			"outputs": [],
 			"cache": true
 		},
 		"lint:fix": {
 			"dependsOn": ["^build"],
-			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
+			"inputs": ["src/**/*.ts"],
 			"outputs": [],
 			"cache": true
 		},
 		"format": {
 			"dependsOn": ["^build"],
-			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
+			"inputs": ["src/**/*.ts"],
 			"outputs": [],
 			"cache": true,
 			"outputMode": "full"
 		},
 		"check": {
 			"dependsOn": ["^build"],
-			"inputs": ["src/**/*.ts", "src/**/*.svelte"],
+			"inputs": ["src/**/*.ts"],
 			"outputs": [],
 			"cache": true
 		},

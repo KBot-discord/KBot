@@ -1,4 +1,4 @@
-import { eventCacheKey } from './keys';
+import { eventCacheKey } from '#lib/services/keys';
 import { isNullish } from '@sapphire/utilities';
 import { Time } from '@sapphire/duration';
 import { container } from '@sapphire/framework';

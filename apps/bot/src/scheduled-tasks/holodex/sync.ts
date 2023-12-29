@@ -64,8 +64,10 @@ export class HolodexTask extends ScheduledTask {
 
 	private async scheduleNextPage(page: number): Promise<void> {
 		await this.container.tasks.create(
-			'holodexSync', //
-			{ page },
+			{
+				name: 'holodexSync', //
+				payload: { page }
+			},
 			{ repeated: false, delay: Time.Second * 30 }
 		);
 	}
@@ -74,6 +76,6 @@ export class HolodexTask extends ScheduledTask {
 declare module '@sapphire/plugin-scheduled-tasks' {
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface ScheduledTasks {
-		holodexSync: never;
+		holodexSync: { page: number } | undefined;
 	}
 }

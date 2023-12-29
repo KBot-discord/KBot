@@ -1,4 +1,4 @@
-import { pollCacheKey } from './keys';
+import { pollCacheKey } from '#lib/services/keys';
 import { fetchChannel } from '#lib/utilities/discord';
 import { isNullOrUndefined } from '#lib/utilities/functions';
 import { CustomEmotes, EmbedColors } from '#lib/utilities/constants';
@@ -110,7 +110,7 @@ export class PollService {
 		const pollKey = this.pollKey(guildId, pollId);
 		const userKey = this.pollUserKey(userId);
 
-		await this.cache.hSet<number>(pollKey, userKey, option);
+		await this.cache.hSet<string>(pollKey, userKey, option);
 	}
 
 	/**
@@ -118,10 +118,10 @@ export class PollService {
 	 * @param guildId - The ID of the guild
 	 * @param pollId - The ID of the poll
 	 */
-	public async getVotes(guildId: string, pollId: string): Promise<Map<string, number>> {
+	public async getVotes(guildId: string, pollId: string): Promise<Map<string, string>> {
 		const pollKey = this.pollKey(guildId, pollId);
 
-		return await this.cache.hGetAll<number>(pollKey);
+		return await this.cache.hGetAll<string>(pollKey);
 	}
 
 	/**
@@ -149,8 +149,7 @@ export class PollService {
 		const { guildId, pollId } = data;
 
 		await container.tasks.create(
-			'pollResults',
-			{ guildId, pollId },
+			{ name: 'pollResults', payload: { guildId, pollId } },
 			{
 				customJobOptions: {
 					jobId: this.pollJobId(pollId)
@@ -261,12 +260,15 @@ export class PollService {
 	 * @param poll - The poll to calculate results for
 	 * @param votes - A {@link Map} of the votes
 	 */
-	public calculateResults(poll: Poll, votes: Map<string, number>): string[] {
+	public calculateResults(poll: Poll, votes: Map<string, string>): string[] {
 		const { options } = poll;
 		const formattedOptions = options.map((option) => ({ name: option, value: 0 }));
 
-		for (const option of [...votes.values()]) {
-			formattedOptions[option].value++;
+		for (const option of votes.values()) {
+			const coerce = Number(option);
+			if (isNaN(coerce)) throw new TypeError('Expected number, received NaN');
+
+			formattedOptions[Number(option)].value++;
 		}
 
 		return formattedOptions.map((option) => {
