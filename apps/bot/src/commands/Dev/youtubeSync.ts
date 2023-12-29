@@ -35,7 +35,7 @@ export class DevCommand extends KBotCommand<DevModule> {
 	}
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
-		await this.container.tasks.create('holodexSync', {}, { repeated: false, delay: 0 });
+		await this.container.tasks.create('holodexSync', { repeated: false, delay: 0 });
 		return interaction.reply(`Holodex sync started.`);
 	}
 }

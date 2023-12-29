@@ -10,5 +10,5 @@ export type UpsertPollUserData = {
 	guildId: string;
 	pollId: string;
 	userId: string;
-	option: number;
+	option: string;
 };

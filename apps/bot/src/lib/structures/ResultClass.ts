@@ -1,6 +1,6 @@
 import { KBotError } from '#lib/structures/errors/KBotError';
 import { Result } from '@sapphire/framework';
-import type { KBotErrorOptions } from './errors/KBotError';
+import type { KBotErrorOptions } from '#lib/structures/errors/KBotError';
 
 export abstract class ResultClass {
 	public ok(): Result.Ok<undefined>;

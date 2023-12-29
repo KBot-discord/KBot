@@ -1,8 +1,4 @@
 {
 	"extends": "../../tsconfig.base.json",
-	"compilerOptions": {
-		"noEmit": true,
-		"tsBuildInfoFile": "./dist/.tsbuildinfo"
-	},
 	"include": ["src"]
 }
