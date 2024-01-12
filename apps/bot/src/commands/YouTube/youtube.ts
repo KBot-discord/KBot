@@ -280,8 +280,10 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 		const message = interaction.options.getString('message') ?? undefined;
 		const discordChannelId = interaction.options.getChannel('channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement])?.id;
 		const roleId = interaction.options.getRole('role')?.id;
-		const memberDiscordChannelId = interaction.options.getChannel('member_channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement])
-			?.id;
+		const memberDiscordChannelId = interaction.options.getChannel('member_channel', false, [
+			ChannelType.GuildText,
+			ChannelType.GuildAnnouncement
+		])?.id;
 		const memberRoleId = interaction.options.getRole('member_role')?.id;
 
 		const subscription = await this.module.subscriptions.upsert(interaction.guildId, accountId, {
