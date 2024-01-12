@@ -1,5 +1,5 @@
 ## Builder ##
-FROM node:20.10.0-alpine as builder
+FROM node:20.11.0-alpine3.19 as builder
 
 WORKDIR /temp
 
@@ -10,7 +10,7 @@ COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
 ## Dependencies ##
-FROM node:20.10.0-alpine AS deps
+FROM node:20.11.0-alpine3.19 AS deps
 
 ENV NODE_ENV=production
 
@@ -33,7 +33,7 @@ RUN yarn turbo build --filter=@kbotdev/bot && \
 	yarn workspaces focus @kbotdev/bot --production
 
 ## App ##
-FROM node:20.10.0-alpine as app
+FROM node:20.11.0-alpine3.19 as app
 
 LABEL org.opencontainers.image.source=https://github.com/KBot-discord/KBot
 LABEL org.opencontainers.image.licenses=AGPL-3.0-or-later
