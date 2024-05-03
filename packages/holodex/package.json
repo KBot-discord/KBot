@@ -23,7 +23,7 @@
 		"@sapphire/fetch": "^3.0.1"
 	},
 	"devDependencies": {
-		"eslint": "8.56.0",
+		"eslint": "9.2.0",
 		"prettier": "^3.2.1",
 		"tsup": "^8.0.1",
 		"typescript": "^5.3.3"
