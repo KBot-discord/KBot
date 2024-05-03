@@ -3,7 +3,6 @@
 .eslint*
 .devcontainer/
 .husky/
-.idea/
 .vscode/
 .turbo/
 coverage/
@@ -16,7 +15,6 @@ protos/
 !protos/**/*.proto
 !protos/**/*.yaml
 scripts/*.sh
-.all-contributorsrc
 .editorconfig
 .env*
 .gitattributes

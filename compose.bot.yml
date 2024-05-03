@@ -1,0 +1,20 @@
+services:
+  bot:
+    image: kbot/bot
+    build:
+      dockerfile: Dockerfile
+      context: .
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://user:password@postgres_kbot:5432/kbot
+      REDIS_HOST: redis_kbot
+      MEILI_HOST: meili_kbot
+    ports:
+      - 127.0.0.1:8600:8600
+    networks:
+      - kbot_dev
+
+networks:
+  kbot_dev:
+    external: false

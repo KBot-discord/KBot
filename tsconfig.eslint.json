@@ -1,15 +1,9 @@
 {
-	"extends": "./tsconfig.base.json",
+	"extends": "./tsconfig.json",
 	"compilerOptions": {
-		"noEmit": true
+		"typeRoots": ["./src/lib/types/**/*", "./node_modules/@types"],
+		"allowJs": true,
+		"checkJs": true
 	},
-	"include": [
-		"apps/**/*.ts", //
-		"packages/**/*.ts",
-		"scripts/*.ts",
-		".eslintrc.cjs",
-		".lintstagedrc.cjs",
-		"vitest.config.mts",
-		"vitest.workspace.mts"
-	]
+	"include": ["src/**/*.ts", "tests/**/*.ts", ".eslintrc.cjs", "tsup.config.ts", "vitest.config.ts"]
 }

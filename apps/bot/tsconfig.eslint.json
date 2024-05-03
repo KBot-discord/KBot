@@ -1,9 +1,0 @@
-{
-	"extends": "../../tsconfig.base.json",
-	"compilerOptions": {
-		"typeRoots": ["./src/lib/types/**/*", "../../node_modules/@types"],
-		"allowJs": true,
-		"checkJs": true
-	},
-	"include": ["src/**/*.ts", "tests/**/*.ts", ".eslintrc.cjs", "tsup.config.ts", "vitest.config.ts"]
-}

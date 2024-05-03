@@ -1,10 +1,4 @@
 .git/
-.idea/
-.husky/
-.yarn/
-.turbo/
-assets/
 coverage/
 dist/
-infra/
 node_modules/
