@@ -1,25 +1,25 @@
+import { messageLink } from '@discordjs/builders';
+import { ApplyOptions } from '@sapphire/decorators';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, type ModalSubmitInteraction } from 'discord.js';
+import type { APIEmbedField, GuildTextBasedChannel } from 'discord.js';
 import { ChannelPermissionsError } from '../../lib/structures/errors/ChannelPermissionsError.js';
+import type { CreditImageModal } from '../../lib/types/CustomIds.js';
 import { KBotErrors } from '../../lib/types/Enums.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { CreditCustomIds, CreditFields } from '../../lib/utilities/customIds.js';
 import { validCustomId } from '../../lib/utilities/decorators.js';
 import { fetchChannel, parseCustomId } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
-import { messageLink } from '@discordjs/builders';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { APIEmbedField, GuildTextBasedChannel } from 'discord.js';
-import type { CreditImageModal } from '../../lib/types/CustomIds.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: CreditCustomIds.ImageModalCreate,
-	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
+	interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
 })
 export class ModalHandler extends InteractionHandler {
 	public override async run(
 		interaction: ModalSubmitInteraction<'cached'>,
-		{ channelId, name, link, source, description, artist }: InteractionHandler.ParseResult<this>
+		{ channelId, name, link, source, description, artist }: InteractionHandler.ParseResult<this>,
 	): Promise<void> {
 		const fields: APIEmbedField[] = [];
 		if (source) fields.push({ name: 'Image source', value: source });
@@ -28,14 +28,16 @@ export class ModalHandler extends InteractionHandler {
 
 		const creditsChannel = await fetchChannel<GuildTextBasedChannel>(channelId);
 		if (isNullOrUndefined(creditsChannel)) {
-			return void interaction.errorReply("The current credits channel doesn't exist. Please set a new one with `/credits set`");
+			return void interaction.errorReply(
+				"The current credits channel doesn't exist. Please set a new one with `/credits set`",
+			);
 		}
 
 		const { result } = await this.container.validator.channels.canSendEmbeds(creditsChannel);
 		if (!result) {
 			return void interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: new ChannelPermissionsError()
+				error: new ChannelPermissionsError(),
 			});
 		}
 
@@ -45,16 +47,16 @@ export class ModalHandler extends InteractionHandler {
 					.setColor(EmbedColors.Default)
 					.setTitle(name)
 					.setImage(link)
-					.addFields(fields)
+					.addFields(fields),
 			],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>().addComponents([
 					new ButtonBuilder() //
 						.setCustomId(CreditCustomIds.ImageEdit)
 						.setLabel('Edit info')
-						.setStyle(ButtonStyle.Secondary)
-				])
-			]
+						.setStyle(ButtonStyle.Secondary),
+				]),
+			],
 		});
 
 		await interaction.successReply(`[Credits sent](${messageLink(message.channelId, message.id)})`);
@@ -64,14 +66,16 @@ export class ModalHandler extends InteractionHandler {
 	public override async parse(interaction: ModalSubmitInteraction<'cached'>) {
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
+			await interaction.errorReply(
+				'The module for this feature is disabled.\nYou can run `/utility toggle` to enable it.',
+			);
 			return this.none();
 		}
 
 		await interaction.deferReply({ ephemeral: true });
 
 		const {
-			data: { c }
+			data: { c },
 		} = parseCustomId<CreditImageModal>(interaction.customId);
 
 		const name = interaction.fields.getTextInputValue(CreditFields.Name);
@@ -81,7 +85,7 @@ export class ModalHandler extends InteractionHandler {
 		const artist = interaction.fields.getTextInputValue(CreditFields.Artist);
 
 		if (!link.startsWith('https://')) {
-			await interaction.errorReply(`Invalid image URL. The URL must start with \`https://\``);
+			await interaction.errorReply('Invalid image URL. The URL must start with `https://`');
 			return this.none();
 		}
 

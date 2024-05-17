@@ -1,14 +1,14 @@
+import { channelMention } from '@discordjs/builders';
+import type { ModerationSettings } from '@prisma/client';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import type { APIEmbedField } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors, KBotEmoji } from '../../lib/utilities/constants.js';
 import { fetchChannel, getGuildIcon } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { channelMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { APIEmbedField } from 'discord.js';
-import type { ModerationSettings } from '@prisma/client';
 import type { ModerationModule } from '../../modules/ModerationModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -22,21 +22,21 @@ import type { ModerationModule } from '../../modules/ModerationModule.js';
 			.setSubcommands([
 				{
 					label: '/moderation toggle <value>',
-					description: 'Enable or disable the moderation module'
+					description: 'Enable or disable the moderation module',
 				},
 				{
 					label: '/moderation set <report_channel>',
-					description: 'Set new moderation module settings'
+					description: 'Set new moderation module settings',
 				},
 				{
 					label: '/moderation unset <report_channel>',
-					description: 'Reset moderation module settings'
+					description: 'Reset moderation module settings',
 				},
 				{
 					label: '/moderation permissions',
-					description: "Audit the bot's permissions for moderation features"
+					description: "Audit the bot's permissions for moderation features",
 				},
-				{ label: '/moderation settings', description: 'Show the current settings' }
+				{ label: '/moderation settings', description: 'Show the current settings' },
 			]);
 	},
 	subcommands: [
@@ -44,8 +44,8 @@ import type { ModerationModule } from '../../modules/ModerationModule.js';
 		{ name: 'set', chatInputRun: 'chatInputSet' },
 		{ name: 'unset', chatInputRun: 'chatInputUnset' },
 		{ name: 'permissions', chatInputRun: 'chatInputPermissions' },
-		{ name: 'settings', chatInputRun: 'chatInputSettings' }
-	]
+		{ name: 'settings', chatInputRun: 'chatInputSettings' },
+	],
 })
 export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
@@ -65,8 +65,8 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 									.setName('report_channel')
 									.setDescription('The channel to send reports to')
 									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-									.setRequired(false)
-							)
+									.setRequired(false),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -76,13 +76,13 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 								option //
 									.setName('report_channel')
 									.setDescription('Unset the current report channel')
-									.setRequired(false)
-							)
+									.setRequired(false),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('permissions')
-							.setDescription("Audit the bot's permissions for moderation features")
+							.setDescription("Audit the bot's permissions for moderation features"),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -92,18 +92,18 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 								option //
 									.setName('value')
 									.setDescription('True: the module is enabled. False: The module is disabled.')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('settings')
-							.setDescription('Show the current settings')
+							.setDescription('Show the current settings'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -111,7 +111,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			enabled: value
+			enabled: value,
 		});
 
 		const description = settings.enabled //
@@ -124,18 +124,21 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 					.setColor(EmbedColors.Default)
 					.setAuthor({
 						name: 'Moderation module settings',
-						iconURL: getGuildIcon(interaction.guild)
+						iconURL: getGuildIcon(interaction.guild),
 					})
-					.setDescription(description)
-			]
+					.setDescription(description),
+			],
 		});
 	}
 
 	public async chatInputSet(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
-		const reportChannel = interaction.options.getChannel('report_channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
+		const reportChannel = interaction.options.getChannel('report_channel', false, [
+			ChannelType.GuildText,
+			ChannelType.GuildAnnouncement,
+		]);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			reportChannelId: reportChannel?.id
+			reportChannelId: reportChannel?.id,
 		});
 
 		return await this.showSettings(interaction, settings);
@@ -145,7 +148,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 		const reportChannel = interaction.options.getBoolean('report_channel');
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			reportChannelId: reportChannel ? null : undefined
+			reportChannelId: reportChannel ? null : undefined,
 		});
 
 		return await this.showSettings(interaction, settings);
@@ -174,7 +177,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 					fields.push({
 						name: 'Report channel',
 						value: `${reportViewString}\n${reportSendString}\n${reportEmbedString}`,
-						inline: true
+						inline: true,
 					});
 				}
 			}
@@ -189,22 +192,22 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 					.setColor(EmbedColors.Default)
 					.setAuthor({
 						name: 'Moderation module permissions',
-						iconURL: getGuildIcon(interaction.guild)
+						iconURL: getGuildIcon(interaction.guild),
 					})
 					.addFields([
 						{
 							name: 'Minage',
 							value: `Kick Members: ${this.formatField(kickPermissions)}`,
-							inline: true
+							inline: true,
 						},
 						{
 							name: 'Anti-hoist',
 							value: `Manage Nicknames: ${this.formatField(antiHoistPermissions)}`,
-							inline: true
+							inline: true,
 						},
-						...fields
-					])
-			]
+						...fields,
+					]),
+			],
 		});
 	}
 
@@ -218,25 +221,28 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 		return bool ? KBotEmoji.GreenCheck : KBotEmoji.RedX;
 	}
 
-	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {
+	private async showSettings(
+		interaction: KBotSubcommand.ChatInputCommandInteraction,
+		settings: ModerationSettings | null,
+	): Promise<unknown> {
 		const embed = new EmbedBuilder()
 			.setColor(EmbedColors.Default)
 			.setAuthor({ name: 'Moderation module settings', iconURL: getGuildIcon(interaction.guild) })
 			.addFields([
 				{
 					name: 'Module enabled',
-					value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`
+					value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`,
 				},
 				{
 					name: 'Anti-Hoist',
 					value: `${settings?.antiHoistEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`,
-					inline: true
+					inline: true,
 				},
 				{
 					name: 'Report channel',
 					value: `${settings?.reportChannelId ? channelMention(settings.reportChannelId) : 'No channel set'}`,
-					inline: true
-				}
+					inline: true,
+				},
 			]);
 
 		return await interaction.editReply({ embeds: [embed] });

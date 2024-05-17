@@ -1,20 +1,20 @@
-import { BrandColors, EmbedColors } from '../../lib/utilities/constants.js';
-import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, roleMention } from 'discord.js';
-import humanizeDuration from 'humanize-duration';
 import { Time } from '@sapphire/duration';
 import { container } from '@sapphire/framework';
+import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, roleMention } from 'discord.js';
 import type { APIEmbedField, Channel } from 'discord.js';
+import humanizeDuration from 'humanize-duration';
 import type { HolodexVideoWithChannel } from '../../lib/holodex/types/videos.js';
+import { BrandColors, EmbedColors } from '../../lib/utilities/constants.js';
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'youtubeNotify',
 	pattern: '0 */1 * * * *', // Every minute
 	enabled: container.config.enableTasks,
 	customJobOptions: {
-		jobId: 'tasks:youtubeNotify'
-	}
+		jobId: 'tasks:youtubeNotify',
+	},
 })
 export class YoutubeTask extends ScheduledTask {
 	private readonly streamsKey = 'youtube:streams:list';
@@ -29,22 +29,22 @@ export class YoutubeTask extends ScheduledTask {
 				where: {
 					AND: {
 						NOT: { discordChannelId: null },
-						youtubeSettings: { enabled: true }
-					}
+						youtubeSettings: { enabled: true },
+					},
 				},
-				by: ['channelId']
+				by: ['channelId'],
 			})
 			.then((res) => res.map(({ channelId }) => channelId));
 		if (channelIds.length < 1) return;
 
 		const liveStreams = await holodex.videos
 			.getLive({
-				channels: channelIds
+				channels: channelIds,
 			})
 			.then((streams) =>
 				streams.filter(({ available_at }) => {
 					return new Date(available_at).getTime() < Date.now() + Time.Hour;
-				})
+				}),
 			)
 			.catch(() => null);
 		if (!liveStreams) return;
@@ -56,11 +56,13 @@ export class YoutubeTask extends ScheduledTask {
 			return !channelIds.includes(channel.id);
 		});
 		const pastStreams = cachedStreams.filter(({ id }) => {
-			return !danglingStreams.some((stream) => stream.id === id) && !liveStreams.some((stream) => stream.id === id);
+			const isDangling = danglingStreams.some((stream) => stream.id === id);
+			const isLive = liveStreams.some((stream) => stream.id === id);
+			return !(isDangling || isLive);
 		});
 
 		logger.debug(
-			`[YoutubeTask] ${liveStreams.length} live/upcoming streams, ${danglingStreams.length} dangling streams, ${pastStreams.length} past streams`
+			`[YoutubeTask] ${liveStreams.length} live/upcoming streams, ${danglingStreams.length} dangling streams, ${pastStreams.length} past streams`,
 		);
 
 		for (const stream of liveStreams) {
@@ -89,7 +91,7 @@ export class YoutubeTask extends ScheduledTask {
 						const messages = await redis.hGetAll<{ channelId: string }>(this.messagesKey(stream.id));
 						if (messages.size < 1) return;
 						await this.handleEnded(stream, messages);
-					})
+					}),
 			);
 
 			for (const stream of pastStreams) {
@@ -109,8 +111,8 @@ export class YoutubeTask extends ScheduledTask {
 			await redis.hmSet(
 				this.streamsKey,
 				new Map<string, HolodexVideoWithChannel>(
-					liveStreams.map((stream) => [stream.id, stream]) //
-				)
+					liveStreams.map((stream) => [stream.id, stream]), //
+				),
 			);
 		} else {
 			await redis.delete(this.streamsKey);
@@ -133,7 +135,7 @@ export class YoutubeTask extends ScheduledTask {
 			.setColor(BrandColors.Youtube)
 			.setAuthor({
 				name: stream.channel.name,
-				url: `https://www.youtube.com/channel/${stream.channel.id}`
+				url: `https://www.youtube.com/channel/${stream.channel.id}`,
 			})
 			.setTitle(stream.title)
 			.setURL(`https://youtu.be/${stream.id}`)
@@ -144,7 +146,7 @@ export class YoutubeTask extends ScheduledTask {
 			new ButtonBuilder() //
 				.setStyle(ButtonStyle.Link)
 				.setURL(`https://youtu.be/${stream.id}`)
-				.setLabel('Watch Stream')
+				.setLabel('Watch Stream'),
 		]);
 
 		const keysToSet = new Map<string, { channelId: string }>();
@@ -159,7 +161,7 @@ export class YoutubeTask extends ScheduledTask {
 				}
 
 				const { result } = await validator.channels.canSendEmbeds(discordChannel);
-				if (!result || !discordChannel?.isTextBased()) {
+				if (!(result && discordChannel?.isTextBased())) {
 					return;
 				}
 
@@ -178,9 +180,9 @@ export class YoutubeTask extends ScheduledTask {
 					content: subscription.message ?? `${rolePing}${stream.channel.name} is live!`,
 					embeds: [embed],
 					components: [components],
-					allowedMentions: { roles: roleMentions }
+					allowedMentions: { roles: roleMentions },
 				});
-			})
+			}),
 		);
 
 		for (const entry of result) {
@@ -201,7 +203,10 @@ export class YoutubeTask extends ScheduledTask {
 	 * @param stream - The YouTube stream
 	 * @param messages - The sent notifications
 	 */
-	private async handleEnded(stream: HolodexVideoWithChannel, messages: Map<string, { channelId: string }>): Promise<void> {
+	private async handleEnded(
+		stream: HolodexVideoWithChannel,
+		messages: Map<string, { channelId: string }>,
+	): Promise<void> {
 		const { client, validator } = this.container;
 
 		const fields: APIEmbedField[] = [];
@@ -210,8 +215,8 @@ export class YoutubeTask extends ScheduledTask {
 				name: 'Duration',
 				value: humanizeDuration(Date.now() - new Date(stream.available_at).getTime(), {
 					units: ['h', 'm'],
-					maxDecimalPoints: 0
-				})
+					maxDecimalPoints: 0,
+				}),
 			});
 		}
 
@@ -219,7 +224,7 @@ export class YoutubeTask extends ScheduledTask {
 			.setColor(EmbedColors.Grey)
 			.setAuthor({
 				name: stream.channel.name,
-				url: `https://www.youtube.com/channel/${stream.channel.id}`
+				url: `https://www.youtube.com/channel/${stream.channel.id}`,
 			})
 			.setTitle(stream.title)
 			.setURL(`https://youtu.be/${stream.id}`)
@@ -232,7 +237,7 @@ export class YoutubeTask extends ScheduledTask {
 				const discordChannel = await client.channels.fetch(channelId);
 
 				const { result } = await validator.channels.canSendEmbeds(discordChannel);
-				if (!result || !discordChannel?.isTextBased()) {
+				if (!(result && discordChannel?.isTextBased())) {
 					return;
 				}
 
@@ -241,9 +246,9 @@ export class YoutubeTask extends ScheduledTask {
 				return await message?.edit({
 					content: 'Stream is offline.',
 					embeds: [embed],
-					components: []
+					components: [],
 				});
-			})
+			}),
 		);
 	}
 

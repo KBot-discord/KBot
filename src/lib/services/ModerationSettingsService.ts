@@ -1,8 +1,8 @@
-import { moderationCacheKey } from './keys.js';
-import { Time } from '@sapphire/duration';
-import { isNullish } from '@sapphire/utilities';
-import { container } from '@sapphire/framework';
 import type { ModerationSettings } from '@prisma/client';
+import { Time } from '@sapphire/duration';
+import { container } from '@sapphire/framework';
+import { isNullish } from '@sapphire/utilities';
+import { moderationCacheKey } from './keys.js';
 
 export class ModerationSettingsService {
 	private readonly cacheKey = moderationCacheKey;
@@ -27,7 +27,7 @@ export class ModerationSettingsService {
 		}
 
 		const dbResult = await container.prisma.moderationSettings.findUnique({
-			where: { guildId }
+			where: { guildId },
 		});
 		if (isNullish(dbResult)) {
 			return null;
@@ -51,7 +51,7 @@ export class ModerationSettingsService {
 			minAccountAgeReq?: number | null;
 			minAccountAgeMsg?: string | null;
 			antiHoistEnabled?: boolean;
-		}
+		},
 	): Promise<ModerationSettings> {
 		const key = this.cacheKey(guildId);
 
@@ -63,10 +63,10 @@ export class ModerationSettingsService {
 				coreSettings: {
 					connectOrCreate: {
 						where: { guildId },
-						create: { guildId }
-					}
-				}
-			}
+						create: { guildId },
+					},
+				},
+			},
 		});
 		await container.redis.setEx(key, settings, this.defaultExpiry);
 

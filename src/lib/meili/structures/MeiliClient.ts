@@ -1,8 +1,8 @@
-import { MeiliCategories } from '../types/MeiliTypes.js';
 import { MeiliSearch } from 'meilisearch';
-import type { MeiliDocument, MeiliIndex } from '../types/MeiliTypes.js';
 import type { EnqueuedTask, SearchResponse } from 'meilisearch';
 import type { MeiliClientOptions } from '../types/MeiliClientOptions.js';
+import { MeiliCategories } from '../types/MeiliTypes.js';
+import type { MeiliDocument, MeiliIndex } from '../types/MeiliTypes.js';
 
 /**
  * Wrapper for the `meilisearch` MeiliSearch class.
@@ -15,7 +15,7 @@ export class MeilisearchClient extends MeiliSearch {
 	public constructor(options: MeiliClientOptions) {
 		super({
 			...options,
-			host: `http://${options.host}:${options.port}`
+			host: `http://${options.host}:${options.port}`,
 		});
 	}
 
@@ -42,7 +42,7 @@ export class MeilisearchClient extends MeiliSearch {
 		const result = await super
 			.index(index) //
 			.search<MeiliDocument<I>>(searchString, {
-				limit: 25
+				limit: 25,
 			});
 
 		return result;
@@ -54,7 +54,10 @@ export class MeilisearchClient extends MeiliSearch {
 	 * @param documents - The documents to upsert
 	 * @returns The resulting task of the operation
 	 */
-	public async upsertMany<I extends MeiliIndex>(index: I, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
+	public async upsertMany<I extends MeiliIndex>(
+		index: I,
+		documents: MeiliDocument<typeof index>[],
+	): Promise<EnqueuedTask> {
 		return await super
 			.index(index) //
 			.addDocuments(documents);
@@ -66,7 +69,10 @@ export class MeilisearchClient extends MeiliSearch {
 	 * @param documents - The documents to add
 	 * @returns The resulting task of the operation
 	 */
-	public async resetIndex<I extends MeiliIndex>(index: I, documents: MeiliDocument<typeof index>[]): Promise<EnqueuedTask> {
+	public async resetIndex<I extends MeiliIndex>(
+		index: I,
+		documents: MeiliDocument<typeof index>[],
+	): Promise<EnqueuedTask> {
 		await super.index(index).deleteAllDocuments();
 		return await super
 			.index(index) //

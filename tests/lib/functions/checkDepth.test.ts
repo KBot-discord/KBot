@@ -1,6 +1,6 @@
+import { describe, expect, test } from 'vitest';
 import { checkDepth } from '../../../src/lib/utilities/functions.js';
 import { depth_one, depth_three_with_objects, depth_two } from '../../mocks/index.js';
-import { describe, expect, test } from 'vitest';
 
 describe('checkDepth', () => {
 	test('IF depth 1 THEN 1', () => {

@@ -1,9 +1,9 @@
-import { ChannelPermissionsError } from './errors/ChannelPermissionsError.js';
-import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { channelMention } from '@discordjs/builders';
-import { ChannelType, PermissionFlagsBits } from 'discord.js';
+import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { isNullOrUndefined } from '@sapphire/utilities';
+import { ChannelType, PermissionFlagsBits } from 'discord.js';
 import type { Channel, GuildChannel, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
+import { ChannelPermissionsError } from './errors/ChannelPermissionsError.js';
 
 export class ChannelValidator {
 	/**
@@ -11,12 +11,12 @@ export class ChannelValidator {
 	 * @param channel - The text channel
 	 */
 	public async canSendEmbeds(
-		channel: Channel | GuildChannel | GuildTextBasedChannel | null
+		channel: Channel | GuildChannel | GuildTextBasedChannel | null,
 	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {
 		if (isNullOrUndefined(channel) || !channel.isTextBased() || channel.isDMBased()) {
 			return {
 				result: false,
-				error: new ChannelPermissionsError({ channel: undefined })
+				error: new ChannelPermissionsError({ channel: undefined }),
 			};
 		}
 
@@ -49,10 +49,10 @@ export class ChannelValidator {
 			result: false,
 			error: new ChannelPermissionsError({
 				userMessage: `I don't have the required permission(s) to send messages in ${channelMention(
-					channel.id //
+					channel.id, //
 				)}\nRequired permission(s):${errors}`,
-				channel
-			})
+				channel,
+			}),
 		};
 	}
 
@@ -61,12 +61,12 @@ export class ChannelValidator {
 	 * @param channel - The voice channel
 	 */
 	public async canModerateVoice(
-		channel: VoiceBasedChannel | null
+		channel: VoiceBasedChannel | null,
 	): Promise<{ result: false; error: ChannelPermissionsError } | { result: true; error?: undefined }> {
 		if (isNullOrUndefined(channel) || !channel.isVoiceBased()) {
 			return {
 				result: false,
-				error: new ChannelPermissionsError({ channel: undefined })
+				error: new ChannelPermissionsError({ channel: undefined }),
 			};
 		}
 
@@ -96,10 +96,10 @@ export class ChannelValidator {
 			result: false,
 			error: new ChannelPermissionsError({
 				userMessage: `I don't have the required permission(s) to manage the karaoke events in ${channelMention(
-					channel.id //
+					channel.id, //
 				)}\nRequired permission(s):${errors}`,
-				channel
-			})
+				channel,
+			}),
 		};
 	}
 }

@@ -1,9 +1,9 @@
-import { fetchChannel } from '../../utilities/discord.js';
-import { container } from '@sapphire/framework';
-import { EmbedBuilder } from 'discord.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { GuildMember, GuildTextBasedChannel, HexColorString, Message } from 'discord.js';
 import type { WelcomeSettings } from '@prisma/client';
+import { container } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { EmbedBuilder } from 'discord.js';
+import type { GuildMember, GuildTextBasedChannel, HexColorString, Message } from 'discord.js';
+import { fetchChannel } from '../../utilities/discord.js';
 
 export class WelcomeHandler {
 	public constructor(private readonly member: GuildMember) {}
@@ -13,7 +13,7 @@ export class WelcomeHandler {
 
 		const settings = await welcome.settings.get(this.member.guild.id);
 		if (isNullOrUndefined(settings) || !settings.enabled || isNullOrUndefined(settings.channelId)) return;
-		if (!settings.message && !settings.title && !settings.description) return;
+		if (!(settings.message || settings.title || settings.description)) return;
 
 		const channel = await fetchChannel<GuildTextBasedChannel>(settings.channelId);
 		const { result } = await validator.channels.canSendEmbeds(channel);
@@ -24,7 +24,7 @@ export class WelcomeHandler {
 			return;
 		}
 
-		if (!settings.title && !settings.description && !settings.image) {
+		if (!(settings.title || settings.description || settings.image)) {
 			await this.withMessage(channel, settings);
 			return;
 		}
@@ -46,7 +46,7 @@ export class WelcomeHandler {
 		}
 
 		return await channel.send({
-			embeds: [embed]
+			embeds: [embed],
 		});
 	}
 
@@ -56,7 +56,7 @@ export class WelcomeHandler {
 
 		return await channel.send({
 			content: message,
-			allowedMentions: { users: [this.member.id] }
+			allowedMentions: { users: [this.member.id] },
 		});
 	}
 
@@ -78,7 +78,7 @@ export class WelcomeHandler {
 		return await channel.send({
 			content: message,
 			embeds: [embed],
-			allowedMentions: { users: [this.member.id] }
+			allowedMentions: { users: [this.member.id] },
 		});
 	}
 

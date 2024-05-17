@@ -1,5 +1,5 @@
-import { GENERIC_ERROR, formGenericError } from '../../../src/lib/utilities/constants.js';
 import { describe, expect, test } from 'vitest';
+import { GENERIC_ERROR, formGenericError } from '../../../src/lib/utilities/constants.js';
 
 describe('formGenericError', () => {
 	test('IF no message THEN generic message', () => {

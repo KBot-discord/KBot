@@ -1,6 +1,6 @@
-import { getGuildSoundboardSlots } from '../../../src/lib/utilities/discord.js';
-import { describe, expect, test } from 'vitest';
 import { GuildPremiumTier } from 'discord.js';
+import { describe, expect, test } from 'vitest';
+import { getGuildSoundboardSlots } from '../../../src/lib/utilities/discord.js';
 
 describe('getGuildStickerSlots', () => {
 	test('IF no tier THEN 8', () => {

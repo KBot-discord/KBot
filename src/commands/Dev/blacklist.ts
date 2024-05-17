@@ -1,8 +1,8 @@
-import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
-import { KBotModules } from '../../lib/types/Enums.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord.js';
+import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
+import { KBotModules } from '../../lib/types/Enums.js';
 import type { DevModule } from '../../modules/DevModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -17,8 +17,8 @@ import type { DevModule } from '../../modules/DevModule.js';
 	subcommands: [
 		{ name: 'add', chatInputRun: 'chatInputAdd' },
 		{ name: 'remove', chatInputRun: 'chatInputRemove' },
-		{ name: 'is_blacklisted', chatInputRun: 'chatInputIsBlacklisted' }
-	]
+		{ name: 'is_blacklisted', chatInputRun: 'chatInputIsBlacklisted' },
+	],
 })
 export class DevCommand extends KBotSubcommand<DevModule> {
 	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
@@ -37,8 +37,8 @@ export class DevCommand extends KBotSubcommand<DevModule> {
 								option //
 									.setName('guild')
 									.setDescription('The ID of the guild')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -48,8 +48,8 @@ export class DevCommand extends KBotSubcommand<DevModule> {
 								option //
 									.setName('guild')
 									.setDescription('The ID of the guild')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -59,13 +59,13 @@ export class DevCommand extends KBotSubcommand<DevModule> {
 								option //
 									.setName('guild')
 									.setDescription('The ID of the guild')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
-			}
+				guildIds: this.container.config.discord.devServers,
+			},
 		);
 	}
 
@@ -75,7 +75,7 @@ export class DevCommand extends KBotSubcommand<DevModule> {
 		await this.container.prisma.blacklist.upsert({
 			where: { guildId },
 			update: { guildId },
-			create: { guildId }
+			create: { guildId },
 		});
 
 		const guild = interaction.client.guilds.cache.get(guildId);
@@ -91,7 +91,7 @@ export class DevCommand extends KBotSubcommand<DevModule> {
 
 		await this.container.prisma.blacklist
 			.delete({
-				where: { guildId }
+				where: { guildId },
 			})
 			.catch(() => null);
 
@@ -102,7 +102,7 @@ export class DevCommand extends KBotSubcommand<DevModule> {
 		const guildId = interaction.options.getString('guild', true);
 
 		const result = await this.container.prisma.blacklist.count({
-			where: { guildId }
+			where: { guildId },
 		});
 
 		if (result > 1) {

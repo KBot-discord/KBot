@@ -1,17 +1,18 @@
-import { ModerationSettingsService } from '../lib/services/ModerationSettingsService.js';
-import { MinageHandler } from '../lib/structures/handlers/MinageHandler.js';
-import { EmbedColors } from '../lib/utilities/constants.js';
-import { getGuildIcon } from '../lib/utilities/discord.js';
 import { Module } from '@kbotdev/plugin-modules';
-import { EmbedBuilder, bold, time } from 'discord.js';
+import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullOrUndefined } from '@sapphire/utilities';
+import { EmbedBuilder, bold, time } from 'discord.js';
 import type { GuildMember } from 'discord.js';
-import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '../lib/types/Enums.js';
+import { ModerationSettingsService } from '../lib/services/ModerationSettingsService.js';
+import { MinageHandler } from '../lib/structures/handlers/MinageHandler.js';
+import { KBotModules } from '../lib/types/Enums.js';
+import { EmbedColors } from '../lib/utilities/constants.js';
+import { getGuildIcon } from '../lib/utilities/discord.js';
 
 @ApplyOptions<Module.Options>({
-	fullName: 'Moderation Module'
+	name: KBotModules.Moderation,
+	fullName: 'Moderation Module',
 })
 export class ModerationModule extends Module {
 	public readonly settings: ModerationSettingsService;
@@ -42,7 +43,12 @@ export class ModerationModule extends Module {
 			.replaceAll('{date}', stampDate);
 	}
 
-	public formatMinageEmbed(member: GuildMember, msg: string | null | undefined, req: number, reqDate: number): EmbedBuilder {
+	public formatMinageEmbed(
+		member: GuildMember,
+		msg: string | null | undefined,
+		req: number,
+		reqDate: number,
+	): EmbedBuilder {
 		const message = msg ?? MinageHandler.defaultMessage;
 
 		const formattedMessage = this.formatMinageMessage(member, message, req, reqDate);
@@ -57,7 +63,6 @@ export class ModerationModule extends Module {
 }
 
 declare module '@kbotdev/plugin-modules' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
 		[KBotModules.Moderation]: never;
 	}

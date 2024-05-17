@@ -1,9 +1,9 @@
-import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
+import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import type { PollResultPayload } from '../../lib/types/Tasks.js';
 
 @ApplyOptions<ScheduledTask.Options>({
-	name: 'pollResults'
+	name: 'pollResults',
 })
 export class UtilityTask extends ScheduledTask {
 	public override async run({ guildId, pollId }: PollResultPayload): Promise<void> {
@@ -12,7 +12,6 @@ export class UtilityTask extends ScheduledTask {
 }
 
 declare module '@sapphire/plugin-scheduled-tasks' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface ScheduledTasks {
 		pollResults: { guildId: string; pollId: string };
 	}

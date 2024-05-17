@@ -1,9 +1,9 @@
-import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
+import { Events, Listener } from '@sapphire/framework';
 import type { DMChannel, NonThreadGuildBasedChannel } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	event: Events.ChannelDelete
+	event: Events.ChannelDelete,
 })
 export class GuildListener extends Listener<typeof Events.ChannelDelete> {
 	public async run(channel: DMChannel | NonThreadGuildBasedChannel): Promise<void> {

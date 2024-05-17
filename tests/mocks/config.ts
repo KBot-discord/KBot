@@ -2,12 +2,12 @@ import type { ClientConfig } from '#src/lib/types/Config';
 
 export const mockValidConfig = {
 	discord: {
-		token: 'token'
-	}
+		token: 'token',
+	},
 } as ClientConfig;
 
 export const mockInvalidConfig = {
 	discord: {
-		token: undefined
-	}
+		token: undefined,
+	},
 } as unknown as ClientConfig;

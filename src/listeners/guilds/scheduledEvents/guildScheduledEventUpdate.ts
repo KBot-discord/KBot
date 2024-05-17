@@ -1,22 +1,28 @@
-import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Events, GuildScheduledEventEntityType, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
+import { Listener } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
+import { Events, GuildScheduledEventEntityType, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
 import type { Guild, GuildScheduledEvent, VoiceBasedChannel } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	event: Events.GuildScheduledEventUpdate
+	event: Events.GuildScheduledEventUpdate,
 })
 export class GuildListener extends Listener<typeof Events.GuildScheduledEventUpdate> {
 	public async run(oldEvent: GuildScheduledEvent | null, newEvent: GuildScheduledEvent): Promise<void> {
 		if (isNullOrUndefined(oldEvent) || isNullOrUndefined(oldEvent.channel) || isNullOrUndefined(oldEvent.guild)) return;
 
-		if (oldEvent.entityType !== GuildScheduledEventEntityType.External && newEvent.entityType === GuildScheduledEventEntityType.External) {
+		if (
+			oldEvent.entityType !== GuildScheduledEventEntityType.External &&
+			newEvent.entityType === GuildScheduledEventEntityType.External
+		) {
 			await this.handleInternalToExternal(oldEvent.guild, oldEvent.channel);
 			return;
 		}
 
-		if (oldEvent.status === GuildScheduledEventStatus.Scheduled && newEvent.status === GuildScheduledEventStatus.Active) {
+		if (
+			oldEvent.status === GuildScheduledEventStatus.Scheduled &&
+			newEvent.status === GuildScheduledEventStatus.Active
+		) {
 			await this.handleGoingActive(oldEvent.guild, oldEvent.channel, oldEvent.name);
 		}
 	}
@@ -57,7 +63,7 @@ export class GuildListener extends Listener<typeof Events.GuildScheduledEventUpd
 			PermissionFlagsBits.ManageEvents,
 			PermissionFlagsBits.MuteMembers,
 			PermissionFlagsBits.MoveMembers,
-			PermissionFlagsBits.ManageChannels
+			PermissionFlagsBits.ManageChannels,
 		]);
 		if (!validPermissions) {
 			await events.karaoke.deleteEvent(channel.id);
@@ -71,8 +77,8 @@ export class GuildListener extends Listener<typeof Events.GuildScheduledEventUpd
 			this.container.logger.sentryError(error, {
 				context: {
 					event,
-					guildId: guild.id
-				}
+					guildId: guild.id,
+				},
 			});
 		});
 	}

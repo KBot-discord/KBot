@@ -1,20 +1,28 @@
 {
 	"typescript.tsdk": "./node_modules/typescript/lib",
 	"typescript.referencesCodeLens.enabled": true,
-	"eslint.format.enable": true,
+	"eslint.enable": false,
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"eslint.validate": ["javascript", "typescript"],
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.biome": "explicit"
+	},
 	"[javascript]": {
-		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+		"editor.defaultFormatter": "biomejs.biome"
 	},
 	"[typescript]": {
-		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
-	},
-	"[proto3]": {
-		"editor.defaultFormatter": "bufbuild.vscode-buf"
+		"editor.defaultFormatter": "biomejs.biome"
 	},
 	"[prisma]": {
 		"editor.defaultFormatter": "Prisma.prisma"
+	},
+	"[markdown]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome"
 	}
 }

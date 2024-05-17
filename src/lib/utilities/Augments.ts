@@ -1,7 +1,7 @@
-import { EmbedColors } from './constants.js';
 import { CommandInteraction, EmbedBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import type { InteractionResponse, Message } from 'discord.js';
 import type { FollowupArgs, ReplyArgs } from '../types/Augments.js';
+import { EmbedColors } from './constants.js';
 
 type InteractionUnion = CommandInteraction | MessageComponentInteraction | ModalSubmitInteraction;
 
@@ -14,13 +14,18 @@ type FormattedResponse = {
 	ephemeral: boolean | undefined;
 };
 
-function formatResponse(interaction: InteractionUnion, color: EmbedColors, text: string, tryEphemeral?: boolean): FormattedResponse {
+function formatResponse(
+	interaction: InteractionUnion,
+	color: EmbedColors,
+	text: string,
+	tryEphemeral?: boolean,
+): FormattedResponse {
 	const embed = new EmbedBuilder().setColor(color).setDescription(text);
 	const ephemeral = interaction.ephemeral ?? tryEphemeral;
 	return {
 		embeds: [embed],
 		allowedMentions: { users: [interaction.user.id], roles: [] },
-		ephemeral
+		ephemeral,
 	};
 }
 
@@ -28,7 +33,7 @@ async function _safeReply(
 	interaction: InteractionUnion,
 	color: EmbedColors,
 	text: string,
-	tryEphemeral?: boolean
+	tryEphemeral?: boolean,
 ): Promise<InteractionResponse | Message> {
 	const data = formatResponse(interaction, color, text, tryEphemeral);
 	return interaction.deferred || interaction.replied //
@@ -36,7 +41,12 @@ async function _safeReply(
 		: await interaction.reply(data);
 }
 
-async function _safeFollowup(interaction: InteractionUnion, color: EmbedColors, text: string, tryEphemeral?: boolean): Promise<Message> {
+async function _safeFollowup(
+	interaction: InteractionUnion,
+	color: EmbedColors,
+	text: string,
+	tryEphemeral?: boolean,
+): Promise<Message> {
 	const data = formatResponse(interaction, color, text, tryEphemeral);
 	return await interaction.followUp(data);
 }

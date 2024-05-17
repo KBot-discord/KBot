@@ -13,12 +13,12 @@ export default defineConfig({
 		logo: '/assets/logo.png',
 
 		search: {
-			provider: 'local'
+			provider: 'local',
 		},
 
 		editLink: {
 			pattern: 'https://github.com/kbot-discord/KBot/edit/main/docs/:path',
-			text: 'Suggest changes to this page'
+			text: 'Suggest changes to this page',
 		},
 
 		nav: [
@@ -27,9 +27,9 @@ export default defineConfig({
 			{ text: 'Support', link: 'https://kbot.ca/discord' },
 			{
 				text: 'Source Code',
-				link: 'https://github.com/kbot-discord/kbot'
+				link: 'https://github.com/kbot-discord/kbot',
 			},
-			{ text: 'Status', link: 'https://status.kbot.ca/' }
+			{ text: 'Status', link: 'https://status.kbot.ca/' },
 		],
 
 		sidebar: [
@@ -40,53 +40,53 @@ export default defineConfig({
 				text: 'Configuration',
 				items: [
 					{ text: 'Getting Started', link: '/configuration/getting-started' },
-					{ text: 'Permissions', link: '/configuration/permissions' }
-				]
+					{ text: 'Permissions', link: '/configuration/permissions' },
+				],
 			},
 			{
 				text: 'Modules',
 				items: [
 					{
 						text: 'Events',
-						items: [{ text: 'Karaoke', link: '/events/karaoke' }]
+						items: [{ text: 'Karaoke', link: '/events/karaoke' }],
 					},
 					{
 						text: 'Moderation',
 						items: [
 							{ text: 'Anti-Hoist', link: '/moderation/anti-hoist' },
 							{ text: 'Minage', link: '/moderation/minage' },
-							{ text: 'Report', link: '/moderation/report' }
-						]
+							{ text: 'Report', link: '/moderation/report' },
+						],
 					},
 					{
 						text: 'Notifications',
-						items: [{ text: 'YouTube', link: '/notifications/youtube' }]
+						items: [{ text: 'YouTube', link: '/notifications/youtube' }],
 					},
 					{
 						text: 'Utility',
 						items: [
 							{ text: 'Discord Status', link: '/utility/discord-status' },
 							{ text: 'Credits', link: '/utility/credits' },
-							{ text: 'Polls', link: '/utility/polls' }
-						]
+							{ text: 'Polls', link: '/utility/polls' },
+						],
 					},
 					{
 						text: 'Welcome',
-						items: [{ text: 'Overview', link: '/welcome/overview' }]
-					}
-				]
+						items: [{ text: 'Overview', link: '/welcome/overview' }],
+					},
+				],
 			},
 			{
 				text: 'References',
-				items: [{ text: 'Time format', link: '/references/time-format' }]
+				items: [{ text: 'Time format', link: '/references/time-format' }],
 			},
 			{ text: 'Terms of Use', link: 'https://kbot.ca/terms' },
-			{ text: 'Privacy Policy', link: 'https://kbot.ca/privacy' }
-		]
+			{ text: 'Privacy Policy', link: 'https://kbot.ca/privacy' },
+		],
 	},
 
 	vite: {
-		plugins: []
+		plugins: [],
 	},
 
 	head: [
@@ -95,16 +95,16 @@ export default defineConfig({
 			'meta',
 			{
 				name: 'viewport',
-				content: 'width=device-width, initial-scale=1'
-			}
+				content: 'width=device-width, initial-scale=1',
+			},
 		],
 		[
 			'link',
 			{
 				rel: 'apple-touch-icon',
 				sizes: '180x180',
-				href: '/apple-touch-icon.png'
-			}
+				href: '/apple-touch-icon.png',
+			},
 		],
 		[
 			'link',
@@ -112,8 +112,8 @@ export default defineConfig({
 				rel: 'icon',
 				type: 'image/png',
 				sizes: '32x32',
-				href: '/favicon-32x32.png'
-			}
+				href: '/favicon-32x32.png',
+			},
 		],
 		[
 			'link',
@@ -121,8 +121,8 @@ export default defineConfig({
 				rel: 'icon',
 				type: 'image/png',
 				sizes: '16x16',
-				href: '/favicon-16x16.png'
-			}
+				href: '/favicon-16x16.png',
+			},
 		],
 		['link', { rel: 'manifest', href: '/site.webmanifest' }],
 		['link', { rel: 'shortcut icon', href: '/favicon.ico' }],
@@ -137,8 +137,8 @@ export default defineConfig({
 			{
 				property: 'theme-color',
 				'data-react-helmet': 'true',
-				content: '#006BFC'
-			}
+				content: '#006BFC',
+			},
 		],
 
 		// Twitter
@@ -149,8 +149,8 @@ export default defineConfig({
 			'meta',
 			{
 				property: 'twitter:description',
-				content: 'Documentation for KBot'
-			}
-		]
+				content: 'Documentation for KBot',
+			},
+		],
 	],
 });

@@ -1,22 +1,25 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { type ButtonInteraction, EmbedBuilder } from 'discord.js';
+import type { GuildTextBasedChannel } from 'discord.js';
+import type { PollMenuButton } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { PollCustomIds } from '../../lib/utilities/customIds.js';
 import { validCustomId } from '../../lib/utilities/decorators.js';
 import { fetchChannel, parseCustomId } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import { ButtonInteraction, EmbedBuilder } from 'discord.js';
-import type { GuildTextBasedChannel } from 'discord.js';
-import type { PollMenuButton } from '../../lib/types/CustomIds.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: PollCustomIds.ResultsHidden,
-	interactionHandlerType: InteractionHandlerTypes.Button
+	interactionHandlerType: InteractionHandlerTypes.Button,
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>): Promise<void> {
+	public override async run(
+		interaction: ButtonInteraction<'cached'>,
+		{ pollId }: InteractionHandler.ParseResult<this>,
+	): Promise<void> {
 		const {
-			utility: { polls }
+			utility: { polls },
 		} = this.container;
 
 		const active = await polls.isActive(interaction.guildId, pollId);
@@ -49,8 +52,8 @@ export class ButtonHandler extends InteractionHandler {
 					.setTitle(`Results: ${message.embeds[0].title}`)
 					.setDescription(results.join('\n'))
 					.setFooter({ text: message.embeds[0].footer!.text })
-					.setTimestamp()
-			]
+					.setTimestamp(),
+			],
 		});
 	}
 
@@ -58,14 +61,17 @@ export class ButtonHandler extends InteractionHandler {
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, {
-				tryEphemeral: true
-			});
+			await interaction.errorReply(
+				'The module for this feature is disabled.\nYou can run `/utility toggle` to enable it.',
+				{
+					tryEphemeral: true,
+				},
+			);
 			return this.none();
 		}
 
 		const {
-			data: { pollId }
+			data: { pollId },
 		} = parseCustomId<PollMenuButton>(interaction.customId);
 
 		await interaction.deferReply({ ephemeral: true });

@@ -3,7 +3,7 @@ import { Events, Listener } from '@sapphire/framework';
 import type { CloseEvent } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	event: Events.ShardDisconnect
+	event: Events.ShardDisconnect,
 })
 export class ShardListener extends Listener<typeof Events.ShardDisconnect> {
 	public override run(event: CloseEvent, shardId: number): void {

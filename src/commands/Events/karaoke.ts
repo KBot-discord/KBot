@@ -1,20 +1,31 @@
+import { channelMention, userMention } from '@discordjs/builders';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	ComponentType,
+	EmbedBuilder,
+	PermissionFlagsBits,
+} from 'discord.js';
+import type { ButtonInteraction, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { fetchChannel } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { channelMention, userMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { ButtonInteraction, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import type { EventModule } from '../../modules/EventModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Events,
 	description: 'Join or leave the karaoke queue.',
 	preconditions: ['EDefer', 'ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
+	requiredClientPermissions: [
+		PermissionFlagsBits.MuteMembers,
+		PermissionFlagsBits.MoveMembers,
+		PermissionFlagsBits.ManageChannels,
+	],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -24,7 +35,7 @@ import type { EventModule } from '../../modules/EventModule.js';
 				{ label: '/karaoke duet <partner>', description: 'Join the queue as a duet' },
 				{ label: '/karaoke leave', description: 'Leave the queue' },
 				{ label: '/karaoke queue', description: 'Show the current queue' },
-				{ label: '/karaoke help', description: 'Show info about karaoke commands' }
+				{ label: '/karaoke help', description: 'Show info about karaoke commands' },
 			]);
 	},
 	subcommands: [
@@ -32,8 +43,8 @@ import type { EventModule } from '../../modules/EventModule.js';
 		{ name: 'duet', chatInputRun: 'chatInputDuet' },
 		{ name: 'leave', chatInputRun: 'chatInputLeave' },
 		{ name: 'queue', chatInputRun: 'chatInputQueue' },
-		{ name: 'help', chatInputRun: 'chatInputHelp' }
-	]
+		{ name: 'help', chatInputRun: 'chatInputHelp' },
+	],
 })
 export class EventsCommand extends KBotSubcommand<EventModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -51,7 +62,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('join')
-							.setDescription('Join the queue')
+							.setDescription('Join the queue'),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -61,28 +72,28 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 								option //
 									.setName('partner')
 									.setDescription('The partner for your duet')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('leave')
-							.setDescription('Leave the queue')
+							.setDescription('Leave the queue'),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('queue')
-							.setDescription('Show the current queue')
+							.setDescription('Show the current queue'),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('help')
-							.setDescription('Show info about karaoke commands')
+							.setDescription('Show info about karaoke commands'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -105,7 +116,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: voiceResult.error
+				error: voiceResult.error,
 			});
 		}
 
@@ -114,7 +125,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: textResult.error
+				error: textResult.error,
 			});
 		}
 
@@ -125,7 +136,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 
 		const updatedEvent = await karaoke.addUserToQueue(
 			eventId, //
-			{ id: member.id, name: member.displayName }
+			{ id: member.id, name: member.displayName },
 		);
 
 		if (updatedEvent.queue.length === 1) {
@@ -134,7 +145,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 			await textChannel!.send({
 				content: `${userMention(member.id)} is up!`,
 				embeds: [karaoke.buildQueueEmbed(updatedEvent)],
-				allowedMentions: { users: [] }
+				allowedMentions: { users: [] },
 			});
 		}
 
@@ -165,7 +176,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: voiceResult.error
+				error: voiceResult.error,
 			});
 		}
 
@@ -174,7 +185,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: textResult.error
+				error: textResult.error,
 			});
 		}
 
@@ -186,7 +197,9 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		const response = await this.duetConfirmation(textChannel!, member.id, partner.id);
 		if (isNullOrUndefined(response)) {
 			return await interaction.defaultReply("Your duet partner didn't respond to your join request.");
-		} else if (!response) {
+		}
+
+		if (!response) {
 			return await interaction.defaultReply('Your duet partner denied your join request.');
 		}
 
@@ -194,7 +207,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 			id: member.id,
 			name: member.displayName,
 			partnerId: partner.id,
-			partnerName: partner.displayName
+			partnerName: partner.displayName,
 		});
 
 		if (updatedEvent.queue.length === 1) {
@@ -202,7 +215,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 			await textChannel!.send({
 				content: `${userMention(member.id)} & ${userMention(partner.id)} are up!`,
 				embeds: [karaoke.buildQueueEmbed(updatedEvent)],
-				allowedMentions: { users: [] }
+				allowedMentions: { users: [] },
 			});
 		}
 
@@ -228,7 +241,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: voiceResult.error
+				error: voiceResult.error,
 			});
 		}
 
@@ -237,7 +250,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: textResult.error
+				error: textResult.error,
 			});
 		}
 
@@ -255,7 +268,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 				const ping = member.id === userEntry.id ? userEntry.partnerId : userEntry.id;
 				await textChannel!.send({
 					content: `${userMention(userEntry.id)} & ${userMention(userEntry.partnerId)} have left the queue.`,
-					allowedMentions: { users: [ping] }
+					allowedMentions: { users: [ping] },
 				});
 			}
 		}
@@ -277,7 +290,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		}
 
 		return await interaction.editReply({
-			embeds: [karaoke.buildQueueEmbed(event)]
+			embeds: [karaoke.buildQueueEmbed(event)],
 		});
 	}
 
@@ -297,9 +310,9 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 								{
 									name: 'Command channel',
 									value: channelMention(event.textChannelId),
-									inline: true
-								}
-							)
+									inline: true,
+								},
+							),
 					);
 
 		return await interaction.editReply({
@@ -311,23 +324,23 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 						[
 							'**1.** Join the karaoke queue by running the ``/karaoke join`` slash command.',
 							'**2.** Once your turn comes up, you will be invited to become a speaker on the stage.',
-							'**3.** After singing, you can either leave the stage by muting your mic, clicking the "Move to audience" button, leaving the stage, or running the ``/karaoke leave`` slash command.'
-						].join('\n')
+							'**3.** After singing, you can either leave the stage by muting your mic, clicking the "Move to audience" button, leaving the stage, or running the ``/karaoke leave`` slash command.',
+						].join('\n'),
 					)
 					.addFields(
 						{
 							name: 'Join',
-							value: 'Joins the karaoke queue. User must be in the voice channel or stage.'
+							value: 'Joins the karaoke queue. User must be in the voice channel or stage.',
 						},
 						{
 							name: 'Duet',
-							value: 'Join the queue as a duet. User and partner must be in the voice channel or stage.'
+							value: 'Join the queue as a duet. User and partner must be in the voice channel or stage.',
 						},
 						{ name: 'Leave', value: 'Leaves the queue.' },
-						{ name: 'List', value: 'Shows the current karaoke queue.' }
+						{ name: 'List', value: 'Shows the current karaoke queue.' },
 					),
-				...formattedEvents
-			]
+				...formattedEvents,
+			],
 		});
 	}
 
@@ -337,10 +350,14 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 	 * @param memberId - the ID of the member
 	 * @param partnerId - The ID of the partner
 	 */
-	private async duetConfirmation(channel: GuildTextBasedChannel, memberId: string, partnerId: string): Promise<boolean | null> {
+	private async duetConfirmation(
+		channel: GuildTextBasedChannel,
+		memberId: string,
+		partnerId: string,
+	): Promise<boolean | null> {
 		const PromptButtons = {
 			Yes: '@kbotdev/karaoke.duet.yes',
-			No: '@kbotdev/karaoke.duet.no'
+			No: '@kbotdev/karaoke.duet.no',
 		};
 
 		const message = await channel.send({
@@ -349,7 +366,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setDescription(`Would ${userMention(partnerId)} like to the queue as a duet with ${userMention(memberId)}?`)
-					.setFooter({ text: 'This confirmation will timeout in 30 seconds' })
+					.setFooter({ text: 'This confirmation will timeout in 30 seconds' }),
 			],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>()
@@ -357,23 +374,23 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 						new ButtonBuilder() //
 							.setCustomId(PromptButtons.Yes)
 							.setLabel('Yes')
-							.setStyle(ButtonStyle.Success)
+							.setStyle(ButtonStyle.Success),
 					)
 					.addComponents(
 						new ButtonBuilder() //
 							.setCustomId(PromptButtons.No)
 							.setLabel('No')
-							.setStyle(ButtonStyle.Danger)
-					)
+							.setStyle(ButtonStyle.Danger),
+					),
 			],
-			allowedMentions: { users: [partnerId] }
+			allowedMentions: { users: [partnerId] },
 		});
 
 		return await message
 			.awaitMessageComponent({
 				filter: (i: ButtonInteraction) => i.user.id === partnerId,
 				componentType: ComponentType.Button,
-				time: 30000
+				time: 30000,
 			})
 			.then(async (i) => {
 				await message.delete();

@@ -1,9 +1,9 @@
-import { envGetNumber } from '../../../src/lib/utilities/config.js';
-import { beforeAll, describe, expect, test } from 'vitest';
 import { config } from 'dotenv';
+import { beforeAll, describe, expect, test } from 'vitest';
+import { envGetNumber } from '../../../src/lib/utilities/config.js';
 
 describe('envGetNumber', () => {
-	beforeAll(async () => {
+	beforeAll(() => {
 		const path = new URL('../../.env.test', import.meta.url).pathname;
 		config({ path });
 	});

@@ -1,5 +1,5 @@
-import { KBotError } from './errors/KBotError.js';
 import { Result } from '@sapphire/framework';
+import { KBotError } from './errors/KBotError.js';
 import type { KBotErrorOptions } from './errors/KBotError.js';
 
 export abstract class ResultClass {

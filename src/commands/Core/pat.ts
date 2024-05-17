@@ -1,17 +1,22 @@
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { buffer } from 'node:stream/consumers';
+import { ApplyOptions } from '@sapphire/decorators';
+import { Time } from '@sapphire/duration';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { GifEncoder } from '@skyra/gifenc';
+import { Canvas, loadImage } from 'canvas-constructor/cairo';
+import type { Image } from 'canvas-constructor/cairo';
+import {
+	ApplicationCommandType,
+	AttachmentBuilder,
+	PermissionFlagsBits,
+	type UserContextMenuCommandInteraction,
+} from 'discord.js';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { imageFolder } from '../../lib/utilities/constants.js';
 import { getMemberAvatarUrl } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { GifEncoder } from '@skyra/gifenc';
-import { Canvas, loadImage } from 'canvas-constructor/cairo';
-import { ApplicationCommandType, AttachmentBuilder, PermissionFlagsBits } from 'discord.js';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { Time } from '@sapphire/duration';
-import { join } from 'node:path';
-import { readdirSync } from 'fs';
-import { buffer } from 'node:stream/consumers';
-import type { Image } from 'canvas-constructor/cairo';
 import type { CoreModule } from '../../modules/CoreModule.js';
 
 type PatOptions = {
@@ -35,7 +40,7 @@ type Dimentions = {
 		return builder //
 			.setName('Pat')
 			.setTarget('user');
-	}
+	},
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly pats: Image[] = [];
@@ -50,20 +55,19 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 					.setDMPermission(false),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
-	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
-		const user = interaction.options.getUser('user', true);
-		const member = await interaction.guild.members.fetch(user.id);
+	public override async contextMenuRun(interaction: UserContextMenuCommandInteraction<'cached'>): Promise<unknown> {
+		const member = await interaction.guild.members.fetch(interaction.targetUser.id);
 
 		const cache = await this.container.redis.get<string>(this.cacheKey(member.id));
 		if (cache !== null) {
 			const gif = Buffer.from(cache, 'utf-8');
 			return await interaction.editReply({
-				files: [new AttachmentBuilder(gif, { name: 'pat.gif' })]
+				files: [new AttachmentBuilder(gif, { name: 'pat.gif' })],
 			});
 		}
 
@@ -73,11 +77,11 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		await this.container.redis.setEx<string>(
 			this.cacheKey(member.id), //
 			gif.toString(),
-			Time.Minute * 5
+			Time.Minute * 5,
 		);
 
 		return await interaction.editReply({
-			files: [new AttachmentBuilder(gif, { name: 'pat.gif' })]
+			files: [new AttachmentBuilder(gif, { name: 'pat.gif' })],
 		});
 	}
 
@@ -118,7 +122,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		await Promise.all(
 			readdirSync(join(imageFolder, 'pat')).map(async (file) => {
 				this.pats.push(await loadImage(join(imageFolder, `pat/${file}`)));
-			})
+			}),
 		);
 	}
 
@@ -140,7 +144,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 			width,
 			height,
 			offsetX: (1 - width) * 0.5 + 0.1,
-			offsetY: 1 - height - 0.08
+			offsetY: 1 - height - 0.08,
 		};
 	}
 

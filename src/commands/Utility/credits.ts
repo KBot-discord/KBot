@@ -1,16 +1,16 @@
+import { channelMention } from '@discordjs/builders';
+import type { UtilitySettings } from '@prisma/client';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import type { ApplicationCommandOptionChoiceData, GuildEmoji, Sticker } from 'discord.js';
+import fuzzysort from 'fuzzysort';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { CreditType } from '../../lib/utilities/customIds.js';
 import { getGuildIcon } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { channelMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import fuzzysort from 'fuzzysort';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { ApplicationCommandOptionChoiceData, GuildEmoji, Sticker } from 'discord.js';
-import type { UtilitySettings } from '@prisma/client';
 import type { UtilityModule } from '../../modules/UtilityModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -27,7 +27,7 @@ import type { UtilityModule } from '../../modules/UtilityModule.js';
 				{ label: '/credits image', description: 'Add a new image credit entry' },
 				{ label: '/credits set <channel>', description: 'Set a new credits channel' },
 				{ label: '/credits unset', description: 'Reset the credits channel' },
-				{ label: '/credits settings', description: 'Show the current settings' }
+				{ label: '/credits settings', description: 'Show the current settings' },
 			]);
 	},
 	subcommands: [
@@ -36,8 +36,8 @@ import type { UtilityModule } from '../../modules/UtilityModule.js';
 		{ name: 'image', chatInputRun: 'chatInputImage' },
 		{ name: 'set', chatInputRun: 'chatInputSet' },
 		{ name: 'unset', chatInputRun: 'chatInputUnset' },
-		{ name: 'settings', chatInputRun: 'chatInputSettings' }
-	]
+		{ name: 'settings', chatInputRun: 'chatInputSettings' },
+	],
 })
 export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -61,8 +61,8 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 									.setName('name')
 									.setDescription('The name of the emote to add credits for')
 									.setAutocomplete(true)
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -73,13 +73,13 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 									.setName('name')
 									.setDescription('The name of the sticker to add credits for')
 									.setAutocomplete(true)
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('image')
-							.setDescription('Add a new image credit entry')
+							.setDescription('Add a new image credit entry'),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -90,23 +90,23 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 									.setName('channel')
 									.setDescription('The channel to send credits to')
 									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('unset')
-							.setDescription('Reset the credits channel')
+							.setDescription('Reset the credits channel'),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('settings')
-							.setDescription('Show the current settings')
+							.setDescription('Show the current settings'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -128,19 +128,19 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 			{
 				limit: 25,
 				all: true,
-				keys: ['name', 'id']
-			}
+				keys: ['name', 'id'],
+			},
 		);
 
 		const options: ApplicationCommandOptionChoiceData[] = result.map(({ obj }) => ({
 			name: `${obj.name!} (ID: ${obj.id})`,
-			value: obj.id
+			value: obj.id,
 		}));
 
 		await interaction.respond(options.slice(0, 24));
 	}
 
-	public async chatInputEmote(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<any> {
+	public async chatInputEmote(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const emoteId = interaction.options.getString('name', true);
 		const settings = await this.module.settings.get(interaction.guildId);
 
@@ -151,15 +151,15 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		const emoji = interaction.guild.emojis.cache.get(emoteId);
 		if (!emoji) {
 			return await interaction.defaultReply('An emote with that ID does not exist.', {
-				tryEphemeral: true
+				tryEphemeral: true,
 			});
 		}
 
 		const modal = this.module.buildCreditModal(settings.creditsChannelId, emoji.id, CreditType.Emote);
-		await interaction.showModal(modal);
+		return await interaction.showModal(modal);
 	}
 
-	public async chatInputSticker(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<any> {
+	public async chatInputSticker(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const emoteId = interaction.options.getString('name', true);
 		const settings = await this.module.settings.get(interaction.guildId);
 
@@ -170,15 +170,15 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		const sticker = interaction.guild.stickers.cache.get(emoteId);
 		if (!sticker) {
 			return await interaction.defaultReply('A sticker with that ID does not exist.', {
-				tryEphemeral: true
+				tryEphemeral: true,
 			});
 		}
 
 		const modal = this.module.buildCreditModal(settings.creditsChannelId, sticker.id, CreditType.Sticker);
-		await interaction.showModal(modal);
+		return await interaction.showModal(modal);
 	}
 
-	public async chatInputImage(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<any> {
+	public async chatInputImage(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.get(interaction.guildId);
 
 		if (!settings?.creditsChannelId) {
@@ -186,14 +186,17 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		}
 
 		const modal = this.module.buildCreditModal(settings.creditsChannelId);
-		await interaction.showModal(modal);
+		return await interaction.showModal(modal);
 	}
 
 	public async chatInputSet(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		await interaction.deferReply();
 
 		const { client, validator } = this.container;
-		const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
+		const channel = interaction.options.getChannel('channel', true, [
+			ChannelType.GuildText,
+			ChannelType.GuildAnnouncement,
+		]);
 
 		const { result, error } = await validator.channels.canSendEmbeds(channel);
 		if (!result) {
@@ -201,7 +204,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		}
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			creditsChannelId: channel.id
+			creditsChannelId: channel.id,
 		});
 
 		return await this.showSettings(interaction, settings);
@@ -211,7 +214,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		await interaction.deferReply();
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			creditsChannelId: null
+			creditsChannelId: null,
 		});
 
 		return await this.showSettings(interaction, settings);
@@ -225,14 +228,19 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		return await this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {
+	private async showSettings(
+		interaction: KBotSubcommand.ChatInputCommandInteraction,
+		settings: UtilitySettings | null,
+	): Promise<unknown> {
 		return await interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Credit settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`Channel: ${settings?.creditsChannelId ? channelMention(settings.creditsChannelId) : 'No channel set'}`)
-			]
+					.setDescription(
+						`Channel: ${settings?.creditsChannelId ? channelMention(settings.creditsChannelId) : 'No channel set'}`,
+					),
+			],
 		});
 	}
 }

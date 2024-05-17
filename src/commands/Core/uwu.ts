@@ -1,10 +1,10 @@
-import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
-import { KBotModules } from '../../lib/types/Enums.js';
-import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '../../lib/utilities/constants.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefinedOrEmpty } from '@sapphire/utilities';
-import { ApplicationCommandType, PermissionFlagsBits } from 'discord.js';
+import { ApplicationCommandType, type MessageContextMenuCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
+import { KBotModules } from '../../lib/types/Enums.js';
+import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '../../lib/utilities/constants.js';
 import type { CoreModule } from '../../modules/CoreModule.js';
 
 function getRandomInt(max: number): number {
@@ -19,7 +19,7 @@ function getRandomInt(max: number): number {
 		return builder //
 			.setName('uwu')
 			.setTarget('message');
-	}
+	},
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly isPrintable = /^[ -~]+$/;
@@ -35,17 +35,17 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 					.setDMPermission(false),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
-	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
+	public override async contextMenuRun(interaction: MessageContextMenuCommandInteraction): Promise<unknown> {
 		const message = interaction.options.getMessage('message', true);
 
 		if (isNullOrUndefinedOrEmpty(message.content)) {
 			return await interaction.defaultReply('There is no text to uwu-ify', {
-				tryEphemeral: true
+				tryEphemeral: true,
 			});
 		}
 
@@ -54,7 +54,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		const uwuText = this.convertString(message.content);
 		if (uwuText.length > 1999) {
 			return await interaction.editReply({
-				content: 'Text is too long (more than 2000 characters)'
+				content: 'Text is too long (more than 2000 characters)',
 			});
 		}
 

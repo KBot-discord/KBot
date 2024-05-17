@@ -1,8 +1,8 @@
 import { container } from '@sapphire/framework';
 import { Logger } from '@sapphire/plugin-logger';
 import { captureException, captureMessage } from '@sentry/node';
-import { redBright } from 'colorette';
 import type { Scope } from '@sentry/types';
+import { redBright } from 'colorette';
 
 export class KBotLogger extends Logger {
 	public infoTag(tag: string, value: unknown): void {
@@ -20,7 +20,10 @@ export class KBotLogger extends Logger {
 		});
 	}
 
-	public sentryError(error: unknown, { message, context }: { message?: string; context?: NonNullable<unknown> } = {}): void {
+	public sentryError(
+		error: unknown,
+		{ message, context }: { message?: string; context?: NonNullable<unknown> } = {},
+	): void {
 		message //
 			? super.error(message, error)
 			: super.error(error);

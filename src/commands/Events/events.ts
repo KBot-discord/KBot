@@ -1,11 +1,11 @@
+import type { ModuleCommand } from '@kbotdev/plugin-modules';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors, KBotEmoji } from '../../lib/utilities/constants.js';
 import { getGuildIcon } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EventModule } from '../../modules/EventModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -18,13 +18,13 @@ import type { EventModule } from '../../modules/EventModule.js';
 			.setName('Events')
 			.setSubcommands([
 				{ label: '/events toggle <value>', description: 'Enable or disable the events module' }, //
-				{ label: '/events settings', description: 'Show the current settings' }
+				{ label: '/events settings', description: 'Show the current settings' },
 			]);
 	},
 	subcommands: [
 		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
-		{ name: 'settings', chatInputRun: 'chatInputSettings' }
-	]
+		{ name: 'settings', chatInputRun: 'chatInputSettings' },
+	],
 })
 export class EventsCommand extends KBotSubcommand<EventModule> {
 	public override registerApplicationCommands(registry: ModuleCommand.Registry): void {
@@ -43,18 +43,18 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 								option //
 									.setName('value')
 									.setDescription('True: the module is enabled. False: The module is disabled.')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('settings')
-							.setDescription('Show the current settings')
+							.setDescription('Show the current settings'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -62,7 +62,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			enabled: value
+			enabled: value,
 		});
 
 		const description = settings.enabled //
@@ -74,8 +74,8 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Events module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(description)
-			]
+					.setDescription(description),
+			],
 		});
 	}
 
@@ -90,10 +90,10 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 					.addFields([
 						{
 							name: 'Module enabled',
-							value: `${settings?.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX}`
-						}
-					])
-			]
+							value: `${settings?.enabled ? KBotEmoji.GreenCheck : KBotEmoji.RedX}`,
+						},
+					]),
+			],
 		});
 	}
 }

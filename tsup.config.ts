@@ -1,5 +1,5 @@
-import { defineConfig } from 'tsup';
 import { relative } from 'node:path';
+import { defineConfig } from 'tsup';
 
 export default defineConfig({
 	bundle: false,
@@ -15,5 +15,5 @@ export default defineConfig({
 	sourcemap: true,
 	target: 'esnext',
 	treeshake: true,
-	tsconfig: relative(__dirname, './tsconfig.json')
+	tsconfig: relative(__dirname, './tsconfig.json'),
 });

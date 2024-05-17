@@ -1,7 +1,7 @@
+import type { HolodexOptions } from '../structures/Holodex.js';
+import type { HolodexVideoWithChannel } from '../types/videos.js';
 import { BASE_URL } from '../utilities/constants.js';
 import { fetchApi } from '../utilities/fetch.js';
-import type { HolodexVideoWithChannel } from '../types/videos.js';
-import type { HolodexOptions } from '../structures/Holodex.js';
 
 /**
  * Handler for any methods relating to videos.

@@ -1,5 +1,5 @@
-import { parseTimeString } from '../../../src/lib/utilities/functions.js';
 import { describe, expect, test } from 'vitest';
+import { parseTimeString } from '../../../src/lib/utilities/functions.js';
 
 describe('parseTimeString', () => {
 	test('IF valid string THEN duration', () => {

@@ -1,12 +1,7 @@
-import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
-import { ReportButtons, ReportHandler } from '../../lib/structures/handlers/ReportHandler.js';
-import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
-import { EmbedColors } from '../../lib/utilities/constants.js';
-import { ReportCustomIds } from '../../lib/utilities/customIds.js';
-import { fetchChannel, getMemberAvatarUrl } from '../../lib/utilities/discord.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { channelMention, userMention } from '@discordjs/builders';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
 import {
 	ActionRowBuilder,
 	ApplicationCommandType,
@@ -15,10 +10,25 @@ import {
 	ButtonStyle,
 	EmbedBuilder,
 	MessageType,
-	PermissionFlagsBits
+	PermissionFlagsBits,
 } from 'discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import type { APIEmbedField, GuildMember, GuildTextBasedChannel, Message, MessageCreateOptions } from 'discord.js';
+import type {
+	APIActionRowComponent,
+	APIEmbed,
+	APIEmbedField,
+	APIMessageActionRowComponent,
+	GuildMember,
+	GuildTextBasedChannel,
+	JSONEncodable,
+	Message,
+	MessageContextMenuCommandInteraction,
+} from 'discord.js';
+import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
+import { ReportButtons, ReportHandler } from '../../lib/structures/handlers/ReportHandler.js';
+import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
+import { EmbedColors } from '../../lib/utilities/constants.js';
+import { ReportCustomIds } from '../../lib/utilities/customIds.js';
+import { fetchChannel, getMemberAvatarUrl } from '../../lib/utilities/discord.js';
 import type { ModerationModule } from '../../modules/ModerationModule.js';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -30,7 +40,7 @@ import type { ModerationModule } from '../../modules/ModerationModule.js';
 		return builder //
 			.setName('Report')
 			.setTarget('message');
-	}
+	},
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -47,12 +57,12 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.setDMPermission(false),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
-	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<unknown> {
+	public override async contextMenuRun(interaction: MessageContextMenuCommandInteraction<'cached'>): Promise<unknown> {
 		await interaction.deferReply({ ephemeral: true });
 
 		const { validator, client } = this.container;
@@ -65,7 +75,9 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 
 		const reportChannel = await fetchChannel<GuildTextBasedChannel>(settings.reportChannelId);
 		if (isNullOrUndefined(reportChannel)) {
-			return await interaction.errorReply("The current report channel doesn't exist. Please set a new one with `/moderation set report_channel`.");
+			return await interaction.errorReply(
+				"The current report channel doesn't exist. Please set a new one with `/moderation set report_channel`.",
+			);
 		}
 
 		const { result, error } = await validator.channels.canSendEmbeds(reportChannel);
@@ -74,56 +86,64 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		}
 
 		const member = await interaction.guild.members.fetch(message.author.id);
-		const messageData: MessageCreateOptions = {
-			embeds: [this.buildEmbed(message, interaction.member, member)],
-			components: [this.buildRow(message, member, interaction.guild.ownerId)]
-		};
+		const embeds: JSONEncodable<APIEmbed>[] = [
+			this.buildEmbed(message, interaction.member, member), //
+		];
+		const components: JSONEncodable<APIActionRowComponent<APIMessageActionRowComponent>>[] = [
+			this.buildRow(message, member, interaction.guild.ownerId),
+		];
 
 		let reportMessage: Message<true>;
 
 		if (message.embeds.length > 0) {
-			messageData.embeds!.push(message.embeds[0]);
+			embeds.push(message.embeds[0]);
 		}
 
 		if (message.attachments.size > 0) {
 			const files = message.attachments.map((e) => {
 				return new AttachmentBuilder(e.url, {
 					name: e.name,
-					description: e.description ?? undefined
+					description: e.description ?? undefined,
 				}).setSpoiler(true);
 			});
 
 			const fileFields: APIEmbedField[] = [];
 
-			files.forEach((file) => {
+			for (const file of files) {
 				const name = {
 					name: 'File name',
 					value: file.name!.substring(8, file.name!.length),
-					inline: true
+					inline: true,
 				};
 				fileFields.push(name);
 
 				const desc = {
 					name: 'File description',
 					value: file.description ?? 'No file description',
-					inline: true
+					inline: true,
 				};
 				fileFields.push(desc);
-			});
+			}
 
-			messageData.embeds!.push(
+			embeds.push(
 				new EmbedBuilder() //
 					.setColor(EmbedColors.Default)
-					.addFields(fileFields)
+					.addFields(fileFields),
 			);
 
-			reportMessage = await reportChannel.send(messageData);
+			reportMessage = await reportChannel.send({
+				embeds,
+				components,
+			});
 
 			await reportChannel.send({
-				files
+				files,
 			});
 		} else {
-			reportMessage = await reportChannel.send(messageData);
+			reportMessage = await reportChannel.send({
+				embeds,
+				components,
+			});
 		}
 
 		new ReportHandler(message, reportMessage);
@@ -143,13 +163,13 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 				new ButtonBuilder() //
 					.setCustomId(ReportCustomIds.Delete)
 					.setLabel('Delete')
-					.setStyle(ButtonStyle.Primary)
+					.setStyle(ButtonStyle.Primary),
 			)
 			.addComponents(
 				new ButtonBuilder() //
 					.setCustomId(ReportCustomIds.Info)
 					.setLabel('User Info')
-					.setStyle(ButtonStyle.Primary)
+					.setStyle(ButtonStyle.Primary),
 			);
 
 		if (message.webhookId) {
@@ -181,7 +201,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			.setFields([
 				{ name: 'Channel', value: channelMention(message.channelId), inline: true },
 				{ name: 'Author', value: userMention(target.id), inline: true },
-				{ name: 'Message link', value: `[Go to message](${message.url})`, inline: true }
+				{ name: 'Message link', value: `[Go to message](${message.url})`, inline: true },
 			])
 			.setFooter({ text: `Reported by ${moderator.user.username}` })
 			.setTimestamp();
@@ -190,7 +210,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 			embed.addFields({
 				name: 'Reply to',
 				value: `[Go to message](https://discord.com/channels/${message.guildId}/${message.channelId}/${message.reference.messageId})`,
-				inline: true
+				inline: true,
 			});
 		}
 

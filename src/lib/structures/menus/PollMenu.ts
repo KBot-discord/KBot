@@ -1,15 +1,15 @@
-import { Menu } from './Menu.js';
+import { time } from '@discordjs/builders';
+import type { Poll } from '@prisma/client';
+import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
+import { container } from '@sapphire/framework';
+import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
+import type { APIEmbedField, Guild, Message, User } from 'discord.js';
+import type { PollMenuButton } from '../../types/CustomIds.js';
 import { EmbedColors } from '../../utilities/constants.js';
 import { PollCustomIds } from '../../utilities/customIds.js';
 import { buildCustomId, getGuildIcon } from '../../utilities/discord.js';
 import { MenuPageBuilder } from '../builders/MenuPageBuilder.js';
-import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
-import { container } from '@sapphire/framework';
-import { time } from '@discordjs/builders';
-import type { APIEmbedField, Guild, Message, User } from 'discord.js';
-import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
-import type { Poll } from '@prisma/client';
-import type { PollMenuButton } from '../../types/CustomIds.js';
+import { Menu } from './Menu.js';
 
 export class PollMenu extends Menu {
 	private readonly guild: Guild;
@@ -27,7 +27,7 @@ export class PollMenu extends Menu {
 
 		this.setSelectMenuPlaceholder('Select a poll');
 		this.setSelectMenuOptions((pageIndex) => {
-			if (pageIndex === 1) return { label: `Home page` };
+			if (pageIndex === 1) return { label: 'Home page' };
 			return { label: `Poll #${pageIndex - 1}` };
 		});
 
@@ -38,9 +38,9 @@ export class PollMenu extends Menu {
 					embed
 						.setColor(EmbedColors.Default)
 						.setAuthor({ name: 'Poll management', iconURL: getGuildIcon(this.guild) })
-						.addFields([{ name: 'Creating a poll', value: 'Run `/poll create`' }])
+						.addFields([{ name: 'Creating a poll', value: 'Run `/poll create`' }]),
 				];
-			})
+			}),
 		);
 
 		return await super.run(messageOrInteraction, target);
@@ -56,33 +56,33 @@ export class PollMenu extends Menu {
 						type: ComponentType.Button,
 						style: ButtonStyle.Primary,
 						customId: buildCustomId<PollMenuButton>(PollCustomIds.ResultsHidden, {
-							pollId: poll.id
+							pollId: poll.id,
 						}),
-						label: 'Show current votes (hidden)'
+						label: 'Show current votes (hidden)',
 					},
 					{
 						type: ComponentType.Button,
 						style: ButtonStyle.Primary,
 						customId: buildCustomId<PollMenuButton>(PollCustomIds.ResultsPublic, {
-							pollId: poll.id
+							pollId: poll.id,
 						}),
-						label: 'Show current votes (public)'
+						label: 'Show current votes (public)',
 					},
 					{
 						type: ComponentType.Button,
 						style: ButtonStyle.Primary,
 						customId: buildCustomId<PollMenuButton>(PollCustomIds.End, {
-							pollId: poll.id
+							pollId: poll.id,
 						}),
-						label: 'End poll'
-					}
+						label: 'End poll',
+					},
 				]);
 		});
 	}
 
 	private async buildEmbeds(): Promise<EmbedBuilder[]> {
 		const {
-			utility: { polls }
+			utility: { polls },
 		} = container;
 		const { guild } = this;
 

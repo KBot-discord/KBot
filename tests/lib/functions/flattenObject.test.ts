@@ -1,6 +1,6 @@
+import { describe, expect, test } from 'vitest';
 import { checkDepth, flattenObject } from '../../../src/lib/utilities/functions.js';
 import { depth_one, depth_two } from '../../mocks/index.js';
-import { describe, expect, test } from 'vitest';
 
 describe('flattenObject', () => {
 	test('IF depth 1 THEN flattened object', () => {

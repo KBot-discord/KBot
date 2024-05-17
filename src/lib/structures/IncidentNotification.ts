@@ -1,8 +1,8 @@
-import { fetchChannel } from '../utilities/discord.js';
+import type { IncidentMessage } from '@prisma/client';
 import { container } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
 import type { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
-import type { IncidentMessage } from '@prisma/client';
+import { fetchChannel } from '../utilities/discord.js';
 
 export class IncidentNotification {
 	public channel: GuildTextBasedChannel | null = null;
@@ -50,7 +50,7 @@ export class IncidentNotification {
 			id: this.messageId!,
 			channelId: this.channelId,
 			guildId: this.channel!.guildId,
-			incidentId: this.incidentId
+			incidentId: this.incidentId,
 		};
 	}
 }

@@ -1,18 +1,28 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	DiscordAPIError,
+	EmbedBuilder,
+	type ModalSubmitInteraction,
+} from 'discord.js';
+import type { AddResourceModal, Credit, StickerData } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
 import { validCustomId } from '../../lib/utilities/decorators.js';
 import { buildCustomId, calculateStickerSlots, parseCustomId } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
-import type { AddResourceModal, Credit, StickerData } from '../../lib/types/CustomIds.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: ResourceCustomIds.Sticker,
-	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
+	interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
 })
 export class ModalHandler extends InteractionHandler {
-	public override async run(interaction: ModalSubmitInteraction<'cached'>, { stickerData }: InteractionHandler.ParseResult<this>): Promise<void> {
+	public override async run(
+		interaction: ModalSubmitInteraction<'cached'>,
+		{ stickerData }: InteractionHandler.ParseResult<this>,
+	): Promise<void> {
 		const embed = new EmbedBuilder();
 		const { url } = stickerData;
 
@@ -21,7 +31,7 @@ export class ModalHandler extends InteractionHandler {
 			.create({
 				file: url,
 				name: stickerName,
-				tags: stickerName
+				tags: stickerName,
 			})
 			.catch((e) => (e instanceof Error ? e : null));
 		if (!newSticker || newSticker instanceof Error) {
@@ -39,7 +49,7 @@ export class ModalHandler extends InteractionHandler {
 			embeds: [
 				embed
 					.setColor(EmbedColors.Success) //
-					.setDescription(`**${stickerName}** has been added\n\n**Sticker slots left:** ${slotsLeft}/${totalSlots}`)
+					.setDescription(`**${stickerName}** has been added\n\n**Sticker slots left:** ${slotsLeft}/${totalSlots}`),
 			],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>().addComponents([
@@ -47,20 +57,20 @@ export class ModalHandler extends InteractionHandler {
 						.setCustomId(
 							buildCustomId<Credit>(CreditCustomIds.Create, {
 								ri: newSticker.id,
-								t: CreditType.Sticker
-							})
+								t: CreditType.Sticker,
+							}),
 						)
 						.setLabel('Add to credits channel')
-						.setStyle(ButtonStyle.Success)
-				])
-			]
+						.setStyle(ButtonStyle.Success),
+				]),
+			],
 		});
 	}
 
 	@validCustomId(ResourceCustomIds.Sticker)
 	public override async parse(interaction: ModalSubmitInteraction<'cached'>) {
 		const {
-			data: { mi, ui }
+			data: { mi, ui },
 		} = parseCustomId<AddResourceModal>(interaction.customId);
 
 		const stickerData = await this.container.utility.getAndDeleteResourceCache<StickerData>(mi, ui);
@@ -76,18 +86,23 @@ export class ModalHandler extends InteractionHandler {
 
 	private async handleError(interaction: ModalSubmitInteraction<'cached'>, error: Error | null): Promise<void> {
 		if (error instanceof DiscordAPIError) {
-			// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 			switch (error.code) {
 				case 50045: {
-					await interaction.errorReply('The file size of that sticker is too big to upload. (Discord error code: 50045)', {
-						tryEphemeral: true
-					});
+					await interaction.errorReply(
+						'The file size of that sticker is too big to upload. (Discord error code: 50045)',
+						{
+							tryEphemeral: true,
+						},
+					);
 					return;
 				}
 				case 50138: {
-					await interaction.errorReply('Discord was unable to resize the sticker when uploading. (Discord error code: 50138)', {
-						tryEphemeral: true
-					});
+					await interaction.errorReply(
+						'Discord was unable to resize the sticker when uploading. (Discord error code: 50138)',
+						{
+							tryEphemeral: true,
+						},
+					);
 					return;
 				}
 			}
@@ -95,7 +110,7 @@ export class ModalHandler extends InteractionHandler {
 
 		this.container.logger.sentryError(error);
 		await interaction.errorReply('Something went wrong when uploading the sticker.', {
-			tryEphemeral: true
+			tryEphemeral: true,
 		});
 	}
 }

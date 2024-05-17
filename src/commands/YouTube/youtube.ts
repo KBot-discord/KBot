@@ -1,16 +1,29 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import {
+	ActionRowBuilder,
+	ChannelType,
+	EmbedBuilder,
+	PermissionFlagsBits,
+	StringSelectMenuBuilder,
+	channelMention,
+} from 'discord.js';
+import type {
+	APISelectMenuOption,
+	ApplicationCommandOptionChoiceData,
+	BaseMessageOptions,
+	Guild,
+	GuildTextBasedChannel,
+} from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { MeiliCategories } from '../../lib/meili/types/MeiliTypes.js';
+import type { YoutubeSubscriptionWithChannel } from '../../lib/services/types/youtube.js';
 import { YoutubeMenu } from '../../lib/structures/menus/YoutubeMenu.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors, KBotEmoji } from '../../lib/utilities/constants.js';
 import { YoutubeCustomIds } from '../../lib/utilities/customIds.js';
 import { fetchChannel, getGuildIcon } from '../../lib/utilities/discord.js';
-import { ActionRowBuilder, ChannelType, EmbedBuilder, PermissionFlagsBits, StringSelectMenuBuilder, channelMention } from 'discord.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { ApplyOptions } from '@sapphire/decorators';
-import type { YoutubeSubscriptionWithChannel } from '../../lib/services/types/youtube.js';
-import type { APISelectMenuOption, ApplicationCommandOptionChoiceData, BaseMessageOptions, Guild, GuildTextBasedChannel } from 'discord.js';
 import type { YoutubeModule } from '../../modules/YouTubeModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -26,14 +39,14 @@ import type { YoutubeModule } from '../../modules/YouTubeModule.js';
 				{ label: '/youtube unsubscribe <subscription>', description: 'Unsubscribe from a channel' },
 				{
 					label: '/youtube set <subscription> [message] [channel] [role] [member_channel] [member_role]',
-					description: 'Set YouTube notification settings'
+					description: 'Set YouTube notification settings',
 				},
 				{
 					label: '/youtube unset <subscription> [message] [channel] [role] [member_channel] [member_role]',
-					description: 'Unset YouTube notification settings'
+					description: 'Unset YouTube notification settings',
 				},
 				{ label: '/youtube toggle <value>', description: 'Enable or disable the youtube module' },
-				{ label: '/youtube subscriptions', description: 'Show the current youtube subscriptions' }
+				{ label: '/youtube subscriptions', description: 'Show the current youtube subscriptions' },
 			]);
 	},
 	subcommands: [
@@ -43,8 +56,8 @@ import type { YoutubeModule } from '../../modules/YouTubeModule.js';
 		{ name: 'unset', chatInputRun: 'chatInputUnset' },
 		{ name: 'role_reaction', chatInputRun: 'chatInputRoleReaction' },
 		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
-		{ name: 'subscriptions', chatInputRun: 'chatInputSubscriptions' }
-	]
+		{ name: 'subscriptions', chatInputRun: 'chatInputSubscriptions' },
+	],
 })
 export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
@@ -62,10 +75,12 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 							.addStringOption((option) =>
 								option //
 									.setName('account')
-									.setDescription('Search the name of the channel and get an autocompleted list. Only channels on Holodex are supported')
+									.setDescription(
+										'Search the name of the channel and get an autocompleted list. Only channels on Holodex are supported',
+									)
 									.setRequired(true)
-									.setAutocomplete(true)
-							)
+									.setAutocomplete(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -76,8 +91,8 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 									.setName('subscription')
 									.setDescription('The YouTube subscription you want to remove')
 									.setRequired(true)
-									.setAutocomplete(true)
-							)
+									.setAutocomplete(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -88,40 +103,40 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 									.setName('subscription')
 									.setDescription('The YouTube subscription you want to change settings for')
 									.setRequired(true)
-									.setAutocomplete(true)
+									.setAutocomplete(true),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('message')
 									.setDescription('The message for the notification')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addChannelOption((option) =>
 								option //
 									.setName('channel')
 									.setDescription('The channel to send notifications to')
 									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addRoleOption((option) =>
 								option //
 									.setName('role')
 									.setDescription('The role to ping for notifications')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addChannelOption((option) =>
 								option //
 									.setName('member_channel')
 									.setDescription('The channel to send member notifications to')
 									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addRoleOption((option) =>
 								option //
 									.setName('member_role')
 									.setDescription('The role to ping for member notifications')
-									.setRequired(false)
-							)
+									.setRequired(false),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -132,38 +147,38 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 									.setName('subscription')
 									.setDescription('The YouTube subscription you want to change settings for')
 									.setRequired(true)
-									.setAutocomplete(true)
+									.setAutocomplete(true),
 							)
 							.addBooleanOption((option) =>
 								option //
 									.setName('message')
 									.setDescription('Reset the notification message to default')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addBooleanOption((option) =>
 								option //
 									.setName('channel')
 									.setDescription('Remove the channel that notifications are sent to')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addBooleanOption((option) =>
 								option //
 									.setName('role')
 									.setDescription('Remove the ping role')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addBooleanOption((option) =>
 								option //
 									.setName('member_channel')
 									.setDescription('Remove the channel that member notifications are sent to')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addBooleanOption((option) =>
 								option //
 									.setName('member_role')
 									.setDescription('Remove the member ping role')
-									.setRequired(false)
-							)
+									.setRequired(false),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -174,8 +189,8 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 									.setName('channel')
 									.setDescription('The channel to send the role reaction embed to')
 									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -185,18 +200,18 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 								option //
 									.setName('value')
 									.setDescription('True: the module is enabled. False: The module is disabled.')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('subscriptions')
-							.setDescription('Show the current youtube subscriptions')
+							.setDescription('Show the current youtube subscriptions'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -209,7 +224,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 
 			options = result.hits.map(({ name, englishName, id }) => ({
 				name: englishName ?? name,
-				value: id
+				value: id,
 			}));
 		} else if (focusedOption.name === 'subscription') {
 			const channels = await this.module.subscriptions.getByGuild(interaction.guildId);
@@ -220,7 +235,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 
 			options = channels.map(({ channelId, channel }) => ({
 				name: channel.name,
-				value: channelId
+				value: channelId,
 			}));
 		} else {
 			await interaction.respond([]);
@@ -255,8 +270,10 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 				new EmbedBuilder() //
 					.setColor(EmbedColors.Success)
 					.setThumbnail(channel.image)
-					.setDescription(`Successfully subscribed to [${channel.name}](https://www.youtube.com/channel/${subscription.channel.youtubeId})`)
-			]
+					.setDescription(
+						`Successfully subscribed to [${channel.name}](https://www.youtube.com/channel/${subscription.channel.youtubeId})`,
+					),
+			],
 		});
 	}
 
@@ -282,11 +299,14 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 		}
 
 		const message = interaction.options.getString('message') ?? undefined;
-		const discordChannelId = interaction.options.getChannel('channel', false, [ChannelType.GuildText, ChannelType.GuildAnnouncement])?.id;
+		const discordChannelId = interaction.options.getChannel('channel', false, [
+			ChannelType.GuildText,
+			ChannelType.GuildAnnouncement,
+		])?.id;
 		const roleId = interaction.options.getRole('role')?.id;
 		const memberDiscordChannelId = interaction.options.getChannel('member_channel', false, [
 			ChannelType.GuildText,
-			ChannelType.GuildAnnouncement
+			ChannelType.GuildAnnouncement,
 		])?.id;
 		const memberRoleId = interaction.options.getRole('member_role')?.id;
 
@@ -295,7 +315,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 			discordChannelId,
 			roleId,
 			memberDiscordChannelId,
-			memberRoleId
+			memberRoleId,
 		});
 
 		if (roleId ?? memberRoleId) {
@@ -324,7 +344,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 			discordChannelId: channel ? null : undefined,
 			roleId: role ? null : undefined,
 			memberDiscordChannelId: memberChannel ? null : undefined,
-			memberRoleId: memberRole ? null : undefined
+			memberRoleId: memberRole ? null : undefined,
 		});
 
 		if (role === true || memberRole) {
@@ -338,11 +358,14 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 		const bot = await interaction.guild.members.fetchMe();
 		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles)) {
 			return await interaction.defaultReply(
-				"I don't have the required permissions for role reactions to work.\n\nMissing permission: `Manage Roles`."
+				"I don't have the required permissions for role reactions to work.\n\nMissing permission: `Manage Roles`.",
 			);
 		}
 
-		const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
+		const channel = interaction.options.getChannel('channel', true, [
+			ChannelType.GuildText,
+			ChannelType.GuildAnnouncement,
+		]);
 		const { result, error } = await this.container.validator.channels.canSendEmbeds(channel);
 		if (!result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, { interaction, error });
@@ -359,7 +382,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			enabled: value
+			enabled: value,
 		});
 
 		const description = settings.enabled //
@@ -371,8 +394,8 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Youtube module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(description)
-			]
+					.setDescription(description),
+			],
 		});
 	}
 
@@ -388,12 +411,12 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 
 	private async showSettings(
 		interaction: KBotSubcommand.ChatInputCommandInteraction,
-		subscription: YoutubeSubscriptionWithChannel
+		subscription: YoutubeSubscriptionWithChannel,
 	): Promise<unknown> {
 		const embed = this.module.buildSubscriptionEmbed(subscription);
 
 		return await interaction.editReply({
-			embeds: [embed]
+			embeds: [embed],
 		});
 	}
 
@@ -411,7 +434,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 
 		await this.module.settings.upsert(guild.id, {
 			reactionRoleMessageId: message.id,
-			reactionRoleChannelId: message.channelId
+			reactionRoleChannelId: message.channelId,
 		});
 
 		return message;
@@ -423,7 +446,11 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 	 */
 	private async updateReactionRoleMessage(guild: Guild): Promise<unknown> {
 		const settings = await this.module.settings.get(guild.id);
-		if (isNullOrUndefined(settings) || isNullOrUndefined(settings.reactionRoleChannelId) || isNullOrUndefined(settings.reactionRoleMessageId)) {
+		if (
+			isNullOrUndefined(settings) ||
+			isNullOrUndefined(settings.reactionRoleChannelId) ||
+			isNullOrUndefined(settings.reactionRoleMessageId)
+		) {
 			return;
 		}
 
@@ -431,7 +458,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 		if (isNullOrUndefined(channel)) {
 			return await this.module.settings.upsert(guild.id, {
 				reactionRoleMessageId: null,
-				reactionRoleChannelId: null
+				reactionRoleChannelId: null,
 			});
 		}
 
@@ -446,7 +473,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 		if (isNullOrUndefined(editMessage)) {
 			return await this.module.settings.upsert(guild.id, {
 				reactionRoleMessageId: null,
-				reactionRoleChannelId: null
+				reactionRoleChannelId: null,
 			});
 		}
 
@@ -458,7 +485,9 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 	 * @param subscriptions - The subscriptions
 	 */
 	private async buildRoleReactionMessage(subscriptions: YoutubeSubscriptionWithChannel[]): Promise<BaseMessageOptions> {
-		const relevantSubscriptions = subscriptions.filter(({ roleId, memberRoleId }) => !isNullOrUndefined(roleId) || !isNullOrUndefined(memberRoleId));
+		const relevantSubscriptions = subscriptions.filter(
+			({ roleId, memberRoleId }) => !(isNullOrUndefined(roleId) && isNullOrUndefined(memberRoleId)),
+		);
 
 		const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [];
 		const subscriptionsWithRoleIds = subscriptions.filter(({ roleId }) => !isNullOrUndefined(roleId));
@@ -466,7 +495,8 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 
 		let roleString = '';
 		if (subscriptionsWithRoleIds.length > 0 && subscriptionsWithMemberRoleIds.length > 0) {
-			roleString = '\n\n**Top select menu:** Get notified for non-member streams.\n**Bottom select menu** Get notified for member streams.';
+			roleString =
+				'\n\n**Top select menu:** Get notified for non-member streams.\n**Bottom select menu** Get notified for member streams.';
 		} else if (subscriptionsWithRoleIds.length > 0) {
 			roleString = '\n\nUse the select menu below to be notified for streams.';
 		} else if (subscriptionsWithMemberRoleIds.length > 0) {
@@ -486,8 +516,8 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 							.setPlaceholder('Click here to select a role')
 							.setOptions(options)
 							.setMinValues(0)
-							.setMaxValues(subscriptionsWithRoleIds.length)
-					])
+							.setMaxValues(subscriptionsWithRoleIds.length),
+					]),
 			);
 		}
 
@@ -502,8 +532,8 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 							.setPlaceholder('Click here to select a member role')
 							.setOptions(memberOptions)
 							.setMinValues(0)
-							.setMaxValues(subscriptionsWithMemberRoleIds.length)
-					])
+							.setMaxValues(subscriptionsWithMemberRoleIds.length),
+					]),
 			);
 		}
 
@@ -516,9 +546,9 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 				new EmbedBuilder() //
 					.setColor(EmbedColors.Default)
 					.setTitle('Channels')
-					.setDescription(description)
+					.setDescription(description),
 			],
-			components
+			components,
 		};
 	}
 

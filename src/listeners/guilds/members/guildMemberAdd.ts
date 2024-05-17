@@ -1,12 +1,12 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { Events, Listener } from '@sapphire/framework';
+import type { GuildMember } from 'discord.js';
 import { AntiHoistHandler } from '../../../lib/structures/handlers/AntiHoistHandler.js';
 import { MinageHandler } from '../../../lib/structures/handlers/MinageHandler.js';
 import { WelcomeHandler } from '../../../lib/structures/handlers/WelcomeHandler.js';
-import { Events, Listener } from '@sapphire/framework';
-import { ApplyOptions } from '@sapphire/decorators';
-import type { GuildMember } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	event: Events.GuildMemberAdd
+	event: Events.GuildMemberAdd,
 })
 export class GuildListener extends Listener<typeof Events.GuildMemberAdd> {
 	public async run(member: GuildMember): Promise<void> {

@@ -1,22 +1,26 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { PollMenu } from '../../lib/structures/menus/PollMenu.js';
+import type { PollOption } from '../../lib/types/CustomIds.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors, KBotEmoji, POLL_NUMBERS, POLL_TIME_LIMIT } from '../../lib/utilities/constants.js';
 import { PollCustomIds } from '../../lib/utilities/customIds.js';
 import { buildCustomId } from '../../lib/utilities/discord.js';
 import { parseTimeString } from '../../lib/utilities/functions.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import type { PollOption } from '../../lib/types/CustomIds.js';
 import type { UtilityModule } from '../../modules/UtilityModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Utility,
 	description: 'Create, end, or manage polls.',
 	preconditions: ['EDefer', 'ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks],
+	requiredClientPermissions: [
+		PermissionFlagsBits.ViewChannel,
+		PermissionFlagsBits.SendMessages,
+		PermissionFlagsBits.EmbedLinks,
+	],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -24,15 +28,15 @@ import type { UtilityModule } from '../../modules/UtilityModule.js';
 			.setSubcommands([
 				{
 					label: '/poll create <channel> <time> <option1> <option2> [option3 - option10]',
-					description: 'Create a poll. There must be at least 2 choices.'
+					description: 'Create a poll. There must be at least 2 choices.',
 				}, //
-				{ label: '/poll menu', description: 'Show the menu for controlling timed polls' }
+				{ label: '/poll menu', description: 'Show the menu for controlling timed polls' },
 			]);
 	},
 	subcommands: [
 		{ name: 'create', chatInputRun: 'chatInputCreate' },
-		{ name: 'menu', chatInputRun: 'chatInputMenu' }
-	]
+		{ name: 'menu', chatInputRun: 'chatInputMenu' },
+	],
 })
 export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -55,84 +59,84 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 								option //
 									.setName('question')
 									.setDescription('The question or topic of the poll')
-									.setRequired(true)
+									.setRequired(true),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('time')
 									.setDescription('Time the poll will run for.')
-									.setRequired(true)
+									.setRequired(true),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option1')
 									.setDescription('Option 1')
-									.setRequired(true)
+									.setRequired(true),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option2')
 									.setDescription('Option 2')
-									.setRequired(true)
+									.setRequired(true),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option3')
 									.setDescription('Option 3')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option4')
 									.setDescription('Option 4')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option5')
 									.setDescription('Option 5')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option6')
 									.setDescription('Option 6')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option7')
 									.setDescription('Option 7')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option8')
 									.setDescription('Option 8')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option9')
 									.setDescription('Option 9')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addStringOption((option) =>
 								option //
 									.setName('option10')
 									.setDescription('Option 10')
-									.setRequired(false)
-							)
+									.setRequired(false),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('menu')
-							.setDescription('Show the menu for managing polls')
+							.setDescription('Show the menu for managing polls'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -160,7 +164,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		const expiresIn = parseTimeString(time);
 		if (isNullOrUndefined(expiresIn)) {
 			return await interaction.errorReply(
-				'Invalid time format. You can find info about time formats here: https://docs.kbot.ca/references/time-format'
+				'Invalid time format. You can find info about time formats here: https://docs.kbot.ca/references/time-format',
 			);
 		}
 		if (!isNullOrUndefined(expiresIn) && expiresIn > Date.now() + POLL_TIME_LIMIT) {
@@ -170,7 +174,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		const expiresAt = expiresIn + Date.now();
 
 		const pollMessage = await interaction.channel!.send({
-			embeds: this.createPollEmbeds(interaction.user.username, text, options, expiresAt)
+			embeds: this.createPollEmbeds(interaction.user.username, text, options, expiresAt),
 		});
 
 		await polls.create(pollMessage.guildId, pollMessage.id, {
@@ -178,13 +182,13 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 			options,
 			time: BigInt(expiresAt),
 			channelId: pollMessage.channelId,
-			creator: interaction.user.username
+			creator: interaction.user.username,
 		});
 		await polls.createTask(expiresIn, { guildId: pollMessage.guildId, pollId: pollMessage.id });
 
 		await pollMessage.edit({
 			embeds: pollMessage.embeds,
-			components: this.createPollButtons(options)
+			components: this.createPollButtons(options),
 		});
 
 		return await interaction.successReply(`${KBotEmoji.GreenCheck} Poll created`);
@@ -226,7 +230,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 				.setTitle(text)
 				.setDescription(options.join('\n'))
 				.setFooter({ text: `Poll made by ${userTag}` })
-				.setTimestamp()
+				.setTimestamp(),
 		];
 
 		if (!isNullOrUndefined(expiresAt)) {
@@ -234,7 +238,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Success)
 					.setTitle('Poll ends in:')
-					.setDescription(`<t:${Math.floor(expiresAt / 1000)}:R>`)
+					.setDescription(`<t:${Math.floor(expiresAt / 1000)}:R>`),
 			);
 		}
 
@@ -256,9 +260,11 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 
 				if (options[iteration]) {
 					const key = buildCustomId<PollOption>(PollCustomIds.Vote, {
-						option: String(iteration)
+						option: String(iteration),
 					});
-					components.push(new ButtonBuilder().setCustomId(key).setEmoji(POLL_NUMBERS[iteration]).setStyle(ButtonStyle.Primary));
+					components.push(
+						new ButtonBuilder().setCustomId(key).setEmoji(POLL_NUMBERS[iteration]).setStyle(ButtonStyle.Primary),
+					);
 				} else {
 					break;
 				}

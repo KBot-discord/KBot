@@ -1,12 +1,12 @@
-import { pollCacheKey } from './keys.js';
+import type { Poll } from '@prisma/client';
+import { container } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import type { GuildTextBasedChannel, Message } from 'discord.js';
+import type { PollResultPayload } from '../types/Tasks.js';
 import { CustomEmotes, EmbedColors } from '../utilities/constants.js';
 import { fetchChannel } from '../utilities/discord.js';
-import { container } from '@sapphire/framework';
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { GuildTextBasedChannel, Message } from 'discord.js';
-import type { Poll } from '@prisma/client';
-import type { PollResultPayload } from '../types/Tasks.js';
+import { pollCacheKey } from './keys.js';
 
 const BAR_LENGTH = 10;
 
@@ -17,7 +17,7 @@ export class PollService {
 	 */
 	public async get(pollId: string): Promise<Poll | null> {
 		return await container.prisma.poll.findUnique({
-			where: { id: pollId }
+			where: { id: pollId },
 		});
 	}
 
@@ -27,7 +27,7 @@ export class PollService {
 	 */
 	public async getByGuild(guildId: string): Promise<Poll[]> {
 		return await container.prisma.poll.findMany({
-			where: { guildId }
+			where: { guildId },
 		});
 	}
 
@@ -46,7 +46,7 @@ export class PollService {
 			time?: bigint | null;
 			options: string[];
 			creator: string;
-		}
+		},
 	): Promise<Poll> {
 		const { title, channelId, time, options, creator } = data;
 
@@ -59,8 +59,8 @@ export class PollService {
 				time,
 				options,
 				creator,
-				utilitySettings: { connect: { guildId } }
-			}
+				utilitySettings: { connect: { guildId } },
+			},
 		});
 	}
 
@@ -75,7 +75,7 @@ export class PollService {
 		await container.redis.delete(pollKey);
 		return await container.prisma.poll
 			.delete({
-				where: { id: pollId }
+				where: { id: pollId },
 			})
 			.catch(() => null);
 	}
@@ -86,7 +86,7 @@ export class PollService {
 	 */
 	public async count(guildId: string): Promise<number> {
 		return await container.prisma.poll.count({
-			where: { guildId }
+			where: { guildId },
 		});
 	}
 
@@ -156,11 +156,11 @@ export class PollService {
 			{ name: 'pollResults', payload: { guildId, pollId } },
 			{
 				customJobOptions: {
-					jobId: this.pollJobId(pollId)
+					jobId: this.pollJobId(pollId),
 				},
 				repeated: false,
-				delay: expiresIn
-			}
+				delay: expiresIn,
+			},
 		);
 	}
 
@@ -190,14 +190,16 @@ export class PollService {
 			poll = await this.get(pollId);
 			if (isNullOrUndefined(poll)) {
 				logger.sentryMessage('Failed to find a poll while attempting to end it', {
-					context: { pollId }
+					context: { pollId },
 				});
 				return false;
 			}
 
 			channel = await fetchChannel<GuildTextBasedChannel>(poll.channelId);
+			if (!channel?.isTextBased() || channel.isDMBased()) return false;
+
 			const { result } = await validator.channels.canSendEmbeds(channel);
-			if (!result || !channel || !channel.isTextBased() || channel.isDMBased()) return false;
+			if (!result) return false;
 
 			message = await channel.messages.fetch(pollId).catch(() => null);
 		} catch (error: unknown) {
@@ -217,7 +219,7 @@ export class PollService {
 				const result = await message
 					.edit({
 						embeds: [message.embeds[0], new EmbedBuilder().setColor(EmbedColors.Error).setTitle('Poll has ended')],
-						components: []
+						components: [],
 					})
 					.catch(() => null);
 
@@ -229,8 +231,8 @@ export class PollService {
 								.setTitle(`Results: ${poll.title}`)
 								.setDescription(results.join('\n'))
 								.setFooter({ text: `Poll made by ${poll.creator}` })
-								.setTimestamp()
-						]
+								.setTimestamp(),
+						],
 					});
 				} else {
 					shouldSend = true;
@@ -245,8 +247,8 @@ export class PollService {
 							.setTitle(`Results: ${poll.title}`)
 							.setDescription(results.join('\n'))
 							.setFooter({ text: `Poll made by ${poll.creator}` })
-							.setTimestamp()
-					]
+							.setTimestamp(),
+					],
 				});
 			}
 
@@ -270,7 +272,7 @@ export class PollService {
 
 		for (const option of votes.values()) {
 			const coerce = Number(option);
-			if (isNaN(coerce)) throw new TypeError('Expected number, received NaN');
+			if (Number.isNaN(coerce)) throw new TypeError('Expected number, received NaN');
 
 			formattedOptions[Number(option)].value++;
 		}

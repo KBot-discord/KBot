@@ -1,8 +1,8 @@
-import { coreCacheKey } from './keys.js';
-import { Time } from '@sapphire/duration';
-import { isNullish } from '@sapphire/utilities';
-import { container } from '@sapphire/framework';
 import type { CoreSettings, FeatureFlags } from '@prisma/client';
+import { Time } from '@sapphire/duration';
+import { container } from '@sapphire/framework';
+import { isNullish } from '@sapphire/utilities';
+import { coreCacheKey } from './keys.js';
 
 export class CoreSettingsService {
 	private readonly cacheKey = coreCacheKey;
@@ -27,7 +27,7 @@ export class CoreSettingsService {
 		}
 
 		const dbResult = await container.prisma.coreSettings.findUnique({
-			where: { guildId }
+			where: { guildId },
 		});
 		if (isNullish(dbResult)) {
 			return null;
@@ -44,14 +44,14 @@ export class CoreSettingsService {
 	 */
 	public async upsert(
 		guildId: string, //
-		data: { flags?: FeatureFlags[] } = {}
+		data: { flags?: FeatureFlags[] } = {},
 	): Promise<CoreSettings> {
 		const key = this.cacheKey(guildId);
 
 		const settings = await container.prisma.coreSettings.upsert({
 			where: { guildId },
 			update: data,
-			create: { ...data, guildId }
+			create: { ...data, guildId },
 		});
 		await container.redis.setEx(key, settings, this.defaultExpiry);
 
@@ -69,7 +69,7 @@ export class CoreSettingsService {
 
 		return await container.prisma.coreSettings
 			.delete({
-				where: { guildId }
+				where: { guildId },
 			})
 			.catch(() => null);
 	}

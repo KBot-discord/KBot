@@ -1,12 +1,12 @@
+import type { ModerationSettings } from '@prisma/client';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { MinageHandler } from '../../lib/structures/handlers/MinageHandler.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors, KBotEmoji } from '../../lib/utilities/constants.js';
 import { getGuildIcon } from '../../lib/utilities/discord.js';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import type { ModerationSettings } from '@prisma/client';
 import type { ModerationModule } from '../../modules/ModerationModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -22,10 +22,10 @@ import type { ModerationModule } from '../../modules/ModerationModule.js';
 				{ label: '/minage toggle <value>', description: 'Enable or disable minage' }, //
 				{
 					label: '/minage set [days] [message]',
-					description: 'Set the account age requirements and kick message'
+					description: 'Set the account age requirements and kick message',
 				},
 				{ label: '/minage unset [days] [message]', description: 'Unset the current settings' },
-				{ label: '/minage settings', description: 'Show the current settings' }
+				{ label: '/minage settings', description: 'Show the current settings' },
 			]);
 	},
 	subcommands: [
@@ -33,8 +33,8 @@ import type { ModerationModule } from '../../modules/ModerationModule.js';
 		{ name: 'set', chatInputRun: 'chatInputSet' },
 		{ name: 'unset', chatInputRun: 'chatInputUnset' },
 		{ name: 'test', chatInputRun: 'chatInputTest' },
-		{ name: 'settings', chatInputRun: 'chatInputSettings' }
-	]
+		{ name: 'settings', chatInputRun: 'chatInputSettings' },
+	],
 })
 export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -57,14 +57,14 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 								option //
 									.setName('days')
 									.setDescription('New users below the set amount of days will be kicked and sent a message')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addStringOption((msg) =>
 								msg //
 									.setName('message')
 									.setDescription('Message to be sent on kick')
-									.setRequired(false)
-							)
+									.setRequired(false),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -74,19 +74,19 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 								msg //
 									.setName('days')
 									.setDescription('Reset the required days to 0')
-									.setRequired(false)
+									.setRequired(false),
 							)
 							.addBooleanOption((msg) =>
 								msg //
 									.setName('message')
 									.setDescription('Reset the kick message to default')
-									.setRequired(false)
-							)
+									.setRequired(false),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('test')
-							.setDescription('Test the minage message')
+							.setDescription('Test the minage message'),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
@@ -96,18 +96,18 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 								option //
 									.setName('value')
 									.setDescription('True: minage is enabled. False: minage is disabled.')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('settings')
-							.setDescription('Show the current settings')
+							.setDescription('Show the current settings'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -115,7 +115,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			minAccountAgeEnabled: value
+			minAccountAgeEnabled: value,
 		});
 
 		const description = settings.enabled //
@@ -127,8 +127,8 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Minage settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(description)
-			]
+					.setDescription(description),
+			],
 		});
 	}
 
@@ -138,7 +138,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
 			minAccountAgeReq: days,
-			minAccountAgeMsg: response
+			minAccountAgeMsg: response,
 		});
 
 		return await this.showSettings(interaction, settings);
@@ -150,7 +150,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
 			minAccountAgeReq: days ? null : undefined,
-			minAccountAgeMsg: response ? null : undefined
+			minAccountAgeMsg: response ? null : undefined,
 		});
 
 		return await this.showSettings(interaction, settings);
@@ -179,7 +179,10 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 		return await this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {
+	private async showSettings(
+		interaction: KBotSubcommand.ChatInputCommandInteraction,
+		settings: ModerationSettings | null,
+	): Promise<unknown> {
 		const bot = await interaction.guild.members.fetchMe();
 
 		return await interaction.editReply({
@@ -191,24 +194,24 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 					.addFields([
 						{
 							name: 'Enabled',
-							value: `${settings?.minAccountAgeEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`
+							value: `${settings?.minAccountAgeEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`,
 						},
 						{
 							name: 'Account age requirement',
 							value: `${settings?.minAccountAgeReq ?? 0}`,
-							inline: true
+							inline: true,
 						},
 						{
 							name: 'Kick message',
 							value: `${settings?.minAccountAgeMsg ?? MinageHandler.defaultMessage}`,
-							inline: true
+							inline: true,
 						},
 						{
 							name: 'Variables:',
 							value: `\`{server}\` - The name of the server
 							\`{req}\` - The required amount of days
 							\`{days}\` - The amount of days until the user can join the server
-							\`{date}\` - The date on which the user can join the server`
+							\`{date}\` - The date on which the user can join the server`,
 						},
 						{
 							name: 'Permissions:',
@@ -216,10 +219,10 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 								bot.permissions.has(PermissionFlagsBits.KickMembers) //
 									? KBotEmoji.GreenCheck
 									: KBotEmoji.RedX
-							}`
-						}
-					])
-			]
+							}`,
+						},
+					]),
+			],
 		});
 	}
 }

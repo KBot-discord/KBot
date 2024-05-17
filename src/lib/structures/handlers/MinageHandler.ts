@@ -1,20 +1,19 @@
+import type { ModerationSettings } from '@prisma/client';
 import { container } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import type { ModerationSettings } from '@prisma/client';
 import type { GuildMember } from 'discord.js';
 
 export class MinageHandler {
 	public constructor(
 		private readonly member: GuildMember,
-		private readonly settings: ModerationSettings
+		private readonly settings: ModerationSettings,
 	) {}
 
 	public async run(): Promise<boolean> {
 		const { moderation } = container;
 
 		if (
-			!this.settings.enabled || //
-			!this.member.kickable ||
+			!(this.settings.enabled && this.member.kickable) ||
 			isNullOrUndefined(this.settings.minAccountAgeReq) ||
 			this.settings.minAccountAgeReq === 0
 		) {
@@ -27,8 +26,12 @@ export class MinageHandler {
 		const { reqAge, reqDate } = this.calculateAge(req);
 		if (createdAt <= reqAge) return false;
 
-		await this.member.send({ embeds: [moderation.formatMinageEmbed(this.member, msg, req, reqDate)] }).catch(() => null);
-		await this.member.kick(`Account too new. Required age: ${req}, Account age: ${Math.floor((Date.now() - createdAt) / 86400000)}`);
+		await this.member
+			.send({ embeds: [moderation.formatMinageEmbed(this.member, msg, req, reqDate)] })
+			.catch(() => null);
+		await this.member.kick(
+			`Account too new. Required age: ${req}, Account age: ${Math.floor((Date.now() - createdAt) / 86400000)}`,
+		);
 
 		return true;
 	}

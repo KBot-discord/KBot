@@ -1,21 +1,30 @@
+import { channelMention, time, userMention } from '@discordjs/builders';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import type {
+	ApplicationCommandOptionChoiceData,
+	GuildScheduledEvent,
+	GuildTextBasedChannel,
+	VoiceBasedChannel,
+} from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KaraokeEventMenu } from '../../lib/structures/menus/KaraokeEventMenu.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
 import { BlankSpace, EmbedColors, KBotEmoji, formGenericError } from '../../lib/utilities/constants.js';
 import { fetchChannel, getGuildIcon } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { channelMention, time, userMention } from '@discordjs/builders';
-import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { ApplicationCommandOptionChoiceData, GuildScheduledEvent, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import type { EventModule } from '../../modules/EventModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
 	module: KBotModules.Events,
 	description: 'Create, end, or manage events.',
 	preconditions: ['EDefer', 'ModuleEnabled'],
-	requiredClientPermissions: [PermissionFlagsBits.MuteMembers, PermissionFlagsBits.MoveMembers, PermissionFlagsBits.ManageChannels],
+	requiredClientPermissions: [
+		PermissionFlagsBits.MuteMembers,
+		PermissionFlagsBits.MoveMembers,
+		PermissionFlagsBits.ManageChannels,
+	],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
 	helpEmbed: (builder) => {
 		return builder //
@@ -23,22 +32,22 @@ import type { EventModule } from '../../modules/EventModule.js';
 			.setSubcommands([
 				{
 					label: '/manage karaoke start <voice_channel> <text_channel> [topic] [role]',
-					description: 'Start a karaoke event'
+					description: 'Start a karaoke event',
 				}, //
 				{
 					label: '/manage karaoke schedule <discord_event> <text_channel> [role]',
-					description: 'Schedule a karaoke event'
+					description: 'Schedule a karaoke event',
 				},
 				{ label: '/manage karaoke stop <event>', description: 'Stop a karaoke event' },
 				{
 					label: '/manage karaoke add <event> <user>',
-					description: 'Add a user to a karaoke queue'
+					description: 'Add a user to a karaoke queue',
 				},
 				{
 					label: '/manage karaoke remove <event> <user>',
-					description: 'Remove a user to a karaoke queue'
+					description: 'Remove a user to a karaoke queue',
 				},
-				{ label: '/manage karaoke menu', description: 'Open the menu to manage karaoke events' }
+				{ label: '/manage karaoke menu', description: 'Open the menu to manage karaoke events' },
 			]);
 	},
 	subcommands: [
@@ -51,10 +60,10 @@ import type { EventModule } from '../../modules/EventModule.js';
 				{ name: 'stop', chatInputRun: 'chatInputKaraokeStop' },
 				{ name: 'add', chatInputRun: 'chatInputKaraokeAdd' },
 				{ name: 'remove', chatInputRun: 'chatInputKaraokeRemove' },
-				{ name: 'menu', chatInputRun: 'chatInputKaraokeMenu' }
-			]
-		}
-	]
+				{ name: 'menu', chatInputRun: 'chatInputKaraokeMenu' },
+			],
+		},
+	],
 })
 export class EventsCommand extends KBotSubcommand<EventModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -82,27 +91,32 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 											.setName('voice_channel')
 											.setDescription('The stage or voice channel for the karaoke event')
 											.addChannelTypes(ChannelType.GuildStageVoice, ChannelType.GuildVoice)
-											.setRequired(true)
+											.setRequired(true),
 									)
 									.addChannelOption((chan) =>
 										chan
 											.setName('text_channel')
 											.setDescription('The channel to show queue rotations and instructions')
-											.addChannelTypes(ChannelType.GuildText, ChannelType.PublicThread, ChannelType.GuildStageVoice, ChannelType.GuildVoice)
-											.setRequired(true)
+											.addChannelTypes(
+												ChannelType.GuildText,
+												ChannelType.PublicThread,
+												ChannelType.GuildStageVoice,
+												ChannelType.GuildVoice,
+											)
+											.setRequired(true),
 									)
 									.addStringOption((topic) =>
 										topic //
 											.setName('topic')
 											.setDescription('If it\'s a stage channel, the topic of the stage (default: "Karaoke Event")')
-											.setRequired(false)
+											.setRequired(false),
 									)
 									.addRoleOption((role) =>
 										role //
 											.setName('role')
 											.setDescription('The role to ping for the event')
-											.setRequired(false)
-									)
+											.setRequired(false),
+									),
 							)
 							.addSubcommand((subcommand) =>
 								subcommand //
@@ -113,21 +127,26 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 											.setName('discord_event')
 											.setDescription('The Discord event that the karaoke event will be for')
 											.setAutocomplete(true)
-											.setRequired(true)
+											.setRequired(true),
 									)
 									.addChannelOption((chan) =>
 										chan
 											.setName('text_channel')
 											.setDescription('The channel to show queue rotations and instructions')
-											.addChannelTypes(ChannelType.GuildText, ChannelType.PublicThread, ChannelType.GuildStageVoice, ChannelType.GuildVoice)
-											.setRequired(true)
+											.addChannelTypes(
+												ChannelType.GuildText,
+												ChannelType.PublicThread,
+												ChannelType.GuildStageVoice,
+												ChannelType.GuildVoice,
+											)
+											.setRequired(true),
 									)
 									.addRoleOption((role) =>
 										role //
 											.setName('role')
 											.setDescription('The role to ping for the event')
-											.setRequired(false)
-									)
+											.setRequired(false),
+									),
 							)
 							.addSubcommand((subcommand) =>
 								subcommand //
@@ -138,8 +157,8 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 											.setName('event')
 											.setDescription('The event to stop')
 											.setAutocomplete(true)
-											.setRequired(true)
-									)
+											.setRequired(true),
+									),
 							)
 							.addSubcommand((subcommand) =>
 								subcommand //
@@ -150,14 +169,14 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 											.setName('event')
 											.setDescription('The event to add the user to')
 											.setAutocomplete(true)
-											.setRequired(true)
+											.setRequired(true),
 									)
 									.addUserOption((option) =>
 										option //
 											.setName('user')
 											.setDescription('The user to add')
-											.setRequired(true)
-									)
+											.setRequired(true),
+									),
 							)
 							.addSubcommand((subcommand) =>
 								subcommand //
@@ -168,25 +187,25 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 											.setName('event')
 											.setDescription('The event to remove the user from')
 											.setAutocomplete(true)
-											.setRequired(true)
+											.setRequired(true),
 									)
 									.addUserOption((option) =>
 										option //
 											.setName('user')
 											.setDescription('The user to remove')
-											.setRequired(true)
-									)
+											.setRequired(true),
+									),
 							)
 							.addSubcommand((subcommand) =>
 								subcommand //
 									.setName('menu')
-									.setDescription('Open the menu to manage karaoke events')
-							)
+									.setDescription('Open the menu to manage karaoke events'),
+							),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -228,13 +247,13 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 
 		const voiceChannel = interaction.options.getChannel('voice_channel', true, [
 			ChannelType.GuildStageVoice, //
-			ChannelType.GuildVoice
+			ChannelType.GuildVoice,
 		]);
 		const textChannel = interaction.options.getChannel('text_channel', true, [
 			ChannelType.GuildText,
 			ChannelType.PublicThread,
 			ChannelType.GuildStageVoice,
-			ChannelType.GuildVoice
+			ChannelType.GuildVoice,
 		]);
 		const topic = interaction.options.getString('topic');
 		const role = interaction.options.getRole('role');
@@ -248,7 +267,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: voiceResult.error
+				error: voiceResult.error,
 			});
 		}
 
@@ -256,13 +275,13 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: textResult.error
+				error: textResult.error,
 			});
 		}
 
 		const result = await this.module.karaoke.startEvent(voiceChannel, textChannel, {
 			stageTopic: topic,
-			roleId: role?.id
+			roleId: role?.id,
 		});
 
 		return await result.match({
@@ -273,12 +292,12 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 				this.container.logger.sentryError(error, {
 					context: {
 						event,
-						guildId: interaction.guild.id
-					}
+						guildId: interaction.guild.id,
+					},
 				});
 
 				return await interaction.errorReply(formGenericError('Something went wrong when trying to start the event.'));
-			}
+			},
 		});
 	}
 
@@ -290,12 +309,14 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 			ChannelType.GuildText,
 			ChannelType.PublicThread,
 			ChannelType.GuildStageVoice,
-			ChannelType.GuildVoice
+			ChannelType.GuildVoice,
 		]);
 		const role = interaction.options.getRole('role');
 
 		// TODO: check validation
-		const discordEvent = (await interaction.guild.scheduledEvents.fetch(discordEventId)) as GuildScheduledEvent | undefined;
+		const discordEvent = (await interaction.guild.scheduledEvents.fetch(discordEventId)) as
+			| GuildScheduledEvent
+			| undefined;
 		if (isNullOrUndefined(discordEvent)) {
 			return await interaction.errorReply('That is not a valid discord event.');
 		}
@@ -309,7 +330,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: voiceResult.error
+				error: voiceResult.error,
 			});
 		}
 
@@ -317,7 +338,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: textResult.error
+				error: textResult.error,
 			});
 		}
 
@@ -326,7 +347,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 			guildId: interaction.guildId,
 			textChannelId: textChannel.id,
 			discordEventId,
-			roleId: role?.id
+			roleId: role?.id,
 		});
 
 		return await interaction.editReply({
@@ -336,7 +357,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 					.setColor(EmbedColors.Default)
 					.setAuthor({
 						name: `${KBotEmoji.Microphone} Karaoke management`,
-						iconURL: getGuildIcon(interaction.guild)
+						iconURL: getGuildIcon(interaction.guild),
 					})
 					.setTitle(discordEvent.channel.name)
 					.addFields([
@@ -344,7 +365,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 						{
 							name: 'Event time:',
 							value: time(Math.floor(discordEvent.scheduledStartTimestamp! / 1000)),
-							inline: true
+							inline: true,
 						},
 						{ name: BlankSpace, value: BlankSpace, inline: false },
 						{ name: 'Voice channel:', value: channelMention(newEvent.id), inline: true },
@@ -352,10 +373,10 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 						{
 							name: 'Queue lock:',
 							value: newEvent.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`,
-							inline: true
-						}
-					])
-			]
+							inline: true,
+						},
+					]),
+			],
 		});
 	}
 
@@ -381,12 +402,12 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 				this.container.logger.sentryError(error, {
 					context: {
 						event,
-						guildId: interaction.guild.id
-					}
+						guildId: interaction.guild.id,
+					},
 				});
 
 				return await interaction.errorReply(formGenericError('Something went wrong when trying to end the event.'));
-			}
+			},
 		});
 	}
 
@@ -414,7 +435,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: voiceResult.error
+				error: voiceResult.error,
 			});
 		}
 
@@ -423,7 +444,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: textResult.error
+				error: textResult.error,
 			});
 		}
 
@@ -434,7 +455,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 
 		const updatedEvent = await karaoke.addUserToQueue(eventId, {
 			id: member.id,
-			name: member.displayName
+			name: member.displayName,
 		});
 
 		if (updatedEvent.queue.length === 1) {
@@ -442,7 +463,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 			await textChannel!.send({
 				content: `${userMention(member.id)} is up!`,
 				embeds: [karaoke.buildQueueEmbed(updatedEvent)],
-				allowedMentions: { users: [] }
+				allowedMentions: { users: [] },
 			});
 		}
 
@@ -473,7 +494,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!voiceResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: voiceResult.error
+				error: voiceResult.error,
 			});
 		}
 
@@ -482,7 +503,7 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 		if (!textResult.result) {
 			return interaction.client.emit(KBotErrors.ChannelPermissions, {
 				interaction,
-				error: textResult.error
+				error: textResult.error,
 			});
 		}
 
@@ -503,8 +524,8 @@ export class EventsCommand extends KBotSubcommand<EventModule> {
 			await interaction.channel!.send({
 				content: `${content} been removed from the queue by ${interaction.user.id}.`,
 				allowedMentions: {
-					users: userEntry.partnerId ? [userEntry.id, userEntry.partnerId] : [userEntry.id]
-				}
+					users: userEntry.partnerId ? [userEntry.id, userEntry.partnerId] : [userEntry.id],
+				},
 			});
 		}
 

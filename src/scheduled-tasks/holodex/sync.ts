@@ -1,16 +1,16 @@
-import { MeiliCategories } from '../../lib/meili/types/MeiliTypes.js';
-import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
 import { ApplyOptions } from '@sapphire/decorators';
-import { container } from '@sapphire/framework';
 import { Time } from '@sapphire/duration';
+import { container } from '@sapphire/framework';
+import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
+import { MeiliCategories } from '../../lib/meili/types/MeiliTypes.js';
 
 @ApplyOptions<ScheduledTask.Options>({
 	name: 'holodexSync',
 	pattern: '0 0 0 * * 6', // Every saturday
 	enabled: container.config.enableTasks,
 	customJobOptions: {
-		jobId: 'tasks:holodexSync'
-	}
+		jobId: 'tasks:holodexSync',
+	},
 })
 export class HolodexTask extends ScheduledTask {
 	public override async run(data: { page: number } | undefined): Promise<void> {
@@ -19,7 +19,7 @@ export class HolodexTask extends ScheduledTask {
 		const page = data ? data.page : 0;
 
 		const channels = await holodex.channels.getList({
-			offset: page * 100
+			offset: page * 100,
 		});
 
 		metrics.incrementHolodex({ value: page });
@@ -32,11 +32,10 @@ export class HolodexTask extends ScheduledTask {
 						? english_name
 						: null;
 				return { id, name, englishName: engName, org, subOrg: suborg, group };
-			})
+			}),
 		);
 
 		await prisma.$transaction(
-			// eslint-disable-next-line @typescript-eslint/promise-function-async
 			channels.map((channel) => {
 				const engName =
 					channel.english_name !== null && channel.english_name.length > 0 //
@@ -46,21 +45,21 @@ export class HolodexTask extends ScheduledTask {
 				const data = {
 					name: channel.name,
 					englishName: engName,
-					image: channel.photo
+					image: channel.photo,
 				};
 				return prisma.holodexChannel.upsert({
 					where: { youtubeId: channel.id },
 					update: data,
-					create: { ...data, youtubeId: channel.id }
+					create: { ...data, youtubeId: channel.id },
 				});
-			})
+			}),
 		);
 
 		if (channels.length === 100) {
 			await this.scheduleNextPage(page + 1);
 		} else {
 			logger.info(`[HolodexSync] Sync complete. (channels: ${page * 100 + channels.length}, pages: ${page + 1})`, {
-				task: this.name
+				task: this.name,
 			});
 		}
 	}
@@ -69,15 +68,14 @@ export class HolodexTask extends ScheduledTask {
 		await this.container.tasks.create(
 			{
 				name: 'holodexSync', //
-				payload: { page }
+				payload: { page },
 			},
-			{ repeated: false, delay: Time.Second * 30 }
+			{ repeated: false, delay: Time.Second * 30 },
 		);
 	}
 }
 
 declare module '@sapphire/plugin-scheduled-tasks' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface ScheduledTasks {
 		holodexSync: { page: number } | undefined;
 	}

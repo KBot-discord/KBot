@@ -1,13 +1,13 @@
+import { roleMention, userMention } from '@discordjs/builders';
+import type { KaraokeEvent, KaraokeUser } from '@prisma/client';
+import { Result, container } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import type { Guild, GuildMember, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
 import { ResultClass } from '../structures/ResultClass.js';
 import { DiscordFetchError } from '../structures/errors/DiscordFetchError.js';
 import { EmbedColors, KBotEmoji } from '../utilities/constants.js';
 import { fetchChannel } from '../utilities/discord.js';
-import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { Result, container } from '@sapphire/framework';
-import { roleMention, userMention } from '@discordjs/builders';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { Guild, GuildMember, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
-import type { KaraokeEvent, KaraokeUser } from '@prisma/client';
 import type { KaraokeEventWithUsers } from './types/karaoke.js';
 
 export class KaraokeService extends ResultClass {
@@ -17,7 +17,7 @@ export class KaraokeService extends ResultClass {
 	 */
 	public async getEvent(eventId: string): Promise<KaraokeEvent | null> {
 		return await container.prisma.karaokeEvent.findUnique({
-			where: { id: eventId }
+			where: { id: eventId },
 		});
 	}
 
@@ -28,7 +28,7 @@ export class KaraokeService extends ResultClass {
 	public async getEventWithQueue(eventId: string): Promise<(KaraokeEvent & { queue: KaraokeUser[] }) | null> {
 		return await container.prisma.karaokeEvent.findUnique({
 			where: { id: eventId },
-			include: { queue: { orderBy: { createdAt: 'asc' } } }
+			include: { queue: { orderBy: { createdAt: 'asc' } } },
 		});
 	}
 
@@ -38,7 +38,7 @@ export class KaraokeService extends ResultClass {
 	 */
 	public async getEventByGuild(guildId: string): Promise<KaraokeEvent[]> {
 		return await container.prisma.karaokeEvent.findMany({
-			where: { guildId }
+			where: { guildId },
 		});
 	}
 
@@ -49,7 +49,7 @@ export class KaraokeService extends ResultClass {
 	public async deleteEvent(eventId: string): Promise<KaraokeEvent | null> {
 		return await container.prisma.karaokeEvent
 			.delete({
-				where: { id: eventId }
+				where: { id: eventId },
 			})
 			.catch(() => null);
 	}
@@ -73,8 +73,8 @@ export class KaraokeService extends ResultClass {
 				locked: false,
 				isActive: true,
 				pinMessageId,
-				eventSettings: { connect: { guildId } }
-			}
+				eventSettings: { connect: { guildId } },
+			},
 		});
 	}
 
@@ -99,8 +99,8 @@ export class KaraokeService extends ResultClass {
 				isActive: false,
 				discordEventId,
 				roleId,
-				eventSettings: { connect: { guildId } }
-			}
+				eventSettings: { connect: { guildId } },
+			},
 		});
 	}
 
@@ -121,7 +121,7 @@ export class KaraokeService extends ResultClass {
 
 		return await container.prisma.karaokeEvent.update({
 			where: { id },
-			data: { textChannelId, locked, isActive, discordEventId, roleId }
+			data: { textChannelId, locked, isActive, discordEventId, roleId },
 		});
 	}
 
@@ -138,7 +138,7 @@ export class KaraokeService extends ResultClass {
 	 */
 	public async countEventsByGuild(guildId: string): Promise<number> {
 		return await container.prisma.karaokeEvent.count({
-			where: { guildId }
+			where: { guildId },
 		});
 	}
 
@@ -154,7 +154,7 @@ export class KaraokeService extends ResultClass {
 			name: string;
 			partnerId?: string | null;
 			partnerName?: string | null;
-		}
+		},
 	): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
 		const { id, name, partnerId, partnerName } = data;
 
@@ -162,9 +162,9 @@ export class KaraokeService extends ResultClass {
 			data: { id, name, partnerId, partnerName, karaokeEvent: { connect: { id: eventId } } },
 			include: {
 				karaokeEvent: {
-					include: { queue: { orderBy: { createdAt: 'asc' } } }
-				}
-			}
+					include: { queue: { orderBy: { createdAt: 'asc' } } },
+				},
+			},
 		});
 
 		return result.karaokeEvent;
@@ -180,7 +180,7 @@ export class KaraokeService extends ResultClass {
 		data: {
 			id: string;
 			partnerId?: string | null;
-		}
+		},
 	): Promise<KaraokeEvent & { queue: KaraokeUser[] }> {
 		const { id } = data;
 
@@ -188,9 +188,9 @@ export class KaraokeService extends ResultClass {
 			where: { id_eventId: { id, eventId } },
 			include: {
 				karaokeEvent: {
-					include: { queue: { orderBy: { createdAt: 'asc' } } }
-				}
-			}
+					include: { queue: { orderBy: { createdAt: 'asc' } } },
+				},
+			},
 		});
 
 		return result.karaokeEvent;
@@ -223,7 +223,7 @@ export class KaraokeService extends ResultClass {
 	public async rotateQueue(
 		guild: Guild, //
 		event: KaraokeEventWithUsers,
-		textChannel: GuildTextBasedChannel
+		textChannel: GuildTextBasedChannel,
 	): Promise<void> {
 		const { current, next } = await this.fetchEventUsers(guild, event.queue);
 
@@ -233,7 +233,7 @@ export class KaraokeService extends ResultClass {
 		const updatedEvent = await this.rotate(
 			event, //
 			{ user: currentUser, partner: currentPartner },
-			{ user: nextUser, partner: nextPartner }
+			{ user: nextUser, partner: nextPartner },
 		);
 
 		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
@@ -270,7 +270,7 @@ export class KaraokeService extends ResultClass {
 		guild: Guild, //
 		event: KaraokeEventWithUsers,
 		textChannel: GuildTextBasedChannel,
-		moderatorId: string
+		moderatorId: string,
 	): Promise<void> {
 		const { current, next } = await this.fetchEventUsers(guild, event.queue);
 
@@ -280,7 +280,7 @@ export class KaraokeService extends ResultClass {
 		const updatedEvent = await this.rotate(
 			event, //
 			{ user: currentUser, partner: currentPartner },
-			{ user: nextUser, partner: nextPartner }
+			{ user: nextUser, partner: nextPartner },
 		);
 
 		const { result } = await container.validator.channels.canSendEmbeds(textChannel);
@@ -291,7 +291,9 @@ export class KaraokeService extends ResultClass {
 		const mentions: string[] = nextUser ? [nextUser.id] : [];
 
 		if (currentPartner) {
-			done = `${userMention(currentUser.id)} & ${userMention(currentPartner.id)} have been skipped by ${userMention(moderatorId)}`;
+			done = `${userMention(currentUser.id)} & ${userMention(currentPartner.id)} have been skipped by ${userMention(
+				moderatorId,
+			)}`;
 		}
 
 		if (nextUser && nextPartner) {
@@ -317,7 +319,7 @@ export class KaraokeService extends ResultClass {
 		guild: Guild,
 		event: KaraokeEventWithUsers,
 		textChannel: GuildTextBasedChannel,
-		moderatorId: string
+		moderatorId: string,
 	): Promise<void> {
 		const { current, next } = await this.fetchEventUsers(guild, event.queue);
 
@@ -327,7 +329,7 @@ export class KaraokeService extends ResultClass {
 		const updatedEvent = await this.rotate(
 			event, //
 			{ user: currentUser, partner: currentPartner },
-			{ user: nextUser, partner: nextPartner }
+			{ user: nextUser, partner: nextPartner },
 		);
 
 		let done = `${userMention(currentUser.id)} has been removed from the queue by ${userMention(moderatorId)}`;
@@ -335,7 +337,9 @@ export class KaraokeService extends ResultClass {
 		const mentions: string[] = nextUser ? [nextUser.id] : [];
 
 		if (currentPartner) {
-			done = `${userMention(currentUser.id)} & ${userMention(currentPartner.id)} have been removed from the queue by ${userMention(moderatorId)}`;
+			done = `${userMention(currentUser.id)} & ${userMention(
+				currentPartner.id,
+			)} have been removed from the queue by ${userMention(moderatorId)}`;
 		}
 
 		if (nextUser && nextPartner) {
@@ -359,7 +363,7 @@ export class KaraokeService extends ResultClass {
 	public isJoinValid(
 		event: KaraokeEventWithUsers,
 		userId: string,
-		partner?: GuildMember
+		partner?: GuildMember,
 	): { valid: false; reason: string } | { valid: true; reason?: undefined } {
 		if (event.locked) {
 			return { valid: false, reason: 'The karaoke queue is locked.' };
@@ -373,7 +377,7 @@ export class KaraokeService extends ResultClass {
 		if (partner && (!partner.voice.channelId || partner.voice.channelId !== event.id)) {
 			return {
 				valid: false,
-				reason: `Tell your partner to please join the stage, then run this command again.\n\n**Stage:** <#${event.id}>`
+				reason: `Tell your partner to please join the stage, then run this command again.\n\n**Stage:** <#${event.id}>`,
 			};
 		}
 		if (event.queue.some((member) => member.id === userId)) {
@@ -390,7 +394,10 @@ export class KaraokeService extends ResultClass {
 	 * @param event - The event to check
 	 * @param userId - The ID of the user to check
 	 */
-	public isAddValid(event: KaraokeEventWithUsers, userId: string): { valid: false; reason: string } | { valid: true; reason?: undefined } {
+	public isAddValid(
+		event: KaraokeEventWithUsers,
+		userId: string,
+	): { valid: false; reason: string } | { valid: true; reason?: undefined } {
 		if (event.queue.length > 50) {
 			return { valid: false, reason: 'Queue limit of 50 people has been reached.' };
 		}
@@ -413,7 +420,7 @@ export class KaraokeService extends ResultClass {
 		data: {
 			stageTopic?: string | null;
 			roleId?: string | null;
-		}
+		},
 	): Promise<Result<KaraokeEvent, Error>> {
 		const { events, validator } = container;
 
@@ -433,7 +440,7 @@ export class KaraokeService extends ResultClass {
 				id: voiceChannel.id,
 				guildId: voiceChannel.guildId,
 				textChannelId: textChannel.id,
-				pinMessageId: textChannel.isVoiceBased() ? undefined : message?.id
+				pinMessageId: textChannel.isVoiceBased() ? undefined : message?.id,
 			});
 		});
 	}
@@ -467,7 +474,7 @@ export class KaraokeService extends ResultClass {
 				locked: false,
 				discordEventId: null,
 				roleId: null,
-				pinMessageId: message?.id
+				pinMessageId: message?.id,
 			});
 		});
 	}
@@ -491,13 +498,15 @@ export class KaraokeService extends ResultClass {
 					await Promise.allSettled(
 						eventChannel.members //
 							.filter((member) => member.voice.serverMute)
-							.map(async (member) => await member.voice.setMute(false))
+							.map(async (member) => await member.voice.setMute(false)),
 					);
 				}
 			}
 
 			if (event.pinMessageId && !textChannel.isVoiceBased()) {
-				const canUnpin = await validator.client.hasChannelPermissions(textChannel, [PermissionFlagsBits.ManageMessages]);
+				const canUnpin = await validator.client.hasChannelPermissions(textChannel, [
+					PermissionFlagsBits.ManageMessages,
+				]);
 				if (canUnpin) {
 					const message = await textChannel.messages.fetch(event.pinMessageId);
 					await message.unpin().catch(() => null);
@@ -541,13 +550,13 @@ export class KaraokeService extends ResultClass {
 	public async rotate(
 		event: KaraokeEventWithUsers,
 		current: { user: GuildMember; partner?: GuildMember },
-		next: { user?: GuildMember; partner?: GuildMember }
+		next: { user?: GuildMember; partner?: GuildMember },
 	): Promise<KaraokeEventWithUsers> {
 		const { queue } = event;
 
 		await this.removeUserFromQueue(event.id, {
 			id: current.user.id,
-			partnerId: current.partner?.id
+			partnerId: current.partner?.id,
 		});
 
 		await this.setUserToAudience(current.user, current.partner);
@@ -600,13 +609,18 @@ export class KaraokeService extends ResultClass {
 	 * @param content - The message to send
 	 * @param mentions - The IDs of the users to mention
 	 */
-	private async sendEmbed(textChannel: GuildTextBasedChannel, event: KaraokeEventWithUsers, content: string, mentions: string[]): Promise<void> {
+	private async sendEmbed(
+		textChannel: GuildTextBasedChannel,
+		event: KaraokeEventWithUsers,
+		content: string,
+		mentions: string[],
+	): Promise<void> {
 		const embed = this.buildQueueEmbed(event);
 
 		await textChannel.send({
 			content,
 			embeds: [embed],
-			allowedMentions: { users: mentions }
+			allowedMentions: { users: mentions },
 		});
 	}
 
@@ -616,12 +630,16 @@ export class KaraokeService extends ResultClass {
 	 * @param textChannel - The channel to send the announcement to
 	 * @param roleId - The ID of the role to ping
 	 */
-	private async sendAnnouncement(embed: EmbedBuilder, textChannel: GuildTextBasedChannel, roleId?: string | null): Promise<Message | null> {
+	private async sendAnnouncement(
+		embed: EmbedBuilder,
+		textChannel: GuildTextBasedChannel,
+		roleId?: string | null,
+	): Promise<Message | null> {
 		return await textChannel
 			.send({
 				content: `${roleId ? roleMention(roleId) : ''} A karaoke event has started!`,
 				embeds: [embed],
-				allowedMentions: { roles: roleId ? [roleId] : [] }
+				allowedMentions: { roles: roleId ? [roleId] : [] },
 			})
 			.catch(() => null);
 	}
@@ -632,7 +650,11 @@ export class KaraokeService extends ResultClass {
 	 * @param voiceChannel - The voice channel
 	 * @param stageTopic - If its a stage channel, the topic of the stage
 	 */
-	private async setupVoiceChannel(embed: EmbedBuilder, voiceChannel: VoiceBasedChannel, stageTopic: string): Promise<EmbedBuilder> {
+	private async setupVoiceChannel(
+		embed: EmbedBuilder,
+		voiceChannel: VoiceBasedChannel,
+		stageTopic: string,
+	): Promise<EmbedBuilder> {
 		if (voiceChannel.type === ChannelType.GuildStageVoice) {
 			if (isNullOrUndefined(voiceChannel.stageInstance)) {
 				embed.setTitle(`Event: ${stageTopic}`);
@@ -645,7 +667,7 @@ export class KaraokeService extends ResultClass {
 
 			if (voiceChannel.members.size > 0) {
 				await Promise.allSettled(
-					voiceChannel.members.map(async (member) => await member.voice.setMute(true)) //
+					voiceChannel.members.map(async (member) => await member.voice.setMute(true)), //
 				);
 			}
 		}
@@ -659,12 +681,15 @@ export class KaraokeService extends ResultClass {
 	 * @param voiceChannelId - The ID of the voice channel
 	 * @param textChannelId - The ID of the text channel
 	 */
-	private async fetchEventChannels(voiceChannelId: string, textChannelId: string): Promise<[VoiceBasedChannel, GuildTextBasedChannel]> {
+	private async fetchEventChannels(
+		voiceChannelId: string,
+		textChannelId: string,
+	): Promise<[VoiceBasedChannel, GuildTextBasedChannel]> {
 		const eventChannel = await fetchChannel<VoiceBasedChannel>(voiceChannelId);
 		if (!eventChannel) {
 			throw new DiscordFetchError({
 				message: 'Failed to fetch event voice channel',
-				resourceId: voiceChannelId
+				resourceId: voiceChannelId,
 			});
 		}
 
@@ -672,7 +697,7 @@ export class KaraokeService extends ResultClass {
 		if (!textChannel) {
 			throw new DiscordFetchError({
 				message: 'Failed to fetch event text channel',
-				resourceId: textChannelId
+				resourceId: textChannelId,
 			});
 		}
 
@@ -686,8 +711,11 @@ export class KaraokeService extends ResultClass {
 	 */
 	private async fetchEventUsers(
 		guild: Guild,
-		queue: KaraokeUser[]
-	): Promise<{ current: [GuildMember, GuildMember | undefined]; next: [GuildMember | undefined, GuildMember | undefined] }> {
+		queue: KaraokeUser[],
+	): Promise<{
+		current: [GuildMember, GuildMember | undefined];
+		next: [GuildMember | undefined, GuildMember | undefined];
+	}> {
 		const currentUserId = queue.at(0)!.id;
 		const currentPartnerId = queue.at(0)?.partnerId;
 		const nextUserId = queue.at(1)?.id;
@@ -701,7 +729,7 @@ export class KaraokeService extends ResultClass {
 
 		return {
 			current: [currentUser, currentPartner],
-			next: [nextUser, nextPartner]
+			next: [nextUser, nextPartner],
 		};
 	}
 }

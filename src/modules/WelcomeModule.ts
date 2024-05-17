@@ -1,14 +1,15 @@
-import { WelcomeSettingsService } from '../lib/services/WelcomeSettingsService.js';
 import { Module } from '@kbotdev/plugin-modules';
-import { ApplyOptions } from '@sapphire/decorators';
-import { userMention } from 'discord.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { GuildMember } from 'discord.js';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '../lib/types/Enums.js';
+import { ApplyOptions } from '@sapphire/decorators';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { userMention } from 'discord.js';
+import type { GuildMember } from 'discord.js';
+import { WelcomeSettingsService } from '../lib/services/WelcomeSettingsService.js';
+import { KBotModules } from '../lib/types/Enums.js';
 
 @ApplyOptions<Module.Options>({
-	fullName: 'Welcome Module'
+	name: KBotModules.Welcome,
+	fullName: 'Welcome Module',
 })
 export class WelcomeModule extends Module {
 	public readonly settings: WelcomeSettingsService;
@@ -38,7 +39,6 @@ export class WelcomeModule extends Module {
 }
 
 declare module '@kbotdev/plugin-modules' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
 		[KBotModules.Welcome]: never;
 	}

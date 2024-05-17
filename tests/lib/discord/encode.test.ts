@@ -1,13 +1,13 @@
-import { encode } from '../../../src/lib/utilities/discord.js';
-import { describe, expect, test } from 'vitest';
 import type { JSONEncodable } from 'discord.js';
+import { describe, expect, test } from 'vitest';
+import { encode } from '../../../src/lib/utilities/discord.js';
 
 describe('encode', () => {
 	test('IF encodeable object THEN JSON', () => {
 		const mockEncodeableObject: JSONEncodable<{ key: string }> = {
 			toJSON(): { key: string } {
 				return { key: 'string' };
-			}
+			},
 		};
 
 		const result = encode(mockEncodeableObject);
@@ -17,7 +17,7 @@ describe('encode', () => {
 
 	test('IF unencodeable object THEN object', () => {
 		const mockUnencodeableObject = {
-			key: 'string'
+			key: 'string',
 		};
 
 		const result = encode(mockUnencodeableObject);

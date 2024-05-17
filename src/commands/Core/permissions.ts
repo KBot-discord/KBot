@@ -1,7 +1,7 @@
-import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
-import { KBotModules } from '../../lib/types/Enums.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { PermissionFlagsBits } from 'discord.js';
+import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
+import { KBotModules } from '../../lib/types/Enums.js';
 import type { CoreModule } from '../../modules/CoreModule.js';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -10,12 +10,12 @@ import type { CoreModule } from '../../modules/CoreModule.js';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Permissions');
-	}
+	},
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly permissionInfo = [
 		'To edit command permissions go to `Server Settings -> Integrations -> KBot -> Manage`', //
-		'Info about default permissions can be found at: https://docs.kbot.ca/configuration/permissions'
+		'Info about default permissions can be found at: https://docs.kbot.ca/configuration/permissions',
 	].join('\n');
 
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
@@ -28,8 +28,8 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 					.setDMPermission(true),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 

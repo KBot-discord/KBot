@@ -1,21 +1,25 @@
-import { Menu } from './Menu.js';
+import { channelMention, time } from '@discordjs/builders';
+import type { KaraokeEvent } from '@prisma/client';
+import type {
+	AnyInteractableInteraction,
+	PaginatedMessageAction,
+	PaginatedMessageActionButton,
+} from '@sapphire/discord.js-utilities';
+import { container } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
+import type { Guild, GuildBasedChannel, Message, User } from 'discord.js';
+import type { KaraokeMenuButton } from '../../types/CustomIds.js';
 import { BlankSpace, EmbedColors, KBotEmoji } from '../../utilities/constants.js';
 import { KaraokeCustomIds } from '../../utilities/customIds.js';
 import { buildCustomId, fetchChannel, getGuildIcon } from '../../utilities/discord.js';
 import { MenuPageBuilder } from '../builders/MenuPageBuilder.js';
-import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
-import { container } from '@sapphire/framework';
-import { channelMention, time } from '@discordjs/builders';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { Guild, GuildBasedChannel, Message, User } from 'discord.js';
-import type { AnyInteractableInteraction, PaginatedMessageAction, PaginatedMessageActionButton } from '@sapphire/discord.js-utilities';
-import type { KaraokeEvent } from '@prisma/client';
-import type { KaraokeMenuButton } from '../../types/CustomIds.js';
+import { Menu } from './Menu.js';
 
 const KaraokeEventActions: { id: string; text: string; emoji: string | null }[] = [
 	{ id: KaraokeCustomIds.Lock, text: 'Lock queue', emoji: KBotEmoji.Locked },
 	{ id: KaraokeCustomIds.Unlock, text: 'Unlock queue', emoji: KBotEmoji.Unlocked },
-	{ id: KaraokeCustomIds.Skip, text: 'Skip queue', emoji: null }
+	{ id: KaraokeCustomIds.Skip, text: 'Skip queue', emoji: null },
 ];
 
 export class KaraokeEventMenu extends Menu {
@@ -34,7 +38,7 @@ export class KaraokeEventMenu extends Menu {
 
 		this.setSelectMenuPlaceholder('Select an event');
 		this.setSelectMenuOptions((pageIndex) => {
-			if (pageIndex === 1) return { label: `Home page` };
+			if (pageIndex === 1) return { label: 'Home page' };
 			return { label: `Event #${pageIndex - 1} | ${this.events[pageIndex - 2].channel.name}` };
 		});
 
@@ -46,7 +50,7 @@ export class KaraokeEventMenu extends Menu {
 						.setColor(EmbedColors.Default)
 						.setAuthor({
 							name: `${KBotEmoji.Microphone} Karaoke management `,
-							iconURL: getGuildIcon(this.guild)
+							iconURL: getGuildIcon(this.guild),
 						})
 						.setTitle('Home page')
 						.setDescription('This menu allows you to manage events through buttons.')
@@ -55,11 +59,11 @@ export class KaraokeEventMenu extends Menu {
 							{ name: 'Ending an event', value: 'Run `/manage karaoke stop`' },
 							{
 								name: 'Scheduling an event',
-								value: 'After creating the Discord event, you can run `/manage karaoke schedule`'
-							}
-						])
+								value: 'After creating the Discord event, you can run `/manage karaoke schedule`',
+							},
+						]),
 				];
-			})
+			}),
 		);
 
 		return await super.run(messageOrInteraction, target);
@@ -76,9 +80,9 @@ export class KaraokeEventMenu extends Menu {
 						type: ComponentType.Button,
 						style: ButtonStyle.Secondary,
 						customId: buildCustomId<KaraokeMenuButton>(id, {
-							eventId: event.id
+							eventId: event.id,
 						}),
-						label: text
+						label: text,
 					};
 					if (emoji) action.emoji = emoji;
 					return action;
@@ -89,10 +93,10 @@ export class KaraokeEventMenu extends Menu {
 						type: ComponentType.Button,
 						style: ButtonStyle.Danger,
 						customId: buildCustomId<KaraokeMenuButton>(KaraokeCustomIds.Unschedule, {
-							eventId: event.id
+							eventId: event.id,
 						}),
-						label: 'Unschedule event'
-					}
+						label: 'Unschedule event',
+					},
 				];
 			}
 
@@ -104,7 +108,7 @@ export class KaraokeEventMenu extends Menu {
 
 	private async buildEmbeds(): Promise<EmbedBuilder[]> {
 		const {
-			events: { karaoke }
+			events: { karaoke },
 		} = container;
 		const { guild } = this;
 
@@ -113,8 +117,8 @@ export class KaraokeEventMenu extends Menu {
 		const mergedEvents = await Promise.all(
 			event.map(async (event) => ({
 				event,
-				channel: (await fetchChannel<GuildBasedChannel>(event.id))!
-			}))
+				channel: (await fetchChannel<GuildBasedChannel>(event.id))!,
+			})),
 		);
 
 		this.events = mergedEvents.filter((event) => !isNullOrUndefined(event.channel));
@@ -129,9 +133,9 @@ export class KaraokeEventMenu extends Menu {
 						{
 							name: 'Event time:',
 							value: time(Math.floor(discordEvent.scheduledStartTimestamp! / 1000)),
-							inline: true
+							inline: true,
 						},
-						{ name: BlankSpace, value: BlankSpace, inline: false }
+						{ name: BlankSpace, value: BlankSpace, inline: false },
 					);
 				}
 
@@ -139,7 +143,7 @@ export class KaraokeEventMenu extends Menu {
 					.setColor(EmbedColors.Default)
 					.setAuthor({
 						name: `${KBotEmoji.Microphone} Karaoke management`,
-						iconURL: getGuildIcon(guild)
+						iconURL: getGuildIcon(guild),
 					})
 					.setTitle(`Event #${index + 1} | ${channel.name}`)
 					.addFields([
@@ -147,16 +151,16 @@ export class KaraokeEventMenu extends Menu {
 						{
 							name: 'Voice channel:',
 							value: `${channelMention(event.id)}\n\nPermissions:`,
-							inline: true
+							inline: true,
 						},
 						{ name: 'Text channel:', value: channelMention(event.textChannelId), inline: true },
 						{
 							name: 'Queue lock:',
 							value: event.locked ? `${KBotEmoji.Locked} locked` : `${KBotEmoji.Unlocked} unlocked`,
-							inline: true
-						}
+							inline: true,
+						},
 					]);
-			})
+			}),
 		);
 	}
 }

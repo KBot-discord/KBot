@@ -1,8 +1,8 @@
-import { welcomeCacheKey } from './keys.js';
-import { Time } from '@sapphire/duration';
-import { isNullish } from '@sapphire/utilities';
-import { container } from '@sapphire/framework';
 import type { WelcomeSettings } from '@prisma/client';
+import { Time } from '@sapphire/duration';
+import { container } from '@sapphire/framework';
+import { isNullish } from '@sapphire/utilities';
+import { welcomeCacheKey } from './keys.js';
 
 export class WelcomeSettingsService {
 	private readonly cacheKey = welcomeCacheKey;
@@ -27,7 +27,7 @@ export class WelcomeSettingsService {
 		}
 
 		const dbResult = await container.prisma.welcomeSettings.findUnique({
-			where: { guildId }
+			where: { guildId },
 		});
 		if (isNullish(dbResult)) {
 			return null;
@@ -52,7 +52,7 @@ export class WelcomeSettingsService {
 			description?: string | null;
 			image?: string | null;
 			color?: string | null;
-		}
+		},
 	): Promise<WelcomeSettings> {
 		const key = this.cacheKey(guildId);
 
@@ -64,10 +64,10 @@ export class WelcomeSettingsService {
 				coreSettings: {
 					connectOrCreate: {
 						where: { guildId },
-						create: { guildId }
-					}
-				}
-			}
+						create: { guildId },
+					},
+				},
+			},
 		});
 		await container.redis.setEx(key, settings, this.defaultExpiry);
 

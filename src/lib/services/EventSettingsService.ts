@@ -1,8 +1,8 @@
-import { eventCacheKey } from './keys.js';
-import { isNullish } from '@sapphire/utilities';
+import type { EventSettings } from '@prisma/client';
 import { Time } from '@sapphire/duration';
 import { container } from '@sapphire/framework';
-import type { EventSettings } from '@prisma/client';
+import { isNullish } from '@sapphire/utilities';
+import { eventCacheKey } from './keys.js';
 
 export class EventSettingsService {
 	private readonly cacheKey = eventCacheKey;
@@ -27,7 +27,7 @@ export class EventSettingsService {
 		}
 
 		const dbResult = await container.prisma.eventSettings.findUnique({
-			where: { guildId }
+			where: { guildId },
 		});
 		if (isNullish(dbResult)) {
 			return null;
@@ -46,7 +46,7 @@ export class EventSettingsService {
 		guildId: string,
 		data: {
 			enabled?: boolean;
-		}
+		},
 	): Promise<EventSettings> {
 		const key = this.cacheKey(guildId);
 
@@ -58,10 +58,10 @@ export class EventSettingsService {
 				coreSettings: {
 					connectOrCreate: {
 						where: { guildId },
-						create: { guildId }
-					}
-				}
-			}
+						create: { guildId },
+					},
+				},
+			},
 		});
 		await container.redis.setEx(key, settings, this.defaultExpiry);
 

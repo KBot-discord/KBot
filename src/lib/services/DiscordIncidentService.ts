@@ -1,15 +1,17 @@
-import { container } from '@sapphire/framework';
 import type { IncidentMessage } from '@prisma/client';
+import { container } from '@sapphire/framework';
 
 export class DiscordIncidentService {
 	/**
 	 * Get many incidents.
 	 * @param incidentIds - The incident IDs to get
 	 */
-	public async getIncidents(incidentIds: string[]): Promise<{ id: string; updatedAt: Date; messages: IncidentMessage[] }[]> {
+	public async getIncidents(
+		incidentIds: string[],
+	): Promise<{ id: string; updatedAt: Date; messages: IncidentMessage[] }[]> {
 		return await container.prisma.discordIncident.findMany({
 			where: { id: { in: incidentIds } },
-			select: { id: true, updatedAt: true, messages: true }
+			select: { id: true, updatedAt: true, messages: true },
 		});
 	}
 
@@ -20,7 +22,7 @@ export class DiscordIncidentService {
 	 */
 	public async cleanupIncidents(incidentIds: string[]): Promise<number> {
 		const result = await container.prisma.discordIncident.deleteMany({
-			where: { NOT: { id: { in: incidentIds } } }
+			where: { NOT: { id: { in: incidentIds } } },
 		});
 
 		return result.count;

@@ -1,18 +1,19 @@
+import { channelMention, roleMention } from '@discordjs/builders';
+import { Module } from '@kbotdev/plugin-modules';
+import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import { ApplyOptions } from '@sapphire/decorators';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { EmbedBuilder } from 'discord.js';
 import { YoutubeChannelService } from '../lib/services/YoutubeChannelService.js';
 import { YoutubeSettingsService } from '../lib/services/YoutubeSettingsService.js';
 import { YoutubeSubscriptionService } from '../lib/services/YoutubeSubscriptionService.js';
-import { BlankSpace, EmbedColors } from '../lib/utilities/constants.js';
-import { Module } from '@kbotdev/plugin-modules';
-import { EmbedBuilder } from 'discord.js';
-import { channelMention, roleMention } from '@discordjs/builders';
-import { ApplyOptions } from '@sapphire/decorators';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import type { YoutubeSubscriptionWithChannel } from '../lib/services/types/youtube.js';
-import type { KBotModules } from '../lib/types/Enums.js';
+import { KBotModules } from '../lib/types/Enums.js';
+import { BlankSpace, EmbedColors } from '../lib/utilities/constants.js';
 
 @ApplyOptions<Module.Options>({
-	fullName: 'Youtube Module'
+	name: KBotModules.YouTube,
+	fullName: 'Youtube Module',
 })
 export class YoutubeModule extends Module {
 	public readonly settings: YoutubeSettingsService;
@@ -41,7 +42,7 @@ export class YoutubeModule extends Module {
 		roleId,
 		discordChannelId,
 		memberDiscordChannelId,
-		memberRoleId
+		memberRoleId,
 	}: YoutubeSubscriptionWithChannel): EmbedBuilder {
 		return new EmbedBuilder() //
 			.setColor(EmbedColors.Default)
@@ -53,27 +54,26 @@ export class YoutubeModule extends Module {
 				{
 					name: 'Channel',
 					value: discordChannelId ? channelMention(discordChannelId) : 'No channel set.',
-					inline: true
+					inline: true,
 				},
 				{ name: 'Role', value: roleId ? roleMention(roleId) : 'No role set.', inline: true },
 				{ name: BlankSpace, value: BlankSpace },
 				{
 					name: 'Member Channel',
 					value: memberDiscordChannelId ? channelMention(memberDiscordChannelId) : 'No channel set.',
-					inline: true
+					inline: true,
 				},
 				{
 					name: 'Member Role',
 					value: memberRoleId ? roleMention(memberRoleId) : 'No role set.',
-					inline: true
-				}
+					inline: true,
+				},
 			])
 			.setThumbnail(channel.image);
 	}
 }
 
 declare module '@kbotdev/plugin-modules' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
 		[KBotModules.YouTube]: never;
 	}

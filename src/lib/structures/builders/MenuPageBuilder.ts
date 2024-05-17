@@ -1,7 +1,11 @@
-import { encode } from '../../utilities/discord.js';
-import { EmbedBuilder } from 'discord.js';
+import type {
+	PaginatedMessageAction,
+	PaginatedMessageMessageOptionsUnion,
+	PaginatedMessagePage,
+} from '@sapphire/discord.js-utilities';
 import { isFunction } from '@sapphire/utilities';
-import type { PaginatedMessageAction, PaginatedMessageMessageOptionsUnion, PaginatedMessagePage } from '@sapphire/discord.js-utilities';
+import { type APIEmbed, EmbedBuilder, type JSONEncodable } from 'discord.js';
+import { encode } from '../../utilities/discord.js';
 
 export class MenuPageBuilder {
 	public readonly page: PaginatedMessageMessageOptionsUnion;
@@ -27,8 +31,8 @@ export class MenuPageBuilder {
 					embed7: EmbedBuilder,
 					embed8: EmbedBuilder,
 					embed9: EmbedBuilder,
-					embed10: EmbedBuilder
-			  ) => EmbedBuilder[])
+					embed10: EmbedBuilder,
+			  ) => EmbedBuilder[]),
 	): this {
 		this.page.embeds = isFunction(embeds)
 			? embeds(
@@ -41,7 +45,7 @@ export class MenuPageBuilder {
 					new EmbedBuilder(),
 					new EmbedBuilder(),
 					new EmbedBuilder(),
-					new EmbedBuilder()
+					new EmbedBuilder(),
 				)
 			: embeds;
 		return this;
@@ -76,7 +80,7 @@ export class MenuPageBuilder {
 
 		const embedAt = this.page.embeds.at(index);
 		const newEmbed = embed(new EmbedBuilder(encode(embedAt)));
-		this.page.embeds[index] = newEmbed;
+		(this.page.embeds as (APIEmbed | JSONEncodable<APIEmbed>)[])[index] = newEmbed;
 
 		return this;
 	}

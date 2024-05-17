@@ -4,7 +4,7 @@ import type { PreconditionOptions, PreconditionResult } from '@sapphire/framewor
 import type { CommandInteraction, ContextMenuCommandInteraction, Message } from 'discord.js';
 
 @ApplyOptions<PreconditionOptions>({
-	name: 'BotOwnerOnly'
+	name: 'BotOwnerOnly',
 })
 export class BotOwnerPrecondition extends Precondition {
 	public override chatInputRun(interaction: CommandInteraction): PreconditionResult {
@@ -27,7 +27,6 @@ export class BotOwnerPrecondition extends Precondition {
 }
 
 declare module '@sapphire/framework' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Preconditions {
 		BotOwnerOnly: never;
 	}

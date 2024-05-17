@@ -5,7 +5,7 @@ export class AntiHoistHandler {
 	public readonly usernameRegex = /^[0-9 !"#$%&'()*+,\-.\/:;<=>?@[\\\]^_`]+/g;
 
 	public async parseMember(member: GuildMember, settings: ModerationSettings): Promise<void> {
-		if (!settings.enabled || !member.manageable || !settings.antiHoistEnabled) return;
+		if (!(settings.enabled && member.manageable && settings.antiHoistEnabled)) return;
 
 		const currentName = member.nickname ?? member.user.username;
 

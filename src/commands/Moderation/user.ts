@@ -1,9 +1,9 @@
-import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
-import { KBotModules } from '../../lib/types/Enums.js';
-import { getUserInfo } from '../../lib/utilities/discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord.js';
+import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
+import { KBotModules } from '../../lib/types/Enums.js';
+import { getUserInfo } from '../../lib/utilities/discord.js';
 import type { ModerationModule } from '../../modules/ModerationModule.js';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -15,7 +15,7 @@ import type { ModerationModule } from '../../modules/ModerationModule.js';
 		return builder //
 			.setName('User')
 			.setOption({ label: '/user <target>' });
-	}
+	},
 })
 export class ModerationCommand extends KBotCommand<ModerationModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -34,12 +34,12 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 						option //
 							.setName('target')
 							.setDescription('The user or the ID of the user to get info for')
-							.setRequired(true)
+							.setRequired(true),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 

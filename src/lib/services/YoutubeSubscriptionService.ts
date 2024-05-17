@@ -1,5 +1,5 @@
-import { container } from '@sapphire/framework';
 import type { HolodexChannel, YoutubeSubscription } from '@prisma/client';
+import { container } from '@sapphire/framework';
 import type { YoutubeSubscriptionWithChannel } from './types/youtube.js';
 
 export class YoutubeSubscriptionService {
@@ -11,7 +11,7 @@ export class YoutubeSubscriptionService {
 	public async get(guildId: string, channelId: string): Promise<YoutubeSubscriptionWithChannel | null> {
 		return await container.prisma.youtubeSubscription.findUnique({
 			where: { channelId_guildId: { channelId, guildId } },
-			include: { channel: true }
+			include: { channel: true },
 		});
 	}
 
@@ -22,7 +22,7 @@ export class YoutubeSubscriptionService {
 	public async getByGuild(guildId: string): Promise<YoutubeSubscriptionWithChannel[]> {
 		return await container.prisma.youtubeSubscription.findMany({
 			where: { guildId },
-			include: { channel: true }
+			include: { channel: true },
 		});
 	}
 
@@ -32,7 +32,7 @@ export class YoutubeSubscriptionService {
 	 */
 	public async getByChannel(channelId: string): Promise<YoutubeSubscription[]> {
 		return await container.prisma.youtubeSubscription.findMany({
-			where: { id: channelId }
+			where: { id: channelId },
 		});
 	}
 
@@ -46,9 +46,9 @@ export class YoutubeSubscriptionService {
 				AND: {
 					channelId,
 					NOT: { discordChannelId: null },
-					youtubeSettings: { enabled: true }
-				}
-			}
+					youtubeSettings: { enabled: true },
+				},
+			},
 		});
 	}
 
@@ -61,7 +61,7 @@ export class YoutubeSubscriptionService {
 		return await container.prisma.youtubeSubscription
 			.delete({
 				where: { channelId_guildId: { guildId, channelId } },
-				include: { channel: true }
+				include: { channel: true },
 			})
 			.catch(() => null);
 	}
@@ -81,7 +81,7 @@ export class YoutubeSubscriptionService {
 			discordChannelId?: string | null;
 			memberRoleId?: string | null;
 			memberDiscordChannelId?: string | null;
-		}
+		},
 	): Promise<YoutubeSubscription & { channel: HolodexChannel }> {
 		return await container.prisma.youtubeSubscription.upsert({
 			where: { channelId_guildId: { guildId, channelId } },
@@ -96,14 +96,14 @@ export class YoutubeSubscriptionService {
 							coreSettings: {
 								connectOrCreate: {
 									where: { guildId },
-									create: { guildId }
-								}
-							}
-						}
-					}
-				}
+									create: { guildId },
+								},
+							},
+						},
+					},
+				},
 			},
-			include: { channel: true }
+			include: { channel: true },
 		});
 	}
 
@@ -113,7 +113,7 @@ export class YoutubeSubscriptionService {
 	 */
 	public async countByGuild(guildId: string): Promise<number> {
 		return await container.prisma.youtubeSubscription.count({
-			where: { guildId }
+			where: { guildId },
 		});
 	}
 
@@ -124,7 +124,7 @@ export class YoutubeSubscriptionService {
 	 */
 	public async exists(guildId: string, channelId: string): Promise<boolean> {
 		const result = await container.prisma.youtubeSubscription.count({
-			where: { channelId, guildId }
+			where: { channelId, guildId },
 		});
 		return result > 0;
 	}

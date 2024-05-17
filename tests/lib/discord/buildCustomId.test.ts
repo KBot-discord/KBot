@@ -1,7 +1,7 @@
+import { UserError } from '@sapphire/framework';
+import { describe, expect, test } from 'vitest';
 import { buildCustomId } from '../../../src/lib/utilities/discord.js';
 import { mockCustomId, mockCustomIdAlt } from '../../mocks/discord.js';
-import { describe, expect, test } from 'vitest';
-import { UserError } from '@sapphire/framework';
 
 describe('buildCustomId', () => {
 	test('IF prefix with no data THEN custom ID', () => {
@@ -14,7 +14,7 @@ describe('buildCustomId', () => {
 		const result = buildCustomId('custom-id', {
 			key1: 'val1',
 			key2: 'val2',
-			key3: 'val3'
+			key3: 'val3',
 		});
 
 		expect(result).toStrictEqual(mockCustomId);
@@ -24,7 +24,7 @@ describe('buildCustomId', () => {
 		const result = buildCustomId('custom-id', {
 			key1: undefined,
 			key2: null,
-			key3: 'val3'
+			key3: 'val3',
 		});
 
 		expect(result).toStrictEqual(mockCustomIdAlt);
@@ -36,8 +36,8 @@ describe('buildCustomId', () => {
 				key1: undefined,
 				key2: null,
 				key3: {
-					key4: 'val4'
-				}
+					key4: 'val4',
+				},
 			});
 		};
 
@@ -56,7 +56,7 @@ describe('buildCustomId', () => {
 				key7: 'this is a long string',
 				key8: 'this is a long string',
 				key9: 'this is a long string',
-				key10: 'this is a long string'
+				key10: 'this is a long string',
 			});
 		};
 

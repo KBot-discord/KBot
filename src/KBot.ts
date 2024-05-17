@@ -1,12 +1,13 @@
+import { ApplicationCommandRegistries, RegisterBehavior, container } from '@sapphire/framework';
+
 import '@kbotdev/plugin-modules/register';
 import '@sapphire/plugin-scheduled-tasks/register';
 import '@sapphire/plugin-api/register';
 import './plugins/register.js';
 import './lib/utilities/Augments.js';
 
-import { KBotClient } from './lib/extensions/KBotClient.js';
 import { loadConfig } from './config.js';
-import { ApplicationCommandRegistries, RegisterBehavior, container } from '@sapphire/framework';
+import { KBotClient } from './lib/extensions/KBotClient.js';
 
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
 

@@ -4,7 +4,7 @@ import type { AsyncPreconditionResult, PreconditionOptions } from '@sapphire/fra
 import type { CommandInteraction, ContextMenuCommandInteraction } from 'discord.js';
 
 @ApplyOptions<PreconditionOptions>({
-	name: 'EDefer'
+	name: 'EDefer',
 })
 export class BotOwnerPrecondition extends Precondition {
 	public override async chatInputRun(interaction: CommandInteraction): AsyncPreconditionResult {
@@ -22,7 +22,6 @@ export class BotOwnerPrecondition extends Precondition {
 }
 
 declare module '@sapphire/framework' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Preconditions {
 		EDefer: never;
 	}

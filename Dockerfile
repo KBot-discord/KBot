@@ -1,30 +1,38 @@
 ## Builder ##
-FROM node:22.0.0-alpine3.19 as base
+FROM node:22.1.0-alpine3.19 as base
 
-RUN apk update --no-cache
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN apk add -q --no-cache cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make && \
+	corepack enable
+
+## Production dependencies ##
+FROM base as prod-deps
+
+WORKDIR /temp
+
+COPY pnpm-lock.yaml package.json .npmrc ./
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 ## Builder ##
 FROM base AS builder
 
 WORKDIR /temp
 
-RUN apk add -q --no-cache cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make
-
 COPY prisma ./prisma/
 COPY tsconfig.json tsup.config.ts pnpm-lock.yaml package.json .npmrc ./
 COPY src ./src/
 
-RUN corepack enable && \
-	pnpm install --frozen-lockfile && \
-	pnpm run build && \
-	pnpm install --frozen-lockfile --prod
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm db:generate && \
+	pnpm run build
 
 ## App ##
-FROM base as app
+FROM node:22.1.0-alpine3.19 as app
 
 WORKDIR /app
-
-COPY --chown=kbot:kbot assets ./assets/
 
 LABEL org.opencontainers.image.source=https://github.com/KBot-discord/KBot
 LABEL org.opencontainers.image.licenses=AGPL-3.0-or-later
@@ -32,20 +40,20 @@ LABEL org.opencontainers.image.licenses=AGPL-3.0-or-later
 ENV NODE_ENV=production
 
 ## Canvas dependencies
-RUN apk add -q --no-cache \
-		cairo=1.18.0-r0 \
-		jpeg=9e-r1 \
-		pango=1.51.0-r0 \
-		giflib=5.2.2-r0 && \
-	npm i -g prisma && \
+RUN apk update --no-cache && \
+	apk add -q --no-cache \
+		cairo \
+		jpeg \
+		pango \
+		giflib && \
 	addgroup --system --gid 1001 kbot && \
 	adduser --system --uid 1001 kbot
 
 USER kbot:kbot
 
-COPY --from=builder --chown=kbot:kbot /temp/prisma/migrations prisma/migrations/
-COPY --from=builder --chown=kbot:kbot /temp/prisma/schema.prisma prisma/schema.prisma
-COPY --from=builder --chown=kbot:kbot /temp/node_modules node_modules/
+COPY --chown=kbot:kbot assets ./assets/
+COPY --from=builder --chown=kbot:kbot /temp/prisma prisma/
+COPY --from=prod-deps --chown=kbot:kbot /temp/node_modules node_modules/
 COPY --from=builder --chown=kbot:kbot /temp/dist dist/
 COPY --from=builder --chown=kbot:kbot /temp/package.json ./
 

@@ -1,10 +1,10 @@
-import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
+import { Events, Listener } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
 import type { StageInstance } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	event: Events.StageInstanceDelete
+	event: Events.StageInstanceDelete,
 })
 export class StageListener extends Listener<typeof Events.StageInstanceDelete> {
 	public async run(stageInstance: StageInstance): Promise<void> {
@@ -24,8 +24,8 @@ export class StageListener extends Listener<typeof Events.StageInstanceDelete> {
 			this.container.logger.sentryError(error, {
 				context: {
 					event,
-					guildId: stageInstance.guild!.id
-				}
+					guildId: stageInstance.guild!.id,
+				},
 			});
 		});
 	}

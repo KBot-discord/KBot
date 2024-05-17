@@ -1,19 +1,19 @@
-import type { APIMessage, InteractionResponse, Message } from 'discord.js';
-import type { PrismaClient } from '@prisma/client';
 import type { RedisClient } from '@killbasa/redis-utils';
-import type { ChannelPermissionsPayload } from './Errors.js';
-import type { KBotErrors } from './Enums.js';
-import type { ClientConfig } from './Config.js';
-import type { Validator } from '../structures/Validator.js';
+import type { PrismaClient } from '@prisma/client';
+import type { APIMessage, InteractionResponse, Message } from 'discord.js';
 import type { CoreModule } from '../../modules/CoreModule.js';
 import type { EventModule } from '../../modules/EventModule.js';
 import type { ModerationModule } from '../../modules/ModerationModule.js';
 import type { UtilityModule } from '../../modules/UtilityModule.js';
 import type { WelcomeModule } from '../../modules/WelcomeModule.js';
 import type { YoutubeModule } from '../../modules/YouTubeModule.js';
+import type { Holodex } from '../holodex/structures/Holodex.js';
 import type { MeilisearchClient } from '../meili/structures/MeiliClient.js';
 import type { KBotMetrics } from '../observability/KBotMetrics.js';
-import type { Holodex } from '../holodex/structures/Holodex.js';
+import type { Validator } from '../structures/Validator.js';
+import type { ClientConfig } from './Config.js';
+import { KBotErrors } from './Enums.js';
+import type { ChannelPermissionsPayload } from './Errors.js';
 
 export type InteractionResponseUnion = APIMessage | InteractionResponse | Message | void;
 
@@ -22,13 +22,6 @@ export type ReplyArgs = [text: string, options?: { tryEphemeral?: boolean }];
 export type FollowupArgs = [text: string, options?: { ephemeral?: boolean }];
 
 declare module 'discord.js' {
-	interface Client {
-		/**
-		 * Send formatted errors to a channel in the developer server.
-		 */
-		readonly webhook: WebhookClient | null;
-	}
-
 	interface ClientEvents {
 		[KBotErrors.ChannelPermissions]: [payload: ChannelPermissionsPayload];
 	}

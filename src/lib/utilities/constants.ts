@@ -1,11 +1,11 @@
+import { join } from 'node:path';
 import { Time } from '@sapphire/duration';
 import { getRootData } from '@sapphire/pieces';
-import { join } from 'node:path';
 
 export const NodeEnvironments = {
 	Dev: 'development',
 	Staging: 'staging',
-	Production: 'production'
+	Production: 'production',
 } as const;
 
 export const mainFolder = getRootData().root;
@@ -18,26 +18,26 @@ export const DISCORD_STATUS_BASE = 'https://srhpyqt94yxb.statuspage.io/api/v2/';
 
 export const BlankSpace = '\u200B';
 
-export const enum StatusEmbed {
+export enum StatusEmbed {
 	Green = '#43b581',
 	Yellow = '#faa61a',
 	Orange = '#f26522',
 	Red = '#f04747',
-	Black = '#737f8d'
+	Black = '#737f8d',
 }
 
-export const enum EmbedColors {
+export enum EmbedColors {
 	Default = '#006BFC',
 	Success = '#33B54E',
 	Warning = 'Yellow',
 	Error = 'Red',
-	Grey = '#818C94'
+	Grey = '#818C94',
 }
 
-export const enum BrandColors {
+export enum BrandColors {
 	Twitch = '#9146FF ',
 	Twitter = '#1DA1F2',
-	Youtube = '#FF0000'
+	Youtube = '#FF0000',
 }
 
 export const POLL_NUMBERS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
@@ -54,12 +54,12 @@ export const KBotEmoji = {
 	Unlocked: '🔓',
 	GreenCheck: '✅',
 	RedX: '❌',
-	Microphone: '🎤'
+	Microphone: '🎤',
 };
 
 export const CustomEmotes = {
 	Blank: '<:blank:1089252121871917149>',
-	BlueSquare: '<:blue:1089252072874053702>'
+	BlueSquare: '<:blue:1089252072874053702>',
 };
 
 export const GuildEmoteSlots = [50, 100, 150, 250];
@@ -81,7 +81,8 @@ export const UrlRegex = /https\S*?([a-zA-Z0-9]+)(?:\.\w+)?(?:\s|$)/;
  */
 export const EmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,20})>?/;
 
-export const GENERIC_ERROR = 'Woops, something went wrong. The devs have been made aware of the error and are looking into it.';
+export const GENERIC_ERROR =
+	'Woops, something went wrong. The devs have been made aware of the error and are looking into it.';
 
 export function formGenericError(message?: string): string {
 	if (!message) return GENERIC_ERROR;

@@ -1,9 +1,9 @@
-import { EvalCustomIds, EvalFields } from '../../lib/utilities/customIds.js';
-import { validCustomId } from '../../lib/utilities/decorators.js';
+import { inspect } from 'node:util';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes, Result } from '@sapphire/framework';
-import { ModalSubmitInteraction, codeBlock } from 'discord.js';
-import { inspect } from 'util';
+import { type ModalSubmitInteraction, codeBlock } from 'discord.js';
+import { EvalCustomIds, EvalFields } from '../../lib/utilities/customIds.js';
+import { validCustomId } from '../../lib/utilities/decorators.js';
 
 type EvalOptions = {
 	interaction: ModalSubmitInteraction<'cached'>;
@@ -11,12 +11,12 @@ type EvalOptions = {
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: EvalCustomIds.Eval,
-	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
+	interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
 })
 export class ModalHandler extends InteractionHandler {
 	public override async run(
 		interaction: ModalSubmitInteraction<'cached'>, //
-		{ code }: InteractionHandler.ParseResult<this>
+		{ code }: InteractionHandler.ParseResult<this>,
 	): Promise<void> {
 		const result = await Result.fromAsync(async () => await this.eval(code, { interaction }));
 
@@ -24,21 +24,21 @@ export class ModalHandler extends InteractionHandler {
 			ok: async (data) => {
 				if (data.length > 1999) {
 					return await interaction.editReply({
-						content: this.formatContent({ input: code, result: 'Error: too many characters' })
+						content: this.formatContent({ input: code, result: 'Error: too many characters' }),
 					});
 				}
 
 				return await interaction.editReply({
-					content: this.formatContent({ input: code, result: data })
+					content: this.formatContent({ input: code, result: data }),
 				});
 			},
 			err: async (error) => {
 				if (error instanceof Error) {
 					await interaction.editReply({
-						content: this.formatContent({ input: code, result: error.stack! })
+						content: this.formatContent({ input: code, result: error.stack! }),
 					});
 				}
-			}
+			},
 		});
 	}
 
@@ -57,9 +57,10 @@ export class ModalHandler extends InteractionHandler {
 	 * @param options - The options to be made available in the eval function
 	 */
 	// @ts-expect-error This is so `eval` can access `options`
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+	// biome-ignore lint/correctness/noUnusedVariables:
 	private async eval(code: string, options: EvalOptions): Promise<string> {
-		// eslint-disable-next-line no-eval
+		// biome-ignore lint/security/noGlobalEval:
 		const result = eval(code);
 
 		return await this.clean(result);
@@ -69,7 +70,7 @@ export class ModalHandler extends InteractionHandler {
 	 * Clean the result of the `eval` call.
 	 * @param result - The result
 	 */
-	private async clean(result: string): Promise<string> {
+	private clean(result: string): string {
 		if (typeof result !== 'string') {
 			result = inspect(result, { depth: 1 });
 		}

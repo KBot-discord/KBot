@@ -1,8 +1,8 @@
-import { youtubeCacheKey } from './keys.js';
-import { Time } from '@sapphire/duration';
-import { isNullish } from '@sapphire/utilities';
-import { container } from '@sapphire/framework';
 import type { YoutubeSettings } from '@prisma/client';
+import { Time } from '@sapphire/duration';
+import { container } from '@sapphire/framework';
+import { isNullish } from '@sapphire/utilities';
+import { youtubeCacheKey } from './keys.js';
 
 export class YoutubeSettingsService {
 	private readonly cacheKey = youtubeCacheKey;
@@ -27,7 +27,7 @@ export class YoutubeSettingsService {
 		}
 
 		const dbResult = await container.prisma.youtubeSettings.findUnique({
-			where: { guildId }
+			where: { guildId },
 		});
 		if (isNullish(dbResult)) {
 			return null;
@@ -48,7 +48,7 @@ export class YoutubeSettingsService {
 			enabled?: boolean;
 			reactionRoleMessageId?: string | null;
 			reactionRoleChannelId?: string | null;
-		}
+		},
 	): Promise<YoutubeSettings> {
 		const key = this.cacheKey(guildId);
 
@@ -60,10 +60,10 @@ export class YoutubeSettingsService {
 				coreSettings: {
 					connectOrCreate: {
 						where: { guildId },
-						create: { guildId }
-					}
-				}
-			}
+						create: { guildId },
+					},
+				},
+			},
 		});
 		await container.redis.setEx(key, settings, this.defaultExpiry);
 

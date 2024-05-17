@@ -1,11 +1,11 @@
-import { CoreSettingsService } from '../lib/services/CoreSettingsService.js';
-import { KBotModules } from '../lib/types/Enums.js';
 import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
+import { CoreSettingsService } from '../lib/services/CoreSettingsService.js';
+import { KBotModules } from '../lib/types/Enums.js';
 
 @ApplyOptions<Module.Options>({
 	name: KBotModules.Core,
-	fullName: 'Core Module'
+	fullName: 'Core Module',
 })
 export class CoreModule extends Module {
 	public readonly settings: CoreSettingsService;
@@ -20,7 +20,6 @@ export class CoreModule extends Module {
 }
 
 declare module '@kbotdev/plugin-modules' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
 		[KBotModules.Core]: never;
 	}

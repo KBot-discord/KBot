@@ -1,6 +1,6 @@
-import { getGuildEmoteSlots } from '../../../src/lib/utilities/discord.js';
-import { describe, expect, test } from 'vitest';
 import { GuildPremiumTier } from 'discord.js';
+import { describe, expect, test } from 'vitest';
+import { getGuildEmoteSlots } from '../../../src/lib/utilities/discord.js';
 
 describe('getGuildEmoteSlots', () => {
 	test('IF no tier THEN 50', () => {

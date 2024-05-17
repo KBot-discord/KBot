@@ -1,5 +1,5 @@
-import { container } from '@sapphire/framework';
 import type { HolodexChannel } from '@prisma/client';
+import { container } from '@sapphire/framework';
 
 export class YoutubeChannelService {
 	/**
@@ -8,7 +8,7 @@ export class YoutubeChannelService {
 	 */
 	public async get(channelId: string): Promise<HolodexChannel | null> {
 		return await container.prisma.holodexChannel.findUnique({
-			where: { youtubeId: channelId }
+			where: { youtubeId: channelId },
 		});
 	}
 

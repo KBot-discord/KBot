@@ -1,6 +1,6 @@
-import { EmbedColors } from '../../utilities/constants.js';
 import { EmbedBuilder } from 'discord.js';
 import type { APIEmbedField } from 'discord.js';
+import { EmbedColors } from '../../utilities/constants.js';
 
 export class HelpEmbedBuilder {
 	private readonly embed = new EmbedBuilder();
@@ -75,21 +75,21 @@ export class HelpEmbedBuilder {
 				value:
 					this.type === 'Context-menu command' //
 						? `${this.type} (target: ${this.target})`
-						: this.type!
-			}
+						: this.type!,
+			},
 		];
 
 		if (this.optionsField.length > 0) {
 			fields.push({
 				name: 'Options',
-				value: this.optionsField.join('\n\n')
+				value: this.optionsField.join('\n\n'),
 			});
 		}
 
 		if (this.subcommandsField.length > 0) {
 			fields.push({
 				name: 'Subcommands',
-				value: this.subcommandsField.join('\n\n')
+				value: this.subcommandsField.join('\n\n'),
 			});
 		}
 
@@ -97,7 +97,7 @@ export class HelpEmbedBuilder {
 			.setColor(EmbedColors.Default)
 			.setFields(fields)
 			.setFooter({
-				text: '<option> - The is option required • [option] - The option is not required'
+				text: '<option> - The is option required • [option] - The option is not required',
 			});
 	}
 }

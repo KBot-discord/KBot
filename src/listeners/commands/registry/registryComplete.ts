@@ -4,7 +4,7 @@ import type { ApplicationCommandRegistry } from '@sapphire/framework';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.ApplicationCommandRegistriesRegistered,
-	once: true
+	once: true,
 })
 export class CommandListener extends Listener<typeof Events.ApplicationCommandRegistriesRegistered> {
 	public run(registries: Map<string, ApplicationCommandRegistry>, duration: number): void {

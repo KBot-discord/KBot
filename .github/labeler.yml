@@ -1,9 +1,0 @@
-"apps:bot":
-  - "apps/bot/**"
-  - "protos/**"
-
-"apps:docs":
-  - "apps/docs/**"
-
-"packages":
-  - "packages/**"

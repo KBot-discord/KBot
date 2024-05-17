@@ -2,22 +2,22 @@
  * Echo
  */
 export const EchoCustomIds = {
-	Detailed: 'echo-detailed' as const
+	Detailed: 'echo-detailed' as const,
 };
 
 export const EchoFields = {
-	Text: 'text-to-send'
+	Text: 'text-to-send',
 } as const;
 
 /**
  * Eval
  */
 export const EvalCustomIds = {
-	Eval: 'eval-code' as const
+	Eval: 'eval-code' as const,
 };
 
 export const EvalFields = {
-	Code: 'code-to-eval'
+	Code: 'code-to-eval',
 } as const;
 
 /**
@@ -25,19 +25,19 @@ export const EvalFields = {
  */
 export const ResourceCustomIds = {
 	Emote: 'emote-resource-name' as const,
-	Sticker: 'sticker-resource-name' as const
+	Sticker: 'sticker-resource-name' as const,
 };
 
 export const ResourceFields = {
-	Name: 'resourceName'
+	Name: 'resourceName',
 } as const;
 
 /**
  * Credits
  */
-export const enum CreditType {
+export enum CreditType {
 	Emote = 'e',
-	Sticker = 's'
+	Sticker = 's',
 }
 
 export const CreditCustomIds = {
@@ -48,7 +48,7 @@ export const CreditCustomIds = {
 	ResourceModalCreate: 'credit-resource-mcreate' as const,
 	ImageModalCreate: 'credit-image-mcreate' as const,
 	ResourceModalEdit: 'credit-resource-medit' as const,
-	ImageModalEdit: 'credit-image-medit' as const
+	ImageModalEdit: 'credit-image-medit' as const,
 } as const;
 
 export const CreditFields = {
@@ -56,7 +56,7 @@ export const CreditFields = {
 	Source: 'creditSource',
 	Link: 'creditLink',
 	Description: 'creditDesc',
-	Artist: 'creditArtist'
+	Artist: 'creditArtist',
 } as const;
 
 /**
@@ -72,7 +72,7 @@ export const KaraokeCustomIds = {
 	Remove: 'karaoke-remove' as const,
 	Lock: 'karaoke-lock' as const,
 	Unlock: 'karaoke-unlock' as const,
-	Skip: 'karaoke-skip' as const
+	Skip: 'karaoke-skip' as const,
 } as const;
 
 /**
@@ -82,7 +82,7 @@ export const PollCustomIds = {
 	Vote: 'poll-vote' as const,
 	ResultsPublic: 'poll-results-public' as const,
 	ResultsHidden: 'poll-results-hidden' as const,
-	End: 'poll-end' as const
+	End: 'poll-end' as const,
 } as const;
 
 /**
@@ -91,7 +91,7 @@ export const PollCustomIds = {
 export const ReportCustomIds = {
 	Timeout: '@kbotdev/report.timeout' as const,
 	Delete: '@kbotdev/report.delete' as const,
-	Info: '@kbotdev/report.info' as const
+	Info: '@kbotdev/report.info' as const,
 } as const;
 
 /**
@@ -99,5 +99,5 @@ export const ReportCustomIds = {
  */
 export const YoutubeCustomIds = {
 	RoleReaction: 'role-reaction' as const,
-	RoleReactionMember: 'role-reaction-member' as const
+	RoleReactionMember: 'role-reaction-member' as const,
 } as const;

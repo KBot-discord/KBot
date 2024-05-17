@@ -1,16 +1,16 @@
-import { KBotModules } from '../../lib/types/Enums.js';
-import { Events, Listener, Result } from '@sapphire/framework';
-import { ApplyOptions } from '@sapphire/decorators';
-import { green, red, yellowBright } from 'colorette';
-import { isNullOrUndefined } from '@sapphire/utilities';
 import type { Module, Modules } from '@kbotdev/plugin-modules';
+import { ApplyOptions } from '@sapphire/decorators';
+import { Events, Listener, Result } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { green, red, yellowBright } from 'colorette';
 import type { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import type { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import type { DocumentCommand } from '../../lib/meili/types/MeiliTypes.js';
+import { KBotModules } from '../../lib/types/Enums.js';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.ClientReady,
-	once: true
+	once: true,
 })
 export class ClientListener extends Listener<typeof Events.ClientReady> {
 	private readonly commandsToFilter = ['help'];
@@ -23,7 +23,7 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 		{ key: 'Moderation', value: KBotModules.Moderation },
 		{ key: 'Utility', value: KBotModules.Utility },
 		{ key: 'Welcome', value: KBotModules.Welcome },
-		{ key: 'YouTube', value: KBotModules.YouTube }
+		{ key: 'YouTube', value: KBotModules.YouTube },
 	];
 
 	public async run(): Promise<void> {
@@ -46,19 +46,19 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 			{ key: 'Prisma', value: await Result.fromAsync(async () => await prisma.$queryRaw`SELECT 1`) },
 			{ key: 'Redis', value: await Result.fromAsync(async () => await redis.client.ping()) },
 			{ key: 'Meili', value: await Result.fromAsync(async () => await meili.health()) },
-			{ key: `API Enabled (port: ${config.api.port})`, value: !isNullOrUndefined(client.options.api) }
+			{ key: `API Enabled (port: ${config.api.port})`, value: !isNullOrUndefined(client.options.api) },
 		]);
 
 		this.print({
 			values: [
 				{ name: 'User', value: client.user!.username },
-				{ name: 'Environment', value: config.isDev ? 'Dev' : 'Production' }
+				{ name: 'Environment', value: config.isDev ? 'Dev' : 'Production' },
 			],
 			lists: [
 				{ name: 'Stores', items: stores.map((store) => `${store.size} ${store.name}`) },
 				{ name: 'Modules', items: [...loadedModules.entries()].map(([name, value]) => `[${loaded(value)}] ${name}`) },
-				{ name: 'Services', items: [...loadedServices.entries()].map(([name, value]) => `[${loaded(value)}] ${name}`) }
-			]
+				{ name: 'Services', items: [...loadedServices.entries()].map(([name, value]) => `[${loaded(value)}] ${name}`) },
+			],
 		});
 	}
 
@@ -83,7 +83,7 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 			this.printList({
 				title: title(name),
 				array: items,
-				pad
+				pad,
 			});
 		}
 	}
@@ -135,7 +135,9 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 	 * Check if the provided services are healthy.
 	 * @param servicesToCheck - The services to check.
 	 */
-	private checkServices(servicesToCheck: { key: string; value: Result<unknown, unknown> | boolean }[]): Map<string, boolean> {
+	private checkServices(
+		servicesToCheck: { key: string; value: Result<unknown, unknown> | boolean }[],
+	): Map<string, boolean> {
 		return servicesToCheck.reduce<Map<string, boolean>>((acc, { key, value }) => {
 			if (typeof value === 'boolean') {
 				acc.set(key, value);
@@ -160,7 +162,7 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 			.map((command, index) => ({
 				id: String(index),
 				name: command.name,
-				description: command.description
+				description: command.description,
 			}));
 
 		await this.container.meili.resetIndex('commands', documents);

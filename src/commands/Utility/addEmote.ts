@@ -1,21 +1,29 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { EmojiRegex } from '@sapphire/discord.js-utilities';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import {
+	ActionRowBuilder,
+	ApplicationCommandType,
+	ModalBuilder,
+	PermissionFlagsBits,
+	TextInputBuilder,
+	TextInputStyle,
+} from 'discord.js';
+import type { Message, MessageContextMenuCommandInteraction } from 'discord.js';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
+import type { AddResourceModal, EmojiData } from '../../lib/types/CustomIds.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { UrlRegex } from '../../lib/utilities/constants.js';
 import { ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
 import { attachmentFromMessage, buildCustomId, calculateEmoteSlots } from '../../lib/utilities/discord.js';
 import { fetchBase64Image } from '../../lib/utilities/functions.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import { EmojiRegex } from '@sapphire/discord.js-utilities';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { ApplyOptions } from '@sapphire/decorators';
-import { ActionRowBuilder, ApplicationCommandType, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
-import type { AddResourceModal, EmojiData } from '../../lib/types/CustomIds.js';
-import type { Message } from 'discord.js';
 import type { UtilityModule } from '../../modules/UtilityModule.js';
 
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Utility,
-	description: 'Adds the image attachment, link, or emoji that is in the message as an emoji. Priority is `emoji > attachment > link`.',
+	description:
+		'Adds the image attachment, link, or emoji that is in the message as an emoji. Priority is `emoji > attachment > link`.',
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
@@ -23,7 +31,7 @@ import type { UtilityModule } from '../../modules/UtilityModule.js';
 		return builder //
 			.setName('Add Emote')
 			.setTarget('message');
-	}
+	},
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -40,37 +48,37 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.setDMPermission(false),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
-	public override async contextMenuRun(interaction: KBotCommand.ContextMenuCommandInteraction): Promise<any> {
+	public override async contextMenuRun(interaction: MessageContextMenuCommandInteraction<'cached'>): Promise<unknown> {
 		const message = interaction.options.getMessage('message', true);
 
 		const emoji = await this.getEmoji(message);
 		if (isNullOrUndefined(emoji)) {
 			return await interaction.errorReply(
 				'There is no emoji or file to add.\n\nSupported file types: `jpeg`/`jpg`, `png`, `gif`\nSupported file size: less than 256KB',
-				{ tryEphemeral: true }
+				{ tryEphemeral: true },
 			);
 		}
 
 		const { staticSlots, animatedSlots } = calculateEmoteSlots(interaction.guild);
 		if (emoji.animated && animatedSlots === 0) {
 			return await interaction.errorReply('No animated emoji slots are left.', {
-				tryEphemeral: true
+				tryEphemeral: true,
 			});
 		}
 		if (!emoji.animated && staticSlots === 0) {
 			return await interaction.errorReply('No static emoji slots are left.', {
-				tryEphemeral: true
+				tryEphemeral: true,
 			});
 		}
 
 		await this.container.utility.setResourceCache(message.id, interaction.user.id, emoji);
 
-		await interaction.showModal(this.buildModal(message.id, interaction.user.id, emoji.name));
+		return await interaction.showModal(this.buildModal(message.id, interaction.user.id, emoji.name));
 	}
 
 	/**
@@ -86,7 +94,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			return {
 				url: `https://cdn.discordapp.com/emojis/${emojiData[3]}.${emojiData[1] === 'a' ? 'gif' : 'png'}`,
 				animated: emojiData.at(1) === 'a',
-				name: emojiData.at(2)
+				name: emojiData.at(2),
 			};
 		}
 
@@ -96,7 +104,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 			return {
 				url: attachmentData.url,
-				animated: attachmentData.fileType === '.gif'
+				animated: attachmentData.fileType === '.gif',
 			};
 		}
 
@@ -107,7 +115,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 
 			return {
 				url: imageData.url,
-				animated: imageData.fileType === 'gif'
+				animated: imageData.fileType === 'gif',
 			};
 		}
 
@@ -129,13 +137,13 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			.setCustomId(
 				buildCustomId<AddResourceModal>(ResourceCustomIds.Emote, {
 					mi: messageId,
-					ui: userId
-				})
+					ui: userId,
+				}),
 			)
 			.setTitle('Emote name')
 			.addComponents(
 				new ActionRowBuilder<TextInputBuilder>() //
-					.addComponents(textBuilder)
+					.addComponents(textBuilder),
 			);
 	}
 }

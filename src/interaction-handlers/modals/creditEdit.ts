@@ -1,22 +1,22 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { EmbedBuilder, type ModalSubmitInteraction } from 'discord.js';
+import type { APIEmbedField } from 'discord.js';
+import type { CreditEditModal } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { CreditCustomIds, CreditFields, CreditType } from '../../lib/utilities/customIds.js';
 import { validCustomId } from '../../lib/utilities/decorators.js';
 import { getResourceFromType, parseCustomId } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
-import type { APIEmbedField } from 'discord.js';
-import type { CreditEditModal } from '../../lib/types/CustomIds.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: CreditCustomIds.ResourceModalEdit,
-	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
+	interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
 })
 export class ModalHandler extends InteractionHandler {
 	public override async run(
 		interaction: ModalSubmitInteraction<'cached'>,
-		{ id, resource, type, source, description, artist }: InteractionHandler.ParseResult<this>
+		{ id, resource, type, source, description, artist }: InteractionHandler.ParseResult<this>,
 	): Promise<void> {
 		const message = await interaction.channel!.messages.fetch(id);
 
@@ -33,9 +33,9 @@ export class ModalHandler extends InteractionHandler {
 					.setThumbnail(message.embeds[0].thumbnail!.url)
 					.addFields(fields)
 					.setFooter({
-						text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`
-					})
-			]
+						text: `${type === CreditType.Emote ? 'Emote' : 'Sticker'} ID: ${resource.id}`,
+					}),
+			],
 		});
 	}
 
@@ -43,18 +43,20 @@ export class ModalHandler extends InteractionHandler {
 	public override async parse(interaction: ModalSubmitInteraction<'cached'>) {
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`);
+			await interaction.errorReply(
+				'The module for this feature is disabled.\nYou can run `/utility toggle` to enable it.',
+			);
 			return this.none();
 		}
 
 		const {
-			data: { mi, ri, t }
+			data: { mi, ri, t },
 		} = parseCustomId<CreditEditModal>(interaction.customId);
 
 		const resource = getResourceFromType(interaction.guildId, ri, t);
 		if (!resource) {
 			await interaction.defaultFollowup(`That ${t === CreditType.Emote ? 'emote' : 'sticker'} has been deleted.`, {
-				ephemeral: true
+				ephemeral: true,
 			});
 			return this.none();
 		}

@@ -1,13 +1,13 @@
-import { fetchChannel } from '../../../lib/utilities/discord.js';
-import { Events, Listener } from '@sapphire/framework';
-import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType, PermissionFlagsBits, userMention } from 'discord.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
 import type { KaraokeUser } from '@prisma/client';
+import { ApplyOptions } from '@sapphire/decorators';
+import { Events, Listener } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { ChannelType, PermissionFlagsBits, userMention } from 'discord.js';
+import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
+import { fetchChannel } from '../../../lib/utilities/discord.js';
 
 @ApplyOptions<Listener.Options>({
-	event: Events.VoiceStateUpdate
+	event: Events.VoiceStateUpdate,
 })
 export class VoiceListener extends Listener<typeof Events.VoiceStateUpdate> {
 	public async run(oldState: VoiceState, newState: VoiceState): Promise<void> {
@@ -18,7 +18,7 @@ export class VoiceListener extends Listener<typeof Events.VoiceStateUpdate> {
 			PermissionFlagsBits.ManageEvents,
 			PermissionFlagsBits.MuteMembers,
 			PermissionFlagsBits.MoveMembers,
-			PermissionFlagsBits.ManageChannels
+			PermissionFlagsBits.ManageChannels,
 		]);
 		if (!result) return;
 
@@ -76,7 +76,10 @@ export class VoiceListener extends Listener<typeof Events.VoiceStateUpdate> {
 			}
 
 			// Remove user from queue
-			const user = queue.find(({ id, partnerId, eventId }) => eventId === oldState.channelId && (id === oldState.id || partnerId === oldState.id));
+			const user = queue.find(
+				({ id, partnerId, eventId }) =>
+					eventId === oldState.channelId && (id === oldState.id || partnerId === oldState.id),
+			);
 			if (isNullOrUndefined(user)) return;
 
 			await events.karaoke.removeUserFromQueue(eventId, { id: user.id, partnerId: user.partnerId ?? undefined });
@@ -87,7 +90,7 @@ export class VoiceListener extends Listener<typeof Events.VoiceStateUpdate> {
 					content: user.partnerId //
 						? `${userMention(user.id)} & ${userMention(user.partnerId)} have left the queue.`
 						: `${userMention(user.id)} has left the queue.`,
-					allowedMentions: { users: user.partnerId ? [user.id, user.partnerId] : [user.id] }
+					allowedMentions: { users: user.partnerId ? [user.id, user.partnerId] : [user.id] },
 				});
 			}
 		}

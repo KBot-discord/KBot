@@ -1,7 +1,7 @@
-import { HelpEmbedBuilder } from '../structures/builders/HelpEmbedBuilder.js';
 import { ModuleSubcommand } from '@kbotdev/plugin-modules';
 import type { Module } from '@kbotdev/plugin-modules';
 import type { EmbedBuilder } from 'discord.js';
+import { HelpEmbedBuilder } from '../structures/builders/HelpEmbedBuilder.js';
 
 export abstract class KBotSubcommand<M extends Module> extends ModuleSubcommand<M> {
 	public helpEmbed: EmbedBuilder;

@@ -1,5 +1,3 @@
-import { getUserInfo, isWebhookMessage } from '../../utilities/discord.js';
-import { EmbedColors } from '../../utilities/constants.js';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
@@ -8,20 +6,22 @@ import {
 	EmbedBuilder,
 	InteractionCollector,
 	InteractionType,
-	PermissionFlagsBits
+	PermissionFlagsBits,
 } from 'discord.js';
 import type { APIActionRowComponent, APIButtonComponent, ButtonInteraction, GuildMember, Message } from 'discord.js';
+import { EmbedColors } from '../../utilities/constants.js';
+import { getUserInfo, isWebhookMessage } from '../../utilities/discord.js';
 
 export enum ReportButtons {
-	Delete,
-	Info
+	Delete = 0,
+	Info = 1,
 }
 
 const ButtonCustomId = {
 	Delete: '@kbotdev/report.delete',
 	Info: '@kbotdev/report.info',
 	Confirm: '@kbotdev/report.confirm',
-	Cancel: '@kbotdev/report.cancel'
+	Cancel: '@kbotdev/report.cancel',
 } as const;
 
 export class ReportHandler {
@@ -49,9 +49,12 @@ export class ReportHandler {
 
 		if (interaction.customId === ButtonCustomId.Delete) {
 			if (!channel.permissionsFor(await interaction.guild.members.fetchMe()).has(PermissionFlagsBits.ManageMessages)) {
-				await interaction.errorFollowup("I don't have the required permission to delete that message.\n\nRequired permission: Manage Messages", {
-					ephemeral: true
-				});
+				await interaction.errorFollowup(
+					"I don't have the required permission to delete that message.\n\nRequired permission: Manage Messages",
+					{
+						ephemeral: true,
+					},
+				);
 				return;
 			}
 			await this.toggleButton(true, ReportButtons.Delete);
@@ -63,7 +66,7 @@ export class ReportHandler {
 
 			const embed = await getUserInfo(interaction, this.targetMember.id);
 			await interaction.followUp({
-				embeds: [embed]
+				embeds: [embed],
 			});
 		}
 	}
@@ -74,19 +77,23 @@ export class ReportHandler {
 		this.collector?.removeAllListeners();
 	}
 
-	private async confirmationPrompt(interaction: ButtonInteraction<'cached'>, text: string, type: ReportButtons): Promise<void> {
+	private async confirmationPrompt(
+		interaction: ButtonInteraction<'cached'>,
+		text: string,
+		type: ReportButtons,
+	): Promise<void> {
 		const row = new ActionRowBuilder<ButtonBuilder>()
 			.addComponents(
 				new ButtonBuilder() //
 					.setCustomId(ButtonCustomId.Confirm)
 					.setLabel('Confirm')
-					.setStyle(ButtonStyle.Success)
+					.setStyle(ButtonStyle.Success),
 			)
 			.addComponents(
 				new ButtonBuilder() //
 					.setCustomId(ButtonCustomId.Cancel)
 					.setLabel('Cancel')
-					.setStyle(ButtonStyle.Danger)
+					.setStyle(ButtonStyle.Danger),
 			);
 
 		const message = await interaction.followUp({
@@ -94,9 +101,9 @@ export class ReportHandler {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setDescription(text)
-					.setFooter({ text: `Confirmation for ${interaction.member.user.username}` })
+					.setFooter({ text: `Confirmation for ${interaction.member.user.username}` }),
 			],
-			components: [row]
+			components: [row],
 		});
 		const filter = (i: ButtonInteraction<'cached'>): boolean => {
 			return i.member.id === interaction.member.id;
@@ -106,7 +113,7 @@ export class ReportHandler {
 			.awaitMessageComponent({
 				filter,
 				componentType: ComponentType.Button,
-				time: 30000
+				time: 30000,
 			})
 			.then(async (i: ButtonInteraction): Promise<void> => {
 				await message.delete();
@@ -137,7 +144,7 @@ export class ReportHandler {
 			message: this.reportMessage,
 			guild: this.targetMessage.guild,
 			channel: this.targetMessage.channel,
-			interactionType: InteractionType.MessageComponent
+			interactionType: InteractionType.MessageComponent,
 		})
 			.on('collect', this.handleCollect.bind(this))
 			.on('end', this.handleEnd.bind(this));
@@ -147,14 +154,14 @@ export class ReportHandler {
 		const row = this.reportMessage.components[0] as APIActionRowComponent<APIButtonComponent>;
 		const updatedRow: ActionRowBuilder<ButtonBuilder> = ActionRowBuilder.from(row);
 
-		buttons.forEach((entry) => {
+		for (const entry of buttons) {
 			updatedRow.components[entry].setDisabled(disabled);
-		});
+		}
 
 		await this.reportMessage
 			.edit({
 				embeds: this.reportMessage.embeds,
-				components: [updatedRow]
+				components: [updatedRow],
 			})
 			.catch(() => null);
 	}

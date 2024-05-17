@@ -1,15 +1,16 @@
+import { Module } from '@kbotdev/plugin-modules';
+import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import { ApplyOptions } from '@sapphire/decorators';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { EmbedBuilder, channelMention } from 'discord.js';
 import { EventSettingsService } from '../lib/services/EventSettingsService.js';
 import { KaraokeService } from '../lib/services/KaraokeService.js';
+import { KBotModules } from '../lib/types/Enums.js';
 import { EmbedColors } from '../lib/utilities/constants.js';
-import { Module } from '@kbotdev/plugin-modules';
-import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, channelMention } from 'discord.js';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { IsEnabledContext } from '@kbotdev/plugin-modules';
-import type { KBotModules } from '../lib/types/Enums.js';
 
 @ApplyOptions<Module.Options>({
-	fullName: 'Event Module'
+	name: KBotModules.Events,
+	fullName: 'Event Module',
 })
 export class EventModule extends Module {
 	public readonly settings: EventSettingsService;
@@ -41,15 +42,14 @@ export class EventModule extends Module {
 					value: [
 						'**1.** Join the karaoke queue by running the `/karaoke join` slash command.',
 						'**2.** Once your turn comes up, you will be invited to become a speaker on the stage.',
-						'**3.** After singing, you can either leave the stage by muting your mic, clicking the "Move to audience" button, leaving the stage, or running the `/karaoke leave` slash command.'
-					].join('\n')
-				}
+						'**3.** After singing, you can either leave the stage by muting your mic, clicking the "Move to audience" button, leaving the stage, or running the `/karaoke leave` slash command.',
+					].join('\n'),
+				},
 			);
 	}
 }
 
 declare module '@kbotdev/plugin-modules' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
 		[KBotModules.Events]: never;
 	}

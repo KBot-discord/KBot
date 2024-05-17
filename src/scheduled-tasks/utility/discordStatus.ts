@@ -1,12 +1,12 @@
-import { IncidentNotification } from '../../lib/structures/IncidentNotification.js';
-import { DISCORD_STATUS_BASE, StatusEmbed } from '../../lib/utilities/constants.js';
-import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
+import type { IncidentMessage, Prisma } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, TimestampStyles, time } from 'discord.js';
 import { FetchMethods, FetchResultTypes, fetch } from '@sapphire/fetch';
 import { container } from '@sapphire/framework';
-import type { IncidentMessage, Prisma } from '@prisma/client';
+import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
+import { EmbedBuilder, TimestampStyles, time } from 'discord.js';
+import { IncidentNotification } from '../../lib/structures/IncidentNotification.js';
 import type { StatusPageIncident, StatusPageResult } from '../../lib/types/DiscordStatus.js';
+import { DISCORD_STATUS_BASE, StatusEmbed } from '../../lib/utilities/constants.js';
 
 type DatabaseIncidentData = {
 	updatedAt: Date | undefined;
@@ -18,8 +18,8 @@ type DatabaseIncidentData = {
 	pattern: '0 */5 * * * *', // Every 5 minutes
 	enabled: container.config.enableTasks,
 	customJobOptions: {
-		jobId: 'tasks:discordStatus'
-	}
+		jobId: 'tasks:discordStatus',
+	},
 })
 export class UtilityTask extends ScheduledTask {
 	public override async run(): Promise<void> {
@@ -31,9 +31,9 @@ export class UtilityTask extends ScheduledTask {
 		const response = await fetch<StatusPageResult>(
 			`${DISCORD_STATUS_BASE}/incidents.json`,
 			{
-				method: FetchMethods.Get
+				method: FetchMethods.Get,
 			},
-			FetchResultTypes.JSON
+			FetchResultTypes.JSON,
 		).catch(() => null);
 		if (!response) return;
 
@@ -81,14 +81,14 @@ export class UtilityTask extends ScheduledTask {
 		incident: StatusPageIncident,
 		embed: EmbedBuilder,
 		notifications: IncidentNotification[],
-		newIncident = false
+		newIncident = false,
 	): Promise<void> {
 		const { prisma } = this.container;
 
 		const validNotifications: IncidentNotification[] = [];
 
 		const fetchedNotifications = await Promise.all(
-			notifications.map(async (notification) => await notification.fetchChannel()) //
+			notifications.map(async (notification) => await notification.fetchChannel()), //
 		);
 
 		for (const notification of fetchedNotifications) {
@@ -99,7 +99,7 @@ export class UtilityTask extends ScheduledTask {
 		}
 
 		const sendMessageResult = await Promise.all(
-			validNotifications.map(async (notification) => await notification.sendMessage(embed)) //
+			validNotifications.map(async (notification) => await notification.sendMessage(embed)), //
 		);
 
 		if (newIncident) {
@@ -113,9 +113,9 @@ export class UtilityTask extends ScheduledTask {
 					data: {
 						id: incident.id,
 						resolved: incident.status === 'resolved' || incident.status === 'postmortem',
-						messages: { createMany: { data: messages } }
-					}
-				})
+						messages: { createMany: { data: messages } },
+					},
+				}),
 			]);
 		} else {
 			const newNotifications: IncidentMessage[] = sendMessageResult
@@ -127,9 +127,9 @@ export class UtilityTask extends ScheduledTask {
 			await prisma.$transaction([
 				prisma.discordIncident.update({
 					where: { id: incident.id },
-					data: { resolved: incident.status === 'resolved' || incident.status === 'postmortem' }
+					data: { resolved: incident.status === 'resolved' || incident.status === 'postmortem' },
 				}),
-				prisma.incidentMessage.createMany({ data: newNotifications })
+				prisma.incidentMessage.createMany({ data: newNotifications }),
 			]);
 		}
 	}
@@ -164,8 +164,8 @@ export class UtilityTask extends ScheduledTask {
 			embed.addFields([
 				{
 					name: `${name} (${timeString})`,
-					value: update.body
-				}
+					value: update.body,
+				},
 			]);
 		}
 

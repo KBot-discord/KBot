@@ -1,13 +1,20 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { Time } from '@sapphire/duration';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import {
+	ActionRowBuilder,
+	type ButtonInteraction,
+	ModalBuilder,
+	PermissionFlagsBits,
+	TextInputBuilder,
+	TextInputStyle,
+} from 'discord.js';
+import type { Embed, Emoji, Sticker } from 'discord.js';
+import type { Credit, CreditEditModal } from '../../lib/types/CustomIds.js';
 import { CreditCustomIds, CreditFields, CreditType } from '../../lib/utilities/customIds.js';
 import { interactionRatelimit, validCustomId } from '../../lib/utilities/decorators.js';
 import { buildCustomId, parseCustomId } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonInteraction, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
-import { Time } from '@sapphire/duration';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { Embed, Emoji, Sticker } from 'discord.js';
-import type { Credit, CreditEditModal } from '../../lib/types/CustomIds.js';
 
 type EmoteCreditEmbed = {
 	source: string;
@@ -17,10 +24,13 @@ type EmoteCreditEmbed = {
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: CreditCustomIds.ResourceEdit,
-	interactionHandlerType: InteractionHandlerTypes.Button
+	interactionHandlerType: InteractionHandlerTypes.Button,
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { resource, type }: InteractionHandler.ParseResult<this>): Promise<void> {
+	public override async run(
+		interaction: ButtonInteraction<'cached'>,
+		{ resource, type }: InteractionHandler.ParseResult<this>,
+	): Promise<void> {
 		const data = this.parseEmbedFields(interaction.message.embeds[0]);
 		const modal = this.buildModal(interaction.message.id, resource.id!, type, data);
 
@@ -32,21 +42,24 @@ export class ButtonHandler extends InteractionHandler {
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
 			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', {
-				tryEphemeral: true
+				tryEphemeral: true,
 			});
 			return this.none();
 		}
 
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, {
-				tryEphemeral: true
-			});
+			await interaction.errorReply(
+				'The module for this feature is disabled.\nYou can run `/utility toggle` to enable it.',
+				{
+					tryEphemeral: true,
+				},
+			);
 			return this.none();
 		}
 
 		const {
-			data: { ri, t }
+			data: { ri, t },
 		} = parseCustomId<Credit>(interaction.customId);
 
 		let resource: Emoji | Sticker;
@@ -54,7 +67,7 @@ export class ButtonHandler extends InteractionHandler {
 			const emoji = interaction.guild.emojis.cache.get(ri);
 			if (!emoji) {
 				await interaction.defaultFollowup('That emote has been deleted.', {
-					ephemeral: true
+					ephemeral: true,
 				});
 				return this.none();
 			}
@@ -64,7 +77,7 @@ export class ButtonHandler extends InteractionHandler {
 			const sticker = interaction.guild.stickers.cache.get(ri);
 			if (!sticker) {
 				await interaction.defaultFollowup('That sticker has been deleted.', {
-					ephemeral: true
+					ephemeral: true,
 				});
 				return this.none();
 			}
@@ -84,7 +97,7 @@ export class ButtonHandler extends InteractionHandler {
 		return {
 			description: fields.find((e) => e.name === 'Description')?.value ?? '',
 			artist: fields.find((e) => e.name === 'Artist')?.value ?? '',
-			source: fields.find((e) => e.name === 'Image source')?.value ?? ''
+			source: fields.find((e) => e.name === 'Image source')?.value ?? '',
 		};
 	}
 
@@ -102,8 +115,8 @@ export class ButtonHandler extends InteractionHandler {
 				buildCustomId<CreditEditModal>(CreditCustomIds.ResourceModalEdit, {
 					mi: messageId,
 					ri: resourceId,
-					t: type
-				})
+					t: type,
+				}),
 			)
 			.setTitle(`'Edit ${type === CreditType.Emote ? 'emote' : 'sticker'} credit info'`)
 			.addComponents(
@@ -115,7 +128,7 @@ export class ButtonHandler extends InteractionHandler {
 						.setMinLength(0)
 						.setMaxLength(100)
 						.setValue(source)
-						.setRequired(false)
+						.setRequired(false),
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -125,7 +138,7 @@ export class ButtonHandler extends InteractionHandler {
 						.setMinLength(0)
 						.setMaxLength(100)
 						.setValue(description)
-						.setRequired(false)
+						.setRequired(false),
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -136,8 +149,8 @@ export class ButtonHandler extends InteractionHandler {
 						.setMaxLength(100)
 						.setRequired(false)
 						.setValue(artist)
-						.setRequired(false)
-				)
+						.setRequired(false),
+				),
 			);
 	}
 }

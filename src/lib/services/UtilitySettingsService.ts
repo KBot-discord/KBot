@@ -1,8 +1,8 @@
-import { utilityCacheKey } from './keys.js';
-import { Time } from '@sapphire/duration';
-import { isNullish } from '@sapphire/utilities';
-import { container } from '@sapphire/framework';
 import type { UtilitySettings } from '@prisma/client';
+import { Time } from '@sapphire/duration';
+import { container } from '@sapphire/framework';
+import { isNullish } from '@sapphire/utilities';
+import { utilityCacheKey } from './keys.js';
 
 export class UtilitySettingsService {
 	private readonly cacheKey = utilityCacheKey;
@@ -27,7 +27,7 @@ export class UtilitySettingsService {
 		}
 
 		const dbResult = await container.prisma.utilitySettings.findUnique({
-			where: { guildId }
+			where: { guildId },
 		});
 		if (isNullish(dbResult)) {
 			return null;
@@ -48,7 +48,7 @@ export class UtilitySettingsService {
 			enabled?: boolean;
 			incidentChannelId?: string | null;
 			creditsChannelId?: string | null;
-		}
+		},
 	): Promise<UtilitySettings> {
 		const key = this.cacheKey(guildId);
 
@@ -60,10 +60,10 @@ export class UtilitySettingsService {
 				coreSettings: {
 					connectOrCreate: {
 						where: { guildId },
-						create: { guildId }
-					}
-				}
-			}
+						create: { guildId },
+					},
+				},
+			},
 		});
 		await container.redis.setEx(key, settings, this.defaultExpiry);
 
@@ -77,12 +77,12 @@ export class UtilitySettingsService {
 		return await container.prisma.utilitySettings
 			.findMany({
 				where: { AND: { enabled: true, NOT: { incidentChannelId: null } } },
-				select: { guildId: true, incidentChannelId: true }
+				select: { guildId: true, incidentChannelId: true },
 			})
 			.then((res) =>
 				res //
 					.filter((settings) => !isNullish(settings.incidentChannelId))
-					.map(({ guildId, incidentChannelId }) => ({ guildId, channelId: incidentChannelId! }))
+					.map(({ guildId, incidentChannelId }) => ({ guildId, channelId: incidentChannelId! })),
 			);
 	}
 }

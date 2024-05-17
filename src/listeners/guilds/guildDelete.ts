@@ -1,10 +1,10 @@
-import { baseCacheKey } from '../../lib/services/keys.js';
-import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
+import { Events, Listener } from '@sapphire/framework';
 import type { Guild } from 'discord.js';
+import { baseCacheKey } from '../../lib/services/keys.js';
 
 @ApplyOptions<Listener.Options>({
-	event: Events.GuildDelete
+	event: Events.GuildDelete,
 })
 export class GuildListener extends Listener<typeof Events.GuildDelete> {
 	public async run(guild: Guild): Promise<void> {

@@ -3,7 +3,7 @@
  */
 export const MeiliCategories = {
 	Commands: 'commands',
-	YoutubeChannels: 'youtubeChannels'
+	YoutubeChannels: 'youtubeChannels',
 } as const;
 
 export type MeiliIndex = (typeof MeiliCategories)[keyof typeof MeiliCategories];

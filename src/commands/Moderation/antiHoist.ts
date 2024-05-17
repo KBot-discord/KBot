@@ -1,11 +1,11 @@
+import type { ModerationSettings } from '@prisma/client';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors, KBotEmoji } from '../../lib/utilities/constants.js';
 import { getGuildIcon } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { ModerationSettings } from '@prisma/client';
 import type { ModerationModule } from '../../modules/ModerationModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -19,13 +19,13 @@ import type { ModerationModule } from '../../modules/ModerationModule.js';
 			.setName('Anti-Hoist')
 			.setSubcommands([
 				{ label: '/antihoist toggle <value>', description: 'Enable or disable anti-hoist' }, //
-				{ label: '/antihoist settings', description: 'Show the current settings' }
+				{ label: '/antihoist settings', description: 'Show the current settings' },
 			]);
 	},
 	subcommands: [
 		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
-		{ name: 'settings', chatInputRun: 'chatInputSettings' }
-	]
+		{ name: 'settings', chatInputRun: 'chatInputSettings' },
+	],
 })
 export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -48,18 +48,18 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 								option //
 									.setName('value')
 									.setDescription('True: anti-hoist is enabled. False: anti-hoist is disabled.')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('settings')
-							.setDescription('Show the current settings')
+							.setDescription('Show the current settings'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -67,7 +67,7 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			antiHoistEnabled: value
+			antiHoistEnabled: value,
 		});
 
 		const description = settings.enabled //
@@ -79,8 +79,8 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Anti-Hoist settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(description)
-			]
+					.setDescription(description),
+			],
 		});
 	}
 
@@ -90,7 +90,10 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 		return await this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: ModerationSettings | null): Promise<unknown> {
+	private async showSettings(
+		interaction: KBotSubcommand.ChatInputCommandInteraction,
+		settings: ModerationSettings | null,
+	): Promise<unknown> {
 		return await interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
@@ -99,10 +102,10 @@ export class ModerationCommand extends KBotSubcommand<ModerationModule> {
 					.addFields([
 						{
 							name: 'Enabled',
-							value: `${settings?.antiHoistEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`
-						}
-					])
-			]
+							value: `${settings?.antiHoistEnabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`,
+						},
+					]),
+			],
 		});
 	}
 }

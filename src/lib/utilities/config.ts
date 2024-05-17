@@ -1,6 +1,6 @@
-import { flattenObject } from './functions.js';
 import { isNullOrUndefinedOrEmpty } from '@sapphire/utilities';
 import type { ClientConfig } from '../types/Config.js';
+import { flattenObject } from './functions.js';
 
 /**
  * Asserts that a config has no undefined values.
@@ -33,7 +33,7 @@ export function envGetString(key: string): string {
 export function envGetNumber(key: string): number {
 	const value = process.env[key];
 	const number = Number(value);
-	if (isNullOrUndefinedOrEmpty(value) || isNaN(number)) {
+	if (isNullOrUndefinedOrEmpty(value) || Number.isNaN(number)) {
 		const errorString = `"${key}" must be set to a number`;
 		throw new TypeError(errorString);
 	}

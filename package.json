@@ -17,8 +17,7 @@
 		"check": "tsc",
 		"dev": "tsup --watch --onSuccess \"yarn start\"",
 		"start": "node --enable-source-maps ./dist/KBot.js",
-		"lint": "eslint --fix --ext ts src tests",
-		"format": "prettier --write --log-level=warn \"{src,tests}/**/*.{js,ts,json}\"",
+		"lint": "biome check --apply .",
 		"test": "vitest --watch=false",
 		"test:watch": "vitest -w",
 		"db:generate": "prisma generate",
@@ -28,71 +27,62 @@
 		"docs:build": "vitepress build docs",
 		"docs:preview": "vitepress preview docs",
 		"docker": "docker buildx build -t kbot/bot .",
-		"dry-run": "pnpm build && pnpm lint && pnpm format"
+		"dry-run": "pnpm build && pnpm lint && pnpm test"
 	},
 	"dependencies": {
 		"@kbotdev/plugin-modules": "^3.0.0",
 		"@killbasa/redis-utils": "^0.0.10",
-		"@prisma/client": "^5.13.0",
+		"@prisma/client": "^5.14.0",
 		"@sapphire/decorators": "^6.1.0",
-		"@sapphire/discord.js-utilities": "^7.2.0",
+		"@sapphire/discord.js-utilities": "^7.2.1",
 		"@sapphire/duration": "^1.1.2",
 		"@sapphire/fetch": "^3.0.2",
-		"@sapphire/framework": "^5.2.0",
+		"@sapphire/framework": "^5.2.1",
 		"@sapphire/plugin-api": "^6.1.1",
 		"@sapphire/plugin-logger": "^4.0.2",
 		"@sapphire/plugin-scheduled-tasks": "^10.0.1",
 		"@sapphire/utilities": "^3.15.3",
-		"@sentry/integrations": "^7.113.0",
-		"@sentry/node": "^7.113.0",
+		"@sentry/integrations": "^7.114.0",
+		"@sentry/node": "^8.2.1",
 		"@skyra/gifenc": "^1.0.1",
 		"canvas": "2.11.2",
 		"canvas-constructor": "^7.0.1",
 		"colorette": "^2.0.20",
-		"discord.js": "^14.14.1",
+		"discord.js": "^14.15.2",
 		"dotenv": "^16.4.5",
-		"fuzzysort": "^2.0.4",
+		"fuzzysort": "^3.0.1",
 		"humanize-duration": "^3.32.0",
 		"ioredis": "^5.4.1",
-		"meilisearch": "^0.38.0",
+		"meilisearch": "^0.40.0",
 		"prom-client": "^15.1.2"
 	},
 	"devDependencies": {
-		"@killbasa/eslint-config": "^1.0.0",
+		"@biomejs/biome": "^1.7.3",
 		"@killbasa/prettier-config": "^1.0.0",
 		"@killbasa/ts-config": "^1.0.0",
-		"@sentry/types": "^7.113.0",
-		"@swc/core": "^1.4.17",
+		"@sentry/types": "^8.2.1",
+		"@swc/core": "^1.5.7",
 		"@types/humanize-duration": "^3.27.4",
-		"@typescript-eslint/eslint-plugin": "^7.8.0",
-		"@typescript-eslint/parser": "^7.8.0",
-		"eslint": "8.57.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-prettier": "^5.1.3",
 		"husky": "^9.0.11",
 		"lint-staged": "^15.2.2",
 		"prettier": "^3.2.5",
-		"prisma": "^5.13.0",
+		"prisma": "^5.14.0",
 		"tslib": "^2.6.2",
 		"tsup": "^8.0.2",
 		"typescript": "^5.4.5",
 		"vitepress": "^1.1.4",
-		"vitest": "^1.5.3"
+		"vitest": "^1.6.0"
 	},
 	"lint-staged": {
-		"*.{mjs,cjs,js,ts}": [
-			"eslint --fix --ext js,ts",
-			"prettier --write --log-level=warn \"**/*.{mjs,cjs,js,ts}\""
-		],
-		"*.{json,yml,yaml,md}": [
-			"prettier --write --log-level=warn \"**/*.{json,yml,yaml,md}\""
-		]
+		"*.{mjs,cjs,js,ts}": ["pnpm biome check --apply \"**/*.{mjs,cjs,js,ts}\""],
+		"*.{json,yml,yaml}": ["pnpm biome format --write \"**/*.{json,yml,yaml}\""],
+		"*.md": ["prettier --write --log-level=warn \"**/*.md\""]
 	},
 	"engines": {
-		"node": ">=20.x"
+		"node": ">=22.x"
 	},
 	"volta": {
-		"node": "22.0.0",
-		"pnpm": "9.0.6"
+		"node": "22.1.0",
+		"pnpm": "9.1.0"
 	}
 }

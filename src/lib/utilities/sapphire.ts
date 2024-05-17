@@ -1,5 +1,5 @@
+import { join } from 'node:path';
 import { container } from '@sapphire/framework';
-import { join } from 'path';
 import type { StoreRegistryEntries } from '@sapphire/framework';
 
 /**

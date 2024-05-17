@@ -1,5 +1,5 @@
-import { KBotError } from './KBotError.js';
 import type { Channel } from 'discord.js';
+import { KBotError } from './KBotError.js';
 
 export type ChannelPermissionsErrorOptions = {
 	channel?: Channel;
@@ -13,9 +13,9 @@ export class ChannelPermissionsError extends KBotError {
 	public readonly channel: Channel | undefined;
 
 	public constructor(options: ChannelPermissionsErrorOptions = {}) {
-		super(options.message ?? `Insufficient permissions for channel`, {
+		super(options.message ?? 'Insufficient permissions for channel', {
 			name: 'ChannelPermissionsError',
-			code: 'CHANNEL_PERMISSIONS'
+			code: 'CHANNEL_PERMISSIONS',
 		});
 
 		this.userMessage = options.userMessage ?? 'I can not send messages in that channel.';

@@ -1,12 +1,12 @@
+import { channelMention } from '@discordjs/builders';
+import type { UtilitySettings } from '@prisma/client';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors, KBotEmoji } from '../../lib/utilities/constants.js';
 import { getGuildIcon } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { channelMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { UtilitySettings } from '@prisma/client';
 import type { UtilityModule } from '../../modules/UtilityModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -19,13 +19,13 @@ import type { UtilityModule } from '../../modules/UtilityModule.js';
 			.setName('Utility')
 			.setSubcommands([
 				{ label: '/utility toggle <value>', description: 'Enable or disable the utility module' }, //
-				{ label: '/utility settings', description: 'Show the current settings' }
+				{ label: '/utility settings', description: 'Show the current settings' },
 			]);
 	},
 	subcommands: [
 		{ name: 'toggle', chatInputRun: 'chatInputToggle' },
-		{ name: 'settings', chatInputRun: 'chatInputSettings' }
-	]
+		{ name: 'settings', chatInputRun: 'chatInputSettings' },
+	],
 })
 export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 	public override registerApplicationCommands(registry: KBotSubcommand.Registry): void {
@@ -44,18 +44,18 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 								option //
 									.setName('value')
 									.setDescription('True: the module is enabled. False: The module is disabled.')
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('settings')
-							.setDescription('Show the current settings')
+							.setDescription('Show the current settings'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
@@ -63,7 +63,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			enabled: value
+			enabled: value,
 		});
 
 		const description = settings.enabled //
@@ -75,8 +75,8 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Utility module settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(description)
-			]
+					.setDescription(description),
+			],
 		});
 	}
 
@@ -86,7 +86,10 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		return await this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {
+	private async showSettings(
+		interaction: KBotSubcommand.ChatInputCommandInteraction,
+		settings: UtilitySettings | null,
+	): Promise<unknown> {
 		return await interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
@@ -95,20 +98,20 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 					.addFields([
 						{
 							name: 'Module enabled',
-							value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`
+							value: `${settings?.enabled ? `true ${KBotEmoji.GreenCheck}` : `false ${KBotEmoji.RedX}`}`,
 						},
 						{
 							name: 'Discord status channel',
 							value: `${settings?.incidentChannelId ? channelMention(settings.incidentChannelId) : 'No channel set'}`,
-							inline: true
+							inline: true,
 						},
 						{
 							name: 'Emote credits channel',
 							value: `${settings?.creditsChannelId ? channelMention(settings.creditsChannelId) : 'No channel set'}`,
-							inline: true
-						}
-					])
-			]
+							inline: true,
+						},
+					]),
+			],
 		});
 	}
 }

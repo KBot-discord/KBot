@@ -1,11 +1,11 @@
-import { Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Events } from 'discord.js';
+import { Listener } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
+import { Events } from 'discord.js';
 import type { GuildScheduledEvent } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
-	event: Events.GuildScheduledEventDelete
+	event: Events.GuildScheduledEventDelete,
 })
 export class GuildListener extends Listener<typeof Events.GuildScheduledEventDelete> {
 	public async run(guildScheduledEvent: GuildScheduledEvent): Promise<void> {

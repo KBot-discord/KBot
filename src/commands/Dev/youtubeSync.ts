@@ -1,9 +1,9 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { Time } from '@sapphire/duration';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { PermissionFlagsBits } from 'discord.js';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import { Time } from '@sapphire/duration';
-import { PermissionFlagsBits } from 'discord.js';
 import type { DevModule } from '../../modules/DevModule.js';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -16,7 +16,7 @@ import type { DevModule } from '../../modules/DevModule.js';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('dev_setflags');
-	}
+	},
 })
 export class DevCommand extends KBotCommand<DevModule> {
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
@@ -29,13 +29,13 @@ export class DevCommand extends KBotCommand<DevModule> {
 					.setDMPermission(false),
 			{
 				idHints: [],
-				guildIds: this.container.config.discord.devServers
-			}
+				guildIds: this.container.config.discord.devServers,
+			},
 		);
 	}
 
 	public override async chatInputRun(interaction: KBotCommand.ChatInputCommandInteraction): Promise<unknown> {
 		await this.container.tasks.create('holodexSync', { repeated: false, delay: 0 });
-		return await interaction.reply(`Holodex sync started.`);
+		return await interaction.reply('Holodex sync started.');
 	}
 }

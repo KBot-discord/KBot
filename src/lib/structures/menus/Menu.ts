@@ -1,7 +1,7 @@
-import { MenuPageBuilder } from '../builders/MenuPageBuilder.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
-import { isFunction } from '@sapphire/utilities';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
+import { isFunction } from '@sapphire/utilities';
+import { MenuPageBuilder } from '../builders/MenuPageBuilder.js';
 
 export abstract class Menu extends PaginatedMessage {
 	/**
@@ -35,7 +35,10 @@ export abstract class Menu extends PaginatedMessage {
 	 * @param interaction - The interaction to reply to
 	 * @param embed - The updated embed
 	 */
-	public async updateMenuPage(interaction: AnyInteractableInteraction, embed: (builder: MenuPageBuilder) => MenuPageBuilder): Promise<void> {
+	public async updateMenuPage(
+		interaction: AnyInteractableInteraction,
+		embed: (builder: MenuPageBuilder) => MenuPageBuilder,
+	): Promise<void> {
 		const pageOptions = await this.getPageOptions(this.index);
 		const page = embed(new MenuPageBuilder(pageOptions));
 		await this.updateCurrentPage(page.build());

@@ -1,12 +1,12 @@
+import { channelMention } from '@discordjs/builders';
+import type { UtilitySettings } from '@prisma/client';
+import { ApplyOptions } from '@sapphire/decorators';
+import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { getGuildIcon } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { channelMention } from '@discordjs/builders';
-import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
-import type { UtilitySettings } from '@prisma/client';
 import type { UtilityModule } from '../../modules/UtilityModule.js';
 
 @ApplyOptions<KBotSubcommand.Options>({
@@ -20,17 +20,17 @@ import type { UtilityModule } from '../../modules/UtilityModule.js';
 			.setSubcommands([
 				{
 					label: '/discordstatus set <channel>',
-					description: 'Set the channel to send notifications to'
+					description: 'Set the channel to send notifications to',
 				}, //
 				{ label: '/discordstatus unset', description: 'Unset the current channel' },
-				{ label: '/discordstatus settings', description: 'Show the current settings' }
+				{ label: '/discordstatus settings', description: 'Show the current settings' },
 			]);
 	},
 	subcommands: [
 		{ name: 'set', chatInputRun: 'chatInputSet' },
 		{ name: 'unset', chatInputRun: 'chatInputUnset' },
-		{ name: 'settings', chatInputRun: 'chatInputSettings' }
-	]
+		{ name: 'settings', chatInputRun: 'chatInputSettings' },
+	],
 })
 export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 	public override disabledMessage = (moduleFullName: string): string => {
@@ -54,29 +54,32 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 									.setName('channel')
 									.setDescription('The channel to send status updates to')
 									.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-									.setRequired(true)
-							)
+									.setRequired(true),
+							),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('unset')
-							.setDescription('Unset the current channel')
+							.setDescription('Unset the current channel'),
 					)
 					.addSubcommand((subcommand) =>
 						subcommand //
 							.setName('settings')
-							.setDescription('Show the current settings')
+							.setDescription('Show the current settings'),
 					),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 
 	public async chatInputSet(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const { client, validator } = this.container;
-		const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
+		const channel = interaction.options.getChannel('channel', true, [
+			ChannelType.GuildText,
+			ChannelType.GuildAnnouncement,
+		]);
 
 		const { result, error } = await validator.channels.canSendEmbeds(channel);
 		if (!result) {
@@ -84,7 +87,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		}
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			incidentChannelId: channel.id
+			incidentChannelId: channel.id,
 		});
 
 		return await this.showSettings(interaction, settings);
@@ -92,7 +95,7 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 
 	public async chatInputUnset(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
 		const settings = await this.module.settings.upsert(interaction.guildId, {
-			incidentChannelId: null
+			incidentChannelId: null,
 		});
 
 		return await this.showSettings(interaction, settings);
@@ -104,14 +107,19 @@ export class UtilityCommand extends KBotSubcommand<UtilityModule> {
 		return await this.showSettings(interaction, settings);
 	}
 
-	private async showSettings(interaction: KBotSubcommand.ChatInputCommandInteraction, settings: UtilitySettings | null): Promise<unknown> {
+	private async showSettings(
+		interaction: KBotSubcommand.ChatInputCommandInteraction,
+		settings: UtilitySettings | null,
+	): Promise<unknown> {
 		return await interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
 					.setColor(EmbedColors.Default)
 					.setAuthor({ name: 'Discord status settings', iconURL: getGuildIcon(interaction.guild) })
-					.setDescription(`Channel: ${settings?.incidentChannelId ? channelMention(settings.incidentChannelId) : 'No channel set'}`)
-			]
+					.setDescription(
+						`Channel: ${settings?.incidentChannelId ? channelMention(settings.incidentChannelId) : 'No channel set'}`,
+					),
+			],
 		});
 	}
 }

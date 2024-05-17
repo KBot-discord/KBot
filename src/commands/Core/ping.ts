@@ -1,7 +1,7 @@
-import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
-import { KBotModules } from '../../lib/types/Enums.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { PermissionFlagsBits } from 'discord.js';
+import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
+import { KBotModules } from '../../lib/types/Enums.js';
 import type { CoreModule } from '../../modules/CoreModule.js';
 
 @ApplyOptions<KBotCommand.Options>({
@@ -10,7 +10,7 @@ import type { CoreModule } from '../../modules/CoreModule.js';
 	helpEmbed: (builder) => {
 		return builder //
 			.setName('Ping');
-	}
+	},
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
@@ -23,8 +23,8 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 					.setDMPermission(true),
 			{
 				idHints: [],
-				guildIds: []
-			}
+				guildIds: [],
+			},
 		);
 	}
 

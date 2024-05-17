@@ -1,22 +1,32 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	DiscordAPIError,
+	EmbedBuilder,
+	type ModalSubmitInteraction,
+} from 'discord.js';
+import type { AddResourceModal, Credit, EmojiData } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
 import { validCustomId } from '../../lib/utilities/decorators.js';
 import { buildCustomId, calculateEmoteSlots, parseCustomId } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
-import type { AddResourceModal, Credit, EmojiData } from '../../lib/types/CustomIds.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: ResourceCustomIds.Emote,
-	interactionHandlerType: InteractionHandlerTypes.ModalSubmit
+	interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
 })
 export class ModalHandler extends InteractionHandler {
-	public override async run(interaction: ModalSubmitInteraction<'cached'>, { emoteData }: InteractionHandler.ParseResult<this>): Promise<void> {
+	public override async run(
+		interaction: ModalSubmitInteraction<'cached'>,
+		{ emoteData }: InteractionHandler.ParseResult<this>,
+	): Promise<void> {
 		const emoteName = interaction.fields.getTextInputValue(ResourceFields.Name);
 		if (!/^\w+$/.test(emoteName)) {
 			await interaction.errorReply('That is not a valid emote name.', {
-				tryEphemeral: true
+				tryEphemeral: true,
 			});
 			return;
 		}
@@ -27,7 +37,7 @@ export class ModalHandler extends InteractionHandler {
 		const newEmoji = await interaction.guild.emojis
 			.create({
 				attachment: url,
-				name: emoteName
+				name: emoteName,
 			})
 			.catch((e) => (e instanceof Error ? e : null));
 		if (!newEmoji || newEmoji instanceof Error) {
@@ -49,7 +59,7 @@ export class ModalHandler extends InteractionHandler {
 			embeds: [
 				embed
 					.setColor(EmbedColors.Success) //
-					.setDescription(`**${emoteName}** has been added\n\n${slotsLeft}`)
+					.setDescription(`**${emoteName}** has been added\n\n${slotsLeft}`),
 			],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>().addComponents([
@@ -57,20 +67,20 @@ export class ModalHandler extends InteractionHandler {
 						.setCustomId(
 							buildCustomId<Credit>(CreditCustomIds.Create, {
 								ri: newEmoji.id,
-								t: CreditType.Emote
-							})
+								t: CreditType.Emote,
+							}),
 						)
 						.setLabel('Add to credits channel')
-						.setStyle(ButtonStyle.Success)
-				])
-			]
+						.setStyle(ButtonStyle.Success),
+				]),
+			],
 		});
 	}
 
 	@validCustomId(ResourceCustomIds.Emote)
 	public override async parse(interaction: ModalSubmitInteraction<'cached'>) {
 		const {
-			data: { mi, ui }
+			data: { mi, ui },
 		} = parseCustomId<AddResourceModal>(interaction.customId);
 
 		const emoteData = await this.container.utility.getAndDeleteResourceCache<EmojiData>(mi, ui);
@@ -86,18 +96,23 @@ export class ModalHandler extends InteractionHandler {
 
 	private async handleError(interaction: ModalSubmitInteraction<'cached'>, error: Error | null): Promise<void> {
 		if (error instanceof DiscordAPIError) {
-			// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 			switch (error.code) {
 				case 50045: {
-					await interaction.errorReply('The file size of that emoji is too big to upload. (Discord error code: 50045)', {
-						tryEphemeral: true
-					});
+					await interaction.errorReply(
+						'The file size of that emoji is too big to upload. (Discord error code: 50045)',
+						{
+							tryEphemeral: true,
+						},
+					);
 					return;
 				}
 				case 50138: {
-					await interaction.errorReply('Discord was unable to resize the emoji when uploading. (Discord error code: 50138)', {
-						tryEphemeral: true
-					});
+					await interaction.errorReply(
+						'Discord was unable to resize the emoji when uploading. (Discord error code: 50138)',
+						{
+							tryEphemeral: true,
+						},
+					);
 					return;
 				}
 			}
@@ -105,7 +120,7 @@ export class ModalHandler extends InteractionHandler {
 
 		this.container.logger.sentryError(error);
 		await interaction.errorReply('Something went wrong when uploading the emoji.', {
-			tryEphemeral: true
+			tryEphemeral: true,
 		});
 	}
 }

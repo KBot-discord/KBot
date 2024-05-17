@@ -18,19 +18,19 @@ export class KBotMetrics {
 				name: 'kbot_bot_commands_total',
 				help: 'Counter for total amount of command uses.',
 				registers: [register],
-				labelNames: ['command', 'success'] as const
+				labelNames: ['command', 'success'] as const,
 			}),
 			youtube: new Counter({
 				name: 'kbot_bot_youtube_notifications_total',
 				help: 'Counter for total amount of youtube notifications.',
 				registers: [register],
-				labelNames: ['success'] as const
+				labelNames: ['success'] as const,
 			}),
 			holodex: new Counter({
 				name: 'kbot_bot_holodex_api_requests_total',
 				help: 'Counter for total amount of holodex requests.',
-				registers: [register]
-			})
+				registers: [register],
+			}),
 		};
 	}
 
@@ -69,7 +69,7 @@ export class KBotMetrics {
 				if (container.client.isReady()) {
 					this.set(container.client.guilds.cache.size);
 				}
-			}
+			},
 		});
 
 		new Gauge({
@@ -80,7 +80,7 @@ export class KBotMetrics {
 				if (container.client.isReady()) {
 					this.set(container.client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0));
 				}
-			}
+			},
 		});
 
 		new Gauge({
@@ -91,7 +91,7 @@ export class KBotMetrics {
 				if (container.client.isReady()) {
 					this.set(await container.events.karaoke.countEvents());
 				}
-			}
+			},
 		});
 
 		new Gauge({
@@ -102,7 +102,7 @@ export class KBotMetrics {
 				if (container.client.isReady()) {
 					this.set(await container.youtube.channels.count());
 				}
-			}
+			},
 		});
 	}
 }

@@ -1,13 +1,20 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { Time } from '@sapphire/duration';
+import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import {
+	ActionRowBuilder,
+	type ButtonInteraction,
+	ModalBuilder,
+	PermissionFlagsBits,
+	TextInputBuilder,
+	TextInputStyle,
+} from 'discord.js';
+import type { Embed } from 'discord.js';
+import type { CreditImageEditModal } from '../../lib/types/CustomIds.js';
 import { CreditCustomIds, CreditFields } from '../../lib/utilities/customIds.js';
 import { interactionRatelimit, validCustomId } from '../../lib/utilities/decorators.js';
 import { buildCustomId } from '../../lib/utilities/discord.js';
-import { ApplyOptions } from '@sapphire/decorators';
-import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonInteraction, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
-import { Time } from '@sapphire/duration';
-import { isNullOrUndefined } from '@sapphire/utilities';
-import type { Embed } from 'discord.js';
-import type { CreditImageEditModal } from '../../lib/types/CustomIds.js';
 
 type CreditEmbed = {
 	name: string;
@@ -19,7 +26,7 @@ type CreditEmbed = {
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: CreditCustomIds.ImageEdit,
-	interactionHandlerType: InteractionHandlerTypes.Button
+	interactionHandlerType: InteractionHandlerTypes.Button,
 })
 export class ButtonHandler extends InteractionHandler {
 	public override async run(interaction: ButtonInteraction<'cached'>): Promise<void> {
@@ -34,16 +41,19 @@ export class ButtonHandler extends InteractionHandler {
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuildExpressions)) {
 			await interaction.errorReply('You need the `Manage Emojis And Stickers` permission to use this.', {
-				tryEphemeral: true
+				tryEphemeral: true,
 			});
 			return this.none();
 		}
 
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, {
-				tryEphemeral: true
-			});
+			await interaction.errorReply(
+				'The module for this feature is disabled.\nYou can run `/utility toggle` to enable it.',
+				{
+					tryEphemeral: true,
+				},
+			);
 			return this.none();
 		}
 
@@ -61,7 +71,7 @@ export class ButtonHandler extends InteractionHandler {
 			link: image?.url ?? '',
 			source: fields.find((e) => e.name === 'Image source')?.value ?? '',
 			description: fields.find((e) => e.name === 'Description')?.value ?? '',
-			artist: fields.find((e) => e.name === 'Artist')?.value ?? ''
+			artist: fields.find((e) => e.name === 'Artist')?.value ?? '',
 		};
 	}
 
@@ -75,8 +85,8 @@ export class ButtonHandler extends InteractionHandler {
 		return new ModalBuilder()
 			.setCustomId(
 				buildCustomId<CreditImageEditModal>(CreditCustomIds.ImageModalEdit, {
-					mi: messageId
-				})
+					mi: messageId,
+				}),
 			)
 			.setTitle('Edit image credit info')
 			.addComponents(
@@ -88,7 +98,7 @@ export class ButtonHandler extends InteractionHandler {
 						.setMinLength(0)
 						.setMaxLength(50)
 						.setRequired(true)
-						.setValue(name)
+						.setValue(name),
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -98,7 +108,7 @@ export class ButtonHandler extends InteractionHandler {
 						.setMinLength(0)
 						.setMaxLength(100)
 						.setRequired(true)
-						.setValue(link)
+						.setValue(link),
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -108,7 +118,7 @@ export class ButtonHandler extends InteractionHandler {
 						.setMinLength(0)
 						.setMaxLength(100)
 						.setRequired(true)
-						.setValue(source)
+						.setValue(source),
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -118,7 +128,7 @@ export class ButtonHandler extends InteractionHandler {
 						.setMinLength(0)
 						.setMaxLength(100)
 						.setRequired(false)
-						.setValue(description)
+						.setValue(description),
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -128,8 +138,8 @@ export class ButtonHandler extends InteractionHandler {
 						.setMinLength(0)
 						.setMaxLength(100)
 						.setRequired(false)
-						.setValue(artist)
-				)
+						.setValue(artist),
+				),
 			);
 	}
 }

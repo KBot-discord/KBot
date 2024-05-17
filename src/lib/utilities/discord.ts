@@ -1,12 +1,10 @@
-import { BlankSpace, EmbedColors, GuildEmoteSlots, GuildSoundboardSlots, GuildStickerSlots, KBotEmoji } from './constants.js';
-import { CreditType } from './customIds.js';
-import { checkDepth } from './functions.js';
-import { EmbedBuilder, MessageType, PermissionFlagsBits, User, isJSONEncodable } from 'discord.js';
 import { roleMention, time, userMention } from '@discordjs/builders';
-import { UserError, container } from '@sapphire/framework';
+import type { ImageURLOptions } from '@discordjs/rest';
 import { MessageLinkRegex } from '@sapphire/discord.js-utilities';
-import { isNullOrUndefined } from '@sapphire/utilities';
 import type { AnyInteraction } from '@sapphire/discord.js-utilities';
+import { UserError, container } from '@sapphire/framework';
+import { isNullOrUndefined } from '@sapphire/utilities';
+import { EmbedBuilder, MessageType, PermissionFlagsBits, User, isJSONEncodable } from 'discord.js';
 import type {
 	APIUser,
 	Collection,
@@ -20,9 +18,18 @@ import type {
 	RESTAPIPartialCurrentUserGuild,
 	Role,
 	Snowflake,
-	Sticker
+	Sticker,
 } from 'discord.js';
-import type { ImageURLOptions } from '@discordjs/rest';
+import {
+	BlankSpace,
+	EmbedColors,
+	GuildEmoteSlots,
+	GuildSoundboardSlots,
+	GuildStickerSlots,
+	KBotEmoji,
+} from './constants.js';
+import { CreditType } from './customIds.js';
+import { checkDepth } from './functions.js';
 
 /**
  * Builds a custom ID string with a prefix and optional data object.
@@ -31,12 +38,15 @@ import type { ImageURLOptions } from '@discordjs/rest';
  * @param data - The data object to include in the custom ID.
  * @returns The generated custom ID string.
  */
-export function buildCustomId<T extends Record<string, unknown> = Record<string, unknown>>(prefix: string, data?: T): string {
+export function buildCustomId<T extends Record<string, unknown> = Record<string, unknown>>(
+	prefix: string,
+	data?: T,
+): string {
 	if (isNullOrUndefined(data)) return prefix;
 	if (checkDepth(data) > 1) {
 		throw new UserError({
 			identifier: 'INVALID_DEPTH',
-			message: 'Data can only have a depth of 1'
+			message: 'Data can only have a depth of 1',
 		});
 	}
 
@@ -47,7 +57,7 @@ export function buildCustomId<T extends Record<string, unknown> = Record<string,
 	if (result.length > 100) {
 		throw new UserError({
 			identifier: 'INVALUD_CUSTOMID',
-			message: 'Custom IDs can only have a length of 100'
+			message: 'Custom IDs can only have a length of 100',
 		});
 	}
 
@@ -141,7 +151,7 @@ export function calculateEmoteSlots(guild: Guild): { staticSlots: number; animat
 	return {
 		staticSlots: totalSlots - (allEmojis.size - animatedEmojiCount),
 		animatedSlots: totalSlots - animatedEmojiCount,
-		totalSlots
+		totalSlots,
 	};
 }
 
@@ -155,7 +165,7 @@ export function calculateStickerSlots(guild: Guild): { slotsLeft: number; totalS
 
 	return {
 		slotsLeft: totalSlots - allStickers.size,
-		totalSlots
+		totalSlots,
 	};
 }
 
@@ -172,7 +182,7 @@ export function attachmentFromMessage(message: Message): { url: string; fileType
 
 	return {
 		url: attachmentUrl,
-		fileType: parsedUrl[2]
+		fileType: parsedUrl[2],
 	};
 }
 
@@ -181,7 +191,10 @@ export function attachmentFromMessage(message: Message): { url: string; fileType
  * @param guild - The guild to check
  * @param userId - The ID of the user to check
  */
-export async function canManageGuildFilter(guild: Guild | RESTAPIPartialCurrentUserGuild, userId: string): Promise<boolean> {
+export async function canManageGuildFilter(
+	guild: Guild | RESTAPIPartialCurrentUserGuild,
+	userId: string,
+): Promise<boolean> {
 	const fetchedGuild = container.client.guilds.cache.get(guild.id);
 	if (!fetchedGuild) return false;
 
@@ -259,9 +272,9 @@ export async function getUserInfo(interaction: AnyInteraction, userId: string): 
 				{
 					name: 'Joined at:',
 					value: time(Math.round(member.joinedTimestamp! / 1000), 'F'),
-					inline: true
+					inline: true,
 				},
-				{ name: `Roles (${member.roles.cache.size - 1})`, value: rolesToString(member.roles.cache) }
+				{ name: `Roles (${member.roles.cache.size - 1})`, value: rolesToString(member.roles.cache) },
 			)
 			.setFooter({ text: `Present in server: ${KBotEmoji.GreenCheck}` });
 	}
@@ -276,7 +289,7 @@ export async function getUserInfo(interaction: AnyInteraction, userId: string): 
 	if (banned) {
 		embed.addFields(
 			{ name: BlankSpace, value: BlankSpace }, //
-			{ name: 'Ban status:', value: banned, inline: true }
+			{ name: 'Ban status:', value: banned, inline: true },
 		);
 	}
 
@@ -369,6 +382,6 @@ export function parseMessageLink(link: string): { guildId?: string; channelId: s
 	return {
 		guildId: result.at(1),
 		channelId: result.at(2)!,
-		messageId: result.at(3)!
+		messageId: result.at(3)!,
 	};
 }

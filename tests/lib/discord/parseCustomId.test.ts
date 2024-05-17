@@ -1,6 +1,6 @@
+import { describe, expect, test } from 'vitest';
 import { parseCustomId } from '../../../src/lib/utilities/discord.js';
 import { mockCustomId, mockCustomIdAlt } from '../../mocks/discord.js';
-import { describe, expect, test } from 'vitest';
 
 describe('parseCustomId', () => {
 	test('IF custom ID THEN prefix with data', () => {
@@ -11,8 +11,8 @@ describe('parseCustomId', () => {
 			data: {
 				key1: 'val1',
 				key2: 'val2',
-				key3: 'val3'
-			}
+				key3: 'val3',
+			},
 		});
 	});
 
@@ -24,8 +24,8 @@ describe('parseCustomId', () => {
 			data: {
 				key1: undefined,
 				key2: null,
-				key3: 'val3'
-			}
+				key3: 'val3',
+			},
 		});
 	});
 });

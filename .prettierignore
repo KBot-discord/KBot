@@ -1,9 +1,0 @@
-.git/
-.github/pull_request_template.md
-.husky/
-assets/
-coverage/
-dist/
-node_modules/
-pnpm-lock.yaml
-LICENSE

@@ -1,19 +1,20 @@
-import { DiscordIncidentService } from '../lib/services/DiscordIncidentService.js';
-import { PollService } from '../lib/services/PollService.js';
-import { UtilitySettingsService } from '../lib/services/UtilitySettingsService.js';
-import { CreditCustomIds, CreditFields, CreditType } from '../lib/utilities/customIds.js';
-import { buildCustomId } from '../lib/utilities/discord.js';
+import type { IsEnabledContext } from '@kbotdev/plugin-modules';
 import { Module } from '@kbotdev/plugin-modules';
-import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Time } from '@sapphire/duration';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { DiscordIncidentService } from '../lib/services/DiscordIncidentService.js';
+import { PollService } from '../lib/services/PollService.js';
+import { UtilitySettingsService } from '../lib/services/UtilitySettingsService.js';
 import type { CreditImageModal, CreditModal, EmojiData, StickerData } from '../lib/types/CustomIds.js';
-import type { KBotModules } from '../lib/types/Enums.js';
+import { KBotModules } from '../lib/types/Enums.js';
+import { CreditCustomIds, CreditFields, type CreditType } from '../lib/utilities/customIds.js';
+import { buildCustomId } from '../lib/utilities/discord.js';
 
 @ApplyOptions<Module.Options>({
-	fullName: 'Utility Module'
+	name: KBotModules.Utility,
+	fullName: 'Utility Module',
 })
 export class UtilityModule extends Module {
 	public readonly settings: UtilitySettingsService;
@@ -51,7 +52,10 @@ export class UtilityModule extends Module {
 	 * @param messageId - The ID of the message
 	 * @param userId - The ID of the user
 	 */
-	public async getAndDeleteResourceCache<T = EmojiData | StickerData>(messageId: string, userId: string): Promise<T | null> {
+	public async getAndDeleteResourceCache<T = EmojiData | StickerData>(
+		messageId: string,
+		userId: string,
+	): Promise<T | null> {
 		const result = await this.container.redis.get(this.resourceKey(messageId, userId));
 		if (result) await this.container.redis.delete(this.resourceKey(messageId, userId));
 		return result as T;
@@ -63,10 +67,10 @@ export class UtilityModule extends Module {
 				? buildCustomId<CreditModal>(CreditCustomIds.ResourceModalCreate, {
 						c: channelId,
 						ri: resourceId,
-						t: type
+						t: type,
 					})
 				: buildCustomId<CreditImageModal>(CreditCustomIds.ImageModalCreate, {
-						c: channelId
+						c: channelId,
 					});
 
 		const components: ActionRowBuilder<TextInputBuilder>[] = [
@@ -77,7 +81,7 @@ export class UtilityModule extends Module {
 					.setStyle(TextInputStyle.Paragraph)
 					.setMinLength(0)
 					.setMaxLength(100)
-					.setRequired(isNullOrUndefined(resourceId))
+					.setRequired(isNullOrUndefined(resourceId)),
 			),
 			new ActionRowBuilder<TextInputBuilder>().addComponents(
 				new TextInputBuilder()
@@ -86,7 +90,7 @@ export class UtilityModule extends Module {
 					.setStyle(TextInputStyle.Paragraph)
 					.setMinLength(0)
 					.setMaxLength(100)
-					.setRequired(false)
+					.setRequired(false),
 			),
 			new ActionRowBuilder<TextInputBuilder>().addComponents(
 				new TextInputBuilder()
@@ -95,8 +99,8 @@ export class UtilityModule extends Module {
 					.setStyle(TextInputStyle.Short)
 					.setMinLength(0)
 					.setMaxLength(100)
-					.setRequired(false)
-			)
+					.setRequired(false),
+			),
 		];
 
 		if (!resourceId) {
@@ -108,7 +112,7 @@ export class UtilityModule extends Module {
 						.setStyle(TextInputStyle.Short)
 						.setMinLength(0)
 						.setMaxLength(50)
-						.setRequired(true)
+						.setRequired(true),
 				),
 				new ActionRowBuilder<TextInputBuilder>().addComponents(
 					new TextInputBuilder()
@@ -117,8 +121,8 @@ export class UtilityModule extends Module {
 						.setStyle(TextInputStyle.Paragraph)
 						.setMinLength(0)
 						.setMaxLength(100)
-						.setRequired(true)
-				)
+						.setRequired(true),
+				),
 			);
 		}
 
@@ -132,7 +136,6 @@ export class UtilityModule extends Module {
 }
 
 declare module '@kbotdev/plugin-modules' {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Modules {
 		[KBotModules.Utility]: never;
 	}

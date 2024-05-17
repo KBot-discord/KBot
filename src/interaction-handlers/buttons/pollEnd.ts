@@ -1,20 +1,23 @@
-import { PollCustomIds } from '../../lib/utilities/customIds.js';
-import { validCustomId } from '../../lib/utilities/decorators.js';
-import { parseCustomId } from '../../lib/utilities/discord.js';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { ButtonInteraction } from 'discord.js';
+import type { ButtonInteraction } from 'discord.js';
 import type { PollMenuButton } from '../../lib/types/CustomIds.js';
+import { PollCustomIds } from '../../lib/utilities/customIds.js';
+import { validCustomId } from '../../lib/utilities/decorators.js';
+import { parseCustomId } from '../../lib/utilities/discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: PollCustomIds.End,
-	interactionHandlerType: InteractionHandlerTypes.Button
+	interactionHandlerType: InteractionHandlerTypes.Button,
 })
 export class ButtonHandler extends InteractionHandler {
-	public override async run(interaction: ButtonInteraction<'cached'>, { pollId }: InteractionHandler.ParseResult<this>): Promise<void> {
+	public override async run(
+		interaction: ButtonInteraction<'cached'>,
+		{ pollId }: InteractionHandler.ParseResult<this>,
+	): Promise<void> {
 		const {
-			utility: { polls }
+			utility: { polls },
 		} = this.container;
 
 		const active = await polls.isActive(interaction.guildId, pollId);
@@ -36,16 +39,19 @@ export class ButtonHandler extends InteractionHandler {
 	public override async parse(interaction: ButtonInteraction<'cached'>) {
 		const settings = await this.container.utility.settings.get(interaction.guildId);
 		if (isNullOrUndefined(settings) || !settings.enabled) {
-			await interaction.errorReply(`The module for this feature is disabled.\nYou can run \`/utility toggle\` to enable it.`, {
-				tryEphemeral: true
-			});
+			await interaction.errorReply(
+				'The module for this feature is disabled.\nYou can run `/utility toggle` to enable it.',
+				{
+					tryEphemeral: true,
+				},
+			);
 			return this.none();
 		}
 
 		await interaction.deferReply({ ephemeral: true });
 
 		const {
-			data: { pollId }
+			data: { pollId },
 		} = parseCustomId<PollMenuButton>(interaction.customId);
 
 		return this.some({ pollId });
