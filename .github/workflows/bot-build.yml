@@ -35,5 +35,5 @@ jobs:
         uses: docker/build-push-action@v5.1.0
         with:
           push: true
-          file: ./apps/bot/Dockerfile
+          file: ./Dockerfile
           tags: ghcr.io/kbot-discord/bot:latest

@@ -9,7 +9,7 @@ RUN apk add -q --no-cache cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ ma
 	corepack use pnpm@9.6.0
 
 ## Production dependencies ##
-FROM base as prod-deps
+FROM base AS prod-deps
 
 WORKDIR /temp
 
