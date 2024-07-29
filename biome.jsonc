@@ -54,7 +54,7 @@
 		"formatter": {
 			"enabled": true,
 			"quoteStyle": "single",
-			"trailingComma": "all"
+			"trailingCommas": "all"
 		}
 	},
 	"files": {

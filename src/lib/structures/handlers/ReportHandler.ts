@@ -30,6 +30,7 @@ export class ReportHandler {
 
 	private readonly reportMessage: Message<true>;
 
+	// @ts-expect-error
 	private collector: InteractionCollector<ButtonInteraction<'cached'>> | null = null;
 
 	public constructor(targetMessage: Message<true>, reportMessage: Message<true>) {
@@ -74,7 +75,7 @@ export class ReportHandler {
 	private async handleEnd(): Promise<void> {
 		await this.toggleButton(true, ReportButtons.Delete, ReportButtons.Info);
 
-		this.collector?.removeAllListeners();
+		this.collector = null;
 	}
 
 	private async confirmationPrompt(
