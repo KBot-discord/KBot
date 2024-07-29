@@ -58,4 +58,4 @@ COPY --from=prod-deps --chown=kbot:kbot /temp/node_modules node_modules/
 COPY --from=builder --chown=kbot:kbot /temp/dist dist/
 COPY --from=builder --chown=kbot:kbot /temp/package.json ./
 
-CMD ["npx", "prisma", "migrate", "deploy", "&&", "node", "--enable-source-maps", "./dist/KBot.js"]
+CMD ["npx", "prisma", "migrate", "deploy", ";", "node", "--enable-source-maps", "./dist/KBot.js"]
