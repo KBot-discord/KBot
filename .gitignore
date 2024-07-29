@@ -1,10 +1,10 @@
 ## Builds ##
 dist/
+docs/.vitepress/cache/
 
 ## Development ##
 infra/
 coverage/
-k8s/result.yml
 
 ## Dependencies ##
 node_modules/

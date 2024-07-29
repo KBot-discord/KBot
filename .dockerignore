@@ -1,22 +1,10 @@
 .git*
-.prettier*
-.eslint*
-.devcontainer/
 .husky/
-.idea/
 .vscode/
-.turbo/
 coverage/
 dist/
-build/
-infra/
 node_modules/
 tests/
-protos/
-!protos/**/*.proto
-!protos/**/*.yaml
-scripts/*.sh
-.all-contributorsrc
 .editorconfig
 .env*
 .gitattributes
@@ -24,4 +12,3 @@ scripts/*.sh
 LICENSE
 README.md
 vitest.config.ts
-vitest.workspace.ts

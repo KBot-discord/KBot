@@ -1,0 +1,87 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"clientKind": "git",
+		"enabled": true,
+		"useIgnoreFile": true
+	},
+	"organizeImports": {
+		"enabled": true
+	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineEnding": "lf",
+		"lineWidth": 120
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"a11y": {},
+			"complexity": {
+				"useSimplifiedLogicExpression": "off",
+				"noVoid": "off"
+			},
+			"correctness": {
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error",
+				"noUnusedPrivateClassMembers": "error",
+				"noUndeclaredVariables": "error"
+			},
+			"style": {
+				"noParameterAssign": "off",
+				"useConsistentArrayType": {
+					"level": "error",
+					"options": {
+						"syntax": "shorthand"
+					}
+				},
+				"useBlockStatements": "off",
+				"noShoutyConstants": "error",
+				"noNegationElse": "error",
+				"noNonNullAssertion": "off"
+			},
+			"suspicious": {
+				"noAsyncPromiseExecutor": "off",
+				"useAwait": "error"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"enabled": true,
+			"quoteStyle": "single",
+			"trailingCommas": "all"
+		}
+	},
+	"files": {
+		"ignore": [
+			".git/",
+			".github/pull_request_template.md",
+			".husky/",
+			"assets/",
+			"coverage/",
+			"dist/",
+			"docs/.vitepress/cache/",
+			"docs/.vitepress/dist/",
+			"node_modules/",
+			"LICENSE",
+			"pnpm-lock.yaml"
+		]
+	},
+	"overrides": [
+		{
+			"include": ["Augments.ts"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConfusingVoidType": "off"
+					}
+				}
+			}
+		}
+	]
+}
