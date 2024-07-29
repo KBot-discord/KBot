@@ -348,8 +348,6 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 	}
 
 	public async chatInputToggle(interaction: KBotSubcommand.ChatInputCommandInteraction): Promise<unknown> {
-		await interaction.deferReply();
-
 		const value = interaction.options.getBoolean('value', true);
 
 		const settings = await this.module.settings.upsert(interaction.guildId, {
