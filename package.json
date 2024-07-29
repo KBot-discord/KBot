@@ -63,7 +63,6 @@
 		"@sentry/types": "^8.20.0",
 		"@swc/core": "^1.7.3",
 		"@types/humanize-duration": "^3.27.4",
-		"husky": "^9.1.4",
 		"lint-staged": "^15.2.7",
 		"prettier": "^3.3.3",
 		"prisma": "^5.17.0",

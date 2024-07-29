@@ -2,18 +2,11 @@ name: CI (Bot)
 
 on:
   pull_request:
-    paths:
-      - "apps/bot/**"
-      - "packages/**"
-      - "!**/README.md"
 
 jobs:
   checks:
     name: Checks
     runs-on: ubuntu-latest
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
     steps:
       - name: Check out Git repository
@@ -27,14 +20,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn workspaces focus @kbotdev/apps @kbotdev/bot
-          yarn turbo db:generate
+          pnpm install
+          pnpm db:generate
 
       - name: Lint
-        run: yarn turbo lint --filter=@kbotdev/bot
+        run: pnpm lint
 
       - name: Run build
-        run: yarn turbo build --filter=@kbotdev/bot
+        run: pnpm build
 
       - name: Run tests
-        run: yarn turbo test --filter=@kbotdev/bot
+        run: pnpm test

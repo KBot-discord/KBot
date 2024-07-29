@@ -2,17 +2,11 @@ name: CI (Docs)
 
 on:
   pull_request:
-    paths:
-      - "apps/docs/**"
-      - "!**/README.md"
 
 jobs:
   checks:
     name: Checks
     runs-on: ubuntu-latest
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
     steps:
       - name: Check out Git repository
@@ -25,7 +19,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: yarn workspaces focus @kbotdev/apps @kbotdev/docs
+        run: pnpm install
 
       - name: Run build
-        run: yarn turbo build --filter=@kbotdev/docs
+        run: pnpm docs:build
