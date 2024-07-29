@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: yarn
+          cache: pnpm
 
       - name: Install dependencies
         run: yarn workspaces focus @kbotdev/apps @kbotdev/docs
