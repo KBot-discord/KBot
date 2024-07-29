@@ -1,5 +1,5 @@
 ## Builder ##
-FROM node:22.4.1-alpine3.20 AS base
+FROM node:22.5.1-alpine3.20 AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -31,7 +31,7 @@ RUN pnpm db:generate && \
 	pnpm run build
 
 ## App ##
-FROM node:22.4.1-alpine3.20 AS app
+FROM node:22.5.1-alpine3.20 AS app
 
 WORKDIR /app
 
