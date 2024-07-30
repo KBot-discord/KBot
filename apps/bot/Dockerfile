@@ -1,11 +1,11 @@
 ## Builder ##
-FROM node:20.11.0-alpine3.19 as builder
+FROM node:20.11.0-alpine3.19 AS builder
 
 WORKDIR /temp
 
 RUN apk add --no-cache libc6-compat
 
-RUN yarn global add turbo
+RUN yarn global add turbo@1.11.3
 COPY . .
 RUN turbo prune --scope=@kbotdev/bot --docker
 
@@ -33,7 +33,7 @@ RUN yarn turbo build --filter=@kbotdev/bot && \
 	yarn workspaces focus @kbotdev/bot --production
 
 ## App ##
-FROM node:20.11.0-alpine3.19 as app
+FROM node:20.11.0-alpine3.19 AS app
 
 LABEL org.opencontainers.image.source=https://github.com/KBot-discord/KBot
 LABEL org.opencontainers.image.licenses=AGPL-3.0-or-later

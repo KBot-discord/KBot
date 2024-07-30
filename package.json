@@ -19,7 +19,7 @@
 		"format": "turbo run format",
 		"db:generate": "turbo run db:generate",
 		"db:push": "turbo run db:push",
-		"docker:bot": "docker buildx build -f apps/bot/Dockerfile -t kbot/bot .",
+		"docker:bot": "docker buildx build -f apps/bot/Dockerfile -t ghcr.io/kbot-discord/bot:legacy .",
 		"dry-run": "yarn format && yarn lint && yarn build && yarn test"
 	},
 	"devDependencies": {
@@ -66,5 +66,9 @@
 	"engines": {
 		"node": ">=20.x"
 	},
-	"packageManager": "yarn@4.0.2"
+	"packageManager": "yarn@4.3.1",
+	"volta": {
+		"node": "20.11.0",
+		"yarn": "4.3.1"
+	}
 }
