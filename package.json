@@ -32,7 +32,7 @@
 	"dependencies": {
 		"@kbotdev/plugin-modules": "^3.0.0",
 		"@killbasa/redis-utils": "^0.0.10",
-		"@prisma/client": "^5.17.0",
+		"@prisma/client": "^7.0.0",
 		"@sapphire/decorators": "^6.1.0",
 		"@sapphire/discord.js-utilities": "^7.3.0",
 		"@sapphire/duration": "^1.1.2",
@@ -65,7 +65,7 @@
 		"@types/humanize-duration": "^3.27.4",
 		"lint-staged": "^15.2.7",
 		"prettier": "^3.3.3",
-		"prisma": "^5.17.0",
+		"prisma": "^7.0.0",
 		"tslib": "^2.6.3",
 		"tsup": "^8.2.3",
 		"typescript": "^5.5.4",
