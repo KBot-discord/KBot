@@ -70,7 +70,7 @@
 		"tsup": "^8.2.3",
 		"typescript": "^5.5.4",
 		"vitepress": "^1.3.1",
-		"vitest": "^2.0.4"
+		"vitest": "^4.0.0"
 	},
 	"lint-staged": {
 		"*.{mjs,cjs,js,ts}": ["pnpm biome check --write \"**/*.{mjs,cjs,js,ts}\""],
