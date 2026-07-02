@@ -1,18 +1,11 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import {
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	DiscordAPIError,
-	EmbedBuilder,
-	type ModalSubmitInteraction,
-} from 'discord.js';
-import type { AddResourceModal, Credit, EmojiData } from '../../lib/types/CustomIds.js';
+import { DiscordAPIError, EmbedBuilder, type ModalSubmitInteraction } from 'discord.js';
+import type { AddResourceModal, EmojiData } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
-import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
+import { ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
 import { validCustomId } from '../../lib/utilities/decorators.js';
-import { buildCustomId, calculateEmoteSlots, parseCustomId } from '../../lib/utilities/discord.js';
+import { calculateEmoteSlots, parseCustomId } from '../../lib/utilities/discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: ResourceCustomIds.Emote,
@@ -61,19 +54,6 @@ export class ModalHandler extends InteractionHandler {
 					.setColor(EmbedColors.Success) //
 					.setDescription(`**${emoteName}** has been added\n\n${slotsLeft}`),
 			],
-			components: [
-				new ActionRowBuilder<ButtonBuilder>().addComponents([
-					new ButtonBuilder()
-						.setCustomId(
-							buildCustomId<Credit>(CreditCustomIds.Create, {
-								ri: newEmoji.id,
-								t: CreditType.Emote,
-							}),
-						)
-						.setLabel('Add to credits channel')
-						.setStyle(ButtonStyle.Success),
-				]),
-			],
 		});
 	}
 
@@ -83,7 +63,7 @@ export class ModalHandler extends InteractionHandler {
 			data: { mi, ui },
 		} = parseCustomId<AddResourceModal>(interaction.customId);
 
-		const emoteData = await this.container.utility.getAndDeleteResourceCache<EmojiData>(mi, ui);
+		const emoteData = this.container.utility.getAndDeleteResourceCache<EmojiData>(mi, ui);
 		if (!emoteData) {
 			await interaction.errorReply('Please try to add that emote again.');
 			return this.none();
@@ -118,7 +98,7 @@ export class ModalHandler extends InteractionHandler {
 			}
 		}
 
-		this.container.logger.sentryError(error);
+		this.container.logger.error(error);
 		await interaction.errorReply('Something went wrong when uploading the emoji.', {
 			tryEphemeral: true,
 		});

@@ -1,18 +1,11 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import {
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	DiscordAPIError,
-	EmbedBuilder,
-	type ModalSubmitInteraction,
-} from 'discord.js';
-import type { AddResourceModal, Credit, StickerData } from '../../lib/types/CustomIds.js';
+import { DiscordAPIError, EmbedBuilder, type ModalSubmitInteraction } from 'discord.js';
+import type { AddResourceModal, StickerData } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
-import { CreditCustomIds, CreditType, ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
+import { ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
 import { validCustomId } from '../../lib/utilities/decorators.js';
-import { buildCustomId, calculateStickerSlots, parseCustomId } from '../../lib/utilities/discord.js';
+import { calculateStickerSlots, parseCustomId } from '../../lib/utilities/discord.js';
 
 @ApplyOptions<InteractionHandler.Options>({
 	name: ResourceCustomIds.Sticker,
@@ -51,19 +44,6 @@ export class ModalHandler extends InteractionHandler {
 					.setColor(EmbedColors.Success) //
 					.setDescription(`**${stickerName}** has been added\n\n**Sticker slots left:** ${slotsLeft}/${totalSlots}`),
 			],
-			components: [
-				new ActionRowBuilder<ButtonBuilder>().addComponents([
-					new ButtonBuilder()
-						.setCustomId(
-							buildCustomId<Credit>(CreditCustomIds.Create, {
-								ri: newSticker.id,
-								t: CreditType.Sticker,
-							}),
-						)
-						.setLabel('Add to credits channel')
-						.setStyle(ButtonStyle.Success),
-				]),
-			],
 		});
 	}
 
@@ -73,7 +53,7 @@ export class ModalHandler extends InteractionHandler {
 			data: { mi, ui },
 		} = parseCustomId<AddResourceModal>(interaction.customId);
 
-		const stickerData = await this.container.utility.getAndDeleteResourceCache<StickerData>(mi, ui);
+		const stickerData = this.container.utility.getAndDeleteResourceCache<StickerData>(mi, ui);
 		if (!stickerData) {
 			await interaction.errorReply('Please try to add that sticker again.');
 			return this.none();
@@ -108,7 +88,7 @@ export class ModalHandler extends InteractionHandler {
 			}
 		}
 
-		this.container.logger.sentryError(error);
+		this.container.logger.error(error);
 		await interaction.errorReply('Something went wrong when uploading the sticker.', {
 			tryEphemeral: true,
 		});

@@ -2,17 +2,12 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { buffer } from 'node:stream/consumers';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Time } from '@sapphire/duration';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { GifEncoder } from '@skyra/gifenc';
-import { Canvas, loadImage } from 'canvas-constructor/cairo';
 import type { Image } from 'canvas-constructor/cairo';
-import {
-	ApplicationCommandType,
-	AttachmentBuilder,
-	PermissionFlagsBits,
-	type UserContextMenuCommandInteraction,
-} from 'discord.js';
+import { Canvas, loadImage } from 'canvas-constructor/cairo';
+import { AttachmentBuilder, PermissionFlagsBits, type UserContextMenuCommandInteraction } from 'discord.js';
+import { ApplicationCommandType, InteractionContextType } from 'discord-api-types/v10';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { imageFolder } from '../../lib/utilities/constants.js';
@@ -34,51 +29,38 @@ type Dimentions = {
 @ApplyOptions<KBotCommand.Options>({
 	module: KBotModules.Core,
 	description: 'Creates a pat gif of the member.',
-	preconditions: ['Defer'],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	helpEmbed: (builder) => {
-		return builder //
-			.setName('Pat')
-			.setTarget('user');
-	},
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly pats: Image[] = [];
+	private readonly cache = new Map<string, Buffer>();
 
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
-		registry.registerContextMenuCommand(
-			(builder) =>
-				builder //
-					.setName('Pat')
-					.setType(ApplicationCommandType.User)
-					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-					.setDMPermission(false),
-			{
-				idHints: [],
-				guildIds: [],
-			},
+		registry.registerContextMenuCommand((builder) =>
+			builder //
+				.setName('Pat')
+				.setType(ApplicationCommandType.User)
+				.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+				.setContexts(InteractionContextType.Guild),
 		);
 	}
 
 	public override async contextMenuRun(interaction: UserContextMenuCommandInteraction<'cached'>): Promise<unknown> {
+		await interaction.deferReply();
+
 		const member = await interaction.guild.members.fetch(interaction.targetUser.id);
 
-		const cache = await this.container.redis.get<string>(this.cacheKey(member.id));
-		if (cache !== null) {
-			const gif = Buffer.from(cache, 'utf-8');
+		const cache = this.cache.get(this.cacheKey(member.id));
+		if (cache !== undefined) {
 			return await interaction.editReply({
-				files: [new AttachmentBuilder(gif, { name: 'pat.gif' })],
+				files: [new AttachmentBuilder(cache, { name: 'pat.gif' })],
 			});
 		}
 
 		const avatar = getMemberAvatarUrl(member);
 		const gif = await this.createPatGif(avatar, { resolution: 64 });
 
-		await this.container.redis.setEx<string>(
-			this.cacheKey(member.id), //
-			gif.toString(),
-			Time.Minute * 5,
-		);
+		this.cache.set(this.cacheKey(member.id), gif);
 
 		return await interaction.editReply({
 			files: [new AttachmentBuilder(gif, { name: 'pat.gif' })],

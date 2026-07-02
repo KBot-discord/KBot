@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Events, Listener, container } from '@sapphire/framework';
 import type { ChatInputCommandErrorPayload, ContextMenuCommandErrorPayload } from '@sapphire/framework';
+import { container, Events, Listener } from '@sapphire/framework';
 import { DiscordAPIError, HTTPError, RESTJSONErrorCodes } from 'discord.js';
 import { formGenericError } from '../../lib/utilities/constants.js';
 
@@ -27,7 +27,7 @@ async function handleError(data: {
 		success: false,
 	});
 
-	container.logger.sentryError(error, { message, context: payload });
+	container.logger.error(error, { message, context: payload });
 
 	await interaction.errorReply(formGenericError('There was an error when running your command.'), {
 		tryEphemeral: true,

@@ -1,5 +1,5 @@
-import { CommandInteraction, EmbedBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import type { InteractionResponse, Message } from 'discord.js';
+import { CommandInteraction, EmbedBuilder, MessageComponentInteraction, ModalSubmitInteraction } from 'discord.js';
 import type { FollowupArgs, ReplyArgs } from '../types/Augments.js';
 import { EmbedColors } from './constants.js';
 

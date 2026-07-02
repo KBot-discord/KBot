@@ -1,11 +1,8 @@
-import type { Module, Modules } from '@kbotdev/plugin-modules';
+import type { Modules } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Events, Listener, Result } from '@sapphire/framework';
+import { Events, Listener, type Result } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
 import { green, red, yellowBright } from 'colorette';
-import type { KBotCommand } from '../../lib/extensions/KBotCommand.js';
-import type { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
-import type { DocumentCommand } from '../../lib/meili/types/MeiliTypes.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 
 @ApplyOptions<Listener.Options>({
@@ -13,44 +10,25 @@ import { KBotModules } from '../../lib/types/Enums.js';
 	once: true,
 })
 export class ClientListener extends Listener<typeof Events.ClientReady> {
-	private readonly commandsToFilter = ['help'];
-	private readonly modulesToFilter = [KBotModules.Dev] as string[];
-
 	private readonly modules = [
 		{ key: 'Core', value: KBotModules.Core }, //
-		{ key: 'Dev', value: KBotModules.Dev },
-		{ key: 'Events', value: KBotModules.Events },
-		{ key: 'Moderation', value: KBotModules.Moderation },
 		{ key: 'Utility', value: KBotModules.Utility },
-		{ key: 'Welcome', value: KBotModules.Welcome },
-		{ key: 'YouTube', value: KBotModules.YouTube },
 	];
 
-	public async run(): Promise<void> {
-		await this.syncMeili();
-
-		void this.banner();
-	}
-
-	/**
-	 * Print the bot's starting banner
-	 */
-	private async banner(): Promise<void> {
-		const { client, config, stores, prisma, redis, meili } = this.container;
+	public run(): void {
+		const { client, config, stores } = this.container;
 
 		const loaded = (value: boolean): string => (value ? green('+') : red('-'));
 
 		const loadedModules = this.checkModules(this.modules);
 
 		const loadedServices = this.checkServices([
-			{ key: 'Prisma', value: await Result.fromAsync(async () => await prisma.$queryRaw`SELECT 1`) },
-			{ key: 'Redis', value: await Result.fromAsync(async () => await redis.client.ping()) },
-			{ key: 'Meili', value: await Result.fromAsync(async () => await meili.health()) },
 			{ key: `API Enabled (port: ${config.api.port})`, value: !isNullOrUndefined(client.options.api) },
 		]);
 
 		this.print({
 			values: [
+				// biome-ignore lint/style/noNonNullAssertion: whatever
 				{ name: 'User', value: client.user!.username },
 				{ name: 'Environment', value: config.isDev ? 'Dev' : 'Production' },
 			],
@@ -146,27 +124,5 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 			}
 			return acc;
 		}, new Map());
-	}
-
-	/**
-	 * Sync the bot's command with the `commands` index in MeiliSearch.
-	 */
-	private async syncMeili(): Promise<void> {
-		const { logger } = this.container;
-
-		const commands = this.container.stores.get('commands').toJSON() as (KBotCommand<Module> | KBotSubcommand<Module>)[];
-
-		const documents: DocumentCommand[] = commands
-			.filter((cmd) => !this.commandsToFilter.includes(cmd.name))
-			.filter((cmd) => !this.modulesToFilter.includes(cmd.module.name))
-			.map((command, index) => ({
-				id: String(index),
-				name: command.name,
-				description: command.description,
-			}));
-
-		await this.container.meili.resetIndex('commands', documents);
-
-		logger.infoTag('Meilisearch', 'Commands synced.');
 	}
 }

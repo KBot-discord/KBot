@@ -1,7 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefinedOrEmpty } from '@sapphire/utilities';
-import { ApplicationCommandType, type MessageContextMenuCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { type MessageContextMenuCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { ApplicationCommandType, InteractionContextType } from 'discord-api-types/v10';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '../../lib/utilities/constants.js';
@@ -15,28 +16,18 @@ function getRandomInt(max: number): number {
 	module: KBotModules.Core,
 	description: 'uwu-ify a message.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	helpEmbed: (builder) => {
-		return builder //
-			.setName('uwu')
-			.setTarget('message');
-	},
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly isPrintable = /^[ -~]+$/;
 	private readonly character = /[a-zA-Z]/;
 
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
-		registry.registerContextMenuCommand(
-			(builder) =>
-				builder //
-					.setName('uwu')
-					.setType(ApplicationCommandType.Message)
-					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-					.setDMPermission(false),
-			{
-				idHints: [],
-				guildIds: [],
-			},
+		registry.registerContextMenuCommand((builder) =>
+			builder //
+				.setName('uwu')
+				.setType(ApplicationCommandType.Message)
+				.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+				.setContexts(InteractionContextType.Guild),
 		);
 	}
 

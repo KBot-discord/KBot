@@ -1,8 +1,8 @@
 import { channelMention } from '@discordjs/builders';
 import { canSendEmbeds, canSendMessages } from '@sapphire/discord.js-utilities';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { ChannelType, PermissionFlagsBits } from 'discord.js';
 import type { Channel, GuildChannel, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
+import { ChannelType, PermissionFlagsBits } from 'discord.js';
 import { ChannelPermissionsError } from './errors/ChannelPermissionsError.js';
 
 export class ChannelValidator {

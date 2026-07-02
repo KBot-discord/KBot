@@ -82,27 +82,5 @@ export class KBotMetrics {
 				}
 			},
 		});
-
-		new Gauge({
-			name: 'kbot_bot_karaoke_events_total',
-			help: 'Gauge for total amount of karaoke events.',
-			registers: [register],
-			async collect(): Promise<void> {
-				if (container.client.isReady()) {
-					this.set(await container.events.karaoke.countEvents());
-				}
-			},
-		});
-
-		new Gauge({
-			name: 'kbot_bot_holodex_channels_total',
-			help: 'Gauge for total amount of holodex channels.',
-			registers: [register],
-			async collect(): Promise<void> {
-				if (container.client.isReady()) {
-					this.set(await container.youtube.channels.count());
-				}
-			},
-		});
 	}
 }
