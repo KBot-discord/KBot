@@ -23,7 +23,9 @@ export class UtilityModule extends Module {
 	 * @param data - The data to set to the cache
 	 */
 	public setResourceCache(messageId: string, userId: string, data: EmojiData | StickerData): void {
-		this.cache.set(this.resourceKey(messageId, userId), data);
+		const key = this.resourceKey(messageId, userId);
+		this.cache.set(key, data);
+		setTimeout(() => this.cache.delete(key), 1000 * 60 * 60); // Delete after 1 hour
 	}
 
 	/**

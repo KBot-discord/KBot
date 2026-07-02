@@ -50,7 +50,8 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 
 		const member = await interaction.guild.members.fetch(interaction.targetUser.id);
 
-		const cache = this.cache.get(this.cacheKey(member.id));
+		const key = this.cacheKey(member.id);
+		const cache = this.cache.get(key);
 		if (cache !== undefined) {
 			return await interaction.editReply({
 				files: [new AttachmentBuilder(cache, { name: 'pat.gif' })],
@@ -60,7 +61,8 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 		const avatar = getMemberAvatarUrl(member);
 		const gif = await this.createPatGif(avatar, { resolution: 64 });
 
-		this.cache.set(this.cacheKey(member.id), gif);
+		this.cache.set(key, gif);
+		setTimeout(() => this.cache.delete(key), 1000 * 60 * 5); // Delete after 5 minutes
 
 		return await interaction.editReply({
 			files: [new AttachmentBuilder(gif, { name: 'pat.gif' })],
