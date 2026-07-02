@@ -1,5 +1,3 @@
-import { setTimeout } from 'node:timers';
-import { Duration } from '@sapphire/duration';
 import { FetchResultTypes, fetch } from '@sapphire/fetch';
 import { isNullOrUndefined } from '@sapphire/utilities';
 
@@ -52,16 +50,6 @@ export function checkDepth(object: Record<string, unknown>): number {
 }
 
 /**
- * Parse a string for a duration.
- * @param input - The string to parse
- */
-export function parseTimeString(input: string | null): number | null {
-	if (isNullOrUndefined(input)) return input;
-	const duration = new Duration(input);
-	return Number.isNaN(duration.offset) ? null : duration.offset;
-}
-
-/**
  * Fetch an image from a URL and convert it to a base64 string.
  * @param url - The URL of the image
  */
@@ -79,19 +67,4 @@ export async function fetchBase64Image(url: string): Promise<{ url: string; file
 		url: `data:${contentType};base64,${buffer}`,
 		fileType: resType[1],
 	};
-}
-
-export function throttle<T extends (...args: unknown[]) => unknown>(fn: T, delay: number): T {
-	let wait = false;
-
-	return function handle(this: unknown, ...args: Parameters<T>) {
-		if (wait) return;
-
-		fn.apply(this, args);
-		wait = true;
-
-		setTimeout(() => {
-			wait = false;
-		}, delay);
-	} as T;
 }

@@ -10,31 +10,26 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
 
       - name: Install canvas dependencies
         run: sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
       - name: Set up NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
-          node-version: 22.13.0
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.14.2
+          node-version: 26.4.0
 
       - name: Install dependencies
         run: |
-          pnpm install
-          pnpm db:generate
+          yarn install
+          yarn db:generate
 
       - name: Lint
-        run: pnpm lint
+        run: yarn lint
 
       - name: Run build
-        run: pnpm build
+        run: yarn build
 
       - name: Run tests
-        run: pnpm test
+        run: yarn test

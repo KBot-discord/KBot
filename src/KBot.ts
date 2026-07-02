@@ -1,7 +1,6 @@
 import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';
 
 import '@kbotdev/plugin-modules/register';
-import '@sapphire/plugin-scheduled-tasks/register';
 import '@sapphire/plugin-api/register';
 import './plugins/register.js';
 import './lib/utilities/Augments.js';
@@ -20,8 +19,8 @@ async function main(): Promise<void> {
 		client = new KBotClient();
 
 		await client.login(discord.token);
-	} catch (error: unknown) {
-		container.logger.sentryError(error);
+	} catch (error) {
+		container.logger.error(error);
 
 		await client?.destroy();
 		process.exit(1);

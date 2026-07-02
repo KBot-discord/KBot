@@ -1,11 +1,6 @@
 export const KBotModules = {
 	Core: 'CoreModule',
-	Dev: 'DevModule',
-	Events: 'EventModule',
-	Moderation: 'ModerationModule',
 	Utility: 'UtilityModule',
-	Welcome: 'WelcomeModule',
-	YouTube: 'YouTubeModule',
 } as const;
 
 export const KBotErrors = {

@@ -4,5 +4,5 @@
 		"allowJs": true,
 		"checkJs": true
 	},
-	"include": ["src/**/*.ts", "tests/**/*.ts", ".prettierrc.cjs", "tsup.config.ts", "vitest.config.ts"]
+	"include": ["src/**/*.ts", "tests/**/*.ts", ".prettierrc.cjs", "tsdown.config.ts"]
 }

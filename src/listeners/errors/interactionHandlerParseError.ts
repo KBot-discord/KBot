@@ -9,7 +9,7 @@ export class ErrorListener extends Listener<typeof Events.InteractionHandlerPars
 	public run(error: Error, payload: InteractionHandlerParseError): void {
 		const { name, location } = payload.handler;
 
-		this.container.logger.sentryError(error, {
+		this.container.logger.error(error, {
 			message: `Encountered error while handling an interaction handler parse method for interaction-handler "${name}" at path "${location.full}"`,
 			context: payload,
 		});

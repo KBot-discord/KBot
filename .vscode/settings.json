@@ -1,6 +1,6 @@
 {
-	"typescript.tsdk": "./node_modules/typescript/lib",
-	"typescript.referencesCodeLens.enabled": true,
+	"js/ts.tsdk.path": "./node_modules/typescript/lib",
+	"js/ts.referencesCodeLens.enabled": true,
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.codeActionsOnSave": {
@@ -11,9 +11,6 @@
 	},
 	"[typescript]": {
 		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[prisma]": {
-		"editor.defaultFormatter": "Prisma.prisma"
 	},
 	"[markdown]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"

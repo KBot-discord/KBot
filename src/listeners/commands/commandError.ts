@@ -27,7 +27,7 @@ async function handleError(data: {
 		success: false,
 	});
 
-	container.logger.sentryError(error, { message, context: payload });
+	container.logger.error(error, { message, context: payload });
 
 	await interaction.errorReply(formGenericError('There was an error when running your command.'), {
 		tryEphemeral: true,

@@ -9,7 +9,7 @@ export class ErrorListener extends Listener<typeof Events.CommandApplicationComm
 	public run(error: Error, command: Command): void {
 		const { name, location } = command;
 
-		this.container.logger.sentryError(error, {
+		this.container.logger.error(error, {
 			message: `Encountered error while handling the command application command registry for command "${name}" at path "${location.full}"`,
 			context: command,
 		});

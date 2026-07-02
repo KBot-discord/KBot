@@ -15,7 +15,7 @@ export class KBotClient extends SapphireClient {
 				IntentsBitField.Flags.GuildMembers,
 				IntentsBitField.Flags.GuildVoiceStates,
 				IntentsBitField.Flags.GuildScheduledEvents,
-				IntentsBitField.Flags.GuildEmojisAndStickers,
+				IntentsBitField.Flags.GuildExpressions,
 			],
 			allowedMentions: {},
 			presence: {
@@ -33,29 +33,6 @@ export class KBotClient extends SapphireClient {
 					port: config.api.port,
 				},
 			},
-			tasks: {
-				bull: {
-					connection: {
-						host: config.redis.host,
-						port: config.redis.port,
-						password: config.redis.password,
-					},
-					defaultJobOptions: { removeOnComplete: 0, removeOnFail: 0 },
-				},
-			},
 		});
-	}
-
-	public override async login(token: string): Promise<string> {
-		return await super.login(token);
-	}
-
-	public override async destroy(): Promise<void> {
-		await Promise.allSettled([
-			container.prisma.$disconnect(), //
-			container.redis.client.quit(),
-		]);
-
-		void super.destroy();
 	}
 }

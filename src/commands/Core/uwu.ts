@@ -16,28 +16,18 @@ function getRandomInt(max: number): number {
 	module: KBotModules.Core,
 	description: 'uwu-ify a message.',
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	helpEmbed: (builder) => {
-		return builder //
-			.setName('uwu')
-			.setTarget('message');
-	},
 })
 export class CoreCommand extends KBotCommand<CoreModule> {
 	private readonly isPrintable = /^[ -~]+$/;
 	private readonly character = /[a-zA-Z]/;
 
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
-		registry.registerContextMenuCommand(
-			(builder) =>
-				builder //
-					.setName('uwu')
-					.setType(ApplicationCommandType.Message)
-					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-					.setContexts(InteractionContextType.Guild),
-			{
-				idHints: [],
-				guildIds: [],
-			},
+		registry.registerContextMenuCommand((builder) =>
+			builder //
+				.setName('uwu')
+				.setType(ApplicationCommandType.Message)
+				.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+				.setContexts(InteractionContextType.Guild),
 		);
 	}
 

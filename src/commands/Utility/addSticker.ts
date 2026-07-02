@@ -20,29 +20,15 @@ import type { UtilityModule } from '../../modules/UtilityModule.js';
 	preconditions: ['ModuleEnabled'],
 	requiredClientPermissions: [PermissionFlagsBits.ManageGuildExpressions],
 	runIn: [CommandOptionsRunTypeEnum.GuildAny],
-	helpEmbed: (builder) => {
-		return builder //
-			.setName('Add Sticker')
-			.setTarget('message');
-	},
 })
 export class UtilityCommand extends KBotCommand<UtilityModule> {
-	public override disabledMessage = (moduleFullName: string): string => {
-		return `[${moduleFullName}] The module for this command is disabled.\nYou can run \`/utility toggle\` to enable it.`;
-	};
-
 	public override registerApplicationCommands(registry: KBotCommand.Registry): void {
-		registry.registerContextMenuCommand(
-			(builder) =>
-				builder //
-					.setName('Add sticker')
-					.setType(ApplicationCommandType.Message)
-					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions)
-					.setContexts(InteractionContextType.Guild),
-			{
-				idHints: [],
-				guildIds: [],
-			},
+		registry.registerContextMenuCommand((builder) =>
+			builder //
+				.setName('Add sticker')
+				.setType(ApplicationCommandType.Message)
+				.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions)
+				.setContexts(InteractionContextType.Guild),
 		);
 	}
 
@@ -64,7 +50,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 			});
 		}
 
-		await this.container.utility.setResourceCache(message.id, interaction.user.id, sticker);
+		this.container.utility.setResourceCache(message.id, interaction.user.id, sticker);
 
 		return await interaction.showModal(this.buildModal(message.id, interaction.user.id, sticker.name));
 	}

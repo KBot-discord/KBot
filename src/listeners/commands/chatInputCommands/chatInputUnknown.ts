@@ -7,7 +7,7 @@ import { Events, Listener } from '@sapphire/framework';
 })
 export class CommandListener extends Listener<typeof Events.UnknownChatInputCommand> {
 	public async run(payload: UnknownChatInputCommandPayload): Promise<void> {
-		this.container.logger.sentryMessage('Unknown chat input command', payload);
+		this.container.logger.info('Unknown chat input command', payload);
 
 		await payload.interaction.errorReply('I was not able to find the command you were trying to run.', {
 			tryEphemeral: true,

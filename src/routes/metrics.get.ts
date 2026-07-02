@@ -14,8 +14,8 @@ export class ApiRoute extends Route {
 				.setContentType(register.contentType as MimeType)
 				.status(200)
 				.respond(await register.metrics());
-		} catch (error: unknown) {
-			container.logger.sentryError(error);
+		} catch (error) {
+			container.logger.error(error);
 			response
 				.status(500) //
 				.respond({ error: 'An error occurred while collecting metrics' });
