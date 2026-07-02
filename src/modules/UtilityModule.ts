@@ -33,7 +33,7 @@ export class UtilityModule extends Module {
 	 * @param messageId - The ID of the message
 	 * @param userId - The ID of the user
 	 */
-	public getAndDeleteResourceCache<T = EmojiData | StickerData>(messageId: string, userId: string): T | null {
+	public popResourceCache<T = EmojiData | StickerData>(messageId: string, userId: string): T | null {
 		const key = this.resourceKey(messageId, userId);
 		const result = this.cache.get(key);
 		if (result) this.cache.delete(key);

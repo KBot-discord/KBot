@@ -1,6 +1,7 @@
 import type { Modules } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Events, Listener, type Result } from '@sapphire/framework';
+import type { Result } from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
 import { green, red, yellowBright } from 'colorette';
 import { KBotModules } from '../../lib/types/Enums.js';

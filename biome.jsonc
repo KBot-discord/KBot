@@ -21,7 +21,18 @@
 		"useEditorconfig": true
 	},
 	"linter": {
-		"enabled": true
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"style": {
+				"useImportType": {
+					"level": "on",
+					"options": {
+						"style": "separatedType"
+					}
+				}
+			}
+		}
 	},
 	"javascript": {
 		"formatter": {

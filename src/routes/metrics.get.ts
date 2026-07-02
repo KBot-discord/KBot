@@ -10,12 +10,15 @@ import { register } from 'prom-client';
 export class ApiRoute extends Route {
 	public override async run(_request: Route.Request, response: Route.Response): Promise<void> {
 		try {
+			const metrics = await register.metrics();
+
 			response
 				.setContentType(register.contentType as MimeType)
 				.status(200)
-				.respond(await register.metrics());
+				.respond(metrics);
 		} catch (error) {
 			container.logger.error(error);
+
 			response
 				.status(500) //
 				.respond({ error: 'An error occurred while collecting metrics' });

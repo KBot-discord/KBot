@@ -1,6 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { DiscordAPIError, EmbedBuilder, type ModalSubmitInteraction } from 'discord.js';
+import type { ModalSubmitInteraction } from 'discord.js';
+import { DiscordAPIError, EmbedBuilder } from 'discord.js';
 import type { AddResourceModal, StickerData } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
@@ -53,7 +54,7 @@ export class ModalHandler extends InteractionHandler {
 			data: { mi, ui },
 		} = parseCustomId<AddResourceModal>(interaction.customId);
 
-		const stickerData = this.container.utility.getAndDeleteResourceCache<StickerData>(mi, ui);
+		const stickerData = this.container.utility.popResourceCache<StickerData>(mi, ui);
 		if (!stickerData) {
 			await interaction.errorReply('Please try to add that sticker again.');
 			return this.none();

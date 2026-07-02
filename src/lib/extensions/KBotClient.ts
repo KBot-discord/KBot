@@ -13,8 +13,6 @@ export class KBotClient extends SapphireClient {
 			intents: [
 				IntentsBitField.Flags.Guilds,
 				IntentsBitField.Flags.GuildMembers,
-				IntentsBitField.Flags.GuildVoiceStates,
-				IntentsBitField.Flags.GuildScheduledEvents,
 				IntentsBitField.Flags.GuildExpressions,
 			],
 			allowedMentions: {},

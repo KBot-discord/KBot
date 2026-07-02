@@ -4,7 +4,8 @@
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.codeActionsOnSave": {
-		"source.organizeImports.biome": "explicit"
+		"source.organizeImports.biome": "explicit",
+		"source.fixAll.biome": "explicit"
 	},
 	"[javascript]": {
 		"editor.defaultFormatter": "biomejs.biome"

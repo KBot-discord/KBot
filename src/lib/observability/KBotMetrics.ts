@@ -44,22 +44,6 @@ export class KBotMetrics {
 		this.counters.commands.inc({ command, success: String(success) }, value);
 	}
 
-	/**
-	 * Increment the YouTube notification counter.
-	 * @param data - The data to increment the counter
-	 */
-	public incrementYoutube({ success, value = 1 }: { success: boolean; value?: number }): void {
-		this.counters.youtube.inc({ success: String(success) }, value);
-	}
-
-	/**
-	 * Increment the Holodex API counter.
-	 * @param data - The data to increment the counter
-	 */
-	public incrementHolodex({ value = 1 }: { value?: number } = {}): void {
-		this.counters.holodex.inc(value);
-	}
-
 	private setupGauges(): void {
 		new Gauge({
 			name: 'kbot_bot_guilds_total',

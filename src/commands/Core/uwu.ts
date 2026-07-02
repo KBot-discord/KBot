@@ -1,7 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefinedOrEmpty } from '@sapphire/utilities';
-import { type MessageContextMenuCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import type { MessageContextMenuCommandInteraction } from 'discord.js';
+import { PermissionFlagsBits } from 'discord.js';
 import { ApplicationCommandType, InteractionContextType } from 'discord-api-types/v10';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';

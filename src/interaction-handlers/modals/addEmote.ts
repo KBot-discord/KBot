@@ -1,6 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { DiscordAPIError, EmbedBuilder, type ModalSubmitInteraction } from 'discord.js';
+import type { ModalSubmitInteraction } from 'discord.js';
+import { DiscordAPIError, EmbedBuilder } from 'discord.js';
 import type { AddResourceModal, EmojiData } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { ResourceCustomIds, ResourceFields } from '../../lib/utilities/customIds.js';
@@ -63,7 +64,7 @@ export class ModalHandler extends InteractionHandler {
 			data: { mi, ui },
 		} = parseCustomId<AddResourceModal>(interaction.customId);
 
-		const emoteData = this.container.utility.getAndDeleteResourceCache<EmojiData>(mi, ui);
+		const emoteData = this.container.utility.popResourceCache<EmojiData>(mi, ui);
 		if (!emoteData) {
 			await interaction.errorReply('Please try to add that emote again.');
 			return this.none();

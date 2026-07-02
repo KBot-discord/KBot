@@ -9,6 +9,7 @@ export function loadConfig(): void {
 	process.env.NODE_ENV ??= NodeEnvironments.Dev;
 
 	config({ path: resolve(mainFolder, '../.env') });
+
 	const env = envGetString('NODE_ENV');
 	const isDev =
 		env !== NodeEnvironments.Production && //
