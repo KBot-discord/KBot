@@ -1,11 +1,11 @@
 import { roleMention, userMention } from '@discordjs/builders';
 import type { KaraokeEvent, KaraokeUser } from '@prisma/client';
-import { Result, container } from '@sapphire/framework';
+import { container, Result } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import type { Guild, GuildMember, GuildTextBasedChannel, Message, VoiceBasedChannel } from 'discord.js';
-import { ResultClass } from '../structures/ResultClass.js';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { DiscordFetchError } from '../structures/errors/DiscordFetchError.js';
+import { ResultClass } from '../structures/ResultClass.js';
 import { EmbedColors, KBotEmoji } from '../utilities/constants.js';
 import { fetchChannel } from '../utilities/discord.js';
 import type { KaraokeEventWithUsers } from './types/karaoke.js';

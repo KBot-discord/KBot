@@ -1,5 +1,5 @@
-import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { Module } from '@kbotdev/plugin-modules';
+import { ModuleCommand } from '@kbotdev/plugin-modules';
 import type { EmbedBuilder } from 'discord.js';
 import { HelpEmbedBuilder } from '../structures/builders/HelpEmbedBuilder.js';
 

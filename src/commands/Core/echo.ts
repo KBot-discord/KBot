@@ -6,9 +6,9 @@ import {
 	EmbedBuilder,
 	ModalBuilder,
 	PermissionFlagsBits,
+	roleMention,
 	TextInputBuilder,
 	TextInputStyle,
-	roleMention,
 } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import type { EchoModal } from '../../lib/types/CustomIds.js';

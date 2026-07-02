@@ -1,4 +1,4 @@
-import { ApplicationCommandRegistries, RegisterBehavior, container } from '@sapphire/framework';
+import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';
 
 import '@kbotdev/plugin-modules/register';
 import '@sapphire/plugin-scheduled-tasks/register';
@@ -12,7 +12,7 @@ import { KBotClient } from './lib/extensions/KBotClient.js';
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
 
 async function main(): Promise<void> {
-	let client: KBotClient | undefined = undefined;
+	let client: KBotClient | undefined;
 
 	try {
 		const { discord } = container.config;

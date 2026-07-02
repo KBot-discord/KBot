@@ -2,7 +2,7 @@ import type { HolodexChannel } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { PermissionFlagsBits, type StringSelectMenuInteraction, roleMention } from 'discord.js';
+import { PermissionFlagsBits, roleMention, type StringSelectMenuInteraction } from 'discord.js';
 import { YoutubeCustomIds } from '../../lib/utilities/customIds.js';
 import { validCustomId } from '../../lib/utilities/decorators.js';
 

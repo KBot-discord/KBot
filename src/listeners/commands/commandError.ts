@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Events, Listener, container } from '@sapphire/framework';
 import type { ChatInputCommandErrorPayload, ContextMenuCommandErrorPayload } from '@sapphire/framework';
+import { container, Events, Listener } from '@sapphire/framework';
 import { DiscordAPIError, HTTPError, RESTJSONErrorCodes } from 'discord.js';
 import { formGenericError } from '../../lib/utilities/constants.js';
 

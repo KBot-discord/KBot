@@ -2,8 +2,8 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Time } from '@sapphire/duration';
 import { container } from '@sapphire/framework';
 import { ScheduledTask } from '@sapphire/plugin-scheduled-tasks';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, roleMention } from 'discord.js';
 import type { APIEmbedField, Channel } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, roleMention } from 'discord.js';
 import humanizeDuration from 'humanize-duration';
 import type { HolodexVideoWithChannel } from '../../lib/holodex/types/videos.js';
 import { BrandColors, EmbedColors } from '../../lib/utilities/constants.js';
@@ -161,7 +161,7 @@ export class YoutubeTask extends ScheduledTask {
 				}
 
 				const { result } = await validator.channels.canSendEmbeds(discordChannel);
-				if (!(result && discordChannel?.isTextBased())) {
+				if (!result || !discordChannel?.isTextBased() || discordChannel.isDMBased()) {
 					return;
 				}
 

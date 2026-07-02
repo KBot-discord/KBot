@@ -5,16 +5,14 @@
 		"enabled": true,
 		"useIgnoreFile": true
 	},
-	"organizeImports": {
-		"enabled": true
-	},
 	"formatter": {
 		"enabled": true,
 		"formatWithErrors": false,
 		"indentStyle": "tab",
 		"indentWidth": 2,
 		"lineEnding": "lf",
-		"lineWidth": 120
+		"lineWidth": 120,
+		"useEditorconfig": true
 	},
 	"linter": {
 		"enabled": true,
@@ -58,23 +56,19 @@
 		}
 	},
 	"files": {
-		"ignore": [
-			".git/",
-			".github/pull_request_template.md",
-			".husky/",
-			"assets/",
-			"coverage/",
-			"dist/",
-			"docs/.vitepress/cache/",
-			"docs/.vitepress/dist/",
-			"node_modules/",
-			"LICENSE",
-			"pnpm-lock.yaml"
+		"includes": [
+			"**/*.ts", //
+			"**/*.tsx",
+			"**/*.js",
+			"**/*.jsx",
+			"**/*.json",
+			"**/*.jsonc",
+			"**/*.md"
 		]
 	},
 	"overrides": [
 		{
-			"include": ["Augments.ts"],
+			"includes": ["**/Augments.ts"],
 			"linter": {
 				"rules": {
 					"suspicious": {

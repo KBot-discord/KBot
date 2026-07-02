@@ -1,8 +1,8 @@
 import type { WelcomeSettings } from '@prisma/client';
 import { container } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { EmbedBuilder } from 'discord.js';
 import type { GuildMember, GuildTextBasedChannel, HexColorString, Message } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { fetchChannel } from '../../utilities/discord.js';
 
 export class WelcomeHandler {

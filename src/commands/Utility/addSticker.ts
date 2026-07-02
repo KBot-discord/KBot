@@ -1,15 +1,9 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import {
-	ActionRowBuilder,
-	ApplicationCommandType,
-	ModalBuilder,
-	PermissionFlagsBits,
-	TextInputBuilder,
-	TextInputStyle,
-} from 'discord.js';
 import type { Message, MessageContextMenuCommandInteraction } from 'discord.js';
+import { ActionRowBuilder, ModalBuilder, PermissionFlagsBits, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ApplicationCommandType, InteractionContextType } from 'discord-api-types/v10';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import type { AddResourceModal, StickerData } from '../../lib/types/CustomIds.js';
 import { KBotModules } from '../../lib/types/Enums.js';
@@ -44,7 +38,7 @@ export class UtilityCommand extends KBotCommand<UtilityModule> {
 					.setName('Add sticker')
 					.setType(ApplicationCommandType.Message)
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions)
-					.setDMPermission(false),
+					.setContexts(InteractionContextType.Guild),
 			{
 				idHints: [],
 				guildIds: [],

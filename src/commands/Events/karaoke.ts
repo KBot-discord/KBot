@@ -2,6 +2,7 @@ import { channelMention, userMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
+import type { ButtonInteraction, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
@@ -10,7 +11,6 @@ import {
 	EmbedBuilder,
 	PermissionFlagsBits,
 } from 'discord.js';
-import type { ButtonInteraction, GuildTextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';

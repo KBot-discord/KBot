@@ -1,13 +1,13 @@
 import { channelMention, roleMention } from '@discordjs/builders';
-import { Module } from '@kbotdev/plugin-modules';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullOrUndefined } from '@sapphire/utilities';
 import { EmbedBuilder } from 'discord.js';
+import type { YoutubeSubscriptionWithChannel } from '../lib/services/types/youtube.js';
 import { YoutubeChannelService } from '../lib/services/YoutubeChannelService.js';
 import { YoutubeSettingsService } from '../lib/services/YoutubeSettingsService.js';
 import { YoutubeSubscriptionService } from '../lib/services/YoutubeSubscriptionService.js';
-import type { YoutubeSubscriptionWithChannel } from '../lib/services/types/youtube.js';
 import { KBotModules } from '../lib/types/Enums.js';
 import { BlankSpace, EmbedColors } from '../lib/utilities/constants.js';
 

@@ -2,7 +2,7 @@ import type { ModerationSettings } from '@prisma/client';
 import type { GuildMember } from 'discord.js';
 
 export class AntiHoistHandler {
-	public readonly usernameRegex = /^[0-9 !"#$%&'()*+,\-.\/:;<=>?@[\\\]^_`]+/g;
+	public readonly usernameRegex = /^[0-9 !"#$%&'()*+,\-./:;<=>?@[\\\]^_`]+/g;
 
 	public async parseMember(member: GuildMember, settings: ModerationSettings): Promise<void> {
 		if (!(settings.enabled && member.manageable && settings.antiHoistEnabled)) return;

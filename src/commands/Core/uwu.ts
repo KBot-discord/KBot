@@ -1,7 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefinedOrEmpty } from '@sapphire/utilities';
-import { ApplicationCommandType, type MessageContextMenuCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { type MessageContextMenuCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { ApplicationCommandType, InteractionContextType } from 'discord-api-types/v10';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { KAOMOJI_CONFUSE, KAOMOJI_EMBARRASSED, KAOMOJI_JOY, KAOMOJI_SPARKLES } from '../../lib/utilities/constants.js';
@@ -32,7 +33,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 					.setName('uwu')
 					.setType(ApplicationCommandType.Message)
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-					.setDMPermission(false),
+					.setContexts(InteractionContextType.Guild),
 			{
 				idHints: [],
 				guildIds: [],

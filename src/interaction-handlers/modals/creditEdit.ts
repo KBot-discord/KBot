@@ -1,8 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { EmbedBuilder, type ModalSubmitInteraction } from 'discord.js';
 import type { APIEmbedField } from 'discord.js';
+import { EmbedBuilder, type ModalSubmitInteraction } from 'discord.js';
 import type { CreditEditModal } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { CreditCustomIds, CreditFields, CreditType } from '../../lib/utilities/customIds.js';

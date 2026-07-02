@@ -1,4 +1,4 @@
-import { LogLevel, SapphireClient, container } from '@sapphire/framework';
+import { container, LogLevel, SapphireClient } from '@sapphire/framework';
 import { ActivityType, IntentsBitField } from 'discord.js';
 import { KBotLogger } from './KBotLogger.js';
 

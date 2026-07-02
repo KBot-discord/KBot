@@ -1,9 +1,9 @@
-import { Module } from '@kbotdev/plugin-modules';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { userMention } from 'discord.js';
 import type { GuildMember } from 'discord.js';
+import { userMention } from 'discord.js';
 import { WelcomeSettingsService } from '../lib/services/WelcomeSettingsService.js';
 import { KBotModules } from '../lib/types/Enums.js';
 

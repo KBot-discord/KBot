@@ -1,20 +1,20 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import {
-	ActionRowBuilder,
-	ChannelType,
-	EmbedBuilder,
-	PermissionFlagsBits,
-	StringSelectMenuBuilder,
-	channelMention,
-} from 'discord.js';
 import type {
 	APISelectMenuOption,
 	ApplicationCommandOptionChoiceData,
 	BaseMessageOptions,
 	Guild,
 	GuildTextBasedChannel,
+} from 'discord.js';
+import {
+	ActionRowBuilder,
+	ChannelType,
+	channelMention,
+	EmbedBuilder,
+	PermissionFlagsBits,
+	StringSelectMenuBuilder,
 } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { MeiliCategories } from '../../lib/meili/types/MeiliTypes.js';
@@ -482,7 +482,7 @@ export class NotificationsCommand extends KBotSubcommand<YoutubeModule> {
 	 * Build the message options from the guild's YouTube subscriptions and roles.
 	 * @param subscriptions - The subscriptions
 	 */
-	private async buildRoleReactionMessage(subscriptions: YoutubeSubscriptionWithChannel[]): Promise<BaseMessageOptions> {
+	private buildRoleReactionMessage(subscriptions: YoutubeSubscriptionWithChannel[]): BaseMessageOptions {
 		const relevantSubscriptions = subscriptions.filter(
 			({ roleId, memberRoleId }) => !(isNullOrUndefined(roleId) && isNullOrUndefined(memberRoleId)),
 		);

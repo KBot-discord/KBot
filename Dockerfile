@@ -1,12 +1,12 @@
 ## Builder ##
-FROM node:22.5.1-alpine3.20 AS base
+FROM node:26.4.0-alpine3.23 AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 RUN apk add -q --no-cache cairo-dev jpeg-dev pango-dev giflib-dev python3 g++ make && \
 	corepack enable pnpm && \
-	corepack use pnpm@9.6.0
+	corepack use pnpm@9.10.0
 
 ## Production dependencies ##
 FROM base AS prod-deps
@@ -31,7 +31,7 @@ RUN pnpm db:generate && \
 	pnpm run build
 
 ## App ##
-FROM node:22.5.1-alpine3.20 AS app
+FROM node:26.4.0-alpine3.23 AS app
 
 WORKDIR /app
 

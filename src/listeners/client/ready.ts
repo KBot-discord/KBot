@@ -154,12 +154,15 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 	private async syncMeili(): Promise<void> {
 		const { logger } = this.container;
 
-		const commands = this.container.stores.get('commands').toJSON() as (KBotCommand<Module> | KBotSubcommand<Module>)[];
+		const commands = this.container.stores.get('commands').toJSON() as [
+			string,
+			KBotCommand<Module> | KBotSubcommand<Module>,
+		][];
 
 		const documents: DocumentCommand[] = commands
-			.filter((cmd) => !this.commandsToFilter.includes(cmd.name))
-			.filter((cmd) => !this.modulesToFilter.includes(cmd.module.name))
-			.map((command, index) => ({
+			.filter(([, cmd]) => !this.commandsToFilter.includes(cmd.name))
+			.filter(([, cmd]) => !this.modulesToFilter.includes(cmd.module.name))
+			.map(([, command], index) => ({
 				id: String(index),
 				name: command.name,
 				description: command.description,

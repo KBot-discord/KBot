@@ -1,8 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { Events } from 'discord.js';
 import type { GuildScheduledEvent } from 'discord.js';
+import { Events } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.GuildScheduledEventDelete,

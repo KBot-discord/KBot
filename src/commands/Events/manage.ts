@@ -2,17 +2,17 @@ import { channelMention, time, userMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import type {
 	ApplicationCommandOptionChoiceData,
 	GuildScheduledEvent,
 	GuildTextBasedChannel,
 	VoiceBasedChannel,
 } from 'discord.js';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KaraokeEventMenu } from '../../lib/structures/menus/KaraokeEventMenu.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
-import { BlankSpace, EmbedColors, KBotEmoji, formGenericError } from '../../lib/utilities/constants.js';
+import { BlankSpace, EmbedColors, formGenericError, KBotEmoji } from '../../lib/utilities/constants.js';
 import { fetchChannel, getGuildIcon } from '../../lib/utilities/discord.js';
 import type { EventModule } from '../../modules/EventModule.js';
 

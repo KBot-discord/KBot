@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Events, Listener } from '@sapphire/framework';
 import type { UnknownContextMenuCommandPayload } from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.UnknownContextMenuCommand,

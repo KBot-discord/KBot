@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Precondition } from '@sapphire/framework';
 import type { PreconditionOptions, PreconditionResult } from '@sapphire/framework';
+import { Precondition } from '@sapphire/framework';
 import type { CommandInteraction, ContextMenuCommandInteraction, Message } from 'discord.js';
 
 @ApplyOptions<PreconditionOptions>({

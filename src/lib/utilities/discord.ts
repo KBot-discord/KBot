@@ -1,10 +1,9 @@
 import { roleMention, time, userMention } from '@discordjs/builders';
 import type { ImageURLOptions } from '@discordjs/rest';
-import { MessageLinkRegex } from '@sapphire/discord.js-utilities';
 import type { AnyInteraction } from '@sapphire/discord.js-utilities';
-import { UserError, container } from '@sapphire/framework';
+import { MessageLinkRegex } from '@sapphire/discord.js-utilities';
+import { container, UserError } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { EmbedBuilder, MessageType, PermissionFlagsBits, User, isJSONEncodable } from 'discord.js';
 import type {
 	APIUser,
 	Collection,
@@ -20,6 +19,7 @@ import type {
 	Snowflake,
 	Sticker,
 } from 'discord.js';
+import { EmbedBuilder, isJSONEncodable, MessageType, PermissionFlagsBits, User } from 'discord.js';
 import {
 	BlankSpace,
 	EmbedColors,
@@ -368,7 +368,7 @@ export function getGuildIcon(guild: Guild | null, options: ImageURLOptions = {})
  * @typeParam T - The type of the channel
  */
 export async function fetchChannel<T extends GuildBasedChannel>(channelId: string): Promise<T | null> {
-	return container.client.channels.fetch(channelId).catch(() => null) as unknown as T | null;
+	return (await container.client.channels.fetch(channelId).catch(() => null)) as unknown as T | null;
 }
 
 /**

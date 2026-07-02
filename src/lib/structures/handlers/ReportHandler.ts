@@ -1,3 +1,4 @@
+import type { APIActionRowComponent, APIButtonComponent, ButtonInteraction, GuildMember, Message } from 'discord.js';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
@@ -8,7 +9,6 @@ import {
 	InteractionType,
 	PermissionFlagsBits,
 } from 'discord.js';
-import type { APIActionRowComponent, APIButtonComponent, ButtonInteraction, GuildMember, Message } from 'discord.js';
 import { EmbedColors } from '../../utilities/constants.js';
 import { getUserInfo, isWebhookMessage } from '../../utilities/discord.js';
 
@@ -31,6 +31,7 @@ export class ReportHandler {
 	private readonly reportMessage: Message<true>;
 
 	// @ts-expect-error
+	// biome-ignore lint/correctness/noUnusedPrivateClassMembers: ackshually it is used
 	private collector: InteractionCollector<ButtonInteraction<'cached'>> | null = null;
 
 	public constructor(targetMessage: Message<true>, reportMessage: Message<true>) {

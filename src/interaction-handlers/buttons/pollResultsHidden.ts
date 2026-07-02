@@ -1,8 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { type ButtonInteraction, EmbedBuilder } from 'discord.js';
 import type { GuildTextBasedChannel } from 'discord.js';
+import { type ButtonInteraction, EmbedBuilder } from 'discord.js';
 import type { PollMenuButton } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { PollCustomIds } from '../../lib/utilities/customIds.js';

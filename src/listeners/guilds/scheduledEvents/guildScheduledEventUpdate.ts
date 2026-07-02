@@ -1,8 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { Events, GuildScheduledEventEntityType, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
 import type { Guild, GuildScheduledEvent, VoiceBasedChannel } from 'discord.js';
+import { Events, GuildScheduledEventEntityType, GuildScheduledEventStatus, PermissionFlagsBits } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	event: Events.GuildScheduledEventUpdate,

@@ -1,6 +1,6 @@
 import { join } from 'node:path';
-import { container } from '@sapphire/framework';
 import type { StoreRegistryEntries } from '@sapphire/framework';
+import { container } from '@sapphire/framework';
 
 /**
  * Registers the store in the provided root folder.

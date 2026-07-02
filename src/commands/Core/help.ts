@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import type { ApplicationCommandOptionChoiceData } from 'discord.js';
+import { EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import type { KBotSubcommand } from '../../lib/extensions/KBotSubcommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
@@ -88,6 +88,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 			| KBotCommand<never>
 			| KBotSubcommand<never>
 			| undefined;
+
 		if (!command) {
 			return await interaction.errorReply('That command does not exist.');
 		}

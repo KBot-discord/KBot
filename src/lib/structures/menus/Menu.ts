@@ -1,5 +1,5 @@
-import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import type { AnyInteractableInteraction } from '@sapphire/discord.js-utilities';
+import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import { isFunction } from '@sapphire/utilities';
 import { MenuPageBuilder } from '../builders/MenuPageBuilder.js';
 
@@ -47,7 +47,10 @@ export abstract class Menu extends PaginatedMessage {
 		if (interaction.deferred || interaction.replied) {
 			await interaction.editReply(options);
 		} else {
-			await interaction.reply({ ...options, content: options.content ?? undefined });
+			await interaction.reply({
+				...options,
+				content: options.content ?? undefined,
+			});
 		}
 	}
 

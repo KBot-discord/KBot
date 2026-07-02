@@ -3,7 +3,7 @@ import { container } from '@sapphire/framework';
 import { config } from 'dotenv';
 import type { ClientConfig } from './lib/types/Config.js';
 import { envGetNumber, envGetString, validateConfig } from './lib/utilities/config.js';
-import { NodeEnvironments, mainFolder } from './lib/utilities/constants.js';
+import { mainFolder, NodeEnvironments } from './lib/utilities/constants.js';
 
 export function loadConfig(): void {
 	process.env.NODE_ENV ??= NodeEnvironments.Dev;

@@ -7,8 +7,8 @@ import type {
 } from '@sapphire/discord.js-utilities';
 import { container } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import type { Guild, GuildBasedChannel, Message, User } from 'discord.js';
+import { ButtonStyle, ComponentType, EmbedBuilder } from 'discord.js';
 import type { KaraokeMenuButton } from '../../types/CustomIds.js';
 import { BlankSpace, EmbedColors, KBotEmoji } from '../../utilities/constants.js';
 import { KaraokeCustomIds } from '../../utilities/customIds.js';

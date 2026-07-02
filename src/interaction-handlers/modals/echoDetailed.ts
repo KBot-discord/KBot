@@ -1,7 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
-import { EmbedBuilder, type ModalSubmitInteraction, roleMention } from 'discord.js';
 import type { GuildTextBasedChannel } from 'discord.js';
+import { EmbedBuilder, type ModalSubmitInteraction, roleMention } from 'discord.js';
 import type { EchoModal } from '../../lib/types/CustomIds.js';
 import { EmbedColors } from '../../lib/utilities/constants.js';
 import { EchoCustomIds, EchoFields } from '../../lib/utilities/customIds.js';

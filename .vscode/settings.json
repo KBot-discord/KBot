@@ -1,7 +1,6 @@
 {
 	"typescript.tsdk": "./node_modules/typescript/lib",
 	"typescript.referencesCodeLens.enabled": true,
-	"eslint.enable": false,
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.codeActionsOnSave": {

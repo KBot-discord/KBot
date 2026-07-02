@@ -8,20 +8,18 @@ import { isNullOrUndefined } from '@sapphire/utilities';
  * @param object - The object to flatten
  */
 
-// biome-ignore lint/suspicious/noExplicitAny:
+// biome-ignore lint/suspicious/noExplicitAny: Messy
 export function flattenObject(object: Record<PropertyKey, any>): Record<string, unknown> {
 	const result: Record<string, unknown> = {};
 
 	for (const key in object) {
-		// biome-ignore lint/suspicious/noPrototypeBuiltins:
-		if (!object.hasOwnProperty(key)) continue;
+		if (!Object.hasOwn(object, key)) continue;
 
 		const val = object[key];
 		if (typeof val === 'object' && !Array.isArray(val)) {
 			const temp = flattenObject(val);
 			for (const j in temp) {
-				// biome-ignore lint/suspicious/noPrototypeBuiltins:
-				if (!temp.hasOwnProperty(j)) continue;
+				if (!Object.hasOwn(temp, j)) continue;
 
 				result[`${key}.${j}`] = temp[j];
 			}
@@ -41,8 +39,7 @@ export function checkDepth(object: Record<string, unknown>): number {
 	let level = 1;
 
 	for (const key in object) {
-		// biome-ignore lint/suspicious/noPrototypeBuiltins:
-		if (!object.hasOwnProperty(key)) continue;
+		if (!Object.hasOwn(object, key)) continue;
 
 		const val = object[key];
 		if (typeof val === 'object' && !isNullOrUndefined(val)) {

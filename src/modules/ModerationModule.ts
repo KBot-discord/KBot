@@ -1,9 +1,9 @@
-import { Module } from '@kbotdev/plugin-modules';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { EmbedBuilder, bold, time } from 'discord.js';
 import type { GuildMember } from 'discord.js';
+import { bold, EmbedBuilder, time } from 'discord.js';
 import { ModerationSettingsService } from '../lib/services/ModerationSettingsService.js';
 import { MinageHandler } from '../lib/structures/handlers/MinageHandler.js';
 import { KBotModules } from '../lib/types/Enums.js';

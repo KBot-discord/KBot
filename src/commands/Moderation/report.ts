@@ -2,9 +2,18 @@ import { channelMention, userMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
+import type {
+	APIEmbed,
+	APIEmbedField,
+	APIMessageTopLevelComponent,
+	GuildMember,
+	GuildTextBasedChannel,
+	JSONEncodable,
+	Message,
+	MessageContextMenuCommandInteraction,
+} from 'discord.js';
 import {
 	ActionRowBuilder,
-	ApplicationCommandType,
 	AttachmentBuilder,
 	ButtonBuilder,
 	ButtonStyle,
@@ -12,17 +21,7 @@ import {
 	MessageType,
 	PermissionFlagsBits,
 } from 'discord.js';
-import type {
-	APIActionRowComponent,
-	APIEmbed,
-	APIEmbedField,
-	APIMessageActionRowComponent,
-	GuildMember,
-	GuildTextBasedChannel,
-	JSONEncodable,
-	Message,
-	MessageContextMenuCommandInteraction,
-} from 'discord.js';
+import { ApplicationCommandType, InteractionContextType } from 'discord-api-types/v10';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import { ReportButtons, ReportHandler } from '../../lib/structures/handlers/ReportHandler.js';
 import { KBotErrors, KBotModules } from '../../lib/types/Enums.js';
@@ -54,7 +53,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 					.setName('Report')
 					.setType(ApplicationCommandType.Message)
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-					.setDMPermission(false),
+					.setContexts(InteractionContextType.Guild),
 			{
 				idHints: [],
 				guildIds: [],
@@ -89,7 +88,7 @@ export class ModerationCommand extends KBotCommand<ModerationModule> {
 		const embeds: JSONEncodable<APIEmbed>[] = [
 			this.buildEmbed(message, interaction.member, member), //
 		];
-		const components: JSONEncodable<APIActionRowComponent<APIMessageActionRowComponent>>[] = [
+		const components: JSONEncodable<APIMessageTopLevelComponent>[] = [
 			this.buildRow(message, member, interaction.guild.ownerId),
 		];
 

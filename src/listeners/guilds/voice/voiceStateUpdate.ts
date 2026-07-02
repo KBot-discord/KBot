@@ -2,8 +2,8 @@ import type { KaraokeUser } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { ChannelType, PermissionFlagsBits, userMention } from 'discord.js';
 import type { GuildTextBasedChannel, VoiceState } from 'discord.js';
+import { ChannelType, PermissionFlagsBits, userMention } from 'discord.js';
 import { fetchChannel } from '../../../lib/utilities/discord.js';
 
 @ApplyOptions<Listener.Options>({

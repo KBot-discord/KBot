@@ -2,6 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Time } from '@sapphire/duration';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import { isNullOrUndefined } from '@sapphire/utilities';
+import type { Embed } from 'discord.js';
 import {
 	ActionRowBuilder,
 	type ButtonInteraction,
@@ -10,7 +11,6 @@ import {
 	TextInputBuilder,
 	TextInputStyle,
 } from 'discord.js';
-import type { Embed } from 'discord.js';
 import type { CreditImageEditModal } from '../../lib/types/CustomIds.js';
 import { CreditCustomIds, CreditFields } from '../../lib/utilities/customIds.js';
 import { interactionRatelimit, validCustomId } from '../../lib/utilities/decorators.js';

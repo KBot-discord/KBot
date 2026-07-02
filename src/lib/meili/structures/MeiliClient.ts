@@ -1,13 +1,13 @@
-import { MeiliSearch } from 'meilisearch';
 import type { EnqueuedTask, SearchResponse } from 'meilisearch';
+import { Meilisearch } from 'meilisearch';
 import type { MeiliClientOptions } from '../types/MeiliClientOptions.js';
-import { MeiliCategories } from '../types/MeiliTypes.js';
 import type { MeiliDocument, MeiliIndex } from '../types/MeiliTypes.js';
+import { MeiliCategories } from '../types/MeiliTypes.js';
 
 /**
  * Wrapper for the `meilisearch` MeiliSearch class.
  */
-export class MeilisearchClient extends MeiliSearch {
+export class MeilisearchClient extends Meilisearch {
 	/**
 	 * The options to pass to the {@link MeilisearchClient}.
 	 * @param options - The {@link MeiliClientOptions} to pass

@@ -1,8 +1,8 @@
-import { Module } from '@kbotdev/plugin-modules';
 import type { IsEnabledContext } from '@kbotdev/plugin-modules';
+import { Module } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
 import { isNullOrUndefined } from '@sapphire/utilities';
-import { EmbedBuilder, channelMention } from 'discord.js';
+import { channelMention, EmbedBuilder } from 'discord.js';
 import { EventSettingsService } from '../lib/services/EventSettingsService.js';
 import { KaraokeService } from '../lib/services/KaraokeService.js';
 import { KBotModules } from '../lib/types/Enums.js';

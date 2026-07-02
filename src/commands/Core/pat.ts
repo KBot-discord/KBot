@@ -5,14 +5,10 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Time } from '@sapphire/duration';
 import { CommandOptionsRunTypeEnum } from '@sapphire/framework';
 import { GifEncoder } from '@skyra/gifenc';
-import { Canvas, loadImage } from 'canvas-constructor/cairo';
 import type { Image } from 'canvas-constructor/cairo';
-import {
-	ApplicationCommandType,
-	AttachmentBuilder,
-	PermissionFlagsBits,
-	type UserContextMenuCommandInteraction,
-} from 'discord.js';
+import { Canvas, loadImage } from 'canvas-constructor/cairo';
+import { AttachmentBuilder, PermissionFlagsBits, type UserContextMenuCommandInteraction } from 'discord.js';
+import { ApplicationCommandType, InteractionContextType } from 'discord-api-types/v10';
 import { KBotCommand } from '../../lib/extensions/KBotCommand.js';
 import { KBotModules } from '../../lib/types/Enums.js';
 import { imageFolder } from '../../lib/utilities/constants.js';
@@ -52,7 +48,7 @@ export class CoreCommand extends KBotCommand<CoreModule> {
 					.setName('Pat')
 					.setType(ApplicationCommandType.User)
 					.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-					.setDMPermission(false),
+					.setContexts(InteractionContextType.Guild),
 			{
 				idHints: [],
 				guildIds: [],

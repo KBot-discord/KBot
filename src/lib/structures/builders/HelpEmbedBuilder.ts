@@ -1,5 +1,5 @@
-import { EmbedBuilder } from 'discord.js';
 import type { APIEmbedField } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { EmbedColors } from '../../utilities/constants.js';
 
 export class HelpEmbedBuilder {
