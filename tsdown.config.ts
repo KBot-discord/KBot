@@ -12,6 +12,6 @@ export default defineConfig({
 	target: 'esnext',
 	treeshake: true,
 	deps: {
-		skipNodeModulesBundle: true,
+		neverBundle: true,
 	},
 });

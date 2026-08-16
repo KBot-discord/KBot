@@ -1,5 +1,5 @@
 ## Base ##
-FROM node:26.4.0-trixie-slim AS base
+FROM node:26.7.0-trixie-slim AS base
 
 RUN apt update && \
 	npm install -g corepack && \
