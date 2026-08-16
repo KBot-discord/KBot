@@ -1,5 +1,5 @@
 import { container, LogLevel, SapphireClient } from '@sapphire/framework';
-import { ActivityType, IntentsBitField } from 'discord.js';
+import { IntentsBitField } from 'discord.js';
 import { KBotLogger } from './KBotLogger.js';
 
 export class KBotClient extends SapphireClient {
@@ -18,7 +18,6 @@ export class KBotClient extends SapphireClient {
 			allowedMentions: {},
 			presence: {
 				status: 'online',
-				activities: [{ name: '/help', type: ActivityType.Playing }],
 			},
 			logger: {
 				instance: new KBotLogger({
