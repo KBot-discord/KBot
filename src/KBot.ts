@@ -1,7 +1,6 @@
 import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';
 
 import '@kbotdev/plugin-modules/register';
-import '@sapphire/plugin-api/register';
 import './plugins/register.js';
 import './lib/utilities/Augments.js';
 

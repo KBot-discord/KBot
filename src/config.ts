@@ -25,9 +25,13 @@ export function loadConfig(): void {
 			devServers: ['953375922990506005'],
 			ownerIds: ['137657554200166401'],
 		},
-		api: {
-			host: envGetString('API_HOST'),
-			port: envGetNumber('API_PORT'),
+		db: {
+			url: envGetString('DATABASE_URL'),
+		},
+		redis: {
+			host: envGetString('REDIS_HOST'),
+			port: envGetNumber('REDIS_PORT'),
+			password: envGetString('REDIS_PASS'),
 		},
 	};
 

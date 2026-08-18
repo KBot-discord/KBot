@@ -8,8 +8,12 @@ export type ClientConfig = {
 		devServers: string[];
 		ownerIds: string[];
 	};
-	api: {
+	db: {
+		url: string;
+	};
+	redis: {
 		host: string;
 		port: number;
+		password: string;
 	};
 };

@@ -1,8 +1,6 @@
 import type { Modules } from '@kbotdev/plugin-modules';
 import { ApplyOptions } from '@sapphire/decorators';
-import type { Result } from '@sapphire/framework';
 import { Events, Listener } from '@sapphire/framework';
-import { isNullOrUndefined } from '@sapphire/utilities';
 import { green, red, yellowBright } from 'colorette';
 import { KBotModules } from '../../lib/types/Enums.js';
 
@@ -23,10 +21,6 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 
 		const loadedModules = this.checkModules(this.modules);
 
-		const loadedServices = this.checkServices([
-			{ key: `API Enabled (port: ${config.api.port})`, value: !isNullOrUndefined(client.options.api) },
-		]);
-
 		this.print({
 			values: [
 				// biome-ignore lint/style/noNonNullAssertion: whatever
@@ -36,7 +30,6 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 			lists: [
 				{ name: 'Stores', items: stores.map((store) => `${store.size} ${store.name}`) },
 				{ name: 'Modules', items: [...loadedModules.entries()].map(([name, value]) => `[${loaded(value)}] ${name}`) },
-				{ name: 'Services', items: [...loadedServices.entries()].map(([name, value]) => `[${loaded(value)}] ${name}`) },
 			],
 		});
 	}
@@ -106,23 +99,6 @@ export class ClientListener extends Listener<typeof Events.ClientReady> {
 
 		return modulesToCheck.reduce<Map<string, boolean>>((acc, { key, value }) => {
 			acc.set(key, modules.has(value));
-			return acc;
-		}, new Map());
-	}
-
-	/**
-	 * Check if the provided services are healthy.
-	 * @param servicesToCheck - The services to check.
-	 */
-	private checkServices(
-		servicesToCheck: { key: string; value: Result<unknown, unknown> | boolean }[],
-	): Map<string, boolean> {
-		return servicesToCheck.reduce<Map<string, boolean>>((acc, { key, value }) => {
-			if (typeof value === 'boolean') {
-				acc.set(key, value);
-			} else {
-				acc.set(key, value.isOk());
-			}
 			return acc;
 		}, new Map());
 	}

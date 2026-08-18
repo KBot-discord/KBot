@@ -9,3 +9,12 @@ export const ResourceCustomIds = {
 export const ResourceFields = {
 	Name: 'resourceName',
 } as const;
+
+/**
+ * Report
+ */
+export const ReportCustomIds = {
+	Timeout: '@kbotdev/report.timeout' as const,
+	Delete: '@kbotdev/report.delete' as const,
+	Info: '@kbotdev/report.info' as const,
+} as const;

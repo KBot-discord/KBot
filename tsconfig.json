@@ -7,6 +7,6 @@
 		"tsBuildInfoFile": "node_modules/.cache/kbot/.tsbuildinfo",
 		"types": ["node"]
 	},
-	"include": ["src"],
+	"include": ["src", "prisma.config.ts", "tsdown.config.ts"],
 	"exclude": ["node_modules", "dist"]
 }

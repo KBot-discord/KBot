@@ -1,6 +1,12 @@
 export const KBotModules = {
 	Core: 'CoreModule',
 	Utility: 'UtilityModule',
+	Moderation: 'ModerationModule',
+} as const;
+
+export const KBotErrors = {
+	WebhookError: 'webhookError',
+	ChannelPermissions: 'channelPermissions',
 } as const;
 
 export const KBotErrorCodes = {
@@ -8,3 +14,5 @@ export const KBotErrorCodes = {
 	InvalidHex: 'INVALID_HEX',
 	DiscordFetch: 'DISCORD_FETCH',
 } as const;
+
+export type KBotErrorCode = (typeof KBotErrorCodes)[keyof typeof KBotErrorCodes];

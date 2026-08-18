@@ -1,16 +1,28 @@
 services:
-  bot:
-    image: kbot/bot
-    build:
-      dockerfile: Dockerfile
-      context: .
-    env_file:
-      - .env
+  postgres-15:
+    # https://hub.docker.com/_/postgres
+    image: postgres:15.19
+    container_name: tenshi-pg-15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tenshi
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - kbot_postgres_data:/var/lib/postgresql/data
     ports:
-      - 127.0.0.1:8600:8600
-    networks:
-      - kbot_dev
+      - 127.0.0.1:5432:5432
 
-networks:
-  kbot_dev:
-    external: false
+  redis:
+    # https://github.com/redis/redis/releases
+    image: redis:8.10.0-alpine3.23
+    container_name: kbot-redis
+    restart: unless-stopped
+    volumes:
+      - kbot_redis:/data
+    ports:
+      - 127.0.0.1:6379:6379
+
+volumes:
+  kbot_postgres_data:
+  kbot_redis:

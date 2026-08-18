@@ -12,6 +12,8 @@ export const rootFolder = join(mainFolder, '..');
 export const assetsFolder = join(rootFolder, 'assets');
 export const imageFolder = join(assetsFolder, 'images');
 
+export const BlankSpace = '\u200B';
+
 export enum EmbedColors {
 	Default = '#006BFC',
 	Success = '#33B54E',
@@ -24,6 +26,14 @@ export const KAOMOJI_JOY = [' (* ^ ω ^)', ' (o^▽^o)', ' (≧◡≦)', ' ☆�
 export const KAOMOJI_EMBARRASSED = [' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)..', ' (*^.^*)..,', '..,', ',,,', '... ', '.. ', ' mmm..', 'O.o'];
 export const KAOMOJI_CONFUSE = [' (o_O)?', ' (°ロ°) !?', ' (ーー;)?', ' owo?'];
 export const KAOMOJI_SPARKLES = [' *:･ﾟ✧*:･ﾟ✧ ', ' ☆*:・ﾟ ', '〜☆ ', ' uguu.., ', ' -.-'];
+
+export const KBotEmoji = {
+	Locked: '🔒',
+	Unlocked: '🔓',
+	GreenCheck: '✅',
+	RedX: '❌',
+	Microphone: '🎤',
+};
 
 export const GuildEmoteSlots = [50, 100, 150, 250];
 
